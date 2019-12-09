@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.connectorio.binding</groupId>
+    <artifactId>parent</artifactId>
+    <version>2.5.0-SNAPSHOT</version>
+    <relativePath>../parent/pom.xml</relativePath>
+  </parent>
+
+  <groupId>org.connectorio.binding.plc4x</groupId>
+  <artifactId>sandbox</artifactId>
+  <packaging>bundle</packaging>
+
+  <name>ConnectorIO - Binding - PLC4X - Sandbox</name>
+  <description>Sandbox for playing around low level network stuff.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.plc4x</groupId>
+      <artifactId>plc4j-driver-s7</artifactId>
+      <version>${plc4x.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.7</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.pcap4j</groupId>
+      <artifactId>pcap4j-core</artifactId>
+      <version>1.8.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.pcap4j</groupId>
+      <artifactId>pcap4j-packetfactory-static</artifactId>
+      <version>1.8.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.openflowplugin.libraries</groupId>
+      <artifactId>liblldp</artifactId>
+      <version>0.9.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.mlaccetti</groupId>
+      <artifactId>rocksaw</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>osgi.core</artifactId>
+      <version>6.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>net.java.dev.jna</groupId>
+      <artifactId>jna</artifactId>
+      <version>5.5.0</version>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals><goal>single</goal></goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.connectorio.binding.plc4x.sandbox.Discoverer</mainClass>
+            </manifest>
+          </archive>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

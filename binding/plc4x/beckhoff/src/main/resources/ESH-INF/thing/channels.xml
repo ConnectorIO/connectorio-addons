@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="co7io-plc4x-ads"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+  <channel-type id="switch">
+    <item-type>Switch</item-type>
+    <label>On/Off Switch</label>
+    <config-description-ref uri="thing-type:co7io-plc4x-ads:switch"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="contact">
+    <item-type>Contact</item-type>
+    <label>Open/Closed contact</label>
+    <config-description-ref uri="thing-type:co7io-plc4x-ads:switch"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="number">
+    <item-type>Number</item-type>
+    <label>Numeric value</label>
+    <config-description-ref uri="thing-type:co7io-plc4x-ads:number"></config-description-ref>
+  </channel-type>
+
+</thing:thing-descriptions>

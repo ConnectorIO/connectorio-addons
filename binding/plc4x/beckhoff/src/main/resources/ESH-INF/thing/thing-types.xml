@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="co7io-plc4x-ads"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+  <bridge-type id="network">
+    <label>Beckhoff ADS Network Bridge</label>
+    <description>TCP/IP Connection to Beckhoff PLC.</description>
+
+    <config-description>
+      <parameter name="host" type="text" required="true">
+        <label>Host name or IP address</label>
+        <description>Address of ADS enabled PLC.</description>
+      </parameter>
+      <parameter name="port" type="integer" required="false">
+        <label>Port number</label>
+        <description>Port number for communication, leave empty for default (48898).</description>
+      </parameter>
+
+      <parameter name="targetAmsId" type="text" required="true">
+        <label>Target AMS Id</label>
+      </parameter>
+      <parameter name="targetAmsPort" type="integer" required="true">
+        <label>Target AMS port</label>
+      </parameter>
+      <parameter name="sourceAmsId" type="text" required="false">
+        <label>Source AMS Id</label>
+        <description>Additional routing information, in order to get value accepted both - Sour AMS Id and Source AMS port must be set.</description>
+      </parameter>
+      <parameter name="sourceAmsPort" type="integer" required="false">
+        <label>Source AMS port</label>
+        <description>Value for Source AMS port is used only when Source Ams Id is set.</description>
+      </parameter>
+
+      <parameter name="refreshInterval" type="integer" required="false">
+        <label>Refresh interval</label>
+        <description>Time between next poll cycles.</description>
+        <default>1000</default>
+      </parameter>
+    </config-description>
+  </bridge-type>
+
+  <bridge-type id="serial">
+    <label>Beckhoff ADS Serial Bridge</label>
+    <description>Serial port connection to Beckhoff PLC.</description>
+
+    <config-description>
+      <parameter name="port" type="text" required="true">
+        <label>Serial port</label>
+        <description>Serial port over which connection is made - ie. /dev/ttyUSB0, /dev/ttyS1 for
+          linux or COM0, COM1 for windows.
+        </description>
+        <context>serial-port</context>
+      </parameter>
+
+      <parameter name="targetAmsId" type="text" required="true">
+        <label>Target AMS Id</label>
+      </parameter>
+      <parameter name="targetAmsPort" type="integer" required="true">
+        <label>Target AMS port</label>
+      </parameter>
+      <parameter name="sourceAmsId" type="text" required="false">
+        <label>Source AMS Id</label>
+      </parameter>
+      <parameter name="sourceAmsPort" type="integer" required="false">
+        <label>Source AMS port</label>
+      </parameter>
+
+      <parameter name="refreshInterval" type="integer" required="false">
+        <label>Refresh interval</label>
+        <description>Time between next poll cycles.</description>
+        <default>1000</default>
+      </parameter>
+    </config-description>
+  </bridge-type>
+
+  <thing-type id="ads" extensible="switch,contact,number">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="network"/>
+      <bridge-type-ref id="serial"/>
+    </supported-bridge-type-refs>
+
+    <label>Beckhoff ADS device</label>
+    <description>A PLC with ADS communication capabilities which can be polled for data.
+    </description>
+
+    <config-description>
+      <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+        <label>Refresh interval</label>
+        <unitLabel>ms</unitLabel>
+        <description>
+          Time between next poll cycles. If no value is given value defined for bridge is used (1000
+          ms by default).
+        </description>
+        <default>0</default>
+      </parameter>
+    </config-description>
+  </thing-type>
+
+</thing:thing-descriptions>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.connectorio</groupId>
+    <artifactId>connectorio-oss</artifactId>
+    <version>1</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>org.connectorio</groupId>
+  <artifactId>binding</artifactId>
+  <version>2.5.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>ConnectorIO - Binding</name>
+  <description>This project contains support for third party bindings.</description>
+
+  <modules>
+    <module>parent</module>
+    <module>binding</module>
+    <module>transformation</module>
+    <!--
+    <module>sandbox</module>
+    -->
+    <module>telemetry</module>
+    <module>features</module>
+  </modules>
+
+  <scm>
+    <connection>scm:git:https://github.com/ConnectorIO/connectorio-binding.git</connection>
+    <developerConnection>scm:git:git@github.com:ConnectorIO/connectorio-binding.git</developerConnection>
+    <url>https://github.com/ConnectorIO/connectorio-binding</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+</project>

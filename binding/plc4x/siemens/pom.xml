@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.connectorio.binding</groupId>
+    <artifactId>plc4x</artifactId>
+    <version>2.5.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.connectorio.binding.plc4x</groupId>
+  <artifactId>siemens</artifactId>
+  <packaging>bundle</packaging>
+
+  <name>ConnectorIO - Binding - PLC4X - Siemens</name>
+  <description>Siemens PLC integration.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.connectorio.binding.plc4x</groupId>
+      <artifactId>shared</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openhab.core.bundles</groupId>
+      <artifactId>org.openhab.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openhab.core.bundles</groupId>
+      <artifactId>org.openhab.core.thing</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.plc4x</groupId>
+      <artifactId>plc4j-driver-s7</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.service.component.annotations</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.connectorio.binding</groupId>
+      <artifactId>test</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.connectorio.binding.features</groupId>
+      <artifactId>plc4x</artifactId>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Embed-Dependency>*;artifactId=plc4j-driver-s7</Embed-Dependency>
+          </instructions>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

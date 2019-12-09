@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="co7io-plc4x-s7"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+  <bridge-type id="network">
+    <label>Siemens S7 TCP/IP Bridge</label>
+    <description>TCP/IP Connection to Siemens PLC.</description>
+
+    <config-description>
+      <parameter name="host" type="text" required="true">
+        <label>Host name or IP address</label>
+        <description>Address of S7 enabled PLC.</description>
+      </parameter>
+      <parameter name="rack" type="integer" required="false">
+        <label>Rack</label>
+        <description>Communication rack to be set in connection string.</description>
+        <default>0</default>
+      </parameter>
+      <parameter name="slot" type="integer" required="false">
+        <label>Slot</label>
+        <description>Communication rack to be set in connection string.</description>
+        <default>0</default>
+      </parameter>
+      <parameter name="refreshInterval" type="integer" required="false">
+        <label>Refresh interval</label>
+        <description>Time between next poll cycles.</description>
+        <default>1000</default>
+      </parameter>
+    </config-description>
+  </bridge-type>
+
+  <thing-type id="s7" extensible="switch,contact,number">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="network"/>
+    </supported-bridge-type-refs>
+
+    <label>Siemens S7 device</label>
+    <description>A PLC with S7 communication capabilities which can be polled for data.
+    </description>
+
+    <config-description>
+      <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+        <label>Refresh interval</label>
+        <unitLabel>ms</unitLabel>
+        <description>
+          Time between next poll cycles. If no value is given value defined for bridge is used (1000
+          ms by default).
+        </description>
+        <default>0</default>
+      </parameter>
+    </config-description>
+  </thing-type>
+
+</thing:thing-descriptions>

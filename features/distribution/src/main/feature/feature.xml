@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="co7io-binding-distribution-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.6.0">
+
+</features>

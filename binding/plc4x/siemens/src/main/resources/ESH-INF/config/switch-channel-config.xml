@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config-description:config-descriptions
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:config-description="https://openhab.org/schemas/config-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
+
+  <config-description uri="thing-type:co7io-plc4x-s7:switch">
+    <parameter-group name="basic">
+      <label>Required configuration</label>
+      <description>Below fields are required in order to read/write data from PLC.</description>
+    </parameter-group>
+
+    <parameter name="field" type="text" groupName="basic">
+      <label>Field</label>
+      <description>Field to be read from PLC. Supported format of field:
+        %I0.1:BOOL
+        %Q0.4:BOOL
+        %M9.0:BOOL
+        %DB1.DBX38.1:BOOL
+        Where %I stand for input, %Q for output, %M for memory and %DB for store.
+      </description>
+    </parameter>
+
+    <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+      <label>Refresh interval</label>
+      <description>
+        Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+      </description>
+      <unitLabel>ms</unitLabel>
+      <default>0</default>
+    </parameter>
+
+  </config-description>
+</config-description:config-descriptions>

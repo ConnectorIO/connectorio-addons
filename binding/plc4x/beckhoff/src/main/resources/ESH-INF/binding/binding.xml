@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding:binding id="co7io-plc4x-ads" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:binding="https://openhab.org/schemas/binding/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/binding/v1.0.0 https://openhab.org/schemas/binding-1.0.0.xsd">
+
+	<name>Beckhoff ADS Binding</name>
+	<description>This binding provides integration with Beckhoff PLCs based on Apache PLC4X project.</description>
+	<author>Łukasz Dywicki</author>
+
+</binding:binding>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.connectorio.binding</groupId>
+    <artifactId>features</artifactId>
+    <version>2.5.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.connectorio.binding.features</groupId>
+  <artifactId>distribution</artifactId>
+  <packaging>kar</packaging>
+
+  <name>ConnectorIO - Binding - Features - Distribution</name>
+  <description>The Karaf Archive / Komplete ARchive :-) with all bindings and components included in here.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.connectorio.binding.features</groupId>
+      <artifactId>base</artifactId>
+      <scope>compile</scope>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.binding.features</groupId>
+      <artifactId>plc4x</artifactId>
+      <scope>compile</scope>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.connectorio.binding.plc4x</groupId>
+      <artifactId>beckhoff</artifactId>
+      <version>${project.version}</version>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.binding.plc4x</groupId>
+      <artifactId>siemens</artifactId>
+      <version>${project.version}</version>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.karaf.features</groupId>
+      <artifactId>framework</artifactId>
+      <type>kar</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>target/dependencies</outputDirectory>
+              <includeClassifiers>features</includeClassifiers>
+              <includeTypes>xml</includeTypes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      -->
+      <!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.8</version>
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>create-karaf-features</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <target>
+                <concat destfile="src/main/feature/feature.xml">
+                  <header file="src/main/resources/header.xml" filtering="no"/>
+                  <fileset dir="${basedirRoot}/bundles">
+                    <include name="*/src/main/feature/feature.xml"/>
+                    <exclude name="**/org.openhab.binding.bluetooth*/**/feature.xml"/>
+                    <exclude name="**/org.openhab.binding.mqtt*/**/feature.xml"/>
+                    <exclude name="**/org.openhab.io.azureiothub/**/feature.xml"/>
+                  </fileset>
+                  <filterchain>
+                    <linecontainsRegExp>
+                      <regexp pattern="(feature&gt;)|(feature\s)|(bundle&gt;)|(bundle\s)"/>
+                    </linecontainsRegExp>
+                  </filterchain>
+                  <footer file="src/main/resources/footer.xml" filtering="no"/>
+                </concat>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      -->
+
+      <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <startLevel>80</startLevel>
+          <enableGeneration>true</enableGeneration>
+          <aggregateFeatures>true</aggregateFeatures>
+          <checkDependencyChange>false</checkDependencyChange>
+          <failOnDependencyChange>false</failOnDependencyChange>
+          <logDependencyChanges>false</logDependencyChanges>
+          <overwriteChangedDependencies>false</overwriteChangedDependencies>
+          <ignoreDependencyFlag>true</ignoreDependencyFlag>
+          <archive>
+            <index>true</index>
+            <manifestEntries>
+              <Karaf-Feature-Start>false</Karaf-Feature-Start>
+            </manifestEntries>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <id>generate-features-file</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>features-generate-descriptor</goal>
+            </goals>
+            <configuration>
+              <outputFile>${feature.directory}</outputFile>
+            </configuration>
+          </execution>
+          <execution>
+            <id>karaf-feature-verification</id>
+            <configuration>
+              <descriptors>
+                <descriptor>mvn:org.openhab.core.features.karaf/org.openhab.core.features.karaf.openhab-core/${openhab.version}/xml/features</descriptor>
+              </descriptors>
+              <distribution>org.apache.karaf.features:framework</distribution>
+              <features>
+                <feature>co7io-*</feature>
+              </features>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
