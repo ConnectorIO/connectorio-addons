@@ -16,6 +16,23 @@
   <name>ConnectorIO - Binding - Compute - Consumption</name>
   <description>An calculator for delta of values between given time frames.</description>
 
-
+  <dependencies>
+    <dependency>
+      <groupId>org.connectorio.binding</groupId>
+      <artifactId>base</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openhab.core.bundles</groupId>
+      <artifactId>org.openhab.core.thing</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openhab.core.bundles</groupId>
+      <artifactId>org.openhab.core.model.persistence</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.service.component.annotations</artifactId>
+    </dependency>
+  </dependencies>
 
 </project>

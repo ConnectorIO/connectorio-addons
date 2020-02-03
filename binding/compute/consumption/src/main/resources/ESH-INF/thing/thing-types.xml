@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="co7io-compute-consumption"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+  <thing-type id="consumption">
+    <label>Consumption calculation</label>
+    <description>Calculation of minute, 5 minute, 15 minutes, 30 minutes, hourly and daily/monthly consumption.</description>
+
+    <!-- CHANNEL DEFINITIONS -->
+    <channels>
+      <channel id="oneMinute" typeId="consumption">
+        <label>Minute consumption</label>
+      </channel>
+      <channel id="fiveMinutes" typeId="consumption">
+        <label>Five minute consumption</label>
+      </channel>
+      <channel id="fifteenMinutes" typeId="consumption">
+        <label>Fifteen minutes consumption</label>
+      </channel>
+      <channel id="thirtyMinutes" typeId="consumption">
+        <label>Thirty minutes consumption</label>
+      </channel>
+      <channel id="hourly" typeId="consumption">
+        <label>Hourly minutes consumption</label>
+      </channel>
+      <channel id="daily" typeId="consumption">
+        <label>Hourly minutes consumption</label>
+      </channel>
+      <channel id="monthly" typeId="consumption">
+        <label>Monthly minutes consumption</label>
+      </channel>
+    </channels>
+
+    <config-description>
+      <parameter name="item" type="text">
+        <label>Item to base calculations on</label>
+        <description>
+          Item which brings updated (cumulative, increasing) value which is base for calculation.
+        </description>
+        <default>0</default>
+      </parameter>
+    </config-description>
+  </thing-type>
+
+</thing:thing-descriptions>
