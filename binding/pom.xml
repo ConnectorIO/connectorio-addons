@@ -18,6 +18,7 @@
 
   <modules>
     <module>base</module>
+    <module>bacnet</module>
     <module>test</module>
     <module>plc4x</module>
     <module>media</module>

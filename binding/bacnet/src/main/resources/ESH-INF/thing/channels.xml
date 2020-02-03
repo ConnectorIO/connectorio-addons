@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="co7io-bacnet"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+  <channel-type id="writeableBinary">
+    <item-type>Switch</item-type>
+    <label>Present value</label>
+    <config-description-ref uri="thing-type:co7io-bacnet:read-write"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="readableBinary">
+    <item-type>Switch</item-type>
+    <label>Present value</label>
+    <config-description-ref uri="thing-type:co7io-bacnet:read-only"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="writeableNumber">
+    <item-type>Number</item-type>
+    <label>Present value</label>
+    <config-description-ref uri="thing-type:co7io-bacnet:read-write"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="readableNumber">
+    <item-type>Number</item-type>
+    <label>Present value</label>
+    <config-description-ref uri="thing-type:co7io-bacnet:read-only"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="writeableDateTime">
+    <item-type>DateTime</item-type>
+    <label>Present value</label>
+    <config-description-ref uri="thing-type:co7io-bacnet:read-write"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="readableDateTime">
+    <item-type>DateTime</item-type>
+    <label>Present value</label>
+    <config-description-ref uri="thing-type:co7io-bacnet:read-only"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="writeableText">
+    <item-type>Text</item-type>
+    <label>Present value</label>
+    <config-description-ref uri="thing-type:co7io-bacnet:read-write"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="readableText">
+    <item-type>Text</item-type>
+    <label>Present value</label>
+    <config-description-ref uri="thing-type:co7io-bacnet:read-only"></config-description-ref>
+  </channel-type>
+
+</thing:thing-descriptions>

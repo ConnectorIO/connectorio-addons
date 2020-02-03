@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="co7io-bacnet" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+
+  <thing-type id="analog-input">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device"/>
+    </supported-bridge-type-refs>
+
+    <label>BACnet Analog Input</label>
+    <description>Analog input of an device.</description>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="analog-output">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device"/>
+    </supported-bridge-type-refs>
+
+    <label>BACnet Analog Output</label>
+    <description>Analog output of an device.</description>
+
+    <channels>
+      <channel id="presentValue" typeId="writeableNumber" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="analog-value">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Analog Value</label>
+    <description>Analog value of an device</description>
+
+    <channels>
+      <channel id="presentValue" typeId="writeableNumber" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="binary-input">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Binary Input</label>
+    <description>Binary input of an device</description>
+
+    <channels>
+      <channel id="presentValue" typeId="readableBinary" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="binary-output">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Binary Output</label>
+    <description>Binary output of an device</description>
+
+    <channels>
+      <channel id="presentValue" typeId="writeableBinary" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="binary-value">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Binary Value</label>
+    <description>Binary value of an device</description>
+
+    <channels>
+      <channel id="presentValue" typeId="writeableBinary" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="calendar">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Calendar</label>
+    <description>Calendar object</description>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="multistate-input">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Multi state input</label>
+    <description>Multi state input is an object which can transit between defined states.</description>
+
+    <channels>
+      <channel id="presentValue" typeId="readableNumber" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="multistate-output">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Multi state output</label>
+    <description>Multi state output is an object with limited set of values which can be set on it.</description>
+
+    <channels>
+      <channel id="presentValue" typeId="writeableNumber" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="multistate-value">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Multi state value</label>
+    <description>A value object with limited set of states.</description>
+
+    <channels>
+      <channel id="presentValue" typeId="writeableNumber" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="pulse-converter">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Pulse converter</label>
+    <description>Pulse converter is object which can do basic calculations based on inputs from other places.</description>
+
+    <channels>
+      <channel id="presentValue" typeId="readableNumber" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="schedule">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Schedule</label>
+    <description>Schedule defines a set of states for a given week which can be set on other devices.</description>
+
+    <channels>
+      <channel id="presentValue" typeId="readableNumber" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="character-string">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Character String</label>
+    <description>A textual value.</description>
+
+    <channels>
+      <channel id="presentValue" typeId="writeableText" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="date-time">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Date Time</label>
+    <description>Date time value</description>
+
+    <channels>
+      <channel id="presentValue" typeId="writeableDateTime" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="large-analog">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Large analog</label>
+    <description>Value which uses additional precession for expressing values.</description>
+
+    <channels>
+      <channel id="presentValue" typeId="writeableNumber" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="octet-string">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Octet string</label>
+    <description>Text value encoded as hex string.</description>
+
+    <channels>
+      <channel id="presentValue" typeId="writeableText" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="time">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Time</label>
+    <description>Time object.</description>
+
+    <channels>
+      <channel id="presentValue" typeId="writeableDateTime" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="integer">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Integer</label>
+    <description>An integer number (signed value).</description>
+
+    <channels>
+      <channel id="presentValue" typeId="writeableNumber" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="postitive-integer">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Positive Integer</label>
+    <description>An integer number without additional bit used for sign.</description>
+
+    <channels>
+      <channel id="presentValue" typeId="writeableNumber" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="date-time-pattern">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Date Time pattern</label>
+    <description>Pattern defining date and time.</description>
+
+    <channels>
+      <channel id="presentValue" typeId="writeableDateTime" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="time-pattern">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Time pattern</label>
+    <description>Time pattern.</description>
+
+    <channels>
+      <channel id="presentValue" typeId="writeableDateTime" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="date-pattern">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Date pattern</label>
+    <description>Date pattern.</description>
+
+    <channels>
+      <channel id="presentValue" typeId="writeableDateTime" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+  <thing-type id="accumulator">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="device" />
+    </supported-bridge-type-refs>
+
+    <label>BACnet Accumulator</label>
+    <description>Value accumulator.</description>
+
+    <channels>
+      <channel id="presentValue" typeId="readableNumber" />
+    </channels>
+
+    <config-description-ref uri="thing-type:co7io-bacnet:object"/>
+  </thing-type>
+
+</thing:thing-descriptions>

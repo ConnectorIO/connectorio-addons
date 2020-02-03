@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config-description:config-descriptions
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:config-description="https://openhab.org/schemas/config-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
+
+  <config-description uri="thing-type:co7io-bacnet:read-only">
+    <parameter-group name="basic">
+      <label>Required configuration</label>
+      <description>Below fields are required in order to read/write data from PLC.</description>
+    </parameter-group>
+
+    <parameter name="readOnly" type="boolean" readOnly="true" required="true">
+      <label>Read only</label>
+      <description>Determine if channel is commendable or just read only.</description>
+      <default>true</default>
+    </parameter>
+    <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+      <label>Refresh interval</label>
+      <description>
+        Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+      </description>
+      <unitLabel>ms</unitLabel>
+      <default>0</default>
+    </parameter>
+  </config-description>
+
+  <config-description uri="thing-type:co7io-bacnet:read-write">
+    <parameter-group name="basic">
+      <label>Required configuration</label>
+      <description>Below fields are required in order to read/write data from PLC.</description>
+    </parameter-group>
+
+    <parameter name="readOnly" type="boolean" readOnly="true" required="true">
+      <label>Read only</label>
+      <description>Determine if channel is commendable or just read only.</description>
+      <default>false</default>
+    </parameter>
+    <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+      <label>Refresh interval</label>
+      <description>
+        Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+      </description>
+      <unitLabel>ms</unitLabel>
+      <default>0</default>
+    </parameter>
+  </config-description>
+
+</config-description:config-descriptions>

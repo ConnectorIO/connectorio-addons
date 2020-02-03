@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding:binding id="co7io-bacnet" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:binding="https://openhab.org/schemas/binding/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/binding/v1.0.0 https://openhab.org/schemas/binding-1.0.0.xsd">
+
+	<name>BACnet Binding</name>
+	<description>This binding provides BACnet integration based on BACnet4J client library.</description>
+	<author>Łukasz Dywicki</author>
+
+</binding:binding>
