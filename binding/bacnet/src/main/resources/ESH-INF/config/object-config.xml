@@ -18,11 +18,10 @@
     <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
       <label>Refresh interval</label>
       <description>
-        Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+        Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
       </description>
       <unitLabel>ms</unitLabel>
       <default>0</default>
     </parameter>
-
   </config-description>
 </config-description:config-descriptions>

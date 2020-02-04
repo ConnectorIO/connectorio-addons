@@ -29,6 +29,16 @@
           Address of device.
         </description>
       </parameter>
+
+      <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+        <label>Refresh interval</label>
+        <description>
+          Time between next poll cycles. If no value is given polling is based on value set on network.
+        </description>
+        <unitLabel>ms</unitLabel>
+        <default>0</default>
+      </parameter>
+
     </config-description>
   </bridge-type>
 
@@ -60,6 +70,15 @@
       <parameter name="broadcastAddress" type="text" required="true" groupName="Network">
         <description>Address used for sending BACnet broadcast messages.</description>
         <label>Broadcast address</label>
+      </parameter>
+
+      <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+        <label>Refresh interval</label>
+        <description>
+          Time between next poll cycles. If no value is given polling is done 1000 ms (every second).
+        </description>
+        <unitLabel>ms</unitLabel>
+        <default>0</default>
       </parameter>
     </config-description>
   </bridge-type>
@@ -94,6 +113,15 @@
           <option value="8E1">8E1: 8 data bits, even parity, 1 stop bit</option>
           <option value="8O1">8N1: 8 data bits, odd parity, 1 stop bit</option>
         </options>
+      </parameter>
+
+      <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+        <label>Refresh interval</label>
+        <description>
+          Time between next poll cycles. If no value is given polling is done 1000 ms (every second).
+        </description>
+        <unitLabel>ms</unitLabel>
+        <default>0</default>
       </parameter>
     </config-description>
   </bridge-type>
