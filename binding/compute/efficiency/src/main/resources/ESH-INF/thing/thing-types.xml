@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="co7io-compute-efficiency"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+  <thing-type id="ventilation-heat-exchanger-efficiency">
+    <label>Heat exchanger efficiency.</label>
+    <description>Calculation of heat exchanger efficiency based on most recent readings.</description>
+
+    <channels>
+      <channel id="efficiency" typeId="efficiency">
+        <label>Temperature efficiency of heat exchanger</label>
+      </channel>
+    </channels>
+
+    <config-description>
+      <parameter name="intakeTemperature" type="text" required="true">
+        <label>Intake temperature item.</label>
+        <description>Name of the item receiving ventilation system intake temperature.</description>
+      </parameter>
+      <parameter name="supplyTemperature" type="text" required="true">
+        <label>Supply temperature item.</label>
+        <description>Name of the item holding ventilation system supply temperature.</description>
+      </parameter>
+      <parameter name="extractTemperature" type="text" required="true">
+        <label>Extract temperature item.</label>
+        <description>Name of the item receiving ventilation system extraction temperature.</description>
+      </parameter>
+      <parameter name="cycleTime" type="integer">
+        <label>Cycle time.</label>
+        <description>
+          Time during which all items should receive state. This parameter defines sliding window from first update during which next two updates should come.
+          If time cycle time is exceeded values will be reset and calculation will begin from collecting data.
+        </description>
+        <default>60</default>
+        <unitLabel>s</unitLabel>
+      </parameter>
+    </config-description>
+  </thing-type>
+
+</thing:thing-descriptions>
