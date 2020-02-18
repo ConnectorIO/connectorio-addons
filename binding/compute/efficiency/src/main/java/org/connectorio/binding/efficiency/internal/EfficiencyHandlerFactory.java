@@ -1,6 +1,6 @@
 package org.connectorio.binding.efficiency.internal;
 
-import static org.connectorio.binding.efficiency.internal.EfficiencyBindingConstants.THING_TYPE_VENTILATION_HEAT_EXCHANGER_EFFICIENCY;
+import static org.connectorio.binding.efficiency.internal.EfficiencyBindingConstants.THING_TYPE_VENTILATION_HEAT_EXCHANGER;
 
 import org.connectorio.binding.base.handler.factory.BaseThingHandlerFactory;
 import org.connectorio.binding.efficiency.internal.memo.StateCollector;
@@ -27,7 +27,7 @@ public class EfficiencyHandlerFactory extends BaseThingHandlerFactory implements
 
   @Activate
   public EfficiencyHandlerFactory(@Reference ItemRegistry itemRegistry, @Reference StateCollector<ItemStateChangedEvent> collector) {
-    super(THING_TYPE_VENTILATION_HEAT_EXCHANGER_EFFICIENCY);
+    super(THING_TYPE_VENTILATION_HEAT_EXCHANGER);
     this.itemRegistry = itemRegistry;
     this.collector = collector;
   }
@@ -36,7 +36,7 @@ public class EfficiencyHandlerFactory extends BaseThingHandlerFactory implements
   protected ThingHandler createHandler(Thing thing) {
     ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
-    if (THING_TYPE_VENTILATION_HEAT_EXCHANGER_EFFICIENCY.equals(thingTypeUID)) {
+    if (THING_TYPE_VENTILATION_HEAT_EXCHANGER.equals(thingTypeUID)) {
       return new EfficiencyHandler(thing, itemRegistry, collector);
     }
 

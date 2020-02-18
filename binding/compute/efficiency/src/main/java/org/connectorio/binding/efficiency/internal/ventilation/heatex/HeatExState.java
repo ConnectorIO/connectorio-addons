@@ -2,6 +2,7 @@ package org.connectorio.binding.efficiency.internal.ventilation.heatex;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
@@ -85,7 +86,7 @@ public class HeatExState implements StateReceiver<ItemStateChangedEvent> {
       return null;
     }
 
-    return Map.entry(currentTime, state.as(DecimalType.class).toBigDecimal());
+    return new AbstractMap.SimpleEntry<>(currentTime, state.as(DecimalType.class).toBigDecimal());
   }
 
 }

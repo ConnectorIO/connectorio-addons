@@ -12,7 +12,7 @@ public interface EfficiencyBindingConstants {
 
   String BINDING_ID = "co7io-compute-efficiency";
 
-  ThingTypeUID THING_TYPE_VENTILATION_HEAT_EXCHANGER_EFFICIENCY = new ThingTypeUID(BINDING_ID, "ventilation-heat-exchanger-efficiency");
+  ThingTypeUID THING_TYPE_VENTILATION_HEAT_EXCHANGER = new ThingTypeUID(BINDING_ID, "ventilation-heat-exchanger");
 
   String EFFICIENCY = "efficiency";
 
