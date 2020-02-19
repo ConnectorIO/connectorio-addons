@@ -26,6 +26,7 @@
     <module>sandbox</module>
     -->
     <module>telemetry</module>
+    <module>persistence</module>
     <module>features</module>
   </modules>
 
