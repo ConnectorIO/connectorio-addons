@@ -5,7 +5,8 @@
 
   <thing-type id="analog-input">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device"/>
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Analog Input</label>
@@ -16,7 +17,8 @@
 
   <thing-type id="analog-output">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device"/>
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Analog Output</label>

@@ -6,7 +6,7 @@ import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.ANA
 import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.BINARY_INPUT_THING_TYPE;
 import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.BINARY_OUTPUT_THING_TYPE;
 import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.BINARY_VALUE_THING_TYPE;
-import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.DEVICE_THING_TYPE;
+import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.IP_DEVICE_THING_TYPE;
 import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.MULTISTATE_INPUT_THING_TYPE;
 import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.MULTISTATE_OUTPUT_TYPE;
 import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.MULTISTATE_VALUE_TYPE;
@@ -36,7 +36,7 @@ public class BACnetPropertyDiscoveryService extends AbstractDiscoveryService imp
   private BACnetDeviceBridgeHandler<?, ?> handler;
 
   public BACnetPropertyDiscoveryService() throws IllegalArgumentException {
-    super(Collections.singleton(DEVICE_THING_TYPE), 60);
+    super(Collections.singleton(IP_DEVICE_THING_TYPE), 300);
   }
 
   @Override
@@ -103,7 +103,7 @@ public class BACnetPropertyDiscoveryService extends AbstractDiscoveryService imp
 
     return builder.withLabel(property.getName())
       .withProperty("description", property.getDescription())
-      .withBridge(handler.getThing().getUID())
+      .withBridge(bridge.getThing().getUID())
       .withProperty("instance", property.getId())
       .withRepresentationProperty("instance")
       .build();

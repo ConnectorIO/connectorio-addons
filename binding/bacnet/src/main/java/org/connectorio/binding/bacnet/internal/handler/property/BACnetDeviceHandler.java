@@ -18,10 +18,9 @@ import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
 import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.core.util.HexUtils;
 
-public class BACnetDeviceHandler extends BACnetObjectHandler<DeviceObject, BACnetNetworkBridgeHandler<?>, DeviceConfig>
-  implements BACnetDeviceBridgeHandler<BACnetNetworkBridgeHandler<?>, DeviceConfig> {
+public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnetObjectHandler<DeviceObject, BACnetNetworkBridgeHandler<?>, C>
+  implements BACnetDeviceBridgeHandler<BACnetNetworkBridgeHandler<?>, C> {
 
   private Device device;
 
@@ -47,8 +46,9 @@ public class BACnetDeviceHandler extends BACnetObjectHandler<DeviceObject, BACne
   public void initialize() {
     device = getBridgeConfig()
       .map(cfg -> {
-        Integer networkNumber = getBridgeHandler().flatMap(BACnetNetworkBridgeHandler::getNetworkNumber).orElse(0);
-        return new Device(cfg.instance, HexUtils.hexToBytes(cfg.address), networkNumber);
+        Integer networkNumber =  Optional.ofNullable(cfg.network)
+          .orElseGet(() -> getBridgeHandler().flatMap(BACnetNetworkBridgeHandler::getNetworkNumber).orElse(0));
+        return createDevice(cfg, networkNumber);
       }).orElse(null);
 
     if (device != null) {
@@ -57,6 +57,8 @@ public class BACnetDeviceHandler extends BACnetObjectHandler<DeviceObject, BACne
       updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Missing device configuration");
     }
   }
+
+  protected abstract Device createDevice(C config, Integer networkNumber);
 
   @Override
   public void handleCommand(ChannelUID channelUID, Command command) {

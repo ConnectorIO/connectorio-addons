@@ -16,7 +16,7 @@
   <description>BACnet Binding.</description>
 
   <properties>
-    <bacnet4j-wrapper.version>1.1.1-SNAPSHOT</bacnet4j-wrapper.version>
+    <bacnet4j-wrapper.version>1.2.0-SNAPSHOT</bacnet4j-wrapper.version>
   </properties>
 
   <dependencies>
@@ -35,6 +35,11 @@
       <artifactId>ip</artifactId>
       <version>${bacnet4j-wrapper.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.code-house.bacnet4j</groupId>
+      <artifactId>mstp</artifactId>
+      <version>${bacnet4j-wrapper.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
@@ -51,6 +56,10 @@
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
       <artifactId>org.openhab.core.config.discovery</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openhab.core.bundles</groupId>
+      <artifactId>org.openhab.core.io.transport.serial</artifactId>
     </dependency>
     <dependency>
       <groupId>com.fasterxml</groupId>

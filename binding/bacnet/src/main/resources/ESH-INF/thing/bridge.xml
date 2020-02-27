@@ -7,27 +7,43 @@
   ">
 
   <!-- Device is a bridge for remaining properties (inputs/outputs) -->
-  <bridge-type id="device">
+  <bridge-type id="ip-device">
     <supported-bridge-type-refs>
       <bridge-type-ref id="ipv4"/>
-      <bridge-type-ref id="mstp"/>
     </supported-bridge-type-refs>
 
-    <label>BACNet device</label>
-    <description>BACNet device.</description>
+    <label>BACnet/IP device</label>
+    <description>BACnet device.</description>
 
     <config-description>
+      <parameter name="address" type="text" required="true">
+        <context>network-address</context>
+        <label>Device IP Address</label>
+        <description>
+          Address of device.
+        </description>
+      </parameter>
+      <parameter name="port" type="integer" required="true">
+        <context>network-address</context>
+        <label>Port</label>
+        <description>
+          Device port.
+        </description>
+        <default>47808</default>
+      </parameter>
+
       <parameter name="instance" type="integer" required="true">
         <label>Device identifier</label>
         <description>
           Identifier of device.
         </description>
       </parameter>
-      <parameter name="address" type="text" required="true">
-        <label>Device address</label>
+      <parameter name="network" type="integer" required="true">
+        <label>Network number</label>
         <description>
-          Address of device.
+          BACnet network number/identifier.
         </description>
+        <default>0</default>
       </parameter>
 
       <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
@@ -42,9 +58,50 @@
     </config-description>
   </bridge-type>
 
+  <bridge-type id="mstp-device">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="mstp"/>
+    </supported-bridge-type-refs>
+
+    <label>BACnet/MSTP device</label>
+    <description>BACnet device.</description>
+
+    <config-description>
+      <parameter name="address" type="integer" required="true">
+        <label>Device address (node id)</label>
+        <description>
+          Address of device.
+        </description>
+      </parameter>
+
+      <parameter name="instance" type="integer" required="true">
+        <label>Device identifier</label>
+        <description>
+          Identifier of device.
+        </description>
+      </parameter>
+      <parameter name="network" type="integer" required="true">
+        <label>Network number</label>
+        <description>
+          BACnet network number/identifier.
+        </description>
+        <default>0</default>
+      </parameter>
+
+      <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+        <label>Refresh interval</label>
+        <description>
+          Time between next poll cycles. If no value is given polling is based on value set on network.
+        </description>
+        <unitLabel>ms</unitLabel>
+        <default>0</default>
+      </parameter>
+
+    </config-description>
+  </bridge-type>
 
   <bridge-type id="ipv4">
-    <label>BACnet IP bridge</label>
+    <label>BACnet/IP bridge</label>
     <description>The BACnet/IP bridge allows to connect devices supporting communication over BACnet/IP.</description>
 
     <config-description>
@@ -58,16 +115,16 @@
         <label>Device identifier</label>
         <default>1339</default>
       </parameter>
-      <parameter name="localBindAddress" type="text" required="false" groupName="Network">
+      <parameter name="localBindAddress" type="text" required="false" groupName="IP Network">
         <description>IP address on which communications to system are expected to take place.</description>
         <label>Local address</label>
       </parameter>
-      <parameter name="port" type="integer" required="true" groupName="Network">
+      <parameter name="port" type="integer" required="true" groupName="IP Network">
         <description>Port number on which to expect communication. By default 47808 (hex 0xBAC0).</description>
         <label>Port number</label>
         <default>47808</default>
       </parameter>
-      <parameter name="broadcastAddress" type="text" required="true" groupName="Network">
+      <parameter name="broadcastAddress" type="text" required="true" groupName="IP Network">
         <description>Address used for sending BACnet broadcast messages.</description>
         <label>Broadcast address</label>
       </parameter>
@@ -84,7 +141,7 @@
   </bridge-type>
 
   <bridge-type id="mstp">
-    <label>BACnet MSTP</label>
+    <label>BACnet/MSTP Bridge</label>
     <description>The BACnet mstp bridge allows to connect devices communicating over serial interface (RS485).</description>
 
     <config-description>
@@ -95,23 +152,24 @@
       </parameter>
 
       <parameter name="serialPort" type="text" required="true" groupName="Serial interface">
-        <description>Serial interface port.</description>
         <label>Serial port</label>
+        <description>Serial interface port.</description>
+        <context>serial-port</context>
       </parameter>
       <parameter name="baudRate" type="integer" required="true" groupName="Serial interface">
-        <description>Baud rate of serial interface.</description>
         <label>Baud rate</label>
+        <description>Baud rate for serial connection.</description>
         <default>9600</default>
       </parameter>
       <parameter name="parity" type="text" required="true" groupName="Serial interface">
         <description>Parity settings determine detection of frames and communication over serial port.</description>
         <label>Parity setting</label>
-        <default>8N2</default>
+        <default>P8N1</default>
         <options>
-          <option value="8N1">8N1: 8 data bits, no parity, 1 stop bit</option>
-          <option value="8N2">8N1: 8 data bits, no parity, 2 stop bits</option>
-          <option value="8E1">8E1: 8 data bits, even parity, 1 stop bit</option>
-          <option value="8O1">8N1: 8 data bits, odd parity, 1 stop bit</option>
+          <option value="P8N1">8N1: 8 data bits, no parity, 1 stop bit</option>
+          <option value="P8N2">8N1: 8 data bits, no parity, 2 stop bits</option>
+          <option value="P8E1">8E1: 8 data bits, even parity, 1 stop bit</option>
+          <option value="P8O1">8N1: 8 data bits, odd parity, 1 stop bit</option>
         </options>
       </parameter>
 

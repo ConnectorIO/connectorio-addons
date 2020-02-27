@@ -1,10 +1,13 @@
 package org.connectorio.binding.bacnet.internal;
 
+import org.connectorio.binding.bacnet.internal.handler.network.BACnetMstpBridgeHandler;
 import org.connectorio.binding.bacnet.internal.handler.property.AnalogOutputHandler;
 import org.connectorio.binding.bacnet.internal.handler.property.AnalogValueHandler;
 import org.connectorio.binding.bacnet.internal.handler.property.BACnetDeviceHandler;
 import org.connectorio.binding.bacnet.internal.handler.network.BACnetIpv4BridgeHandler;
 import org.connectorio.binding.bacnet.internal.handler.property.AnalogInputHandler;
+import org.connectorio.binding.bacnet.internal.handler.property.BACnetIpDeviceHandler;
+import org.connectorio.binding.bacnet.internal.handler.property.BACnetMstpDeviceHandler;
 import org.connectorio.binding.bacnet.internal.handler.property.BinaryInputHandler;
 import org.connectorio.binding.bacnet.internal.handler.property.BinaryOutputHandler;
 import org.connectorio.binding.bacnet.internal.handler.property.BinaryValueHandler;
@@ -17,7 +20,10 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
+import org.eclipse.smarthome.io.transport.serial.SerialPortManager;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,20 +32,28 @@ public class BACnetThingHandlerFactory extends BaseThingHandlerFactory implement
 
   private final Logger logger = LoggerFactory.getLogger(BACnetThingHandlerFactory.class);
 
+  private final SerialPortManager serialPortManager;
+
+  @Activate
+  public BACnetThingHandlerFactory(@Reference  SerialPortManager serialPortManager) {
+    this.serialPortManager = serialPortManager;
+  }
+
   @Override
   protected ThingHandler createHandler(Thing thing) {
     ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
     if (thing instanceof Bridge) {
-      if (DEVICE_THING_TYPE.equals(thingTypeUID)) {
-        return new BACnetDeviceHandler((Bridge) thing);
+      if (IP_DEVICE_THING_TYPE.equals(thingTypeUID)) {
+        return new BACnetIpDeviceHandler((Bridge) thing);
+      } else if (MSTP_DEVICE_THING_TYPE.equals(thingTypeUID)) {
+          return new BACnetMstpDeviceHandler((Bridge) thing);
       } else if (IPV4_BRIDGE_THING_TYPE.equals(thingTypeUID)) {
         return new BACnetIpv4BridgeHandler((Bridge) thing);
 //      } else if (IPV6_BRIDGE_THING_TYPE.equals(thingTypeUID)) {
 //        return new BACnetIpv4BridgeHandler(bundleContext, (Bridge) thing);
       } else if (MSTP_BRIDGE_THING_TYPE.equals(thingTypeUID)) {
-        logger.warn("MSTP networks are not supported yet");
-        return null;
+        return new BACnetMstpBridgeHandler((Bridge) thing, serialPortManager);
       }
     }
 
@@ -70,4 +84,5 @@ public class BACnetThingHandlerFactory extends BaseThingHandlerFactory implement
   public boolean supportsThingType(ThingTypeUID thingTypeUID) {
     return BINDING_ID.equals(thingTypeUID.getBindingId());
   }
+
 }

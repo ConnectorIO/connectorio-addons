@@ -9,7 +9,10 @@ public interface BACnetBindingConstants {
     // bridge types
     String IPV4_BRIDGE_TYPE = "ipv4";
     String MSTP_BRIDGE_TYPE = "mstp";
-    String DEVICE_TYPE = "device"; // it is a bridge to property objects
+
+    // devices are bridges to property objects
+    String IP_DEVICE_TYPE = "ip-device";
+    String MSTP_DEVICE_TYPE = "mstp-device";
 
     // property kinds
     String ANALOG_INPUT_TYPE = "analog-input";
@@ -46,7 +49,9 @@ public interface BACnetBindingConstants {
 
     ThingTypeUID IPV4_BRIDGE_THING_TYPE = new ThingTypeUID(BINDING_ID, IPV4_BRIDGE_TYPE);
     ThingTypeUID MSTP_BRIDGE_THING_TYPE = new ThingTypeUID(BINDING_ID, MSTP_BRIDGE_TYPE);
-    ThingTypeUID DEVICE_THING_TYPE = new ThingTypeUID(BINDING_ID, DEVICE_TYPE);
+
+    ThingTypeUID IP_DEVICE_THING_TYPE = new ThingTypeUID(BINDING_ID, IP_DEVICE_TYPE);
+    ThingTypeUID MSTP_DEVICE_THING_TYPE = new ThingTypeUID(BINDING_ID, MSTP_DEVICE_TYPE);
 
     ThingTypeUID ANALOG_INPUT_THING_TYPE = new ThingTypeUID(BINDING_ID, ANALOG_INPUT_TYPE);
     ThingTypeUID ANALOG_OUTPUT_THING_TYPE = new ThingTypeUID(BINDING_ID, ANALOG_OUTPUT_TYPE);
