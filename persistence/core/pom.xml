@@ -19,7 +19,7 @@
   <dependencies>
     <dependency>
       <groupId>org.connectorio.persistence</groupId>
-      <artifactId>core</artifactId>
+      <artifactId>api</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
