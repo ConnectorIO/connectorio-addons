@@ -31,9 +31,9 @@
   </modules>
 
   <scm>
-    <connection>scm:git:https://github.com/ConnectorIO/connectorio-binding.git</connection>
-    <developerConnection>scm:git:git@github.com:ConnectorIO/connectorio-binding.git</developerConnection>
-    <url>https://github.com/ConnectorIO/connectorio-binding</url>
+    <connection>scm:git:https://github.com/ConnectorIO/connectorio-addons.git</connection>
+    <developerConnection>scm:git:git@github.com:ConnectorIO/connectorio-addons.git</developerConnection>
+    <url>https://github.com/ConnectorIO/connectorio-addons</url>
     <tag>HEAD</tag>
   </scm>
 
