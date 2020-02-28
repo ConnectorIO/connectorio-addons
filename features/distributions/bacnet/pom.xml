@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.connectorio.binding.features</groupId>
+    <artifactId>distributions</artifactId>
+    <version>2.5.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.connectorio.binding.features.distributions</groupId>
+  <artifactId>bacnet</artifactId>
+  <packaging>kar</packaging>
+
+  <name>ConnectorIO - Binding - Features - Distributions - BACnet</name>
+  <description>BACnet deployment archive.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.connectorio.binding.features</groupId>
+      <artifactId>base</artifactId>
+      <scope>compile</scope>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.connectorio.binding</groupId>
+      <artifactId>bacnet</artifactId>
+      <version>${project.version}</version>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.karaf.features</groupId>
+      <artifactId>framework</artifactId>
+      <type>kar</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <startLevel>80</startLevel>
+          <enableGeneration>true</enableGeneration>
+          <aggregateFeatures>true</aggregateFeatures>
+          <checkDependencyChange>false</checkDependencyChange>
+          <failOnDependencyChange>false</failOnDependencyChange>
+          <logDependencyChanges>false</logDependencyChanges>
+          <overwriteChangedDependencies>false</overwriteChangedDependencies>
+          <ignoreDependencyFlag>true</ignoreDependencyFlag>
+          <archive>
+            <index>true</index>
+            <manifestEntries>
+              <Karaf-Feature-Start>false</Karaf-Feature-Start>
+            </manifestEntries>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <id>generate-features-file</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>features-generate-descriptor</goal>
+            </goals>
+            <configuration>
+              <outputFile>${feature.directory}</outputFile>
+            </configuration>
+          </execution>
+          <execution>
+            <id>karaf-feature-verification</id>
+            <configuration>
+              <descriptors>
+                <descriptor>mvn:org.openhab.core.features.karaf/org.openhab.core.features.karaf.openhab-core/${openhab.version}/xml/features</descriptor>
+              </descriptors>
+              <distribution>org.apache.karaf.features:framework</distribution>
+              <features>
+                <feature>co7io-*</feature>
+              </features>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

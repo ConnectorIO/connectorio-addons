@@ -10,17 +10,17 @@
     <relativePath>../parent/pom.xml</relativePath>
   </parent>
 
-  <artifactId>features</artifactId>
+  <groupId>org.connectorio.binding.features</groupId>
+  <artifactId>distributions</artifactId>
   <packaging>pom</packaging>
 
-  <name>ConnectorIO - Binding - Features</name>
-  <description>Karaf related feature sets.</description>
+  <name>ConnectorIO - Binding - Features - Distributions</name>
+  <description>Karaf packages.</description>
 
   <modules>
-    <module>base</module>
-    <module>plc4x</module>
-    <module>distribution</module>
-    <module>distributions</module>
+    <module>bacnet</module>
+    <module>beckhoff</module>
+    <module>siemens</module>
   </modules>
 
 </project>
