@@ -477,7 +477,7 @@ public class PersistenceExtensions {
    * @param item the item for which we will sum its persisted state values since <code>timestamp</code>
    * @param timestamp the point in time from which to start the summation
    * @return the sum of the state values since <code>timestamp</code>, <code>null</code> if the default persistence
-   *         service is not available, or {@link DecimalType.ZERO} if no historic states could be found or if the
+   *         service is not available, or {@link DecimalType#ZERO} if no historic states could be found or if the
    *         default persistence service does not refer to a {@link QueryablePersistenceService}
    */
   public static DecimalType sumSince(Item item, Instant timestamp) {
@@ -491,7 +491,7 @@ public class PersistenceExtensions {
    * @param item the item for which we will sum its persisted state values since <code>timestamp</code>
    * @param timestamp the point in time from which to start the summation
    * @param serviceId the name of the {@link PersistenceService} to use
-   * @return the sum of the state values since the given point in time, or {@link DecimalType.ZERO} if no historic
+   * @return the sum of the state values since the given point in time, or {@link DecimalType#ZERO} if no historic
    *         states could be found for the <code>item</code> or if <code>serviceId</code> does no refer to a
    *         {@link QueryablePersistenceService}
    */

@@ -32,7 +32,7 @@
 
     <!-- various build related variables -->
     <feature.directory>${project.basedir}/target/test-classes/feature.xml</feature.directory>
-    <osgi.version>6.0.0</osgi.version>
+    <osgi.version>7.0.0</osgi.version>
   </properties>
 
   <dependencyManagement>

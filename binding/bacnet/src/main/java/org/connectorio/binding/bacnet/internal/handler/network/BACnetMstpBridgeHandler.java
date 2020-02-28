@@ -32,8 +32,8 @@ public class BACnetMstpBridgeHandler extends BasePollingBridgeHandler<MstpConfig
   /**
    * Creates a new instance of this class for the {@link Bridge}.
    *
-   * @param bridge the bridge that should be handled, not null
-   * @param serialPortManager
+   * @param bridge the bridge that should be handled, not null.
+   * @param serialPortManager serial port manager which is used in case of mstp connections.
    */
   public BACnetMstpBridgeHandler(Bridge bridge, SerialPortManager serialPortManager) {
     super(bridge);
