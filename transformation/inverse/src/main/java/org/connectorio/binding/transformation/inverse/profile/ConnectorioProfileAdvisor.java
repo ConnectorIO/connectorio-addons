@@ -1,5 +1,6 @@
 package org.connectorio.binding.transformation.inverse.profile;
 
+import org.eclipse.smarthome.core.library.CoreItemFactory;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.profiles.ProfileAdvisor;
 import org.eclipse.smarthome.core.thing.profiles.ProfileTypeUID;
@@ -12,7 +13,7 @@ public class ConnectorioProfileAdvisor implements ProfileAdvisor {
 
   @Override
   public ProfileTypeUID getSuggestedProfileTypeUID(Channel channel, String itemType) {
-    if (channel.getKind() == ChannelKind.STATE && "switch".equalsIgnoreCase(itemType)) {
+    if (channel.getKind() == ChannelKind.STATE && CoreItemFactory.SWITCH.equalsIgnoreCase(itemType)) {
       return ConnectorioProfiles.TOGGLE_SWITCH_STATE;
     }
     return null;
@@ -20,7 +21,7 @@ public class ConnectorioProfileAdvisor implements ProfileAdvisor {
 
   @Override
   public ProfileTypeUID getSuggestedProfileTypeUID(ChannelType channelType, String itemType) {
-    if (channelType.getKind() == ChannelKind.STATE && "switch".equalsIgnoreCase(itemType)) {
+    if (channelType.getKind() == ChannelKind.STATE && CoreItemFactory.SWITCH.equalsIgnoreCase(itemType)) {
       return ConnectorioProfiles.TOGGLE_SWITCH_STATE;
     }
     return null;
