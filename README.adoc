@@ -1,0 +1,48 @@
+# ConnectorIO Addons
+
+Hello friend. We would like to give you a short introduction of code present in this repository.
+
+Code here is divided into several areas:
+
+ * `bindings` - various kinds of connectivity extensions which adapt industrial or functional algorithms into runtime.
+ ** `bacnet` - communication with BACnet® enabled HVAC equipment other commercial real estate hardware.
+ ** `plc4x` - communication with industrial equipment thanks to http://plc4x.apache.org[Apache PLC4X] project.
+ *** `siemens` - handling of connectivity to Step 7 (S7) enabled PLCs (coming from a certain vendor).
+ *** `beckhoff` - implementation of ADS based integration for Beckhoff® PLCs.
+ * `transformations` - non standard operations which might be used at the link level to implement certain functionality.
+ * `telemetry` - a telemetry service for streaming data from runtime for anonymous analytics and statistical purposes.
+ * `features` (distributions) - packaging of binding code.
+
+This code is located here mainly due to "incompatible" licensing and will stay here to unify infrastructure between our bindings.
+There is a shared code for `bindings` which might not be fortunate, but simplifies common operations.
+Quality of code and coding style is different than in OH repositories and it is not planned to be aligned.
+Please threat this repository as a source for third party addons. 
+
+## License & notice
+Most of the code is licensed under Apache Software License. The `bacnet` is exceptional and it is licensed under GPLv3 due to GPL code dependencies.
+
+Code refers EPLv1 and EPLv2 licensed code mainly through openHAB artifacts.
+
+## Commercial usage
+Commercial usage of this code is permitted and welcome as long as you can build binaries yourself.
+We provide no binary artifacts here, if you wish to receive one please visit our web page and register to download them. 
+
+## Support
+We do support this code please https://connectorio.com/contact?utm_content=readme&utm_medium=social&utm_source=github.com[get in touch with us]
+if you are interested in terms and conditions.
+
+### Trademarks
+The ® sign indicates that given name or logo is registered trademark.
+
+We respect copyright and we value trademarks of others.
+BACnet, Apache PLC4X, Siemens, Beckhoff are all registered trademarks belonging to its respective owners.
+Above names are mentioned here to give credits to producers of awesome equipment and libraries.
+They are not listed here for advertising or affirmation purposes.
+
+ConnectorIO sp. z o.o. (publisher of this code) is not in relation or partnership with any of above organizations.
+If you was mislead by contents of this file or our code https://connectorio.com/contact?utm_content=trademark_issue&utm_medium=social&utm_source=github.com[please let us know],
+so we can clean things up.
+
+### Disclaimer
+See point 7 of link:LICENSE#L144[license file].
+Be aware that you use this code at your own risk.
