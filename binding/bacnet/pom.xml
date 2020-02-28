@@ -15,8 +15,16 @@
   <name>ConnectorIO - Binding - BACnet</name>
   <description>BACnet Binding.</description>
 
+  <licenses>
+    <license>
+      <name>GNU General Public License, version 3</name>
+      <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+      <comments>Due to bacnet4j dependency this library must be licensed under GNU GPL.</comments>
+    </license>
+  </licenses>
+
   <properties>
-    <bacnet4j-wrapper.version>1.2.0-SNAPSHOT</bacnet4j-wrapper.version>
+    <bacnet4j-wrapper.version>1.2.0</bacnet4j-wrapper.version>
   </properties>
 
   <dependencies>
