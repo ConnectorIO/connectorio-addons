@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="co7io-compute-cycle"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+  <channel-type id="time">
+    <item-type>DateTime</item-type>
+    <label>Calculated time of a cycle.</label>
+  </channel-type>
+
+  <channel-type id="count">
+    <item-type>Number</item-type>
+    <label>Number of cycles in given time span.</label>
+
+    <config-description>
+      <parameter name="duration" type="integer" required="true">
+        <label>Duration of counter.</label>
+        <description>
+          Determine how long counter is incrementing. This option determines what is the span of counter and when it
+          should be set back to 0.
+        </description>
+        <default>1</default>
+      </parameter>
+      <parameter name="unit" type="text" required="true">
+        <label>Time unit of duration.</label>
+        <description>
+          Granularity of duration.
+        </description>
+        <limitToOptions>true</limitToOptions>
+        <default>DAYS</default>
+        <options>
+          <option value="SECONDS">Second</option>
+          <option value="MINUTES">Minute</option>
+          <option value="HOURS">Hour</option>
+          <option value="DAYS">Day</option>
+        </options>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="difference">
+    <item-type>Number</item-type>
+    <label>Difference of values between cycles.</label>
+    <description>Calculates difference in another item from beginning to end of the cycle.</description>
+
+    <config-description>
+      <parameter name="measure" type="text" required="true">
+        <context>item</context>
+        <filter>
+          <criteria name="type">number</criteria>
+        </filter>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+</thing:thing-descriptions>

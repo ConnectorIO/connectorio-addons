@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.connectorio.binding</groupId>
+    <artifactId>compute</artifactId>
+    <version>2.5.1-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.connectorio.binding.compute</groupId>
+  <artifactId>cycle</artifactId>
+  <packaging>bundle</packaging>
+
+  <name>ConnectorIO - Binding - Compute - Cycle</name>
+  <description>A cycle computation which takes 1 binary input and gives back cycle time.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.connectorio.binding</groupId>
+      <artifactId>base</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openhab.core.bundles</groupId>
+      <artifactId>org.openhab.core.thing</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openhab.core.bundles</groupId>
+      <artifactId>org.openhab.core.model.persistence</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.service.component.annotations</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+</project>
