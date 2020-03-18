@@ -7,12 +7,14 @@ import org.eclipse.smarthome.core.items.Item;
 import org.eclipse.smarthome.core.items.ItemNotFoundException;
 import org.eclipse.smarthome.core.items.ItemRegistry;
 import org.eclipse.smarthome.core.library.types.DecimalType;
+import org.eclipse.smarthome.core.library.types.QuantityType;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerCallback;
+import org.eclipse.smarthome.core.types.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CycleDifference implements CycleOperation /*, StateReceiver<ItemStateChangedEvent>*/ {
+public class CycleDifference implements CycleOperation {
 
   private final Logger logger = LoggerFactory.getLogger(CycleDifference.class);
   private final ItemRegistry registry;
@@ -20,7 +22,7 @@ public class CycleDifference implements CycleOperation /*, StateReceiver<ItemSta
   private final ChannelUID channelUID;
   private final DifferenceChannelConfig config;
 
-  private BigDecimal initial;
+  private State initial;
 
   public CycleDifference(ItemRegistry registry, ThingHandlerCallback callback, ChannelUID channelUID, DifferenceChannelConfig config) {
     this.registry = registry;
@@ -34,10 +36,18 @@ public class CycleDifference implements CycleOperation /*, StateReceiver<ItemSta
     this.initial = readItemState();
   }
 
-  private BigDecimal readItemState() {
+  private State readItemState() {
     try {
       Item item = registry.getItem(config.measure);
-      return item.getStateAs(DecimalType.class).toBigDecimal();
+      State state = item.getStateAs(QuantityType.class);
+      if (state != null) {
+        return state;
+      }
+      DecimalType decimalType = item.getStateAs(DecimalType.class);
+      if (decimalType != null) {
+        return decimalType;
+      }
+      return DecimalType.ZERO;
     } catch (ItemNotFoundException e) {
       logger.debug("Could not find item {}", config.measure);
     }
@@ -46,23 +56,31 @@ public class CycleDifference implements CycleOperation /*, StateReceiver<ItemSta
 
   @Override
   public void close() {
-    BigDecimal lastValue = readItemState();
+    State lastValue = readItemState();
 
     if (initial != null && lastValue != null) {
-      callback.stateUpdated(channelUID, new DecimalType(lastValue.subtract(initial)));
-    }
-  }
-
-  /*
-  @Override
-  public void accept(ItemStateChangedEvent itemStateChangedEvent) {
-    if (config.measure.equals(itemStateChangedEvent.getItemName())) {
-      if (initial == null) {
-        initial = itemStateChangedEvent.getItemState().as(DecimalType.class).toBigDecimal();
+      State value = null;
+      if (lastValue instanceof QuantityType && initial instanceof QuantityType) {
+        value = ((QuantityType) lastValue).subtract((QuantityType) initial);
+      } else if (lastValue instanceof QuantityType && initial instanceof DecimalType) {
+        QuantityType<?> quantity = (QuantityType) lastValue;
+        value = new QuantityType<>(quantity.toBigDecimal().subtract(((DecimalType) initial).toBigDecimal()), quantity.getUnit());
+      } else if (lastValue instanceof DecimalType && initial instanceof DecimalType) {
+        // two decimals
+        BigDecimal difference = ((DecimalType) lastValue).toBigDecimal().subtract(((DecimalType) initial).toBigDecimal());
+        value = new DecimalType(difference);
+      }
+      if (value != null) {
+        callback.stateUpdated(channelUID, value);
       } else {
-        last = itemStateChangedEvent.getItemState().as(DecimalType.class).toBigDecimal();
+        logger.info("Could not determine difference between initial value {} and last value {}", initial, lastValue);
       }
     }
   }
-  */
+
+  @Override
+  public ChannelUID getChannelId() {
+    return channelUID;
+  }
+
 }

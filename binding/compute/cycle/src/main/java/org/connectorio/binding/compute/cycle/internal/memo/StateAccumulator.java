@@ -29,7 +29,7 @@ public class StateAccumulator extends AbstractTypedEventSubscriber<ItemStateChan
 
   @Override
   public void removeStateReceiver(StateReceiver<ItemStateChangedEvent> receiver) {
-    receivers.add(receiver);
+    receivers.remove(receiver);
   }
 
 }

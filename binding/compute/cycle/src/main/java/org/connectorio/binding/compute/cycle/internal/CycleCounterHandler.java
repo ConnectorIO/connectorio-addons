@@ -55,6 +55,13 @@ public class CycleCounterHandler extends ConfigStatusThingHandler {
   }
 
   @Override
+  public void dispose() {
+    if (receiver != null) {
+      collector.removeStateReceiver(receiver);
+    }
+  }
+
+  @Override
   public Collection<ConfigStatusMessage> getConfigStatus() {
     CycleCounterConfig config = getConfigAs(CycleCounterConfig.class);
 
@@ -111,13 +118,7 @@ public class CycleCounterHandler extends ConfigStatusThingHandler {
   public void channelUnlinked(ChannelUID channelUID) {
     super.channelUnlinked(channelUID);
 
-    if (channelUID.getId().equals(CycleBindingConstants.TIME)) {
-      receiver.removeOperation(CycleTime.class);
-    }
-
-    if (channelUID.getId().equals(CycleBindingConstants.COUNT)) {
-      receiver.removeOperation(CycleCount.class);
-    }
+    receiver.removeOperation(channelUID);
   }
 
 }

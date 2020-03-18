@@ -5,13 +5,18 @@
   xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
   <channel-type id="time">
-    <item-type>DateTime</item-type>
-    <label>Calculated time of a cycle.</label>
+    <item-type>Number:Time</item-type>
+    <label>Cycle length.</label>
+    <description>
+      Number of seconds taken by cycle.
+    </description>
+    <state pattern="%d %unit%" readOnly="true" />
   </channel-type>
 
   <channel-type id="count">
     <item-type>Number</item-type>
-    <label>Number of cycles in given time span.</label>
+    <label>Cycle count.</label>
+    <state pattern="%d" readOnly="true" />
 
     <config-description>
       <parameter name="duration" type="integer" required="true">
@@ -41,8 +46,9 @@
 
   <channel-type id="difference">
     <item-type>Number</item-type>
-    <label>Difference of values between cycles.</label>
+    <label>Difference between cycles.</label>
     <description>Calculates difference in another item from beginning to end of the cycle.</description>
+    <state pattern="%d %unit%" readOnly="true" />
 
     <config-description>
       <parameter name="measure" type="text" required="true">

@@ -51,4 +51,9 @@ public class CycleCount implements CycleOperation {
     ));
   }
 
+  @Override
+  public ChannelUID getChannelId() {
+    return channelUID;
+  }
+
 }

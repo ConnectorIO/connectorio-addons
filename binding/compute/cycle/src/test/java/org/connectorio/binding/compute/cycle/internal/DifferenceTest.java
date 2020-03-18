@@ -13,6 +13,9 @@ import org.eclipse.smarthome.core.items.ItemRegistry;
 import org.eclipse.smarthome.core.items.events.ItemStateChangedEvent;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
+import org.eclipse.smarthome.core.library.types.QuantityType;
+import org.eclipse.smarthome.core.library.unit.SIUnits;
+import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.ThingUID;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerCallback;
@@ -50,8 +53,8 @@ class DifferenceTest {
   @Test
   void testBasicCycle() {
     Item item = mock(Item.class);
-    when(item.getStateAs(DecimalType.class)).thenReturn(new DecimalType(100.0))
-      .thenReturn(new DecimalType(200.01));
+    when(item.getStateAs(QuantityType.class)).thenReturn(QuantityType.valueOf(100.0, SmartHomeUnits.WATT_HOUR))
+      .thenReturn(QuantityType.valueOf(200.01, SmartHomeUnits.WATT_HOUR));
 
     try {
       when(registry.getItem(MEASURE)).thenReturn(item);
@@ -64,7 +67,7 @@ class DifferenceTest {
     receiver.accept(event(TRIGGER, OnOffType.ON));
     receiver.accept(event(TRIGGER, OnOffType.OFF));
 
-    verify(callback).stateUpdated(DIFFERENCE_CHANNEL, new DecimalType(100.01));
+    verify(callback).stateUpdated(DIFFERENCE_CHANNEL, QuantityType.valueOf(100.01, SmartHomeUnits.WATT_HOUR));
   }
 
   private static ItemStateChangedEvent event(String itemName, State newState) {

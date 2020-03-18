@@ -8,6 +8,7 @@ import org.connectorio.binding.compute.cycle.internal.memo.StateReceiver;
 import org.eclipse.smarthome.core.items.events.ItemStateChangedEvent;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.OpenClosedType;
+import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.types.State;
 
 public class TriggerReceiver implements StateReceiver<ItemStateChangedEvent> {
@@ -51,9 +52,9 @@ public class TriggerReceiver implements StateReceiver<ItemStateChangedEvent> {
     this.operations.add(operation);
   }
 
-  public void removeOperation(Class<? extends CycleOperation> operationType) {
+  public void removeOperation(ChannelUID channelUID) {
     List<CycleOperation> remove = this.operations.stream()
-      .filter(op -> operationType.isInstance(op.getClass()))
+      .filter(op -> op.getChannelId().equals(channelUID))
       .collect(Collectors.toList());
 
     this.operations.removeAll(remove);

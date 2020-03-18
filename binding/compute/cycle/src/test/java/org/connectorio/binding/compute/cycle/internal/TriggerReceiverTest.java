@@ -13,6 +13,7 @@ import org.connectorio.binding.compute.cycle.internal.operation.CycleTime;
 import org.eclipse.smarthome.core.items.events.ItemStateChangedEvent;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
+import org.eclipse.smarthome.core.library.types.QuantityType;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.ThingUID;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerCallback;
@@ -25,6 +26,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.OngoingStubbing;
+import tec.uom.se.quantity.time.TimeQuantities;
+import tec.uom.se.quantity.time.TimeUnitQuantity;
 
 @ExtendWith(MockitoExtension.class)
 class TriggerReceiverTest {
@@ -55,7 +58,7 @@ class TriggerReceiverTest {
     receiver.accept(event(TRIGGER, OnOffType.ON));
     receiver.accept(event(TRIGGER, OnOffType.OFF));
 
-    verify(callback).stateUpdated(CHANNEL_TIME, new DecimalType(10000L));
+    verify(callback).stateUpdated(CHANNEL_TIME, new QuantityType<>(10000L, TimeQuantities.MILLISECOND));
   }
 
   @Test
@@ -77,14 +80,14 @@ class TriggerReceiverTest {
       receiver.accept(event(TRIGGER, OnOffType.OFF));
     }
 
-    ArgumentCaptor<DecimalType> timer = ArgumentCaptor.forClass(DecimalType.class);
+    ArgumentCaptor<QuantityType> timer = ArgumentCaptor.forClass(QuantityType.class);
     verify(callback, times(cycles)).stateUpdated(eq(CHANNEL_TIME), timer.capture());
 
     for (int step = 0; step < cycles; step++) {
       int cycle = step + 1;
 
       assertThat(timer.getAllValues().get(step))
-        .isEqualTo(new DecimalType(STEP_TIME));
+        .isEqualTo(new QuantityType<>(STEP_TIME, TimeQuantities.MILLISECOND));
     }
   }
 
