@@ -49,7 +49,7 @@ class BeckhoffNetworkBridgeHandlerTest {
     CompletableFuture<AdsTcpPlcConnection> initializer = handler.getInitializer();
     assertThatThrownBy(initializer::join).isInstanceOf(CompletionException.class)
       .hasCauseInstanceOf(PlcConnectionException.class)
-      .hasMessageContaining("Error creating channel");
+      .hasMessageContaining("Unable to Connect on TCP Layer");
   }
 
 }

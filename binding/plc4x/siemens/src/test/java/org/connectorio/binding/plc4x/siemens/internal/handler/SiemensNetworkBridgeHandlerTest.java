@@ -45,7 +45,7 @@ class SiemensNetworkBridgeHandlerTest {
     CompletableFuture<S7PlcConnection> initializer = handler.getInitializer();
     assertThatThrownBy(initializer::join).isInstanceOf(CompletionException.class)
       .hasCauseInstanceOf(PlcConnectionException.class)
-      .hasMessageContaining("Error creating channel");
+      .hasMessageContaining("Unable to Connect on TCP Layer");
   }
 
 }

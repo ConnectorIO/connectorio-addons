@@ -16,6 +16,14 @@
   <name>ConnectorIO - Binding - Features - Distributions - BACnet</name>
   <description>BACnet deployment archive.</description>
 
+  <licenses>
+    <license>
+      <name>GNU General Public License, version 3</name>
+      <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+      <comments>Due to bacnet4j dependency this library must be licensed under GNU GPL.</comments>
+    </license>
+  </licenses>
+
   <dependencies>
     <dependency>
       <groupId>org.connectorio.binding.features</groupId>
