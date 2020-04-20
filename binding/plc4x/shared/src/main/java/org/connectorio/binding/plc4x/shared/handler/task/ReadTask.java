@@ -7,6 +7,7 @@ import java.time.ZoneId;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.apache.plc4x.java.api.PlcConnection;
+import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.connectorio.binding.plc4x.shared.config.CommonChannelConfiguration;
@@ -44,14 +45,15 @@ public class ReadTask implements Runnable {
   @Override
   public void run() {
     logger.info("Running task to fetch field {}", channelConfig.field);
-    CompletableFuture<? extends PlcReadResponse> execute = request.execute();
     try {
+      CompletableFuture<? extends PlcReadResponse> execute = request.execute();
       // we should be able to fetch data within short time period, if not then it is a
       // transmission problem and we should not block this task any more.
-      execute.whenComplete(this::handle)
-        .get();
+      execute.whenComplete(this::handle).get();
+    } catch (PlcRuntimeException e) {
+      logger.warn("Could not fetch field {} from PLC", channelConfig.field, e);
     } catch (InterruptedException | ExecutionException e) {
-      logger.warn("Could not fetch data from PLC", e);
+      logger.debug("Error while waiting for PLC response", e);
     }
   }
 
@@ -64,7 +66,7 @@ public class ReadTask implements Runnable {
     Object object = response.getObject(getUID());
     State state = fromPlc(object);
 
-    logger.info("Read value {} mapped to {}", object, state);
+    logger.debug("Read value {} mapped to {}", object, state);
     callback.stateUpdated(channel.getUID(), state);
   }
 

@@ -47,7 +47,7 @@ public class ReadPropertyTask implements Runnable, BacNetToJavaConverter<State> 
         State result = clientFuture.get().getPropertyValue(property, this);
         callback.stateUpdated(channelUID, result);
       } catch (InterruptedException | ExecutionException e) {
-        e.printStackTrace();
+        logger.debug("Could not complete operation", e);
       }
     }
   }

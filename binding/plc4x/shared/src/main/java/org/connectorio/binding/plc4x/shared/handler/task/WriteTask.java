@@ -53,10 +53,10 @@ public class WriteTask implements Runnable {
       return;
     }
 
-    PlcResponseCode object = response.getResponseCode(channelConfig.field);
+    PlcResponseCode object = response.getResponseCode(getUID());
     switch (object) {
       case OK:
-        logger.info("Value {} set to {}", channelConfig.field, response.getField(channelConfig.field));
+        logger.debug("Value {} set to {}", channelConfig.field, response.getField(getUID()));
         break;
       case NOT_FOUND:
         logger.warn("Block {} no found", channelConfig.field);
