@@ -22,12 +22,34 @@ import static org.mockito.Mockito.when;
 import org.connectorio.binding.base.config.Configuration;
 import org.connectorio.binding.base.handler.GenericBridgeHandler;
 import org.eclipse.smarthome.core.thing.Bridge;
+import org.eclipse.smarthome.core.thing.ThingUID;
+import org.eclipse.smarthome.core.thing.binding.BridgeHandler;
+import org.eclipse.smarthome.core.thing.binding.ThingHandlerCallback;
 import org.mockito.Mockito;
 
 public class BridgeMock<B extends GenericBridgeHandler<C>, C extends Configuration> {
 
-  private Bridge bridge = Mockito.mock(Bridge.class);
-  private ConfigurationMock<C> config = new ConfigurationMock<>();
+  private final Bridge bridge;
+  private final ThingHandlerCallback callback = Mockito.mock(ThingHandlerCallback.class);
+  private final ConfigurationMock<C> config = new ConfigurationMock<>();
+  private BridgeHandler handler;
+
+  public BridgeMock() {
+    this("Bridge " + Math.random());
+  }
+
+  public BridgeMock(String name) {
+    bridge = Mockito.mock(Bridge.class, Mockito.withSettings().name(name));
+  }
+
+  public BridgeMock<B, C> withId(String id) {
+    return withId(new ThingUID(id));
+  }
+
+  public BridgeMock<B, C> withId(ThingUID id) {
+    when(bridge.getUID()).thenReturn(id);
+    return this;
+  }
 
   public BridgeMock<B, C> withConfig(C mapped) {
     org.eclipse.smarthome.config.core.Configuration cfg = config.get(mapped);
@@ -35,8 +57,33 @@ public class BridgeMock<B extends GenericBridgeHandler<C>, C extends Configurati
     return this;
   }
 
+  public BridgeMock<B, C> withBridge(Bridge parent) {
+    ThingUID parentUid = parent.getUID();
+    when(bridge.getBridgeUID()).thenReturn(parentUid);
+    when(callback.getBridge(parentUid)).thenReturn(parent);
+    return this;
+  }
+
+  public <X extends BridgeHandler> BridgeMock<B, C> mockHandler(Class<X> type) {
+    handler = Mockito.mock(type);
+    when(bridge.getHandler()).thenReturn(handler);
+    return this;
+  }
+
+  public BridgeMock<B, C> mockHandler() {
+    return mockHandler(BridgeHandler.class);
+  }
+
+  public ThingHandlerCallback getCallback() {
+    return callback;
+  }
+
   public Bridge create() {
     return bridge;
+  }
+
+  public BridgeHandler getHandler() {
+    return handler;
   }
 
 }
