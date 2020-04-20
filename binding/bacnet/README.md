@@ -1,1 +1,1 @@
-This binding is licensed under GNU GPL as it currently depends on GPL-ed library: bacnet4j.
+This binding license is GNU GPL3 as it currently depends on GPL-ed library: bacnet4j.
