@@ -17,11 +17,13 @@
  */
 package org.connectorio.binding.plc4x.beckhoff.internal.config;
 
-import org.connectorio.binding.base.config.PollingConfiguration;
+import org.connectorio.binding.base.config.Configuration;
 
-public class BeckhoffBridgeConfiguration extends PollingConfiguration {
+public class BeckhoffAmsAdsConfiguration implements Configuration {
 
-  public String targetAmsId;
-  public Integer targetAmsPort;
+  public String sourceAmsId;
+  public String broadcastAddress;
+  public String ipAddress;
+  public Integer sourceAmsPort = 30000;
 
 }

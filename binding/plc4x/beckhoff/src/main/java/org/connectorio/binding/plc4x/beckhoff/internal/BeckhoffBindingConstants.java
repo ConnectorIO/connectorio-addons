@@ -30,6 +30,8 @@ public interface BeckhoffBindingConstants extends Plc4xBindingConstants {
 
   String BINDING_ID = Plc4xBindingConstants.protocol("ads");
 
+  ThingTypeUID THING_TYPE_AMS = new ThingTypeUID(BINDING_ID, "ams");
+
   ThingTypeUID THING_TYPE_NETWORK = new ThingTypeUID(BINDING_ID, "network");
 
   ThingTypeUID THING_TYPE_SERIAL = new ThingTypeUID(BINDING_ID, "serial");

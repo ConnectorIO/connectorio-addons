@@ -51,31 +51,28 @@ public class BeckhoffSerialBridgeHandler extends
   }
 
   @Override
-  protected Runnable createInitializer(CompletableFuture<AdsSerialPlcConnection> initializer) {
+  protected Runnable createInitializer(BeckhoffAmsAdsConfiguration amsAds, CompletableFuture<AdsSerialPlcConnection> initializer) {
     return new Runnable() {
       @Override
       public void run() {
         try {
           BeckhoffSerialConfiguration config = getBridgeConfig().get();
           String target = hostWithPort(config.targetAmsId, config.targetAmsPort);
-          String source = hostWithPort(config.sourceAmsId, config.sourceAmsPort);
-          AdsSerialPlcConnection connection = (AdsSerialPlcConnection) new PlcDriverManager(
-              getClass().getClassLoader())
-              .getConnection("ads:serial://" + config.port + "/" + target + "/" + source);
+          String source = amsAds.sourceAmsId != null && amsAds.sourceAmsPort != null ? "/" + hostWithPort(amsAds.sourceAmsId, amsAds.sourceAmsPort) : "";
+          AdsSerialPlcConnection connection = (AdsSerialPlcConnection) new PlcDriverManager(getClass().getClassLoader())
+            .getConnection("ads:serial://" + config.port + "/" + target + source);
           connection.connect();
 
           if (connection.isConnected()) {
             updateStatus(ThingStatus.ONLINE);
             initializer.complete(connection);
           } else {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
-                "Connection failed");
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Connection failed");
             initializer.complete(null);
           }
         } catch (PlcConnectionException e) {
           logger.warn("Could not obtain connection", e);
-          updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
-              e.getMessage());
+          updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
           initializer.completeExceptionally(e);
         }
       }

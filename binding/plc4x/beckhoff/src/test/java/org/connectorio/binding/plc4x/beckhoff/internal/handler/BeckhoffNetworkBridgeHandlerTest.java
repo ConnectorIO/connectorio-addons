@@ -17,19 +17,32 @@
  */
 package org.connectorio.binding.plc4x.beckhoff.internal.handler;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import org.apache.plc4x.java.ads.api.generic.types.AmsNetId;
 import org.apache.plc4x.java.ads.connection.AdsTcpPlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
+import org.connectorio.binding.base.config.Configuration;
+import org.connectorio.binding.base.handler.GenericBridgeHandler;
+import org.connectorio.binding.plc4x.beckhoff.internal.BeckhoffBindingConstants;
+import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffAmsAdsConfiguration;
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffNetworkConfiguration;
+import org.connectorio.binding.plc4x.beckhoff.internal.discovery.DiscoverySender;
+import org.connectorio.binding.plc4x.beckhoff.internal.discovery.RouteReceiver;
 import org.connectorio.binding.test.BridgeMock;
 import org.eclipse.smarthome.core.thing.Bridge;
+import org.eclipse.smarthome.core.thing.ThingUID;
 import org.junit.jupiter.api.Test;
 
 class BeckhoffNetworkBridgeHandlerTest {
+
+  DiscoverySender sender = mock(DiscoverySender.class);
+  RouteReceiver routeReceiver = mock(RouteReceiver.class);
 
   @Test
   void testHandlerInitializationWithNoConfig() {
@@ -37,13 +50,11 @@ class BeckhoffNetworkBridgeHandlerTest {
       .withConfig(new BeckhoffNetworkConfiguration())
       .create();
 
-    BeckhoffNetworkBridgeHandler handler = new BeckhoffNetworkBridgeHandler(bridge);
+    BeckhoffNetworkBridgeHandler handler = new BeckhoffNetworkBridgeHandler(bridge, sender, routeReceiver);
     handler.initialize();
 
     CompletableFuture<AdsTcpPlcConnection> initializer = handler.getInitializer();
-    assertThatThrownBy(initializer::join).isInstanceOf(CompletionException.class)
-      .hasCauseInstanceOf(PlcConnectionException.class)
-      .hasMessageContaining("doesn't match");
+    assertThat(initializer).isNull();
   }
 
   @Test
@@ -53,14 +64,30 @@ class BeckhoffNetworkBridgeHandlerTest {
     cfg.port = 4040;
     cfg.targetAmsId = "0.0.0.0.0.0";
     cfg.targetAmsPort = 4040;
-    cfg.sourceAmsId = "0.0.0.0.0.0";
-    cfg.sourceAmsPort = 4040;
 
-    Bridge bridge = new BridgeMock<>()
+    BeckhoffAmsAdsConfiguration amsCfg = new BeckhoffAmsAdsConfiguration();
+    amsCfg.sourceAmsId = "0.0.0.0.0.0";
+    amsCfg.sourceAmsPort = 4040;
+    amsCfg.ipAddress = "10.10.10.10";
+
+    BridgeMock<GenericBridgeHandler<Configuration>, Configuration> amsBridgeMock = new BridgeMock<>("ams-network")
+      .withId(new ThingUID(BeckhoffBindingConstants.THING_TYPE_AMS, "amsads-1"))
+      .withConfig(amsCfg)
+      .mockHandler(BeckhoffAmsAdsBridgeHandler.class);
+    Bridge amsBridge = amsBridgeMock.create();
+
+    when(((BeckhoffAmsAdsBridgeHandler) amsBridgeMock.getHandler()).getBridgeConfig()).thenReturn(Optional.of(amsCfg));
+
+    BridgeMock<GenericBridgeHandler<Configuration>, Configuration> bridgeMock = new BridgeMock<>("ads-connection")
       .withConfig(cfg)
-      .create();
+      .withBridge(amsBridge);
 
-    BeckhoffNetworkBridgeHandler handler = new BeckhoffNetworkBridgeHandler(bridge);
+    BeckhoffAmsAdsBridgeHandler parentHandler = (BeckhoffAmsAdsBridgeHandler) bridgeMock.getHandler();
+
+    Bridge bridge = bridgeMock.create();
+
+    BeckhoffNetworkBridgeHandler handler = new BeckhoffNetworkBridgeHandler(bridge, sender, routeReceiver);
+    handler.setCallback(bridgeMock.getCallback());
     handler.initialize();
 
     CompletableFuture<AdsTcpPlcConnection> initializer = handler.getInitializer();

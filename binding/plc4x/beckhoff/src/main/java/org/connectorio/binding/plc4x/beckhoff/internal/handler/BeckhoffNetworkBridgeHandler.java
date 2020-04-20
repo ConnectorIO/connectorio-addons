@@ -43,13 +43,31 @@ import org.slf4j.LoggerFactory;
  *
  * @author Lukasz Dywicki - Initial contribution
  */
-public class BeckhoffNetworkBridgeHandler extends
-    BeckhoffBridgeHandler<AdsTcpPlcConnection, BeckhoffNetworkConfiguration> {
+public class BeckhoffNetworkBridgeHandler extends BeckhoffBridgeHandler<AdsTcpPlcConnection, BeckhoffNetworkConfiguration> implements
+  BeckhoffRouteListener {
 
   private final Logger logger = LoggerFactory.getLogger(BeckhoffNetworkBridgeHandler.class);
+  private final AtomicBoolean routing = new AtomicBoolean(false);
 
-  public BeckhoffNetworkBridgeHandler(Bridge thing) {
+  private final DiscoverySender sender;
+  private final RouteReceiver router;
+
+  public BeckhoffNetworkBridgeHandler(Bridge thing, DiscoverySender sender, RouteReceiver router) {
     super(thing);
+    this.sender = sender;
+    this.router = router;
+  }
+
+  @Override
+  public void initialize() {
+    router.addRouteListener(this);
+    super.initialize();
+  }
+
+  @Override
+  public void dispose() {
+    super.dispose();
+    router.removeRouteListener(this);
   }
 
   @Override
@@ -57,35 +75,68 @@ public class BeckhoffNetworkBridgeHandler extends
   }
 
   @Override
-  protected Runnable createInitializer(CompletableFuture<AdsTcpPlcConnection> initializer) {
+  protected Runnable createInitializer(BeckhoffAmsAdsConfiguration amsAds, CompletableFuture<AdsTcpPlcConnection> initializer) {
     return new Runnable() {
       @Override
       public void run() {
         try {
           BeckhoffNetworkConfiguration config = getBridgeConfig().get();
+
+          if (config.username != null) {
+            UdpRouteRequest request = new UdpRouteRequest(amsAds.ipAddress, amsAds.sourceAmsId, amsAds.ipAddress, config.username, config.password);
+            logger.info("Making an attempt to setup route from {} to us using {}", config.host, request);
+            sender.send(new Envelope(config.host, request));
+
+            try {
+              // we should coordinate and wait for response from PLC, but real fact is that Beckhoff does not send reply
+              // if route is already present - so here is very naive way with delaying initialization. Shame on me.
+              Thread.sleep(1750);
+            } catch (InterruptedException e) {
+              logger.debug("Could not wait for udp answer", e);
+            }
+
+            if (routing.get()) {
+              logger.info("Route setup successful. Integration should work now.");
+            } else {
+              logger.warn("Route setup failed. Integration might not work. Please check routing setup on PLC.");
+            }
+          }
+
           String host = hostWithPort(config.host, config.port);
           String target = hostWithPort(config.targetAmsId, config.targetAmsPort);
-          String source = config.sourceAmsId != null && config.sourceAmsPort != null ? "/" + hostWithPort(config.sourceAmsId, config.sourceAmsPort) : "";
+          String source = amsAds.sourceAmsId != null && amsAds.sourceAmsPort != null ? "/" + hostWithPort(amsAds.sourceAmsId, amsAds.sourceAmsPort) : "";
           AdsTcpPlcConnection connection = (AdsTcpPlcConnection) new PlcDriverManager(getClass().getClassLoader())
-              .getConnection("ads:tcp://" + host + "/" + target + source);
-          connection.connect();
+            .getConnection("ads:tcp://" + host + "/" + target + source);
+          //connection.connect();
 
           if (connection.isConnected()) {
             updateStatus(ThingStatus.ONLINE);
             initializer.complete(connection);
           } else {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
-                "Connection failed");
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,"Connection failed");
             initializer.complete(null);
           }
         } catch (PlcConnectionException e) {
           logger.warn("Could not obtain connection", e);
-          updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
-              e.getMessage());
+          updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
           initializer.completeExceptionally(e);
         }
       }
     };
+  }
+
+
+  @Override
+  public void add(String host, String sourceAms, boolean success) {
+    String targetHost = getBridgeConfig().map(cfg -> cfg.host).orElse("");
+    String targetAms = getBridgeConfig().map(cfg -> cfg.targetAmsId).orElse("");
+
+    if (targetHost.equals(host) && sourceAms.equals(targetAms)) {
+      logger.debug("Received routing setup for ams {}, status: {}", sourceAms, success);
+      this.routing.compareAndSet(false, success);
+    } else {
+      logger.debug("Received routing information {} {}, ignoring", host, sourceAms);
+    }
   }
 
 }

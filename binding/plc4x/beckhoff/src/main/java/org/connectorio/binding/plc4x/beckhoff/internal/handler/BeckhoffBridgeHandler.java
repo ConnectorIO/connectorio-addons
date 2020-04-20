@@ -58,8 +58,24 @@ public abstract class BeckhoffBridgeHandler<T extends AdsAbstractPlcConnection, 
   public void initialize() {
     updateStatus(ThingStatus.UNKNOWN);
 
+    if (getBridge() == null) {
+      updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_UNINITIALIZED, "Please attach this bridge handler to AMS ADS network bridge.");
+      return;
+    }
+
+    if (getBridge().getHandler() != null && !(getBridge().getHandler() instanceof BeckhoffAmsAdsBridgeHandler)) {
+      updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_UNINITIALIZED, "Unknown bridge handler used.");
+      return;
+    }
+
+    Optional<BeckhoffAmsAdsConfiguration> config = ((BeckhoffAmsAdsBridgeHandler) getBridge().getHandler()).getBridgeConfig();
+    if (!config.isPresent()) {
+      updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_UNINITIALIZED, "AMS ADS network bridge is not configured yet.");
+      return;
+    }
+
     initializer = new CompletableFuture<>();
-    Runnable connectionTask = createInitializer(initializer);
+    Runnable connectionTask = createInitializer(config.get(), initializer);
     scheduler.submit(connectionTask);
   }
 
@@ -68,7 +84,7 @@ public abstract class BeckhoffBridgeHandler<T extends AdsAbstractPlcConnection, 
     return initializer;
   }
 
-  protected abstract Runnable createInitializer(CompletableFuture<T> initializer);
+  protected abstract Runnable createInitializer(BeckhoffAmsAdsConfiguration amsAds, CompletableFuture<T> initializer);
 
   @Override
   public T getConnection() {
