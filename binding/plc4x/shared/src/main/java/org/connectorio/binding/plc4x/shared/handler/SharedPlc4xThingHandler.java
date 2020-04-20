@@ -127,6 +127,16 @@ public abstract class SharedPlc4xThingHandler<T extends PlcConnection, B extends
 
   private void clearTasks() {
     futures.forEach((k, v) -> v.cancel(false));
+
+    getPlcConnection().ifPresent(connection -> {
+      try {
+        if (connection.isConnected()) {
+          connection.close();
+        }
+      } catch (Exception e) {
+        logger.info("Could not close connection", e);
+      }
+    });
   }
 
 }
