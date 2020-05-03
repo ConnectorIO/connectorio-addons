@@ -1,0 +1,84 @@
+=== Beckhoff ADS
+
+The "ADS" shortcut stands for "Automation Device Specification".
+It is often used with "AMS" which might be decoded as "Automation Message Specification".
+We do distinguish these terms cause they have different role.
+AMS is a routing and virtual networking layer and ADS is data exchange layer built on top of it.
+In order to communicate with ADS devices you must have AMS capabilities first.
+
+Devices which are compatible with this protocol are usually Windows based PLCs of the same brand.
+
+The ConnectorIO ADS binding allows to read values from the PLC as well as write it based on values set in openHAB.
+
+==== Supported hardware
+
+All devices capable of communication AMS/ADS.
+
+==== Supported things and bridges
+
+
+|===
+|Thing |Type |Name |Description
+
+|ams
+|bridge
+|Beckhoff AMS/ADS Network
+|Defines AMS identifiers for communicating with other devices.
+
+|network
+|bridge
+|Beckhoff ADS Network Bridge
+|TCP/IP Connection to Beckhoff PLC
+
+|serial
+|bridge
+|Beckhoff ADS Serial Bridge
+|Serial port connection to Beckhoff PLC (note - not tested).
+
+|ads
+|thing
+|Beckhoff ADS device
+|A PLC with ADS communication capabilities which can be polled for data.
+
+|===
+
+In order to start reading data you need to create at least one `ams` bridge with `network` or `serial` connection.
+Once done then you can start adding `ads` devices.
+Be aware that there might be multiple `ads` devices for single connection allowing to group PLC inputs and outputs.
+If your PLC controls multiple motors then each of them can be created as a `ads` thing with separate state.
+
+Because it is possible to configure polling (sampling) interval for each of above elements you can also group I/O by frequency of updates.
+
+
+==== Textual configuration
+
+Below is example of a text configuration which you can upload to your openhab.
+It allows to use a regular version control system to track changes over time.
+The same can be done via user interface.
+
+```
+Bridge co7io-plc4x-ads:ams:local "My connection" [ sourceAmsId="10.10.10.10.1.1", sourceAmsPort="30000", ipAddress="10.10.10.10", broadcastAddress="10.10.10.255" ] {
+
+    Bridge network [targetAmsId="10.10.10.20.1.1", targetAmsPort="851", host="10.10.10.20"] {
+        Thing ads "Inputs" [refreshInterval="500"] {
+            channels:
+                Type switch: Input001 "Input 001" [field="0x0000/0x0001:BOOL"]
+                Type switch: Input002 "Input 002" [field="0x0000/0x0002:BOOL"]
+                Type switch: Input003 "Input 003" [field="0x0000/0x0003:BOOL"]
+                Type switch: Input004 "Input 004" [field="0x0000/0x0004:BOOL"]
+                Type switch: Input005 "Input 005" [field="0x0000/0x0005:BOOL"]
+        }
+
+        Thing ads "Outputs" [refreshInterval="500"] {
+            channels:
+                Type switch: Output001 "Output 001" [field="0x0001/0x0001:BOOL"]
+                Type switch: Output002 "Output 002" [field="0x0001/0x0002:BOOL"]
+                Type switch: Output003 "Output 003" [field="0x0001/0x0003:BOOL"]
+                Type switch: Output004 "Output 004" [field="0x0001/0x0004:BOOL"]
+                Type switch: Output005 "Output 005" [field="0x0001/0x0005:BOOL"]
+        }
+    }
+}
+```
+
+include::_include/000_tip_mutiple_things.adoc[]

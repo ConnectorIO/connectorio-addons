@@ -1,0 +1,14 @@
+[colophon]
+= Colophon
+
+Published by ConnectorIO sp. z o.o.
+
+(C) 2020 by The ConnectorIO sp z o.o.
+
+This documentation provided as-is for information purposes.
+
+The ® sign indicates that given name or logo is a registered trademark.
+We respect copyright, and we value trademarks of others.
+BACnet, Apache PLC4X, Siemens, Beckhoff are all registered trademarks belonging to its respective owners.
+Above names mentioned in this documentation are to give credits to producers of awesome equipment and libraries.
+They are not listed here for advertising or affirmation purposes.

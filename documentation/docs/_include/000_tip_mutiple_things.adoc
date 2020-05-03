@@ -1,0 +1,7 @@
+
+[TIP]
+====
+Create multiple things to manage inputs and outputs of your device in an organized way.
+All of them will reuse the same network or serial connection.
+Their role is to make navigation over complex installations easier.
+====

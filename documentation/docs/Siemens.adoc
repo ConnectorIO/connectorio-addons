@@ -1,0 +1,65 @@
+=== Siemens S7
+
+The "S7" shortcut stands for "Step 7".
+
+Devices which are compatible with this protocol are usually Siemens PLCs.
+The ConnectorIO S7 binding allows to read values from the PLC as well as write it based on values set in openHAB.
+
+==== Supported hardware
+
+Models supported by this integration are S7-300, 400, 1200, 1500 and Logo which uses same protocol.
+
+==== Supported things and bridges
+
+|===
+|Thing |Type |Name |Description
+
+|network
+|bridge
+|Siemens S7 TCP/IP Bridge
+|TCP/IP Connection to Siemens PLC
+
+|s7
+|thing
+|Siemens S7 device
+|A PLC with S7 communication capabilities which can be polled for data.
+
+|===
+
+In order to start reading data you need to create at least one `network` bridge with `s7` device.
+Be aware that there might be multiple `s7` devices for a single connection allowing to group PLC inputs and outputs.
+If your PLC controls multiple motors then each of them can be created as a `s7` thing with separate state.
+
+Because it is possible to configure polling (sampling) interval for each of above elements you can also group I/O by frequency of updates.
+
+
+==== Textual configuration
+
+Below is example of a text configuration which you can upload to your openhab.
+It allows to use a regular version control system to track changes over time.
+The same can be done via user interface.
+
+```
+Bridge co7io-plc4x-s7:network:local "S7-1200 vYXZ" [ host="10.10.10.10", rack=0, slot=0 ] {
+
+    Thing s7 "Inputs" [refreshInterval="500"] {
+        channels:
+            Type switch: Input001 "Input 001" [field="I0.1:BOOL"]
+            Type switch: Input002 "Input 002" [field="I0.2:BOOL"]
+            Type switch: Input003 "Input 003" [field="I0.3:BOOL"]
+            Type switch: Input004 "Input 004" [field="I0.4:BOOL"]
+            Type switch: Input005 "Input 005" [field="I0.5:BOOL"]
+    }
+
+    Thing s7 "Outputs" [refreshInterval="500"] {
+        channels:
+            Type switch: Output001 "Output 001" [field="Q0.1:BOOL"]
+            Type switch: Output002 "Output 002" [field="Q0.2:BOOL"]
+            Type switch: Output003 "Output 003" [field="Q0.3:BOOL"]
+            Type switch: Output004 "Output 004" [field="Q0.3:BOOL"]
+            Type switch: Output005 "Output 005" [field="Q0.5:BOOL"]
+    }
+}
+```
+
+include::_include/000_tip_mutiple_things.adoc[]
