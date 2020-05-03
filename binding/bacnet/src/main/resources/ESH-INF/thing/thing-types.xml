@@ -33,6 +33,10 @@
     <label>BACnet Analog Input</label>
     <description>Analog input of an device.</description>
 
+    <channels>
+      <channel id="presentValue" typeId="writeableNumber" />
+    </channels>
+
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
   </thing-type>
 
