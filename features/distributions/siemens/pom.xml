@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.connectorio.binding.features</groupId>
     <artifactId>distributions</artifactId>
-    <version>2.5.1-SNAPSHOT</version>
+    <version>2.5.1.M1</version>
   </parent>
 
   <groupId>org.connectorio.binding.features.distributions</groupId>
