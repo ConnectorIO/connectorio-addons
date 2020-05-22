@@ -4,15 +4,15 @@ Below list contains summarized list of changes which been introduced over time.
 Above documentation describes latest state of integration.
 In case if you run older version of integration, please make sure you check earlier documentation.
 
-===== Release 20200501
+===== Release 20200504
 
-Released on *May, 2020*.
+Released on *May 4th, 2020*.
 Compatible with openHAB 2.5.x.
 
 * [Beckhoff] Support for discovery of network enabled devices.
 * [Beckhoff] Fixes for doubled connections opened by binding.
-* [Beckhoff] Reorganization of connection parameters, introduced `Beckhoff AMS/ADS Network`.
-* Fixes causing errors while writing values to PLC.
+* [Beckhoff] Reorganization of connection parameters, introduced `Beckhoff AMS/ADS Network` bridge.
+* Fixes for possible errors while writing values to through Apache PLC4X API.
 
 ===== Release 20200102
 
