@@ -29,6 +29,7 @@ import com.serotonin.bacnet4j.type.primitive.Real;
 import com.serotonin.bacnet4j.type.primitive.SignedInteger;
 import com.serotonin.bacnet4j.type.primitive.Time;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
@@ -65,8 +66,9 @@ public class ReadPropertyTask implements Runnable, BacNetToJavaConverter<State> 
     CompletableFuture<BacNetClient> clientFuture = client.get();
     if (clientFuture.isDone() && !clientFuture.isCancelled() && !clientFuture.isCompletedExceptionally()) {
       try {
-        State result = clientFuture.get().getPropertyValue(property, this);
-        callback.stateUpdated(channelUID, result);
+        Optional.ofNullable(clientFuture.get())
+          .map(connection -> connection.getPropertyValue(property, this))
+          .ifPresent(state -> callback.stateUpdated(channelUID, state));
       } catch (InterruptedException | ExecutionException e) {
         logger.debug("Could not complete operation", e);
       }

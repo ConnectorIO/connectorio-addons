@@ -43,10 +43,13 @@ import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.types.Command;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BACnetDeviceBridgeHandler<?, ?>, C extends ObjectConfig>
   extends BasePollingThingHandler<B, C> {
 
+  private final Logger logger = LoggerFactory.getLogger(getClass());
   private final Type type;
   private Property property;
   private Future<?> reader;
@@ -82,6 +85,7 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
 
   @Override
   public void channelLinked(ChannelUID channelUID) {
+    logger.info("BACnet channel linked {}", channelUID);
     Supplier<CompletableFuture<BacNetClient>> client = () -> getBridgeHandler().flatMap(bridge -> bridge.getClient()).orElse(
       // return failed future if client is not yet ready
       CompletableFuture.completedFuture(null)
@@ -101,9 +105,18 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
 
   @Override
   public void channelUnlinked(ChannelUID channelUID) {
+    logger.info("BACnet channel unlinked {}", channelUID);
     if (reader != null) {
       reader.cancel(true);
     }
   }
 
+  @Override
+  public void dispose() {
+    super.dispose();
+
+    if (reader != null) {
+      reader.cancel(true);
+    }
+  }
 }
