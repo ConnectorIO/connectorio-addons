@@ -144,8 +144,7 @@
     </supported-bridge-type-refs>
 
     <label>Beckhoff ADS device</label>
-    <description>A PLC with ADS communication capabilities which can be polled for data.
-    </description>
+    <description>A PLC with ADS communication capabilities which can be polled for data.</description>
 
     <config-description>
       <parameter name="refreshInterval" type="integer" groupName="basic" required="false">

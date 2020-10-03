@@ -87,7 +87,7 @@ public abstract class BeckhoffBridgeHandler<T extends AdsAbstractPlcConnection, 
   protected abstract Runnable createInitializer(BeckhoffAmsAdsConfiguration amsAds, CompletableFuture<T> initializer);
 
   @Override
-  public T getConnection() {
+  protected T getPlcConnection() {
     try {
       return initializer.get(5, TimeUnit.SECONDS);
     } catch (InterruptedException | TimeoutException | ExecutionException e) {

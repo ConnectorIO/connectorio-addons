@@ -23,17 +23,46 @@ import org.connectorio.binding.base.config.PollingConfiguration;
 import org.connectorio.binding.base.handler.polling.common.BasePollingBridgeHandler;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.binding.BridgeHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class SharedPlc4xBridgeHandler<T extends PlcConnection, C extends PollingConfiguration> extends
     BasePollingBridgeHandler<C> implements BridgeHandler {
+
+  private final Logger logger = LoggerFactory.getLogger(getClass());
+  private T connection;
 
   public SharedPlc4xBridgeHandler(Bridge bridge) {
     super(bridge);
   }
 
-  public abstract T getConnection();
+  public T getConnection() {
+    // make sure we create new connection only if there is none.
+    if (connection == null) {
+      logger.debug("Opening new connection to device");
+      connection = getPlcConnection();
+    }
+    return connection;
+  }
+
+  protected abstract T getPlcConnection();
 
   public abstract CompletableFuture<T> getInitializer();
+
+  @Override
+  public void dispose() {
+    if (connection != null) {
+      try {
+        if (connection.isConnected()) {
+          connection.close();
+          logger.debug("Closed connection to device");
+        }
+      } catch (Exception e) {
+        logger.warn("Error while terminating connection to device", e);
+      }
+      connection = null;
+    }
+  }
 
   protected String hostWithPort(String host, Integer port) {
     return host + (port == null ? "" : ":" + port);

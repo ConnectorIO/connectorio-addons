@@ -17,6 +17,7 @@
  */
 package org.connectorio.binding.plc4x.beckhoff.internal.handler;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.plc4x.java.PlcDriverManager;
@@ -83,7 +84,8 @@ public class BeckhoffNetworkBridgeHandler extends BeckhoffBridgeHandler<AdsTcpPl
           BeckhoffNetworkConfiguration config = getBridgeConfig().get();
 
           if (config.username != null) {
-            UdpRouteRequest request = new UdpRouteRequest(amsAds.ipAddress, amsAds.sourceAmsId, amsAds.ipAddress, config.username, config.password);
+            UdpRouteRequest request = new UdpRouteRequest(amsAds.ipAddress, amsAds.sourceAmsId, amsAds.ipAddress, config.username,
+              Optional.ofNullable(config.password).orElse(""));
             logger.info("Making an attempt to setup route from {} to us using {}", config.host, request);
             sender.send(new Envelope(config.host, request));
 

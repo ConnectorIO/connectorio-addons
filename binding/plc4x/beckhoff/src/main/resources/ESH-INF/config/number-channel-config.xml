@@ -21,7 +21,7 @@
   xmlns:config-description="https://openhab.org/schemas/config-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
 
-  <config-description uri="thing-type:co7io-plc4x-s7:number">
+  <config-description uri="thing-type:co7io-plc4x-ads:number">
     <parameter-group name="basic">
       <label>Required configuration</label>
       <description>Below fields are required in order to read/write data from PLC.</description>

@@ -49,6 +49,7 @@ public abstract class SharedPlc4xThingHandler<T extends PlcConnection, B extends
 
   protected final Map<ChannelUID, ScheduledFuture> futures = new ConcurrentHashMap<>();
   private final Logger logger = LoggerFactory.getLogger(getClass());
+  private T connection;
 
   public SharedPlc4xThingHandler(Thing thing) {
     super(thing);
@@ -77,11 +78,9 @@ public abstract class SharedPlc4xThingHandler<T extends PlcConnection, B extends
         CommonChannelConfiguration.class);
 
       try {
-        Long cycleTime = channelConfig.refreshInterval == null ? getRefreshInterval()
-          : channelConfig.refreshInterval;
-        ScheduledFuture<?> future = scheduler
-          .scheduleAtFixedRate(new ReadTask(connection, getCallback(), channel), 0,
-            cycleTime, TimeUnit.MILLISECONDS);
+        Long cycleTime = channelConfig.refreshInterval == null ? getRefreshInterval() : channelConfig.refreshInterval;
+        ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(new ReadTask(connection, getCallback(), channel), 0,
+          cycleTime, TimeUnit.MILLISECONDS);
         futures.put(channel.getUID(), future);
       } catch (PlcRuntimeException er) {
         logger.warn("Channel configuration error", er);
@@ -107,15 +106,15 @@ public abstract class SharedPlc4xThingHandler<T extends PlcConnection, B extends
     Channel channel = getThing().getChannel(channelUID);
 
     if (RefreshType.REFRESH == command) {
-      getPlcConnection().ifPresent(connection -> scheduler.submit(new ReadTask(connection,
+      getBridgeConnection().ifPresent(connection -> scheduler.submit(new ReadTask(connection,
           getCallback(), channel)));
     } else {
-      getPlcConnection()
+      getBridgeConnection()
           .ifPresent(connection -> scheduler.submit(new WriteTask(connection, channel, command)));
     }
   }
 
-  protected Optional<T> getPlcConnection() {
+  protected Optional<T> getBridgeConnection() {
     return getBridgeHandler().map(SharedPlc4xBridgeHandler::getConnection);
   }
 
@@ -127,16 +126,6 @@ public abstract class SharedPlc4xThingHandler<T extends PlcConnection, B extends
 
   private void clearTasks() {
     futures.forEach((k, v) -> v.cancel(false));
-
-    getPlcConnection().ifPresent(connection -> {
-      try {
-        if (connection.isConnected()) {
-          connection.close();
-        }
-      } catch (Exception e) {
-        logger.info("Could not close connection", e);
-      }
-    });
   }
 
 }

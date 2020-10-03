@@ -90,7 +90,7 @@ public class SiemensNetworkBridgeHandler extends
   }
 
   @Override
-  public S7PlcConnection getConnection() {
+  protected S7PlcConnection getPlcConnection() {
     return initializer.getNow(null);
   }
 
