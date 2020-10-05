@@ -82,3 +82,26 @@ Bridge co7io-plc4x-ads:ams:local "My connection" [ sourceAmsId="10.10.10.10.1.1"
 ```
 
 include::_include/000_tip_mutiple_things.adoc[]
+
+==== Debugging and troubleshooting
+
+Code have been tested with TwinCAT 2 and TwinCAT 3 - both do work, however symbolic fields within TwinCAT 2 seem to have troubles.
+Please try using hex or decimal addresses if symbols fails to work.
+
+If you set up your routes using vendor tooling or seek for a way to debug connection please use https://connectorio.com/shop/[free Beckhoff PLC Symbol Table Scanner].
+Tool can be run as every other java program using `java -jar the-scanner-file.jar ...`.
+Complete list of required arguments is provided by a tool itself.
+
+Because of additional layer of configuration required by AMS this binding is extremely sensitive to network setup.
+Binding attempts to set up AMS routing from openHAB to discovered devices (if any) through provided username and password.
+If routing setup fails connection attempts to PLC is still made.
+This is simply due to fact that adding the same AMS route to PLC second time often does not result in any answer or in a failed answer.
+
+Beckhoff devices accept *only one* connection with specified AMS net id.
+Second connection will be accepted at TCP level but will not report any data.
+Overall communication will not work and symptom for that are timeout errors reported for configured data points.
+
+[NOTE]
+====
+Any updates to AMS network settings require *restart of entire openHAB*.
+====

@@ -4,6 +4,15 @@ Below list contains summarized list of changes which been introduced over time.
 Above documentation describes latest state of integration.
 In case if you run older version of integration, please make sure you check earlier documentation.
 
+===== Release 20201006
+
+Released on *October 6th, 2020*.
+Compatible with openHAB 2.5.x.
+
+* [Beckhoff, Siemens] Fixed connection leaks.
+* [Beckhoff] Fixed broken support for number channels.
+* Update of Apache PLC4X to 0.6.1 (a pre-release) version.
+
 ===== Release 20200504
 
 Released on *May 4th, 2020*.
