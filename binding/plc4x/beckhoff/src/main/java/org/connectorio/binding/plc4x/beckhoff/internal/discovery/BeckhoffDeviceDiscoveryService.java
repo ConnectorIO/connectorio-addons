@@ -27,13 +27,13 @@ import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffAmsAdsConf
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.DiscoverySender.Envelope;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.udp.UdpDiscoveryRequest;
 import org.connectorio.binding.plc4x.beckhoff.internal.handler.BeckhoffAmsAdsBridgeHandler;
-import org.eclipse.smarthome.config.discovery.AbstractDiscoveryService;
-import org.eclipse.smarthome.config.discovery.DiscoveryResult;
-import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
-import org.eclipse.smarthome.config.discovery.DiscoveryService;
-import org.eclipse.smarthome.core.thing.ThingUID;
-import org.eclipse.smarthome.core.thing.binding.ThingHandler;
-import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
+import org.openhab.core.config.discovery.AbstractDiscoveryService;
+import org.openhab.core.config.discovery.DiscoveryResult;
+import org.openhab.core.config.discovery.DiscoveryResultBuilder;
+import org.openhab.core.config.discovery.DiscoveryService;
+import org.openhab.core.thing.ThingUID;
+import org.openhab.core.thing.binding.ThingHandler;
+import org.openhab.core.thing.binding.ThingHandlerService;
 
 public class BeckhoffDeviceDiscoveryService extends AbstractDiscoveryService implements DiscoveryService, ThingHandlerService,
   BeckhoffDiscoveryListener {

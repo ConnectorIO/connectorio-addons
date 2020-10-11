@@ -21,12 +21,12 @@ import static org.connectorio.binding.compute.cycle.internal.CycleBindingConstan
 
 import org.connectorio.binding.base.handler.factory.BaseThingHandlerFactory;
 import org.connectorio.binding.compute.cycle.internal.memo.StateCollector;
-import org.eclipse.smarthome.core.items.ItemRegistry;
-import org.eclipse.smarthome.core.items.events.ItemStateChangedEvent;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
-import org.eclipse.smarthome.core.thing.binding.ThingHandler;
-import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
+import org.openhab.core.items.ItemRegistry;
+import org.openhab.core.items.events.ItemStateChangedEvent;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingTypeUID;
+import org.openhab.core.thing.binding.ThingHandler;
+import org.openhab.core.thing.binding.ThingHandlerFactory;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

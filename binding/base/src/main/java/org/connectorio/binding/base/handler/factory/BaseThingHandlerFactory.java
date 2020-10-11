@@ -20,7 +20,7 @@ package org.connectorio.binding.base.handler.factory;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
+import org.openhab.core.thing.ThingTypeUID;
 
 /**
  * A very basic top class for binding implementations which contains the most common part of all
@@ -28,7 +28,7 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
  *
  * @author Łukasz Dywicki
  */
-public abstract class BaseThingHandlerFactory extends org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory {
+public abstract class BaseThingHandlerFactory extends org.openhab.core.thing.binding.BaseThingHandlerFactory {
 
   private final Set<ThingTypeUID> supportedThings;
 

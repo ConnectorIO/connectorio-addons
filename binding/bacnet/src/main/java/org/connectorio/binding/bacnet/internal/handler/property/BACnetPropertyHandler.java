@@ -38,13 +38,11 @@ import org.connectorio.binding.bacnet.internal.config.ChannelConfig;
 import org.connectorio.binding.bacnet.internal.config.ObjectConfig;
 import org.connectorio.binding.base.handler.PollingHandler;
 import org.connectorio.binding.base.handler.polling.common.BasePollingThingHandler;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.thing.ThingStatusDetail;
-import org.eclipse.smarthome.core.types.Command;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.thing.ThingStatusDetail;
+import org.openhab.core.types.Command;
 
 public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BACnetDeviceBridgeHandler<?, ?>, C extends ObjectConfig>
   extends BasePollingThingHandler<B, C> {

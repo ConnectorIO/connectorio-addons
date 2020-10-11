@@ -26,7 +26,7 @@ import org.connectorio.binding.bacnet.internal.BACnetBindingConstants;
 import org.connectorio.binding.bacnet.internal.config.BACnetConfig;
 import org.connectorio.binding.bacnet.internal.handler.network.BACnetNetworkBridgeHandler;
 import org.connectorio.binding.base.handler.polling.common.BasePollingBridgeHandler;
-import org.eclipse.smarthome.core.thing.Bridge;
+import org.openhab.core.thing.Bridge;
 
 public abstract class BACnetObjectHandler<T extends BACnetObject, B extends BACnetNetworkBridgeHandler<?>, C extends BACnetConfig>
   extends BasePollingBridgeHandler<C> {

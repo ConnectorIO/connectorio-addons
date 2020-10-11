@@ -17,7 +17,7 @@
  */
 package org.connectorio.binding.compute.cycle.internal;
 
-import org.eclipse.smarthome.core.thing.ChannelUID;
+import org.openhab.core.thing.ChannelUID;
 
 public interface CycleOperation {
 

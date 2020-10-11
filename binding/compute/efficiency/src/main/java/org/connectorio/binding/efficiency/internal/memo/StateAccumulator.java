@@ -19,9 +19,9 @@ package org.connectorio.binding.efficiency.internal.memo;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import org.eclipse.smarthome.core.events.AbstractTypedEventSubscriber;
-import org.eclipse.smarthome.core.events.EventSubscriber;
-import org.eclipse.smarthome.core.items.events.ItemStateChangedEvent;
+import org.openhab.core.events.AbstractTypedEventSubscriber;
+import org.openhab.core.events.EventSubscriber;
+import org.openhab.core.items.events.ItemStateChangedEvent;
 import org.osgi.service.component.annotations.Component;
 
 @Component(service = EventSubscriber.class, immediate = true)

@@ -22,11 +22,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.connectorio.binding.compute.cycle.internal.memo.StateReceiver;
-import org.eclipse.smarthome.core.items.events.ItemStateChangedEvent;
-import org.eclipse.smarthome.core.library.types.OnOffType;
-import org.eclipse.smarthome.core.library.types.OpenClosedType;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.types.State;
+import org.openhab.core.items.events.ItemStateChangedEvent;
+import org.openhab.core.library.types.OnOffType;
+import org.openhab.core.library.types.OpenClosedType;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.types.State;
 
 public class TriggerReceiver implements StateReceiver<ItemStateChangedEvent> {
 

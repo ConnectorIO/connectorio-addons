@@ -18,11 +18,12 @@
 package org.connectorio.binding.compute.consumption.internal;
 
 import java.time.ZonedDateTime;
-import org.eclipse.smarthome.core.i18n.TimeZoneProvider;
-import org.eclipse.smarthome.core.items.Item;
-import org.eclipse.smarthome.core.library.types.DecimalType;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.binding.ThingHandlerCallback;
+import org.openhab.core.i18n.TimeZoneProvider;
+import org.openhab.core.items.Item;
+import org.openhab.core.library.types.DecimalType;
+import org.openhab.core.persistence.extensions.PersistenceExtensions;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.binding.ThingHandlerCallback;
 
 public class ConsumptionCalculationTask implements Runnable {
 
@@ -42,7 +43,7 @@ public class ConsumptionCalculationTask implements Runnable {
   public void run() {
     ZonedDateTime now = ZonedDateTime.now(timeZoneProvider.getTimeZone()).minusSeconds(60);
 
-    DecimalType deltaSince = PersistenceExtensions.deltaSince(item, now.toInstant());
+    DecimalType deltaSince = PersistenceExtensions.deltaSince(item, now);
     if (deltaSince != null) {
       callback.stateUpdated(channelUID, deltaSince);
     }

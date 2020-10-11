@@ -21,10 +21,10 @@ import static org.mockito.Mockito.when;
 
 import org.connectorio.binding.base.config.Configuration;
 import org.connectorio.binding.base.handler.GenericBridgeHandler;
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.ThingUID;
-import org.eclipse.smarthome.core.thing.binding.BridgeHandler;
-import org.eclipse.smarthome.core.thing.binding.ThingHandlerCallback;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.ThingUID;
+import org.openhab.core.thing.binding.BridgeHandler;
+import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.mockito.Mockito;
 
 public class BridgeMock<B extends GenericBridgeHandler<C>, C extends Configuration> {
@@ -52,7 +52,7 @@ public class BridgeMock<B extends GenericBridgeHandler<C>, C extends Configurati
   }
 
   public BridgeMock<B, C> withConfig(C mapped) {
-    org.eclipse.smarthome.config.core.Configuration cfg = config.get(mapped);
+    org.openhab.core.config.core.Configuration cfg = config.get(mapped);
     when(bridge.getConfiguration()).thenReturn(cfg);
     return this;
   }

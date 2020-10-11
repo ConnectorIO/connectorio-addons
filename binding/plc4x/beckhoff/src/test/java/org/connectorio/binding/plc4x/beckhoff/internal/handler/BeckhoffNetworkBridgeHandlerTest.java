@@ -35,8 +35,8 @@ import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffNetworkCon
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.DiscoverySender;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.RouteReceiver;
 import org.connectorio.binding.test.BridgeMock;
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.ThingUID;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.ThingUID;
 import org.junit.jupiter.api.Test;
 
 class BeckhoffNetworkBridgeHandlerTest {

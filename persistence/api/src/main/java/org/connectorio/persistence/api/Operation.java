@@ -17,7 +17,7 @@
  */
 package org.connectorio.persistence.api;
 
-import org.eclipse.smarthome.core.items.Item;
+import org.openhab.core.items.Item;
 
 public interface Operation<T> {
 

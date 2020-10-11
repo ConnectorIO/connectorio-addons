@@ -18,8 +18,8 @@
 package org.connectorio.persistence.api;
 
 import java.time.Instant;
-import org.eclipse.smarthome.core.library.types.DecimalType;
-import org.eclipse.smarthome.core.persistence.HistoricItem;
+import org.openhab.core.library.types.DecimalType;
+import org.openhab.core.persistence.HistoricItem;
 
 public interface OperationKind<T> {
 

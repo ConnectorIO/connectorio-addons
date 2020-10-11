@@ -35,13 +35,13 @@ import org.connectorio.binding.bacnet.internal.config.MstpConfig.Parity;
 import org.connectorio.binding.bacnet.internal.discovery.BACnetMstpDeviceDiscoveryService;
 import org.connectorio.binding.bacnet.internal.handler.network.mstp.ManagedMstpNetworkBuilder;
 import org.connectorio.binding.base.handler.polling.common.BasePollingBridgeHandler;
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.thing.ThingStatusDetail;
-import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
-import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.io.transport.serial.SerialPortManager;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.thing.ThingStatusDetail;
+import org.openhab.core.thing.binding.ThingHandlerService;
+import org.openhab.core.types.Command;
+import org.openhab.core.io.transport.serial.SerialPortManager;
 
 public class BACnetMstpBridgeHandler extends BasePollingBridgeHandler<MstpConfig> implements BACnetNetworkBridgeHandler<MstpConfig> {
 

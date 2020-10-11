@@ -20,12 +20,12 @@ package org.connectorio.binding.compute.consumption.internal;
 import static org.connectorio.binding.compute.consumption.internal.ConsumptionBindingConstants.THING_TYPE_CONSUMPTION;
 
 import org.connectorio.binding.base.handler.factory.BaseThingHandlerFactory;
-import org.eclipse.smarthome.core.i18n.TimeZoneProvider;
-import org.eclipse.smarthome.core.items.ItemRegistry;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
-import org.eclipse.smarthome.core.thing.binding.ThingHandler;
-import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
+import org.openhab.core.i18n.TimeZoneProvider;
+import org.openhab.core.items.ItemRegistry;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingTypeUID;
+import org.openhab.core.thing.binding.ThingHandler;
+import org.openhab.core.thing.binding.ThingHandlerFactory;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

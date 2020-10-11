@@ -19,7 +19,7 @@ package org.connectorio.binding.test;
 
 import static org.mockito.Mockito.when;
 
-import org.eclipse.smarthome.config.core.Configuration;
+import org.openhab.core.config.core.Configuration;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 

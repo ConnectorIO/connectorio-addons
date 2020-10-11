@@ -21,7 +21,7 @@
  */
 package org.connectorio.binding.bacnet.internal;
 
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
+import org.openhab.core.thing.ThingTypeUID;
 
 public interface BACnetBindingConstants {
 

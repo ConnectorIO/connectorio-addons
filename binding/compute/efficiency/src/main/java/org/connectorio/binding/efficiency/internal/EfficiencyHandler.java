@@ -23,18 +23,18 @@ import java.util.List;
 import org.connectorio.binding.efficiency.internal.memo.StateCollector;
 import org.connectorio.binding.efficiency.internal.ventilation.heatex.HeatExConfig;
 import org.connectorio.binding.efficiency.internal.ventilation.heatex.HeatExState;
-import org.eclipse.smarthome.config.core.status.ConfigStatusMessage;
-import org.eclipse.smarthome.config.core.status.ConfigStatusMessage.Builder;
-import org.eclipse.smarthome.core.items.Item;
-import org.eclipse.smarthome.core.items.ItemNotFoundException;
-import org.eclipse.smarthome.core.items.ItemRegistry;
-import org.eclipse.smarthome.core.items.events.ItemStateChangedEvent;
-import org.eclipse.smarthome.core.library.CoreItemFactory;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.thing.binding.ConfigStatusThingHandler;
-import org.eclipse.smarthome.core.types.Command;
+import org.openhab.core.config.core.status.ConfigStatusMessage;
+import org.openhab.core.config.core.status.ConfigStatusMessage.Builder;
+import org.openhab.core.items.Item;
+import org.openhab.core.items.ItemNotFoundException;
+import org.openhab.core.items.ItemRegistry;
+import org.openhab.core.items.events.ItemStateChangedEvent;
+import org.openhab.core.library.CoreItemFactory;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.thing.binding.ConfigStatusThingHandler;
+import org.openhab.core.types.Command;
 
 public class EfficiencyHandler extends ConfigStatusThingHandler {
 

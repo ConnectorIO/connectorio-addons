@@ -24,13 +24,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 import org.connectorio.binding.transformation.inverse.profile.toggle.ToggleSwitchStateProfile;
-import org.eclipse.smarthome.core.thing.profiles.Profile;
-import org.eclipse.smarthome.core.thing.profiles.ProfileCallback;
-import org.eclipse.smarthome.core.thing.profiles.ProfileContext;
-import org.eclipse.smarthome.core.thing.profiles.ProfileFactory;
-import org.eclipse.smarthome.core.thing.profiles.ProfileType;
-import org.eclipse.smarthome.core.thing.profiles.ProfileTypeProvider;
-import org.eclipse.smarthome.core.thing.profiles.ProfileTypeUID;
+import org.openhab.core.thing.profiles.Profile;
+import org.openhab.core.thing.profiles.ProfileCallback;
+import org.openhab.core.thing.profiles.ProfileContext;
+import org.openhab.core.thing.profiles.ProfileFactory;
+import org.openhab.core.thing.profiles.ProfileType;
+import org.openhab.core.thing.profiles.ProfileTypeProvider;
+import org.openhab.core.thing.profiles.ProfileTypeUID;
 import org.osgi.service.component.annotations.Component;
 
 @Component(service = {ProfileFactory.class, ProfileTypeProvider.class})

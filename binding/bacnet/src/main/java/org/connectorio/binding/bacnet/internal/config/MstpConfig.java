@@ -21,7 +21,7 @@
  */
 package org.connectorio.binding.bacnet.internal.config;
 
-import org.eclipse.smarthome.io.transport.serial.SerialPort;
+import org.openhab.core.io.transport.serial.SerialPort;
 
 public class MstpConfig extends BACnetConfig {
 

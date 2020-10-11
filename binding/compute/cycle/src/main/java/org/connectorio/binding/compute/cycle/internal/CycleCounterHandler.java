@@ -29,20 +29,20 @@ import org.connectorio.binding.compute.cycle.internal.memo.StateCollector;
 import org.connectorio.binding.compute.cycle.internal.operation.CycleCount;
 import org.connectorio.binding.compute.cycle.internal.operation.CycleDifference;
 import org.connectorio.binding.compute.cycle.internal.operation.CycleTime;
-import org.eclipse.smarthome.config.core.status.ConfigStatusMessage;
-import org.eclipse.smarthome.config.core.status.ConfigStatusMessage.Builder;
-import org.eclipse.smarthome.core.items.Item;
-import org.eclipse.smarthome.core.items.ItemNotFoundException;
-import org.eclipse.smarthome.core.items.ItemRegistry;
-import org.eclipse.smarthome.core.items.events.ItemStateChangedEvent;
-import org.eclipse.smarthome.core.library.CoreItemFactory;
-import org.eclipse.smarthome.core.thing.Channel;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.thing.binding.ConfigStatusThingHandler;
-import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
-import org.eclipse.smarthome.core.types.Command;
+import org.openhab.core.config.core.status.ConfigStatusMessage;
+import org.openhab.core.config.core.status.ConfigStatusMessage.Builder;
+import org.openhab.core.items.Item;
+import org.openhab.core.items.ItemNotFoundException;
+import org.openhab.core.items.ItemRegistry;
+import org.openhab.core.items.events.ItemStateChangedEvent;
+import org.openhab.core.library.CoreItemFactory;
+import org.openhab.core.thing.Channel;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.thing.binding.ConfigStatusThingHandler;
+import org.openhab.core.thing.type.ChannelTypeUID;
+import org.openhab.core.types.Command;
 
 public class CycleCounterHandler extends ConfigStatusThingHandler {
 

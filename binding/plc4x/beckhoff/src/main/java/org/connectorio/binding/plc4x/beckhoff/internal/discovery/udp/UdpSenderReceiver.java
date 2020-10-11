@@ -36,8 +36,8 @@ import org.connectorio.binding.plc4x.beckhoff.internal.discovery.BeckhoffRouteLi
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.DiscoveryReceiver;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.DiscoverySender;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.RouteReceiver;
-import org.eclipse.smarthome.core.common.ThreadPoolManager;
-import org.eclipse.smarthome.core.util.HexUtils;
+import org.openhab.core.common.ThreadPoolManager;
+import org.openhab.core.util.HexUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;

@@ -24,11 +24,11 @@ import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffAmsAdsConf
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.BeckhoffDeviceDiscoveryService;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.DiscoveryReceiver;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.DiscoverySender;
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
-import org.eclipse.smarthome.core.types.Command;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.thing.binding.ThingHandlerService;
+import org.openhab.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

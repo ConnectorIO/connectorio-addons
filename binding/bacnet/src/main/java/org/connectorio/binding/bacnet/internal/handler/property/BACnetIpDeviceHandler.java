@@ -24,8 +24,8 @@ package org.connectorio.binding.bacnet.internal.handler.property;
 import org.code_house.bacnet4j.wrapper.api.Device;
 import org.code_house.bacnet4j.wrapper.ip.IpDevice;
 import org.connectorio.binding.bacnet.internal.config.IpDeviceConfig;
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.Thing;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.Thing;
 
 public class BACnetIpDeviceHandler extends BACnetDeviceHandler<IpDeviceConfig> {
 

@@ -25,12 +25,12 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import org.connectorio.binding.efficiency.internal.memo.StateReceiver;
-import org.eclipse.smarthome.core.items.events.ItemStateChangedEvent;
-import org.eclipse.smarthome.core.library.types.DecimalType;
-import org.eclipse.smarthome.core.library.types.PercentType;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.binding.ThingHandlerCallback;
-import org.eclipse.smarthome.core.types.State;
+import org.openhab.core.items.events.ItemStateChangedEvent;
+import org.openhab.core.library.types.DecimalType;
+import org.openhab.core.library.types.PercentType;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.binding.ThingHandlerCallback;
+import org.openhab.core.types.State;
 
 /**
  * A very basic implementation of naive calculation of heat efficiency algorithm.

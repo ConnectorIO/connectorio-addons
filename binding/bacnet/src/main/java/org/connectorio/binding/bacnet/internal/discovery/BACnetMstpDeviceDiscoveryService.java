@@ -26,9 +26,9 @@ import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.MST
 import java.util.Collections;
 import org.code_house.bacnet4j.wrapper.mstp.MstpDevice;
 import org.connectorio.binding.bacnet.internal.handler.network.BACnetNetworkBridgeHandler;
-import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
-import org.eclipse.smarthome.config.discovery.DiscoveryService;
-import org.eclipse.smarthome.core.thing.ThingUID;
+import org.openhab.core.config.discovery.DiscoveryResultBuilder;
+import org.openhab.core.config.discovery.DiscoveryService;
+import org.openhab.core.thing.ThingUID;
 
 public class BACnetMstpDeviceDiscoveryService extends BACnetDeviceDiscoveryService<MstpDevice> implements DiscoveryService {
 

@@ -32,13 +32,13 @@ import org.connectorio.binding.bacnet.internal.config.DeviceConfig;
 import org.connectorio.binding.bacnet.internal.discovery.BACnetPropertyDiscoveryService;
 import org.connectorio.binding.bacnet.internal.handler.BACnetObjectHandler;
 import org.connectorio.binding.bacnet.internal.handler.network.BACnetNetworkBridgeHandler;
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.thing.ThingStatusDetail;
-import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
-import org.eclipse.smarthome.core.types.Command;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.thing.ThingStatusDetail;
+import org.openhab.core.thing.binding.ThingHandlerService;
+import org.openhab.core.types.Command;
 
 public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnetObjectHandler<DeviceObject, BACnetNetworkBridgeHandler<?>, C>
   implements BACnetDeviceBridgeHandler<BACnetNetworkBridgeHandler<?>, C> {

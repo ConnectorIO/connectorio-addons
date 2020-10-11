@@ -27,15 +27,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.connectorio.binding.bacnet.internal.BACnetBindingConstants;
-import org.eclipse.smarthome.config.discovery.AbstractDiscoveryService;
-import org.eclipse.smarthome.config.discovery.DiscoveryResult;
-import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
-import org.eclipse.smarthome.config.discovery.DiscoveryService;
-import org.eclipse.smarthome.core.net.CidrAddress;
-import org.eclipse.smarthome.core.net.NetUtil;
-import org.eclipse.smarthome.core.net.NetworkAddressChangeListener;
-import org.eclipse.smarthome.core.net.NetworkAddressService;
-import org.eclipse.smarthome.core.thing.ThingUID;
+import org.openhab.core.config.discovery.AbstractDiscoveryService;
+import org.openhab.core.config.discovery.DiscoveryResult;
+import org.openhab.core.config.discovery.DiscoveryResultBuilder;
+import org.openhab.core.config.discovery.DiscoveryService;
+import org.openhab.core.net.CidrAddress;
+import org.openhab.core.net.NetUtil;
+import org.openhab.core.net.NetworkAddressChangeListener;
+import org.openhab.core.net.NetworkAddressService;
+import org.openhab.core.thing.ThingUID;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -86,8 +86,7 @@ public class BACnetInterfaceDiscoveryService extends AbstractDiscoveryService im
       if (address instanceof Inet4Address) {
         String broadcastAddress = NetUtil.getIpv4NetBroadcastAddress(address.getHostAddress(), (short) addr.getPrefix());
 
-        DiscoveryResult network = DiscoveryResultBuilder
-          .create(new ThingUID(BACnetBindingConstants.IPV4_BRIDGE_THING_TYPE, broadcastAddress.replace(".", "_")))
+        DiscoveryResult network = DiscoveryResultBuilder.create(new ThingUID(BACnetBindingConstants.IPV4_BRIDGE_THING_TYPE, broadcastAddress.replace(".", "_")))
           .withLabel("BACnet IPv4 network " + address.getHostAddress())
           //.withProperty("localBindAddress", address.getHostAddress())
           .withProperty("broadcastAddress", broadcastAddress)

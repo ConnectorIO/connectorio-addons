@@ -18,7 +18,7 @@
 package org.connectorio.binding.plc4x.beckhoff.internal;
 
 import org.connectorio.binding.plc4x.shared.Plc4xBindingConstants;
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
+import org.openhab.core.thing.ThingTypeUID;
 
 /**
  * The {@link BeckhoffBindingConstants} class defines common constants, which are used across the

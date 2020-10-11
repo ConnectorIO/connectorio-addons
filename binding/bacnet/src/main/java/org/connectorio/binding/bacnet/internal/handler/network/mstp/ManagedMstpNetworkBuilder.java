@@ -25,9 +25,9 @@ import com.serotonin.bacnet4j.npdu.mstp.MasterNode;
 import com.serotonin.bacnet4j.npdu.mstp.MstpNetwork;
 import org.code_house.bacnet4j.wrapper.mstp.MstpNetworkBuilder;
 import org.connectorio.binding.bacnet.internal.BACnetBindingConstants;
-import org.eclipse.smarthome.io.transport.serial.SerialPort;
-import org.eclipse.smarthome.io.transport.serial.SerialPortIdentifier;
-import org.eclipse.smarthome.io.transport.serial.SerialPortManager;
+import org.openhab.core.io.transport.serial.SerialPort;
+import org.openhab.core.io.transport.serial.SerialPortIdentifier;
+import org.openhab.core.io.transport.serial.SerialPortManager;
 
 public class ManagedMstpNetworkBuilder extends MstpNetworkBuilder {
 

@@ -28,13 +28,13 @@ import java.util.concurrent.TimeUnit;
 import org.code_house.bacnet4j.wrapper.api.Device;
 import org.connectorio.binding.bacnet.internal.handler.network.BACnetNetworkBridgeHandler;
 import org.connectorio.binding.base.GenericTypeUtil;
-import org.eclipse.smarthome.config.discovery.AbstractDiscoveryService;
-import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
-import org.eclipse.smarthome.config.discovery.DiscoveryService;
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
-import org.eclipse.smarthome.core.thing.ThingUID;
-import org.eclipse.smarthome.core.thing.binding.ThingHandler;
-import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
+import org.openhab.core.config.discovery.AbstractDiscoveryService;
+import org.openhab.core.config.discovery.DiscoveryResultBuilder;
+import org.openhab.core.config.discovery.DiscoveryService;
+import org.openhab.core.thing.ThingTypeUID;
+import org.openhab.core.thing.ThingUID;
+import org.openhab.core.thing.binding.ThingHandler;
+import org.openhab.core.thing.binding.ThingHandlerService;
 
 public abstract class BACnetDeviceDiscoveryService<T extends Device> extends AbstractDiscoveryService implements ThingHandlerService, DiscoveryService {
 
@@ -72,8 +72,7 @@ public abstract class BACnetDeviceDiscoveryService<T extends Device> extends Abs
 
     T discoveredDevice = (T) device;
 
-    DiscoveryResultBuilder discoveryResult = DiscoveryResultBuilder
-      .create(createThingId(discoveredDevice))
+    DiscoveryResultBuilder discoveryResult = DiscoveryResultBuilder.create(createThingId(discoveredDevice))
       .withLabel(device.getModelName() + ", " + device.getName() + " (" + device.getVendorName() + ")" + device.getModelName())
       .withBridge(handler.getThing().getUID())
       .withProperty("instance", device.getInstanceNumber())

@@ -17,12 +17,12 @@
  */
 package org.connectorio.binding.transformation.inverse.profile;
 
-import org.eclipse.smarthome.core.library.CoreItemFactory;
-import org.eclipse.smarthome.core.thing.Channel;
-import org.eclipse.smarthome.core.thing.profiles.ProfileAdvisor;
-import org.eclipse.smarthome.core.thing.profiles.ProfileTypeUID;
-import org.eclipse.smarthome.core.thing.type.ChannelKind;
-import org.eclipse.smarthome.core.thing.type.ChannelType;
+import org.openhab.core.library.CoreItemFactory;
+import org.openhab.core.thing.Channel;
+import org.openhab.core.thing.profiles.ProfileAdvisor;
+import org.openhab.core.thing.profiles.ProfileTypeUID;
+import org.openhab.core.thing.type.ChannelKind;
+import org.openhab.core.thing.type.ChannelType;
 import org.osgi.service.component.annotations.Component;
 
 @Component(immediate = true)

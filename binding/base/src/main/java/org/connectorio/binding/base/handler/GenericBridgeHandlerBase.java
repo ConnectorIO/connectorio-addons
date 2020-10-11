@@ -20,8 +20,8 @@ package org.connectorio.binding.base.handler;
 import java.util.Optional;
 import org.connectorio.binding.base.config.Configuration;
 import org.connectorio.binding.base.GenericTypeUtil;
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.binding.BaseBridgeHandler;
 
 public abstract class GenericBridgeHandlerBase<C extends Configuration> extends
     BaseBridgeHandler implements GenericBridgeHandler<C> {

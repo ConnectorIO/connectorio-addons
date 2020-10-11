@@ -22,7 +22,7 @@ import org.connectorio.binding.base.handler.GenericThingHandlerBase;
 import org.connectorio.binding.base.handler.PollingHandler;
 import org.connectorio.binding.base.handler.polling.PollingBridgeHandler;
 import org.connectorio.binding.base.handler.polling.PollingThingHandler;
-import org.eclipse.smarthome.core.thing.Thing;
+import org.openhab.core.thing.Thing;
 
 public abstract class BasePollingThingHandler<B extends PollingBridgeHandler<?>, C extends PollingConfiguration> extends
     GenericThingHandlerBase<B, C> implements PollingThingHandler<B, C> {

@@ -20,10 +20,10 @@ package org.connectorio.binding.base.handler;
 import java.util.Optional;
 import org.connectorio.binding.base.config.PollingConfiguration;
 import org.connectorio.binding.base.GenericTypeUtil;
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
-import org.eclipse.smarthome.core.thing.binding.BridgeHandler;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.binding.BaseThingHandler;
+import org.openhab.core.thing.binding.BridgeHandler;
 
 public abstract class GenericThingHandlerBase<B extends BridgeHandler, C extends PollingConfiguration> extends
     BaseThingHandler implements GenericThingHandler<B, C> {

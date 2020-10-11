@@ -19,7 +19,7 @@ package org.connectorio.binding.plc4x.beckhoff.internal.discovery.udp;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import org.eclipse.smarthome.core.util.HexUtils;
+import org.openhab.core.util.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -26,9 +26,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 import org.connectorio.binding.compute.cycle.internal.CycleOperation;
 import org.connectorio.binding.compute.cycle.internal.config.CounterChannelConfig;
-import org.eclipse.smarthome.core.library.types.DecimalType;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.binding.ThingHandlerCallback;
+import org.openhab.core.library.types.DecimalType;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

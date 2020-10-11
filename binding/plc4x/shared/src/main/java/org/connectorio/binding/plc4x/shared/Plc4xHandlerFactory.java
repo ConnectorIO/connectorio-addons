@@ -19,7 +19,7 @@ package org.connectorio.binding.plc4x.shared;
 
 import java.util.Set;
 import org.connectorio.binding.base.handler.factory.BaseThingHandlerFactory;
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
+import org.openhab.core.thing.ThingTypeUID;
 
 /**
  * Implementation of base class for PLC4X specific handler factories.

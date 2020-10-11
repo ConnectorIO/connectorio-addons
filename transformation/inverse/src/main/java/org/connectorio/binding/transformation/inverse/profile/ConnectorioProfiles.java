@@ -17,9 +17,9 @@
  */
 package org.connectorio.binding.transformation.inverse.profile;
 
-import org.eclipse.smarthome.core.thing.profiles.ProfileTypeBuilder;
-import org.eclipse.smarthome.core.thing.profiles.ProfileTypeUID;
-import org.eclipse.smarthome.core.thing.profiles.StateProfileType;
+import org.openhab.core.thing.profiles.ProfileTypeBuilder;
+import org.openhab.core.thing.profiles.ProfileTypeUID;
+import org.openhab.core.thing.profiles.StateProfileType;
 
 public interface ConnectorioProfiles {
 

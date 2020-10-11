@@ -17,7 +17,7 @@
  */
 package org.connectorio.binding.compute.consumption.internal;
 
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
+import org.openhab.core.thing.ThingTypeUID;
 
 /**
  * The {@link ConsumptionBindingConstants} class defines common constants, which are used across the

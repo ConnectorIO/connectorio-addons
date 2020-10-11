@@ -35,12 +35,12 @@ import org.connectorio.binding.bacnet.internal.config.Ipv4Config;
 import org.connectorio.binding.bacnet.internal.discovery.BACnetDeviceDiscoveryService;
 import org.connectorio.binding.bacnet.internal.discovery.BACnetIpDeviceDiscoveryService;
 import org.connectorio.binding.base.handler.polling.common.BasePollingBridgeHandler;
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.thing.ThingStatusDetail;
-import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
-import org.eclipse.smarthome.core.types.Command;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.thing.ThingStatusDetail;
+import org.openhab.core.thing.binding.ThingHandlerService;
+import org.openhab.core.types.Command;
 
 public class BACnetIpv4BridgeHandler extends BasePollingBridgeHandler<Ipv4Config> implements BACnetNetworkBridgeHandler<Ipv4Config> {
 

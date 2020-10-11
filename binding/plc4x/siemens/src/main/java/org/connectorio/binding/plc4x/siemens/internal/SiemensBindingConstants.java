@@ -18,7 +18,7 @@
 package org.connectorio.binding.plc4x.siemens.internal;
 
 import org.connectorio.binding.plc4x.shared.Plc4xBindingConstants;
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
+import org.openhab.core.thing.ThingTypeUID;
 
 /**
  * The {@link SiemensBindingConstants} class defines common constants, which are used across the

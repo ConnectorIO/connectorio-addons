@@ -25,7 +25,7 @@ import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.s7.connection.S7PlcConnection;
 import org.connectorio.binding.plc4x.siemens.internal.config.SiemensNetworkConfiguration;
 import org.connectorio.binding.test.BridgeMock;
-import org.eclipse.smarthome.core.thing.Bridge;
+import org.openhab.core.thing.Bridge;
 import org.junit.jupiter.api.Test;
 
 class SiemensNetworkBridgeHandlerTest {

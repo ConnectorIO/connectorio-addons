@@ -21,11 +21,11 @@ import static org.connectorio.binding.plc4x.siemens.internal.SiemensBindingConst
 import static org.connectorio.binding.plc4x.siemens.internal.SiemensBindingConstants.THING_TYPE_TCP_IP;
 
 import org.connectorio.binding.plc4x.shared.Plc4xHandlerFactory;
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
-import org.eclipse.smarthome.core.thing.binding.ThingHandler;
-import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingTypeUID;
+import org.openhab.core.thing.binding.ThingHandler;
+import org.openhab.core.thing.binding.ThingHandlerFactory;
 import org.osgi.service.component.annotations.Component;
 
 /**

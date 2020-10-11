@@ -26,7 +26,7 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import org.apache.plc4x.java.ads.api.generic.types.AmsNetId;
-import org.eclipse.smarthome.core.util.HexUtils;
+import org.openhab.core.util.HexUtils;
 
 public class UdpRouteRequest extends UdpStructure {
 

@@ -17,7 +17,7 @@
  */
 package org.connectorio.binding.efficiency.internal.ventilation.heatex;
 
-import org.eclipse.smarthome.core.items.Item;
+import org.openhab.core.items.Item;
 
 public class HeatExInput {
 

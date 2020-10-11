@@ -19,8 +19,8 @@ package org.connectorio.binding.transformation.inverse;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.eclipse.smarthome.core.transform.TransformationException;
-import org.eclipse.smarthome.core.transform.TransformationService;
+import org.openhab.core.transform.TransformationException;
+import org.openhab.core.transform.TransformationService;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
