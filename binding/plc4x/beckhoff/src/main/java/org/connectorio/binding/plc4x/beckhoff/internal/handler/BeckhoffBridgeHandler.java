@@ -22,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.apache.plc4x.java.ads.connection.AdsAbstractPlcConnection;
+import org.apache.plc4x.java.spi.connection.AbstractPlcConnection;
 import org.connectorio.binding.plc4x.beckhoff.internal.BeckhoffBindingConstants;
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffAmsAdsConfiguration;
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffBridgeConfiguration;
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Lukasz Dywicki - Initial contribution
  */
-public abstract class BeckhoffBridgeHandler<T extends AdsAbstractPlcConnection, C extends BeckhoffBridgeConfiguration> extends
+public abstract class BeckhoffBridgeHandler<T extends AbstractPlcConnection, C extends BeckhoffBridgeConfiguration> extends
     SharedPlc4xBridgeHandler<T, C> {
 
   private final Logger logger = LoggerFactory.getLogger(BeckhoffBridgeHandler.class);

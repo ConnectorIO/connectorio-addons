@@ -17,13 +17,13 @@
  */
 package org.connectorio.binding.plc4x.beckhoff.internal.handler;
 
-import org.apache.plc4x.java.ads.connection.AdsAbstractPlcConnection;
+import org.apache.plc4x.java.spi.connection.AbstractPlcConnection;
 import org.connectorio.binding.plc4x.beckhoff.internal.BeckhoffBindingConstants;
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffBridgeConfiguration;
 import org.connectorio.binding.plc4x.shared.handler.SharedPlc4xThingHandler;
 import org.openhab.core.thing.Thing;
 
-public class BeckhoffPlcHandler extends SharedPlc4xThingHandler<AdsAbstractPlcConnection, BeckhoffBridgeHandler<AdsAbstractPlcConnection, ?>, BeckhoffBridgeConfiguration> {
+public class BeckhoffPlcHandler extends SharedPlc4xThingHandler<AbstractPlcConnection, BeckhoffBridgeHandler<AbstractPlcConnection, ?>, BeckhoffBridgeConfiguration> {
 
   public BeckhoffPlcHandler(Thing thing) {
     super(thing);

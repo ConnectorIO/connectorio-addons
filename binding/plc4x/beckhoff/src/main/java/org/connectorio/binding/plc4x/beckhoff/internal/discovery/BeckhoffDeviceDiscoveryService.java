@@ -17,15 +17,18 @@
  */
 package org.connectorio.binding.plc4x.beckhoff.internal.discovery;
 
+import static org.connectorio.binding.plc4x.beckhoff.internal.AmsConverter.createDiscoveryAms;
 import static org.connectorio.binding.plc4x.beckhoff.internal.BeckhoffBindingConstants.THING_TYPE_NETWORK;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.plc4x.java.ads.discovery.readwrite.DiscoveryRequest;
+import org.apache.plc4x.java.ads.discovery.readwrite.types.Direction;
+import org.apache.plc4x.java.ads.discovery.readwrite.types.Operation;
 import org.connectorio.binding.plc4x.beckhoff.internal.BeckhoffBindingConstants;
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffAmsAdsConfiguration;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.DiscoverySender.Envelope;
-import org.connectorio.binding.plc4x.beckhoff.internal.discovery.udp.UdpDiscoveryRequest;
 import org.connectorio.binding.plc4x.beckhoff.internal.handler.BeckhoffAmsAdsBridgeHandler;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
@@ -52,7 +55,7 @@ public class BeckhoffDeviceDiscoveryService extends AbstractDiscoveryService imp
 
         sender.send(new Envelope(
           cfg.broadcastAddress,
-          new UdpDiscoveryRequest(cfg.sourceAmsId)
+          new DiscoveryRequest(Operation.DISCOVERY, Direction.REQUEST, createDiscoveryAms(cfg.sourceAmsId))
         ));
       });
   }
@@ -100,12 +103,13 @@ public class BeckhoffDeviceDiscoveryService extends AbstractDiscoveryService imp
 
   @Override
   public void deviceDiscovered(String host, String name, String amsNetId) {
+    final ThingUID bridgeUID = getHandler().get().getThing().getUID();
     DiscoveryResult network = DiscoveryResultBuilder
-      .create(new ThingUID(THING_TYPE_NETWORK, host.replace(".", "_")))
+      .create(new ThingUID(THING_TYPE_NETWORK, bridgeUID, host.replace(".", "_")))
       .withLabel("Beckhoff device " + name + " (" + amsNetId + ")")
       .withProperty("targetAmsId", amsNetId)
       .withProperty("host", host)
-      .withBridge(getHandler().get().getThing().getUID())
+      .withBridge(bridgeUID)
       .build();
 
     thingDiscovered(network);

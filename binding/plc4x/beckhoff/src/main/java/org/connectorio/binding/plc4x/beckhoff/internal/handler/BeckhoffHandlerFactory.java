@@ -26,6 +26,7 @@ import org.connectorio.binding.plc4x.beckhoff.internal.discovery.DiscoveryReceiv
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.DiscoverySender;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.RouteReceiver;
 import org.connectorio.binding.plc4x.shared.Plc4xHandlerFactory;
+import org.connectorio.binding.plc4x.shared.osgi.PlcDriverManager;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingTypeUID;
@@ -43,13 +44,15 @@ import org.osgi.service.component.annotations.Reference;
 @Component(configurationPid = "binding.beckhoff", service = ThingHandlerFactory.class)
 public class BeckhoffHandlerFactory extends Plc4xHandlerFactory {
 
+  private final PlcDriverManager driverManager;
   private final DiscoverySender sender;
   private final DiscoveryReceiver receiver;
   private final RouteReceiver router;
 
   @Activate
-  public BeckhoffHandlerFactory(@Reference DiscoverySender sender, @Reference DiscoveryReceiver receiver, @Reference RouteReceiver router) {
+  public BeckhoffHandlerFactory(@Reference PlcDriverManager driverManager, @Reference DiscoverySender sender, @Reference DiscoveryReceiver receiver, @Reference RouteReceiver router) {
     super(THING_TYPE_AMS, THING_TYPE_NETWORK, THING_TYPE_SERIAL, THING_TYPE_ADS);
+    this.driverManager = driverManager;
     this.sender = sender;
     this.receiver = receiver;
     this.router = router;
@@ -62,9 +65,9 @@ public class BeckhoffHandlerFactory extends Plc4xHandlerFactory {
     if (THING_TYPE_AMS.equals(thingTypeUID)) {
       return new BeckhoffAmsAdsBridgeHandler((Bridge) thing, sender, receiver);
     } else if (THING_TYPE_NETWORK.equals(thingTypeUID)) {
-      return new BeckhoffNetworkBridgeHandler((Bridge) thing, sender, router);
+      return new BeckhoffNetworkBridgeHandler((Bridge) thing, driverManager, sender, router);
     } else if (THING_TYPE_SERIAL.equals(thingTypeUID)) {
-      return new BeckhoffSerialBridgeHandler((Bridge) thing);
+      return new BeckhoffSerialBridgeHandler((Bridge) thing, driverManager);
     } else if (THING_TYPE_ADS.equals(thingTypeUID)) {
       return new BeckhoffPlcHandler(thing);
     }

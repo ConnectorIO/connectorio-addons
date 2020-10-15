@@ -21,8 +21,10 @@ import java.util.concurrent.CompletableFuture;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.connectorio.binding.base.config.PollingConfiguration;
 import org.connectorio.binding.base.handler.polling.common.BasePollingBridgeHandler;
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.binding.BridgeHandler;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.binding.BridgeHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class SharedPlc4xBridgeHandler<T extends PlcConnection, C extends PollingConfiguration> extends
     BasePollingBridgeHandler<C> implements BridgeHandler {

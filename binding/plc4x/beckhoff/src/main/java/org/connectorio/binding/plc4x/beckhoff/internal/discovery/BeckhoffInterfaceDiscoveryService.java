@@ -25,7 +25,7 @@ import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.apache.plc4x.java.ads.api.generic.types.AmsNetId;
+import org.apache.plc4x.java.ads.readwrite.AmsNetId;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
 import org.openhab.core.config.discovery.DiscoveryResultBuilder;
@@ -72,8 +72,7 @@ public class BeckhoffInterfaceDiscoveryService extends AbstractDiscoveryService 
     for (CidrAddress addr : broadcast) {
       InetAddress address = addr.getAddress();
       if (address instanceof Inet4Address) {
-        byte[] hostAddress = address.getAddress();
-        String amsNetId = AmsNetId.of(hostAddress[0], hostAddress[1], hostAddress[2], hostAddress[3], 0x01, 0x01).toString();
+        String amsNetId = address.getHostAddress() + ".1.1";
 
         DiscoveryResult network = DiscoveryResultBuilder
           .create(new ThingUID(THING_TYPE_AMS, amsNetId.replace(".", "_")))

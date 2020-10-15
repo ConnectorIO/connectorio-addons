@@ -17,12 +17,14 @@
  */
 package org.connectorio.binding.plc4x.beckhoff.internal.discovery.udp;
 
+import static org.connectorio.binding.plc4x.beckhoff.internal.AmsConverter.parseDiscoveryAms;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
@@ -31,6 +33,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscovery;
+import org.apache.plc4x.java.ads.discovery.readwrite.DiscoveryResponse;
+import org.apache.plc4x.java.ads.discovery.readwrite.RouteResponse;
+import org.apache.plc4x.java.ads.discovery.readwrite.io.AdsDiscoveryIO;
+import org.apache.plc4x.java.ads.discovery.readwrite.types.RouteStatus;
+import org.apache.plc4x.java.spi.generation.ParseException;
+import org.apache.plc4x.java.spi.generation.ReadBuffer;
+import org.apache.plc4x.java.spi.generation.WriteBuffer;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.BeckhoffDiscoveryListener;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.BeckhoffRouteListener;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.DiscoveryReceiver;
@@ -136,12 +146,15 @@ public class UdpSenderReceiver implements DiscoverySender, DiscoveryReceiver, Ro
         try {
           Envelope send = queue.poll(500, TimeUnit.MILLISECONDS);
           if (send != null) {
-            byte[] frame = send.structure.construct();
+            final AdsDiscovery structure = send.structure;
+            final WriteBuffer buffer = new WriteBuffer(structure.getLengthInBytes(), false);
+            AdsDiscoveryIO.staticSerialize(buffer, structure);
+            byte[] frame = buffer.getData();
             DatagramPacket packet = new DatagramPacket(frame, frame.length, InetAddress.getByName(send.host), BECKHOFF_UDP_PORT);
 
             socket.send(packet);
           }
-        } catch (IOException | InterruptedException e) {
+        } catch (ParseException | IOException | InterruptedException e) {
           logger.info("Could not send packet", e);
         }
       }
@@ -180,34 +193,18 @@ public class UdpSenderReceiver implements DiscoverySender, DiscoveryReceiver, Ro
       }
     }
 
-    private Optional<UdpStructure> parse(byte[] data, String sender) {
+    private Optional<AdsDiscovery> parse(byte[] data, String sender) {
       if (data.length < 12) {
         return Optional.empty();
       }
 
-      byte[] header = UdpStructure.slice(data, 0, 4);
-      if (!Arrays.equals(UdpStructure.HEADER, header)) {
-        logger.warn("Host {} sent to frame with unknown header {}. Content: {}", sender, HexUtils.bytesToHex(header), HexUtils.bytesToHex(data));
+      try {
+        final AdsDiscovery discovery = AdsDiscoveryIO.staticParse(new ReadBuffer(data, false));
+        logger.debug("Received valid discovery frame from {}. Content: {}", sender, HexUtils.bytesToHex(data));
+        return Optional.of(discovery);
+      } catch (ParseException e) {
+        logger.warn("Host {} sent to us unidentified frame type {}. Content: {}", sender, HexUtils.bytesToHex(data), HexUtils.bytesToHex(data), e);
       }
-
-      header = UdpStructure.slice(data, 4, 4);
-      if (!Arrays.equals(UdpStructure.STATIC, header)) {
-        logger.warn("Host {} sent to us unmapped frame type {}. Content: {}", sender, HexUtils.bytesToHex(header), HexUtils.bytesToHex(data));
-        return Optional.empty();
-      }
-
-      // a real message type
-      header = UdpStructure.slice(data, 8, 4);
-      if (Arrays.equals(UdpStructure.BROADCAST_REPLY_TYPE, header)) {
-        logger.debug("Received identification frame from {}. Content: {}", sender, HexUtils.bytesToHex(data));
-        return Optional.of(UdpDiscoveryResponse.parse(data));
-      } else if (Arrays.equals(UdpStructure.ROUTE_REPLY_TYPE, header)) {
-        logger.debug("Received answer for route request from {}. Content: {}", sender, HexUtils.bytesToHex(data));
-        return Optional.of(new UdpRouteResponse(data));
-      }
-
-      logger.warn("Host {} sent to us unidentified frame type {}. Content: {}", sender, HexUtils.bytesToHex(header), HexUtils.bytesToHex(data));
-
       return Optional.empty();
     }
   }
@@ -233,14 +230,14 @@ public class UdpSenderReceiver implements DiscoverySender, DiscoveryReceiver, Ro
         Envelope reply = queue.poll();
 
         if (reply != null) {
-          if (reply.structure instanceof UdpDiscoveryResponse) {
-            UdpDiscoveryResponse identification = (UdpDiscoveryResponse) reply.structure;
+          if (reply.structure instanceof DiscoveryResponse) {
+            DiscoveryResponse identification = (DiscoveryResponse) reply.structure;
             discoveryListeners.forEach(listener -> listener.deviceDiscovered(
-              reply.host, identification.getName(), identification.getSourceAms()
+              reply.host, new String(identification.getName().getText(), StandardCharsets.UTF_8), parseDiscoveryAms(identification.getAmsNetId())
             ));
-          } else if (reply.structure instanceof UdpRouteResponse) {
-            UdpRouteResponse route = (UdpRouteResponse) reply.structure;
-            routeListeners.forEach(listener -> listener.add(reply.host, route.getAmsNetId(), route.isSuccess()));
+          } else if (reply.structure instanceof RouteResponse) {
+            RouteResponse route = (RouteResponse) reply.structure;
+            routeListeners.forEach(listener -> listener.add(reply.host, parseDiscoveryAms(route.getAmsNetId()), route.getStatus() == RouteStatus.SUCCESS));
           } else {
             logger.warn("Unknown response from {}, packet {}", reply.host, reply.structure);
           }
