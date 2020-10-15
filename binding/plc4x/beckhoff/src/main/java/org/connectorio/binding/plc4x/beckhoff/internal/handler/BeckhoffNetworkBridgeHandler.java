@@ -17,19 +17,27 @@
  */
 package org.connectorio.binding.plc4x.beckhoff.internal.handler;
 
+import static org.connectorio.binding.plc4x.beckhoff.internal.AmsConverter.createDiscoveryAms;
+
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.apache.plc4x.java.PlcDriverManager;
-import org.apache.plc4x.java.ads.connection.AdsTcpPlcConnection;
+import org.apache.plc4x.java.ads.discovery.readwrite.AmsMagicString;
+import org.apache.plc4x.java.ads.discovery.readwrite.AmsNetId;
+import org.apache.plc4x.java.ads.discovery.readwrite.RouteRequest;
+import org.apache.plc4x.java.ads.discovery.readwrite.types.Direction;
+import org.apache.plc4x.java.ads.discovery.readwrite.types.Operation;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
+import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
+import org.apache.plc4x.java.spi.connection.AbstractPlcConnection;
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffAmsAdsConfiguration;
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffNetworkConfiguration;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.BeckhoffRouteListener;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.DiscoverySender;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.DiscoverySender.Envelope;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.RouteReceiver;
-import org.connectorio.binding.plc4x.beckhoff.internal.discovery.udp.UdpRouteRequest;
+import org.connectorio.binding.plc4x.shared.osgi.PlcDriverManager;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.ThingStatus;
@@ -44,17 +52,19 @@ import org.slf4j.LoggerFactory;
  *
  * @author Lukasz Dywicki - Initial contribution
  */
-public class BeckhoffNetworkBridgeHandler extends BeckhoffBridgeHandler<AdsTcpPlcConnection, BeckhoffNetworkConfiguration> implements
+public class BeckhoffNetworkBridgeHandler extends BeckhoffBridgeHandler<AbstractPlcConnection, BeckhoffNetworkConfiguration> implements
   BeckhoffRouteListener {
 
   private final Logger logger = LoggerFactory.getLogger(BeckhoffNetworkBridgeHandler.class);
   private final AtomicBoolean routing = new AtomicBoolean(false);
 
+  private final PlcDriverManager driverManager;
   private final DiscoverySender sender;
   private final RouteReceiver router;
 
-  public BeckhoffNetworkBridgeHandler(Bridge thing, DiscoverySender sender, RouteReceiver router) {
+  public BeckhoffNetworkBridgeHandler(Bridge thing, PlcDriverManager driverManager, DiscoverySender sender, RouteReceiver router) {
     super(thing);
+    this.driverManager = driverManager;
     this.sender = sender;
     this.router = router;
   }
@@ -76,7 +86,7 @@ public class BeckhoffNetworkBridgeHandler extends BeckhoffBridgeHandler<AdsTcpPl
   }
 
   @Override
-  protected Runnable createInitializer(BeckhoffAmsAdsConfiguration amsAds, CompletableFuture<AdsTcpPlcConnection> initializer) {
+  protected Runnable createInitializer(BeckhoffAmsAdsConfiguration amsAds, CompletableFuture<AbstractPlcConnection> initializer) {
     return new Runnable() {
       @Override
       public void run() {
@@ -84,8 +94,14 @@ public class BeckhoffNetworkBridgeHandler extends BeckhoffBridgeHandler<AdsTcpPl
           BeckhoffNetworkConfiguration config = getBridgeConfig().get();
 
           if (config.username != null) {
-            UdpRouteRequest request = new UdpRouteRequest(amsAds.ipAddress, amsAds.sourceAmsId, amsAds.ipAddress, config.username,
-              Optional.ofNullable(config.password).orElse(""));
+            AmsNetId sendingAms = createDiscoveryAms(amsAds.sourceAmsId);
+            AmsMagicString address = new AmsMagicString(amsAds.ipAddress.getBytes(StandardCharsets.UTF_8));
+            AmsNetId target = createDiscoveryAms(amsAds.sourceAmsId);
+            AmsMagicString username = new AmsMagicString(config.username.getBytes(StandardCharsets.UTF_8));
+            AmsMagicString password = new AmsMagicString(Optional.ofNullable(config.password).orElse("").getBytes(StandardCharsets.UTF_8));
+            AmsMagicString routeName = new AmsMagicString(("openhab-" + amsAds.ipAddress).getBytes(StandardCharsets.UTF_8));
+            RouteRequest request = new RouteRequest(Operation.ROUTE, Direction.REQUEST,
+              sendingAms, address, target, username, password, routeName);
             logger.info("Making an attempt to setup route from {} to us using {}", config.host, request);
             sender.send(new Envelope(config.host, request));
 
@@ -105,19 +121,26 @@ public class BeckhoffNetworkBridgeHandler extends BeckhoffBridgeHandler<AdsTcpPl
           }
 
           String host = hostWithPort(config.host, config.port);
-          String target = hostWithPort(config.targetAmsId, config.targetAmsPort);
-          String source = amsAds.sourceAmsId != null && amsAds.sourceAmsPort != null ? "/" + hostWithPort(amsAds.sourceAmsId, amsAds.sourceAmsPort) : "";
-          AdsTcpPlcConnection connection = (AdsTcpPlcConnection) new PlcDriverManager(getClass().getClassLoader())
-            .getConnection("ads:tcp://" + host + "/" + target + source);
-          //connection.connect();
+          String target = "targetAmsNetId=" + config.targetAmsId + "&targetAmsPort=" + config.targetAmsPort;
+          String source = "&sourceAmsNetId=" + amsAds.sourceAmsId + "&sourceAmsPort=" + amsAds.sourceAmsPort;
+
+          AbstractPlcConnection connection = (AbstractPlcConnection) driverManager.getConnection("ads:tcp://" + host + "?" + target + source);
+
+          if (!connection.isConnected()) {
+            connection.connect();
+          }
 
           if (connection.isConnected()) {
             updateStatus(ThingStatus.ONLINE);
             initializer.complete(connection);
           } else {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,"Connection failed");
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Connection failed");
             initializer.complete(null);
           }
+        } catch (PlcRuntimeException e) {
+          logger.error("Connection attempt failed due to runtime error", e);
+          updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
+          initializer.completeExceptionally(e);
         } catch (PlcConnectionException e) {
           logger.warn("Could not obtain connection", e);
           updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());

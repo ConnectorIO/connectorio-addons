@@ -17,6 +17,7 @@
  */
 package org.connectorio.binding.plc4x.siemens.internal.config;
 
+import org.apache.plc4x.java.s7.readwrite.types.S7ControllerType;
 import org.connectorio.binding.base.config.PollingConfiguration;
 
 /**
@@ -32,13 +33,33 @@ public class SiemensNetworkConfiguration extends PollingConfiguration {
     public String host;
 
     /**
-     * Rack number.
+     * Local rack number.
      */
-    public Integer rack = 0;
+    public Integer localRack = 1;
 
     /**
-     * Slot number.
+     * Local slot number.
      */
-    public Integer slot = 0;
+    public Integer localSlot = 1;
+
+    /**
+     * Remote rack number.
+     */
+    public Integer remoteRack = 0;
+
+    /**
+     * Remote slot number.
+     */
+    public Integer remoteSlot = 0;
+
+    /**
+     * PDU size;
+     */
+    public Integer pduSize = 1024;
+
+    /**
+     * Type of controller.
+     */
+    public ControllerType controllerType;
 
 }

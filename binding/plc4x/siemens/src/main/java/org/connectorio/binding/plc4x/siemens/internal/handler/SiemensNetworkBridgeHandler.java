@@ -18,10 +18,11 @@
 package org.connectorio.binding.plc4x.siemens.internal.handler;
 
 import java.util.concurrent.CompletableFuture;
-import org.apache.plc4x.java.PlcDriverManager;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
-import org.apache.plc4x.java.s7.connection.S7PlcConnection;
+import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
+import org.apache.plc4x.java.spi.connection.AbstractPlcConnection;
 import org.connectorio.binding.plc4x.shared.handler.SharedPlc4xBridgeHandler;
+import org.connectorio.binding.plc4x.shared.osgi.PlcDriverManager;
 import org.connectorio.binding.plc4x.siemens.internal.SiemensBindingConstants;
 import org.connectorio.binding.plc4x.siemens.internal.config.SiemensNetworkConfiguration;
 import org.eclipse.smarthome.core.thing.Bridge;
@@ -38,15 +39,16 @@ import org.slf4j.LoggerFactory;
  *
  * @author Lukasz Dywicki - Initial contribution
  */
-public class SiemensNetworkBridgeHandler extends
-  SharedPlc4xBridgeHandler<S7PlcConnection, SiemensNetworkConfiguration> {
+public class SiemensNetworkBridgeHandler extends SharedPlc4xBridgeHandler<AbstractPlcConnection, SiemensNetworkConfiguration> {
 
   private final Logger logger = LoggerFactory.getLogger(SiemensNetworkBridgeHandler.class);
+  private final PlcDriverManager driverManager;
 
-  private CompletableFuture<S7PlcConnection> initializer;
+  private CompletableFuture<AbstractPlcConnection> initializer;
 
-  public SiemensNetworkBridgeHandler(Bridge thing) {
+  public SiemensNetworkBridgeHandler(Bridge thing, PlcDriverManager driverManager) {
     super(thing);
+    this.driverManager = driverManager;
   }
 
   @Override
@@ -63,9 +65,16 @@ public class SiemensNetworkBridgeHandler extends
       public void run() {
         try {
           SiemensNetworkConfiguration config = getBridgeConfig().get();
-          S7PlcConnection connection = (S7PlcConnection) new PlcDriverManager(getClass().getClassLoader())
-            .getConnection("s7://" + config.host /*+ port*/ + "/" + config.rack + "/" + config.slot);
-          connection.connect();
+          String local = "local-slot=" + config.localSlot + "&local-rack=" + config.localRack;
+          String remote = "&remote-slot=" + config.remoteSlot + "&remote-rack=" + config.remoteRack;
+          String pdu = config.pduSize != null ? "&pdu-size=" + config.pduSize : "";
+          String type = config.controllerType != null ? "&controller-type=" + config.controllerType.getType().name() : "";
+          AbstractPlcConnection connection = (AbstractPlcConnection) driverManager
+            .getConnection("s7://" + config.host + "?" + local + remote + pdu + type);
+
+          if (!connection.isConnected()) {
+            connection.connect();
+          }
 
           if (connection.isConnected()) {
             updateStatus(ThingStatus.ONLINE);
@@ -74,6 +83,10 @@ public class SiemensNetworkBridgeHandler extends
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Connection failed");
             initializer.complete(null);
           }
+        } catch (PlcRuntimeException e) {
+          logger.error("Connection attempt failed due to runtime error", e);
+          updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
+          initializer.completeExceptionally(e);
         } catch (PlcConnectionException e) {
           logger.warn("Could not obtain connection", e);
           updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
@@ -85,12 +98,12 @@ public class SiemensNetworkBridgeHandler extends
   }
 
   @Override
-  public CompletableFuture<S7PlcConnection> getInitializer() {
+  public CompletableFuture<AbstractPlcConnection> getInitializer() {
     return initializer;
   }
 
   @Override
-  protected S7PlcConnection getPlcConnection() {
+  public AbstractPlcConnection getPlcConnection() {
     return initializer.getNow(null);
   }
 

@@ -30,15 +30,48 @@
         <label>Host name or IP address</label>
         <description>Address of S7 enabled PLC.</description>
       </parameter>
-      <parameter name="rack" type="integer" required="false">
-        <label>Rack</label>
+      <parameter name="localRack" type="integer" required="false">
+        <label>Local rack</label>
+        <description>Communication rack to be set in connection string.</description>
+        <default>1</default>
+      </parameter>
+      <parameter name="localSlot" type="integer" required="false">
+        <label>Local slot</label>
+        <description>Communication rack to be set in connection string.</description>
+        <default>1</default>
+      </parameter>
+      <parameter name="remoteRack" type="integer" required="false">
+        <label>Remote rack</label>
         <description>Communication rack to be set in connection string.</description>
         <default>0</default>
       </parameter>
-      <parameter name="slot" type="integer" required="false">
-        <label>Slot</label>
+      <parameter name="remoteSlot" type="integer" required="false">
+        <label>Remote slot</label>
         <description>Communication rack to be set in connection string.</description>
         <default>0</default>
+      </parameter>
+      <parameter name="pduSize" type="integer" required="false">
+        <label>PDU size</label>
+        <description>
+          Maximum size of a data-packet sent to and received from the remote PLC.
+        </description>
+        <default>1024</default>
+      </parameter>
+      <parameter name="controllerType" type="integer" required="false">
+        <label>PDU size</label>
+        <description>
+          Type of remote unit. Please use it if automatic identification during bootstrap fails.
+          Setting this option will disable device identification attempt which might be troublesome for some hardware.
+        </description>
+        <default>ANY</default>
+        <options>
+          <option value="ANY">Any - attempt to identify.</option>
+          <option value="S7_300">S7-300 family</option>
+          <option value="S7_400">S7-400 family</option>
+          <option value="S7_1200">S7-1200 family</option>
+          <option value="S7_1500">S7-1500 family</option>
+          <option value="LOGO">Logo family</option>
+        </options>
       </parameter>
       <parameter name="refreshInterval" type="integer" required="false">
         <label>Refresh interval</label>

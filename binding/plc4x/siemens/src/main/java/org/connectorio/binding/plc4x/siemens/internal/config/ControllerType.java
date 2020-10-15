@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.binding.plc4x.beckhoff.internal.discovery;
+package org.connectorio.binding.plc4x.siemens.internal.config;
 
-import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscovery;
+import org.apache.plc4x.java.s7.readwrite.types.S7ControllerType;
 
-public interface DiscoverySender {
+public enum ControllerType {
+    ANY (S7ControllerType.ANY),
+    S7_300 (S7ControllerType.S7_300),
+    S7_400 (S7ControllerType.S7_400),
+    S7_1200 (S7ControllerType.S7_1200),
+    S7_1500 (S7ControllerType.S7_1500),
+    LOGO (S7ControllerType.LOGO);
 
-  class Envelope {
-    public final String host;
-    public final AdsDiscovery structure;
+    private final S7ControllerType type;
 
-    public Envelope(String host, AdsDiscovery structure) {
-      this.host = host;
-      this.structure = structure;
+    ControllerType(S7ControllerType type) {
+        this.type = type;
     }
-  }
 
-  void send(Envelope packet);
-
+    public S7ControllerType getType() {
+        return type;
+    }
 }

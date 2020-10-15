@@ -21,12 +21,15 @@ import static org.connectorio.binding.plc4x.siemens.internal.SiemensBindingConst
 import static org.connectorio.binding.plc4x.siemens.internal.SiemensBindingConstants.THING_TYPE_TCP_IP;
 
 import org.connectorio.binding.plc4x.shared.Plc4xHandlerFactory;
+import org.connectorio.binding.plc4x.shared.osgi.PlcDriverManager;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The {@link SiemensHandlerFactory} is responsible for creating things and thing handlers.
@@ -36,8 +39,12 @@ import org.osgi.service.component.annotations.Component;
 @Component(configurationPid = "binding.siemens", service = ThingHandlerFactory.class)
 public class SiemensHandlerFactory extends Plc4xHandlerFactory {
 
-  public SiemensHandlerFactory() {
+  private final PlcDriverManager driverManager;
+
+  @Activate
+  public SiemensHandlerFactory(@Reference  PlcDriverManager driverManager) {
     super(THING_TYPE_TCP_IP, THING_TYPE_S7);
+    this.driverManager = driverManager;
   }
 
   @Override
@@ -45,7 +52,7 @@ public class SiemensHandlerFactory extends Plc4xHandlerFactory {
     ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
     if (THING_TYPE_TCP_IP.equals(thingTypeUID)) {
-      return new SiemensNetworkBridgeHandler((Bridge) thing);
+      return new SiemensNetworkBridgeHandler((Bridge) thing, driverManager);
     } else if (THING_TYPE_S7.equals(thingTypeUID)) {
       return new SiemensPlcHandler(thing);
     }

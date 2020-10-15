@@ -18,11 +18,11 @@
 package org.connectorio.binding.plc4x.beckhoff.internal.handler;
 
 import java.util.concurrent.CompletableFuture;
-import org.apache.plc4x.java.PlcDriverManager;
-import org.apache.plc4x.java.ads.connection.AdsSerialPlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
+import org.apache.plc4x.java.spi.connection.AbstractPlcConnection;
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffAmsAdsConfiguration;
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffSerialConfiguration;
+import org.connectorio.binding.plc4x.shared.osgi.PlcDriverManager;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.ThingStatus;
@@ -38,12 +38,14 @@ import org.slf4j.LoggerFactory;
  * @author Lukasz Dywicki - Initial contribution
  */
 public class BeckhoffSerialBridgeHandler extends
-    BeckhoffBridgeHandler<AdsSerialPlcConnection, BeckhoffSerialConfiguration> {
+    BeckhoffBridgeHandler<AbstractPlcConnection, BeckhoffSerialConfiguration> {
 
   private final Logger logger = LoggerFactory.getLogger(BeckhoffSerialBridgeHandler.class);
+  private final PlcDriverManager driverManager;
 
-  public BeckhoffSerialBridgeHandler(Bridge thing) {
+  public BeckhoffSerialBridgeHandler(Bridge thing, PlcDriverManager driverManager) {
     super(thing);
+    this.driverManager = driverManager;
   }
 
   @Override
@@ -51,7 +53,7 @@ public class BeckhoffSerialBridgeHandler extends
   }
 
   @Override
-  protected Runnable createInitializer(BeckhoffAmsAdsConfiguration amsAds, CompletableFuture<AdsSerialPlcConnection> initializer) {
+  protected Runnable createInitializer(BeckhoffAmsAdsConfiguration amsAds, CompletableFuture<AbstractPlcConnection> initializer) {
     return new Runnable() {
       @Override
       public void run() {
@@ -59,9 +61,11 @@ public class BeckhoffSerialBridgeHandler extends
           BeckhoffSerialConfiguration config = getBridgeConfig().get();
           String target = hostWithPort(config.targetAmsId, config.targetAmsPort);
           String source = amsAds.sourceAmsId != null && amsAds.sourceAmsPort != null ? "/" + hostWithPort(amsAds.sourceAmsId, amsAds.sourceAmsPort) : "";
-          AdsSerialPlcConnection connection = (AdsSerialPlcConnection) new PlcDriverManager(getClass().getClassLoader())
-            .getConnection("ads:serial://" + config.port + "/" + target + source);
-          connection.connect();
+          AbstractPlcConnection connection = (AbstractPlcConnection) driverManager.getConnection("ads:serial://" + config.port + "/" + target + source);
+
+          if (!connection.isConnected()) {
+            connection.connect();
+          }
 
           if (connection.isConnected()) {
             updateStatus(ThingStatus.ONLINE);

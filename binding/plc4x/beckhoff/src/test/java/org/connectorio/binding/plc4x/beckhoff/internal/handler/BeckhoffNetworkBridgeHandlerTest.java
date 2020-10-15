@@ -22,11 +22,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.net.ConnectException;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import org.apache.plc4x.java.ads.connection.AdsTcpPlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
+import org.apache.plc4x.java.spi.connection.AbstractPlcConnection;
+import org.assertj.core.api.AbstractThrowableAssert;
 import org.connectorio.binding.base.config.Configuration;
 import org.connectorio.binding.base.handler.GenericBridgeHandler;
 import org.connectorio.binding.plc4x.beckhoff.internal.BeckhoffBindingConstants;
@@ -34,6 +37,7 @@ import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffAmsAdsConf
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffNetworkConfiguration;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.DiscoverySender;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.RouteReceiver;
+import org.connectorio.binding.plc4x.shared.osgi.internal.OsgiDriverManager;
 import org.connectorio.binding.test.BridgeMock;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ThingUID;
@@ -50,10 +54,10 @@ class BeckhoffNetworkBridgeHandlerTest {
       .withConfig(new BeckhoffNetworkConfiguration())
       .create();
 
-    BeckhoffNetworkBridgeHandler handler = new BeckhoffNetworkBridgeHandler(bridge, sender, routeReceiver);
+    BeckhoffNetworkBridgeHandler handler = new BeckhoffNetworkBridgeHandler(bridge, new OsgiDriverManager(Collections.emptyList()), sender, routeReceiver);
     handler.initialize();
 
-    CompletableFuture<AdsTcpPlcConnection> initializer = handler.getInitializer();
+    CompletableFuture<AbstractPlcConnection> initializer = handler.getInitializer();
     assertThat(initializer).isNull();
   }
 
@@ -86,14 +90,22 @@ class BeckhoffNetworkBridgeHandlerTest {
 
     Bridge bridge = bridgeMock.create();
 
-    BeckhoffNetworkBridgeHandler handler = new BeckhoffNetworkBridgeHandler(bridge, sender, routeReceiver);
+    BeckhoffNetworkBridgeHandler handler = new BeckhoffNetworkBridgeHandler(bridge, new OsgiDriverManager(Collections.emptyList()), sender, routeReceiver);
     handler.setCallback(bridgeMock.getCallback());
     handler.initialize();
 
-    CompletableFuture<AdsTcpPlcConnection> initializer = handler.getInitializer();
-    assertThatThrownBy(initializer::join).isInstanceOf(CompletionException.class)
-      .hasCauseInstanceOf(PlcConnectionException.class)
-      .hasMessageContaining("Unable to Connect on TCP Layer");
+    CompletableFuture<AbstractPlcConnection> initializer = handler.getInitializer();
+
+    AbstractThrowableAssert<?, ? extends Throwable> thrownBy = assertThatThrownBy(initializer::join);
+    thrownBy.isInstanceOf(CompletionException.class)
+      .hasMessageContaining("Error creating channel.");
+
+    thrownBy = thrownBy.getCause();
+    thrownBy.isInstanceOf(PlcConnectionException.class);
+
+    thrownBy = thrownBy.getCause();
+    thrownBy.isInstanceOf(ConnectException.class)
+      .hasMessageContaining("Connection refused: /%s:%d", cfg.host, cfg.port);
   }
 
 }
