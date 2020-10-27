@@ -24,6 +24,7 @@ package org.connectorio.binding.bacnet.internal.handler.property;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.enumerated.BinaryPV;
 import com.serotonin.bacnet4j.type.primitive.Boolean;
+import com.serotonin.bacnet4j.type.primitive.Date;
 import com.serotonin.bacnet4j.type.primitive.Null;
 import com.serotonin.bacnet4j.type.primitive.Real;
 import com.serotonin.bacnet4j.type.primitive.SignedInteger;
@@ -98,6 +99,9 @@ public class ReadPropertyTask implements Runnable, BacNetToJavaConverter<State> 
       // HH:mm:ss.SSSZ
       String millis = time.getHundredth() != 0 ? "." + time.getHundredth() : "";
       return new DateTimeType(time.getHour() + ":" + time.getMinute() + ":" + time.getSecond() + millis);
+    } else if (encodable instanceof Date) {
+      Date date = (Date) encodable;
+      return new DateTimeType(date.calculateGC().toZonedDateTime());
     }
     logger.info("Received property value is currently not supported");
     return null;
