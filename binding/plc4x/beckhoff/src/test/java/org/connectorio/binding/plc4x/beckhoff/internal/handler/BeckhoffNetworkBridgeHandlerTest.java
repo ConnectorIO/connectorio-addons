@@ -27,8 +27,8 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
-import org.apache.plc4x.java.spi.connection.AbstractPlcConnection;
 import org.assertj.core.api.AbstractThrowableAssert;
 import org.connectorio.binding.base.config.Configuration;
 import org.connectorio.binding.base.handler.GenericBridgeHandler;
@@ -57,8 +57,8 @@ class BeckhoffNetworkBridgeHandlerTest {
     BeckhoffNetworkBridgeHandler handler = new BeckhoffNetworkBridgeHandler(bridge, new OsgiDriverManager(Collections.emptyList()), sender, routeReceiver);
     handler.initialize();
 
-    CompletableFuture<AbstractPlcConnection> initializer = handler.getInitializer();
-    assertThat(initializer).isNull();
+    CompletableFuture<PlcConnection> initializer = handler.getPlcConnection();
+    assertThat(initializer).isNotCompleted();
   }
 
   @Test
@@ -94,7 +94,7 @@ class BeckhoffNetworkBridgeHandlerTest {
     handler.setCallback(bridgeMock.getCallback());
     handler.initialize();
 
-    CompletableFuture<AbstractPlcConnection> initializer = handler.getInitializer();
+    CompletableFuture<PlcConnection> initializer = handler.getPlcConnection();
 
     AbstractThrowableAssert<?, ? extends Throwable> thrownBy = assertThatThrownBy(initializer::join);
     thrownBy.isInstanceOf(CompletionException.class)

@@ -18,10 +18,11 @@
 package org.connectorio.binding.plc4x.siemens.internal.handler;
 
 import java.util.concurrent.CompletableFuture;
+import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.apache.plc4x.java.spi.connection.AbstractPlcConnection;
-import org.connectorio.binding.plc4x.shared.handler.SharedPlc4xBridgeHandler;
+import org.connectorio.binding.plc4x.shared.handler.base.PollingPlc4xBridgeHandler;
 import org.connectorio.binding.plc4x.shared.osgi.PlcDriverManager;
 import org.connectorio.binding.plc4x.siemens.internal.SiemensBindingConstants;
 import org.connectorio.binding.plc4x.siemens.internal.config.SiemensNetworkConfiguration;
@@ -39,12 +40,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author Lukasz Dywicki - Initial contribution
  */
-public class SiemensNetworkBridgeHandler extends SharedPlc4xBridgeHandler<AbstractPlcConnection, SiemensNetworkConfiguration> {
+public class SiemensNetworkBridgeHandler extends PollingPlc4xBridgeHandler<PlcConnection, SiemensNetworkConfiguration> {
 
   private final Logger logger = LoggerFactory.getLogger(SiemensNetworkBridgeHandler.class);
   private final PlcDriverManager driverManager;
 
-  private CompletableFuture<AbstractPlcConnection> initializer;
+  private CompletableFuture<PlcConnection> initializer = new CompletableFuture<>();
 
   public SiemensNetworkBridgeHandler(Bridge thing, PlcDriverManager driverManager) {
     super(thing);
@@ -59,7 +60,6 @@ public class SiemensNetworkBridgeHandler extends SharedPlc4xBridgeHandler<Abstra
   public void initialize() {
     updateStatus(ThingStatus.UNKNOWN);
 
-    initializer = new CompletableFuture<>();
     Runnable connectionTask = new Runnable() {
       @Override
       public void run() {
@@ -69,7 +69,7 @@ public class SiemensNetworkBridgeHandler extends SharedPlc4xBridgeHandler<Abstra
           String remote = "&remote-slot=" + config.remoteSlot + "&remote-rack=" + config.remoteRack;
           String pdu = config.pduSize != null ? "&pdu-size=" + config.pduSize : "";
           String type = config.controllerType != null ? "&controller-type=" + config.controllerType.getType().name() : "";
-          AbstractPlcConnection connection = (AbstractPlcConnection) driverManager
+          PlcConnection connection = driverManager
             .getConnection("s7://" + config.host + "?" + local + remote + pdu + type);
 
           if (!connection.isConnected()) {
@@ -98,13 +98,8 @@ public class SiemensNetworkBridgeHandler extends SharedPlc4xBridgeHandler<Abstra
   }
 
   @Override
-  public CompletableFuture<AbstractPlcConnection> getInitializer() {
+  public CompletableFuture<PlcConnection> getPlcConnection() {
     return initializer;
-  }
-
-  @Override
-  public AbstractPlcConnection getPlcConnection() {
-    return initializer.getNow(null);
   }
 
   @Override

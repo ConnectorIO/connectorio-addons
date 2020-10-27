@@ -15,28 +15,29 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.binding.plc4x.shared.handler;
+package org.connectorio.binding.plc4x.shared.handler.base;
 
 import java.util.concurrent.CompletableFuture;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.connectorio.binding.base.config.PollingConfiguration;
 import org.connectorio.binding.base.handler.polling.common.BasePollingBridgeHandler;
+import org.connectorio.binding.plc4x.shared.handler.Plc4xBridgeHandler;
 import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.binding.BridgeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class SharedPlc4xBridgeHandler<T extends PlcConnection, C extends PollingConfiguration> extends
-    BasePollingBridgeHandler<C> implements BridgeHandler {
+public abstract class PollingPlc4xBridgeHandler<T extends PlcConnection, C extends PollingConfiguration> extends BasePollingBridgeHandler<C>
+  implements Plc4xBridgeHandler<T, C> {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
-  private T connection;
+  private CompletableFuture<T> connection;
 
-  public SharedPlc4xBridgeHandler(Bridge bridge) {
+  public PollingPlc4xBridgeHandler(Bridge bridge) {
     super(bridge);
   }
 
-  public T getConnection() {
+  @Override
+  public CompletableFuture<T> getConnection() {
     // make sure we create new connection only if there is none.
     if (connection == null) {
       logger.debug("Opening new connection to device");
@@ -45,16 +46,15 @@ public abstract class SharedPlc4xBridgeHandler<T extends PlcConnection, C extend
     return connection;
   }
 
-  protected abstract T getPlcConnection();
-
-  public abstract CompletableFuture<T> getInitializer();
+  protected abstract CompletableFuture<T> getPlcConnection();
 
   @Override
   public void dispose() {
-    if (connection != null) {
+    if (connection != null && connection.isDone()) {
       try {
-        if (connection.isConnected()) {
-          connection.close();
+        final T deviceConnection = connection.get();
+        if (deviceConnection.isConnected()) {
+          deviceConnection.close();
           logger.debug("Closed connection to device");
         }
       } catch (Exception e) {

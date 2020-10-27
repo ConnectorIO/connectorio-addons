@@ -17,13 +17,14 @@
  */
 package org.connectorio.binding.plc4x.beckhoff.internal.handler;
 
-import org.apache.plc4x.java.spi.connection.AbstractPlcConnection;
+import org.apache.plc4x.java.api.PlcConnection;
 import org.connectorio.binding.plc4x.beckhoff.internal.BeckhoffBindingConstants;
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffBridgeConfiguration;
-import org.connectorio.binding.plc4x.shared.handler.SharedPlc4xThingHandler;
+import org.connectorio.binding.plc4x.shared.handler.base.PollingPlc4xThingHandler;
 import org.eclipse.smarthome.core.thing.Thing;
 
-public class BeckhoffPlcHandler extends SharedPlc4xThingHandler<AbstractPlcConnection, BeckhoffBridgeHandler<AbstractPlcConnection, ?>, BeckhoffBridgeConfiguration> {
+public class BeckhoffPlcHandler extends PollingPlc4xThingHandler<PlcConnection, BeckhoffBridgeHandler<PlcConnection, ?>,
+  BeckhoffBridgeConfiguration> {
 
   public BeckhoffPlcHandler(Thing thing) {
     super(thing);

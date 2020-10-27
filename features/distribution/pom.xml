@@ -57,8 +57,29 @@
       <type>xml</type>
     </dependency>
     <dependency>
+      <groupId>org.connectorio.binding</groupId>
+      <artifactId>can</artifactId>
+      <version>${project.version}</version>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
       <groupId>org.connectorio.binding.plc4x</groupId>
       <artifactId>beckhoff</artifactId>
+      <version>${project.version}</version>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.binding.plc4x</groupId>
+      <artifactId>canopen</artifactId>
+      <version>${project.version}</version>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.binding.plc4x</groupId>
+      <artifactId>canopen-ta</artifactId>
       <version>${project.version}</version>
       <classifier>features</classifier>
       <type>xml</type>

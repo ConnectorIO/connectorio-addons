@@ -15,12 +15,13 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.binding.plc4x.shared.handler;
+package org.connectorio.binding.plc4x.shared.handler.base;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +31,8 @@ import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.connectorio.binding.base.config.PollingConfiguration;
 import org.connectorio.binding.base.handler.polling.common.BasePollingThingHandler;
 import org.connectorio.binding.plc4x.shared.config.CommonChannelConfiguration;
+import org.connectorio.binding.plc4x.shared.handler.Plc4xBridgeHandler;
+import org.connectorio.binding.plc4x.shared.handler.Plc4xThingHandler;
 import org.connectorio.binding.plc4x.shared.handler.task.ReadTask;
 import org.connectorio.binding.plc4x.shared.handler.task.WriteTask;
 import org.eclipse.smarthome.core.thing.Channel;
@@ -37,27 +40,26 @@ import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
-import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class SharedPlc4xThingHandler<T extends PlcConnection, B extends SharedPlc4xBridgeHandler<T, ?>, C extends PollingConfiguration> extends
-  BasePollingThingHandler<B, C> implements ThingHandler {
+public abstract class PollingPlc4xThingHandler<T extends PlcConnection, B extends Plc4xBridgeHandler<T, ?>, C extends PollingConfiguration> extends
+  BasePollingThingHandler<B, C> implements Plc4xThingHandler<T, B, C> {
 
   protected final Map<ChannelUID, ScheduledFuture> futures = new ConcurrentHashMap<>();
   private final Logger logger = LoggerFactory.getLogger(getClass());
   private T connection;
 
-  public SharedPlc4xThingHandler(Thing thing) {
+  public PollingPlc4xThingHandler(Thing thing) {
     super(thing);
   }
 
   @Override
   public void initialize() {
-    getBridgeHandler().map(SharedPlc4xBridgeHandler::getInitializer)
+    getBridgeHandler().map(Plc4xBridgeHandler::getConnection)
       .map(future -> future.whenCompleteAsync(this::connect, this.scheduler));
   }
 
@@ -115,7 +117,7 @@ public abstract class SharedPlc4xThingHandler<T extends PlcConnection, B extends
   }
 
   protected Optional<T> getBridgeConnection() {
-    return getBridgeHandler().map(SharedPlc4xBridgeHandler::getConnection);
+    return getBridgeHandler().map(Plc4xBridgeHandler::getConnection).map(CompletableFuture::join);
   }
 
   @Override

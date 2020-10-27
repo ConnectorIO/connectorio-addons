@@ -28,30 +28,38 @@ import org.connectorio.binding.plc4x.shared.osgi.PlcDriverManager;
  */
 public class OsgiDriverManager implements PlcDriverManager {
 
-  private final org.apache.plc4x.java.PlcDriverManager mgr;
   private final CompoundClassLoader classLoader;
 
   public OsgiDriverManager(List<ClassLoader> wiring) {
     classLoader = new CompoundClassLoader(wiring);
-    this.mgr = new org.apache.plc4x.java.PlcDriverManager(classLoader);
   }
 
   @Override
   public PlcConnection getConnection(String url) throws PlcConnectionException {
-    return ClassLoaderAware.call(classLoader, () -> mgr.getConnection(url));
+    return ClassLoaderAware.call(classLoader, () -> lookupDriverManager().getConnection(url));
   }
 
   @Override
   public PlcConnection getConnection(String url, PlcAuthentication authentication) throws PlcConnectionException {
-    return ClassLoaderAware.call(classLoader, () -> mgr.getConnection(url, authentication));
+    return ClassLoaderAware.call(classLoader, () -> lookupDriverManager().getConnection(url, authentication));
   }
 
   @Override
   public PlcDriver getDriver(String url) throws PlcConnectionException {
-    return ClassLoaderAware.call(classLoader, () -> mgr.getDriver(url));
+    return ClassLoaderAware.call(classLoader, () -> lookupDriverManager().getDriver(url));
   }
 
   void close() {
+  }
+
+  /**
+   * Drivers are looked up at the start of PlcDriverManager so its initialization must be defered to actual
+   * connection opening when all drivers are installed, and not when manager is ready.
+   *
+   * @return Driver manager
+   */
+  private org.apache.plc4x.java.PlcDriverManager lookupDriverManager() {
+    return new org.apache.plc4x.java.PlcDriverManager(classLoader);
   }
 
 }

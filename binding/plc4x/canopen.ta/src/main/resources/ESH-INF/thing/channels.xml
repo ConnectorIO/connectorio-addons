@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright (C) 2019-2020 ConnectorIO Sp. z o.o.
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -
+ - SPDX-License-Identifier: Apache-2.0
+ -->
+<thing:thing-descriptions bindingId="co7io-plc4x-canopen"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+  <channel-type id="ta-analog-output">
+    <item-type>Number:Dimensionless</item-type>
+    <label>Analog output</label>
+    <state readOnly="true" pattern="%s" />
+
+    <config-description>
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+        <description>Index of analog output.</description>
+      </parameter>
+
+      <parameter name="unit" type="text" required="true">
+        <label>Unit</label>
+        <description>Unit used by URV to report measured values.</description>
+
+        <default>DIMENSIONLESS</default>
+        <options>
+          <option value="DIMENSIONLESS">DIMENSIONLESS</option>
+          <option value="CELSIUS">CELSIUS</option>
+          <option value="IRRADIANCE">IRRADIANCE</option>
+          <option value="LITRE_PER_HOUR">LITRE_PER_HOUR</option>
+          <option value="SECOND">SECOND</option>
+          <option value="MINUTE">MINUTE</option>
+          <option value="LITRE_PER_IMPULSE">LITRE_PER_IMPULSE</option>
+          <option value="KELVIN">KELVIN</option>
+          <option value="HUMIDITY">HUMIDITY</option>
+          <option value="KILOWATT">KILOWATT</option>
+          <option value="KILOWATT_HOUR">KILOWATT_HOUR</option>
+          <option value="METAWATT_HOUR">METAWATT_HOUR</option>
+          <option value="VOLT">VOLT</option>
+          <option value="MILLI_AMPERE">MILLI_AMPERE</option>
+          <option value="HOUR">HOUR</option>
+          <option value="DAY">DAY</option>
+          <option value="IMPULSE">IMPULSE</option>
+          <option value="KILOOHM">KILOOHM</option>
+          <option value="LITRE">LITRE</option>
+          <option value="KILOMETRE_PER_HOUR">KILOMETRE_PER_HOUR</option>
+          <option value="HERTZ">HERTZ</option>
+          <option value="LITRE_PER_MINUTE">LITRE_PER_MINUTE</option>
+          <option value="BAR">BAR</option>
+          <option value="KILO_METRE">KILO_METRE</option>
+          <option value="METRE">METRE</option>
+          <option value="MILLIMETER">MILLIMETER</option>
+          <option value="CUBIC_METRE">CUBIC_METRE</option>
+          <option value="HERTZ_KM_HOUR">HERTZ_KM_HOUR</option>
+          <option value="HERTZ_M_SECOND">HERTZ_M_SECOND</option>
+          <option value="KILOWATT_PER_IMPULSE">KILOWATT_PER_IMPULSE</option>
+          <option value="CUBICMETRE_PER_IMPULSE">CUBICMETRE_PER_IMPULSE</option>
+          <option value="MILLIMETRE_PER_IMPULSE">MILLIMETRE_PER_IMPULSE</option>
+          <option value="LITER_PER_IMPULSE">LITER_PER_IMPULSE</option>
+          <option value="LITER_PER_DAY">LITER_PER_DAY</option>
+          <option value="METRE_PER_SECOND">METRE_PER_SECOND</option>
+          <option value="CUBICMETRE_PER_MINUTE">CUBICMETRE_PER_MINUTE</option>
+          <option value="CUBICMETRE_PER_HOUR">CUBICMETRE_PER_HOUR</option>
+          <option value="CUBICMETRE_PER_DAY">CUBICMETRE_PER_DAY</option>
+          <option value="MILLIMETER_PER_MINUTE">MILLIMETER_PER_MINUTE</option>
+          <option value="MILLIMETER_PER_HOUR">MILLIMETER_PER_HOUR</option>
+          <option value="MILLIMETER_PER_DAY">MILLIMETER_PER_DAY</option>
+        </options>
+      </parameter>
+
+    </config-description>
+  </channel-type>
+
+  <channel-type id="ta-digital-output">
+    <item-type>Contact</item-type>
+    <label>Digital output</label>
+    <state readOnly="true" />
+
+    <config-description>
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+        <description>Index of digital output.</description>
+      </parameter>
+    </config-description>
+
+  </channel-type>
+
+</thing:thing-descriptions>

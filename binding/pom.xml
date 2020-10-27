@@ -36,6 +36,7 @@
 
   <modules>
     <module>base</module>
+    <module>can</module>
     <module>bacnet</module>
     <module>test</module>
     <module>plc4x</module>
