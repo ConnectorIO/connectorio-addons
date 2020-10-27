@@ -22,12 +22,10 @@
 package org.connectorio.binding.bacnet.internal.handler.property;
 
 import com.serotonin.bacnet4j.obj.BACnetObject;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.api.Device;
@@ -36,13 +34,13 @@ import org.code_house.bacnet4j.wrapper.api.Type;
 import org.connectorio.binding.bacnet.internal.BACnetBindingConstants;
 import org.connectorio.binding.bacnet.internal.config.ChannelConfig;
 import org.connectorio.binding.bacnet.internal.config.ObjectConfig;
-import org.connectorio.binding.base.handler.PollingHandler;
 import org.connectorio.binding.base.handler.polling.common.BasePollingThingHandler;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.types.Command;
+import org.eclipse.smarthome.core.types.RefreshType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +78,22 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
 
   @Override
   public void handleCommand(ChannelUID channelUID, Command command) {
+    logger.debug("Handle command {} for channel {} and property {}", channelUID, command, property);
 
+    final CompletableFuture<BacNetClient> client = getBridgeHandler().flatMap(bridge -> bridge.getClient())
+      .orElseThrow(() -> new IllegalArgumentException("BACnet client is not ready"));
+
+    if (command == RefreshType.REFRESH) {
+      scheduler.execute(new ReadPropertyTask(() -> client, getCallback(), property, channelUID));
+    } else {
+      scheduler.execute(new Runnable() {
+        @Override
+        public void run() {
+          client.join().setPropertyValue(property, command, (value) -> BACnetValueConverter.openHabTypeToBacNetValue(type.getBacNetType(), value));
+          logger.debug("Command {} for property {} executed successfully", command, property);
+        }
+      });
+    }
   }
 
   @Override
@@ -119,4 +132,5 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
       reader.cancel(true);
     }
   }
+
 }
