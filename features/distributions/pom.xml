@@ -36,6 +36,7 @@
   <modules>
     <module>bacnet</module>
     <module>beckhoff</module>
+    <module>canopen</module>
     <module>siemens</module>
   </modules>
 

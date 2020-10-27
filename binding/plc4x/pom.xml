@@ -36,6 +36,8 @@
   <modules>
     <module>shared</module>
     <module>beckhoff</module>
+    <module>canopen</module>
+    <module>canopen.ta</module>
     <module>siemens</module>
   </modules>
 

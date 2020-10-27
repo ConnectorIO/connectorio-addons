@@ -28,9 +28,9 @@ import org.apache.plc4x.java.ads.discovery.readwrite.AmsNetId;
 import org.apache.plc4x.java.ads.discovery.readwrite.RouteRequest;
 import org.apache.plc4x.java.ads.discovery.readwrite.types.Direction;
 import org.apache.plc4x.java.ads.discovery.readwrite.types.Operation;
+import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
-import org.apache.plc4x.java.spi.connection.AbstractPlcConnection;
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffAmsAdsConfiguration;
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffNetworkConfiguration;
 import org.connectorio.binding.plc4x.beckhoff.internal.discovery.BeckhoffRouteListener;
@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Lukasz Dywicki - Initial contribution
  */
-public class BeckhoffNetworkBridgeHandler extends BeckhoffBridgeHandler<AbstractPlcConnection, BeckhoffNetworkConfiguration> implements
+public class BeckhoffNetworkBridgeHandler extends BeckhoffBridgeHandler<PlcConnection, BeckhoffNetworkConfiguration> implements
   BeckhoffRouteListener {
 
   private final Logger logger = LoggerFactory.getLogger(BeckhoffNetworkBridgeHandler.class);
@@ -86,7 +86,7 @@ public class BeckhoffNetworkBridgeHandler extends BeckhoffBridgeHandler<Abstract
   }
 
   @Override
-  protected Runnable createInitializer(BeckhoffAmsAdsConfiguration amsAds, CompletableFuture<AbstractPlcConnection> initializer) {
+  protected Runnable createInitializer(BeckhoffAmsAdsConfiguration amsAds, CompletableFuture<PlcConnection> initializer) {
     return new Runnable() {
       @Override
       public void run() {
@@ -124,7 +124,7 @@ public class BeckhoffNetworkBridgeHandler extends BeckhoffBridgeHandler<Abstract
           String target = "targetAmsNetId=" + config.targetAmsId + "&targetAmsPort=" + config.targetAmsPort;
           String source = "&sourceAmsNetId=" + amsAds.sourceAmsId + "&sourceAmsPort=" + amsAds.sourceAmsPort;
 
-          AbstractPlcConnection connection = (AbstractPlcConnection) driverManager.getConnection("ads:tcp://" + host + "?" + target + source);
+          PlcConnection connection = driverManager.getConnection("ads:tcp://" + host + "?" + target + source);
 
           if (!connection.isConnected()) {
             connection.connect();

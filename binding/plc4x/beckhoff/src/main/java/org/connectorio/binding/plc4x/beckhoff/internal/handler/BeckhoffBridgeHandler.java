@@ -19,14 +19,11 @@ package org.connectorio.binding.plc4x.beckhoff.internal.handler;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import org.apache.plc4x.java.spi.connection.AbstractPlcConnection;
+import org.apache.plc4x.java.api.PlcConnection;
 import org.connectorio.binding.plc4x.beckhoff.internal.BeckhoffBindingConstants;
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffAmsAdsConfiguration;
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffBridgeConfiguration;
-import org.connectorio.binding.plc4x.shared.handler.SharedPlc4xBridgeHandler;
+import org.connectorio.binding.plc4x.shared.handler.base.PollingPlc4xBridgeHandler;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.ThingStatus;
@@ -40,11 +37,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author Lukasz Dywicki - Initial contribution
  */
-public abstract class BeckhoffBridgeHandler<T extends AbstractPlcConnection, C extends BeckhoffBridgeConfiguration> extends
-    SharedPlc4xBridgeHandler<T, C> {
+public abstract class BeckhoffBridgeHandler<T extends PlcConnection, C extends BeckhoffBridgeConfiguration> extends
+  PollingPlc4xBridgeHandler<T, C> {
 
   private final Logger logger = LoggerFactory.getLogger(BeckhoffBridgeHandler.class);
-  private CompletableFuture<T> initializer;
+  private CompletableFuture<T> initializer = new CompletableFuture<>();;
 
   public BeckhoffBridgeHandler(Bridge thing) {
     super(thing);
@@ -74,26 +71,15 @@ public abstract class BeckhoffBridgeHandler<T extends AbstractPlcConnection, C e
       return;
     }
 
-    initializer = new CompletableFuture<>();
     Runnable connectionTask = createInitializer(config.get(), initializer);
     scheduler.submit(connectionTask);
-  }
-
-  @Override
-  public CompletableFuture<T> getInitializer() {
-    return initializer;
   }
 
   protected abstract Runnable createInitializer(BeckhoffAmsAdsConfiguration amsAds, CompletableFuture<T> initializer);
 
   @Override
-  protected T getPlcConnection() {
-    try {
-      return initializer.get(5, TimeUnit.SECONDS);
-    } catch (InterruptedException | TimeoutException | ExecutionException e) {
-      logger.warn("Could not obtain connection", e);
-      return null;
-    }
+  protected CompletableFuture<T> getPlcConnection() {
+      return initializer;
   }
 
   @Override

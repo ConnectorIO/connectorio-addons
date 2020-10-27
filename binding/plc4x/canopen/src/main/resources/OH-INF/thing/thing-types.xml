@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright (C) 2019-2020 ConnectorIO Sp. z o.o.
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -
+ - SPDX-License-Identifier: Apache-2.0
+ -->
+<thing:thing-descriptions bindingId="co7io-plc4x-canopen"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+  <bridge-type id="socketcan">
+    <label>SocketCAN interface for CANopen</label>
+    <description>Defines CANopen interface which uses SocketCAN under the hood.</description>
+
+    <config-description>
+      <parameter name="nodeId" type="integer" required="true">
+        <label>CANopen Node ID</label>
+        <description>
+          Identifier of node used to identify request made to the bus.
+          Please be aware that this identifier impacts bus arbitration. If you wish high priority set it to values from 1 and above, if you don't want to interfere set it to 127 or less.
+        </description>
+      </parameter>
+      <parameter name="heartbeat" type="boolean" required="false">
+        <label>Emit heartbeat</label>
+        <default>true</default>
+        <description>
+          Determine if binding should announce its state to the bus through standard CANopen NMT service. It might be required for some requests to work.
+        </description>
+      </parameter>
+      <parameter name="name" type="text" required="true">
+        <label>Interface name</label>
+        <description>Name of interface assigned by operating system.</description>
+      </parameter>
+      <parameter name="discoveryMode" type="text" required="false">
+        <label>Discovery mode</label>
+        <default>NMT_LISTEN</default>
+        <description>Node discovery strategy for this CANopen connection.</description>
+        <options>
+          <option value="NMT_LISTEN">Listen for node heartbeat information.</option>
+          <option value="SDO_SCAN">Actively scan bus by sending SDO to each possible node.</option>
+        </options>
+      </parameter>
+      <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+        <label>Refresh interval</label>
+        <description>
+          Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+        </description>
+        <unitLabel>ms</unitLabel>
+        <default>0</default>
+      </parameter>
+    </config-description>
+  </bridge-type>
+
+  <thing-type id="generic">
+    <label>Generic CANopen device</label>
+    <description>A generic purpose CANopen device which can be polled for data via SDO requests.</description>
+
+    <config-description>
+      <parameter name="nodeId" type="integer" required="true">
+        <label>CANopen Node ID</label>
+        <description>
+          Identifier of node used to identify request made to the bus.
+          Please be aware that this identifier impacts bus arbitration. If you wish high priority set it to values from 1 and above, if you don't want to interfere set it to 127 or less.
+        </description>
+      </parameter>
+      <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+        <label>Refresh interval</label>
+        <description>
+          Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+        </description>
+        <unitLabel>ms</unitLabel>
+        <default>0</default>
+      </parameter>
+    </config-description>
+  </thing-type>
+
+</thing:thing-descriptions>

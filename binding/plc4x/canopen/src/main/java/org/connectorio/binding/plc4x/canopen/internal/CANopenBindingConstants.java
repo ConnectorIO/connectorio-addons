@@ -1,0 +1,16 @@
+package org.connectorio.binding.plc4x.canopen.internal;
+
+import org.openhab.core.thing.ThingTypeUID;
+
+public interface CANopenBindingConstants extends org.connectorio.binding.plc4x.canopen.CANopenBindingConstants {
+
+  // bridge types
+  String SOCKETCAN_BRIDGE_TYPE = "socketcan";
+
+  String GENERIC_THING = "generic";
+
+  ThingTypeUID SOCKETCAN_BRIDGE_THING_TYPE = new ThingTypeUID(BINDING_ID, SOCKETCAN_BRIDGE_TYPE);
+
+  ThingTypeUID GENERIC_THING_TYPE = new ThingTypeUID(BINDING_ID, GENERIC_THING);
+
+}

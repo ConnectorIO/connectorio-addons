@@ -16,7 +16,7 @@
  -
  - SPDX-License-Identifier: Apache-2.0
  -->
-<features name="co7io-binding-ads-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.6.0">
+<features name="co7io-binding-s7-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.6.0">
 
   <repository>mvn:org.openhab.core.features.karaf/org.openhab.core.features.karaf.openhab-core/${openhab.version}/xml/features</repository>
   <repository>mvn:org.connectorio.binding.features/plc4x/${project.version}/xml/features</repository>

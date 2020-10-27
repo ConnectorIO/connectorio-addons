@@ -18,8 +18,8 @@
 package org.connectorio.binding.plc4x.beckhoff.internal.handler;
 
 import java.util.concurrent.CompletableFuture;
+import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
-import org.apache.plc4x.java.spi.connection.AbstractPlcConnection;
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffAmsAdsConfiguration;
 import org.connectorio.binding.plc4x.beckhoff.internal.config.BeckhoffSerialConfiguration;
 import org.connectorio.binding.plc4x.shared.osgi.PlcDriverManager;
@@ -37,8 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Lukasz Dywicki - Initial contribution
  */
-public class BeckhoffSerialBridgeHandler extends
-    BeckhoffBridgeHandler<AbstractPlcConnection, BeckhoffSerialConfiguration> {
+public class BeckhoffSerialBridgeHandler extends BeckhoffBridgeHandler<PlcConnection, BeckhoffSerialConfiguration> {
 
   private final Logger logger = LoggerFactory.getLogger(BeckhoffSerialBridgeHandler.class);
   private final PlcDriverManager driverManager;
@@ -53,7 +52,7 @@ public class BeckhoffSerialBridgeHandler extends
   }
 
   @Override
-  protected Runnable createInitializer(BeckhoffAmsAdsConfiguration amsAds, CompletableFuture<AbstractPlcConnection> initializer) {
+  protected Runnable createInitializer(BeckhoffAmsAdsConfiguration amsAds, CompletableFuture<PlcConnection> initializer) {
     return new Runnable() {
       @Override
       public void run() {
@@ -61,7 +60,7 @@ public class BeckhoffSerialBridgeHandler extends
           BeckhoffSerialConfiguration config = getBridgeConfig().get();
           String target = hostWithPort(config.targetAmsId, config.targetAmsPort);
           String source = amsAds.sourceAmsId != null && amsAds.sourceAmsPort != null ? "/" + hostWithPort(amsAds.sourceAmsId, amsAds.sourceAmsPort) : "";
-          AbstractPlcConnection connection = (AbstractPlcConnection) driverManager.getConnection("ads:serial://" + config.port + "/" + target + source);
+          PlcConnection connection = driverManager.getConnection("ads:serial://" + config.port + "/" + target + source);
 
           if (!connection.isConnected()) {
             connection.connect();

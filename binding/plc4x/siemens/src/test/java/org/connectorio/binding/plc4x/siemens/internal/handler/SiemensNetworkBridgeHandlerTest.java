@@ -17,7 +17,6 @@
  */
 package org.connectorio.binding.plc4x.siemens.internal.handler;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.net.ConnectException;
@@ -25,9 +24,9 @@ import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.s7.readwrite.S7Driver;
-import org.apache.plc4x.java.spi.connection.AbstractPlcConnection;
 import org.assertj.core.api.AbstractThrowableAssert;
 import org.connectorio.binding.plc4x.shared.osgi.internal.OsgiDriverManager;
 import org.connectorio.binding.plc4x.siemens.internal.config.SiemensNetworkConfiguration;
@@ -46,7 +45,7 @@ class SiemensNetworkBridgeHandlerTest {
     SiemensNetworkBridgeHandler handler = new SiemensNetworkBridgeHandler(bridge, new OsgiDriverManager(Collections.emptyList()));
     handler.initialize();
 
-    CompletableFuture<AbstractPlcConnection> initializer = handler.getInitializer();
+    CompletableFuture<PlcConnection> initializer = handler.getPlcConnection();
     AbstractThrowableAssert<?, ? extends Throwable> thrownBy = assertThatThrownBy(initializer::join);
     thrownBy.isInstanceOf(CompletionException.class)
       .hasMessageContaining("Error creating channel.");
@@ -79,7 +78,7 @@ class SiemensNetworkBridgeHandlerTest {
 //      .hasCauseInstanceOf(PlcConnectionException.class)
 //      .hasMessageContaining("Unable to Connect on TCP Layer");
 
-    CompletableFuture<AbstractPlcConnection> initializer = handler.getInitializer();
+    CompletableFuture<PlcConnection> initializer = handler.getPlcConnection();
 
     AbstractThrowableAssert<?, ? extends Throwable> thrownBy = assertThatThrownBy(initializer::join);
     thrownBy.isInstanceOf(CompletionException.class)
