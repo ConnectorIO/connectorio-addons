@@ -58,7 +58,16 @@ public class DBusCANInterfaceDiscoveryService extends AbstractDiscoveryService i
   }
 
   @Override
+  protected void startBackgroundDiscovery() {
+    scanInterfaces();
+  }
+
+  @Override
   protected void startScan() {
+    scanInterfaces();
+  }
+
+  private void scanInterfaces() {
     try (DBusConnection connection = DBusConnection.getConnection(DBusBusType.SYSTEM, false, DBusConnection.TCP_CONNECT_TIMEOUT)) {
       ObjectManager nm = connection.getRemoteObject(NETWORK_MANAGER_BUS, "/org/freedesktop", ObjectManager.class);
 
