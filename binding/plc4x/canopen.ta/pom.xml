@@ -57,6 +57,13 @@
       <type>xml</type>
     </dependency>
     <dependency>
+      <groupId>org.connectorio.binding.plc4x</groupId>
+      <artifactId>canopen</artifactId>
+      <classifier>features</classifier>
+      <type>xml</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>tec.uom</groupId>
       <artifactId>uom-se</artifactId>
       <version>1.0.10</version>
