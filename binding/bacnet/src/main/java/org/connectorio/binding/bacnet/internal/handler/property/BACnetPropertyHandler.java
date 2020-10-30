@@ -43,6 +43,7 @@ import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.types.Command;
+import org.openhab.core.types.RefreshType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +81,26 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
 
   @Override
   public void handleCommand(ChannelUID channelUID, Command command) {
+    logger.debug("Handle command {} for channel {} and property {}", channelUID, command, property);
 
+    final CompletableFuture<BacNetClient> client = getBridgeHandler().flatMap(bridge -> bridge.getClient())
+      .orElseThrow(() -> new IllegalArgumentException("BACnet client is not ready"));
+
+    if (command == RefreshType.REFRESH) {
+      scheduler.execute(new ReadPropertyTask(() -> client, getCallback(), property, channelUID));
+    } else {
+      scheduler.execute(new Runnable() {
+        @Override
+        public void run() {
+          logger.debug("Dispatching command {} to property {}", command, property);
+          client.join().setPropertyValue(property, command, (value) -> {
+            logger.trace("Command {} have been converter to BACnet value {} of type {}", command, value, value.getClass());
+            return BACnetValueConverter.openHabTypeToBacNetValue(type.getBacNetType(), value);
+          });
+          logger.debug("Command {} for property {} executed successfully", command, property);
+        }
+      });
+    }
   }
 
   @Override
@@ -119,4 +139,5 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
       reader.cancel(true);
     }
   }
+
 }

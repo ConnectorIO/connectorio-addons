@@ -68,7 +68,10 @@ public class ReadPropertyTask implements Runnable, BacNetToJavaConverter<State> 
       try {
         Optional.ofNullable(clientFuture.get())
           .map(connection -> connection.getPropertyValue(property, this))
-          .ifPresent(state -> callback.stateUpdated(channelUID, state));
+          .ifPresent(state -> {
+            logger.debug("Requesting state {} for property {}", state, property);
+            callback.stateUpdated(channelUID, state);
+          });
       } catch (InterruptedException | ExecutionException e) {
         logger.debug("Could not complete operation", e);
       }
@@ -77,7 +80,7 @@ public class ReadPropertyTask implements Runnable, BacNetToJavaConverter<State> 
 
   @Override
   public State fromBacNet(Encodable encodable) {
-    logger.info("Mapping value {} for channel {}", encodable, channelUID);
+    logger.debug("Mapping value {} of type {} for channel {}", encodable, encodable.getClass(), channelUID);
     if (encodable instanceof Null) {
       return UnDefType.NULL;
     } else if (encodable instanceof Real) {
@@ -96,7 +99,7 @@ public class ReadPropertyTask implements Runnable, BacNetToJavaConverter<State> 
       String millis = time.getHundredth() != 0 ? "." + time.getHundredth() : "";
       return new DateTimeType(time.getHour() + ":" + time.getMinute() + ":" + time.getSecond() + millis);
     }
-    logger.info("Received value {}, {}", encodable, encodable.getClass().getName());
+    logger.info("Received property value is currently not supported");
     return null;
   }
 }
