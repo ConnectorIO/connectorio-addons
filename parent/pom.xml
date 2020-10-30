@@ -817,8 +817,8 @@
 
   <repositories>
     <repository>
-      <id>openhab-releases</id>
-      <name>openhab-releases</name>
+      <id>openhab-release</id>
+      <name>openhab-release</name>
       <url>https://openhab.jfrog.io/openhab/libs-release</url>
       <releases>
         <enabled>true</enabled>
@@ -828,8 +828,8 @@
       </snapshots>
     </repository>
     <repository>
-      <id>openhab-snapshots</id>
-      <name>openhab-snapshots</name>
+      <id>openhab-snapshot</id>
+      <name>openhab-snapshot</name>
       <url>https://openhab.jfrog.io/openhab/libs-snapshot</url>
       <releases>
         <enabled>false</enabled>
@@ -842,8 +842,8 @@
 
   <pluginRepositories>
     <pluginRepository>
-      <id>openhab-releases</id>
-      <name>openhab-releases</name>
+      <id>openhab-release</id>
+      <name>openhab-releass</name>
       <url>https://openhab.jfrog.io/openhab/libs-release</url>
       <releases>
         <enabled>true</enabled>
@@ -853,8 +853,8 @@
       </snapshots>
     </pluginRepository>
     <pluginRepository>
-      <id>openhab-snapshots</id>
-      <name>openhab-snapshots</name>
+      <id>openhab-snapshot</id>
+      <name>openhab-snapshot</name>
       <url>https://openhab.jfrog.io/openhab/libs-snapshot</url>
       <releases>
         <enabled>false</enabled>
