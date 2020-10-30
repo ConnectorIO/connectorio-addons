@@ -88,7 +88,7 @@
         <groupId>org.connectorio.binding.plc4x</groupId>
         <artifactId>canopen</artifactId>
         <version>${project.version}</version>
-        <classifier>xml</classifier>
+        <classifier>features</classifier>
         <type>xml</type>
       </dependency>
       <!-- maybe some day ?

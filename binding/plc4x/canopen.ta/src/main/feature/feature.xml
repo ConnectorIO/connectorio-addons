@@ -26,7 +26,7 @@
   </feature>
 
   <feature name="co7io-binding-plc4x-canopen-ta" description="Technische Alternative Binding" version="${project.version}">
-    <feature>co7io-binding-canopen</feature>
+    <feature>co7io-binding-plc4x-canopen</feature>
     <bundle start-level="80">mvn:org.connectorio.binding.plc4x/canopen-ta/${project.version}</bundle>
   </feature>
 
