@@ -89,7 +89,11 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
       scheduler.execute(new Runnable() {
         @Override
         public void run() {
-          client.join().setPropertyValue(property, command, (value) -> BACnetValueConverter.openHabTypeToBacNetValue(type.getBacNetType(), value));
+          logger.debug("Dispatching command {} to property {}", command, property);
+          client.join().setPropertyValue(property, command, (value) -> {
+            logger.trace("Command {} have been converter to BACnet value {} of type {}", command, value, value.getClass());
+            return BACnetValueConverter.openHabTypeToBacNetValue(type.getBacNetType(), value);
+          });
           logger.debug("Command {} for property {} executed successfully", command, property);
         }
       });
