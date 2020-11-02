@@ -21,8 +21,11 @@ import static org.connectorio.binding.plc4x.canopen.ta.internal.TACANopenBinding
 
 import org.connectorio.binding.base.handler.factory.BaseThingHandlerFactory;
 import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.binding.ThingHandlerFactory;
 import org.openhab.core.thing.binding.ThingHandler;
+import org.osgi.service.component.annotations.Component;
 
+@Component(service = {TAThingHandlerFactory.class, BaseThingHandlerFactory.class, ThingHandlerFactory.class})
 public class TAThingHandlerFactory extends BaseThingHandlerFactory {
 
   public TAThingHandlerFactory() {

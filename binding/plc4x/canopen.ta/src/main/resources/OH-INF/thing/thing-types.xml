@@ -21,7 +21,11 @@
   xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-  <bridge-type id="ta-uvr16x2">
+  <thing-type id="ta-uvr16x2">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="socketcan"/>
+    </supported-bridge-type-refs>
+
     <label>Technische Alternative UVR 16x2</label>
     <description>Freely programmable logic controller.</description>
 
@@ -33,6 +37,6 @@
         </description>
       </parameter>
     </config-description>
-  </bridge-type>
+  </thing-type>
 
 </thing:thing-descriptions>

@@ -17,6 +17,8 @@
  */
 package org.connectorio.binding.plc4x.canopen.internal.handler;
 
+import static org.connectorio.binding.plc4x.canopen.internal.CANopenBindingConstants.GENERIC_BRIDGE_THING_TYPE;
+import static org.connectorio.binding.plc4x.canopen.internal.CANopenBindingConstants.SDO_THING_TYPE;
 import static org.connectorio.binding.plc4x.canopen.internal.CANopenBindingConstants.SOCKETCAN_BRIDGE_THING_TYPE;
 
 import java.util.List;
@@ -42,7 +44,7 @@ public class CANOpenThingHandlerFactory extends BaseThingHandlerFactory implemen
 
   @Activate
   public CANOpenThingHandlerFactory(@Reference PlcDriverManager driverManager) {
-    super(SOCKETCAN_BRIDGE_THING_TYPE);
+    super(SOCKETCAN_BRIDGE_THING_TYPE, GENERIC_BRIDGE_THING_TYPE, SDO_THING_TYPE);
     this.driverManager = driverManager;
   }
 
@@ -52,6 +54,13 @@ public class CANOpenThingHandlerFactory extends BaseThingHandlerFactory implemen
       if (SOCKETCAN_BRIDGE_THING_TYPE.equals(thing.getThingTypeUID())) {
         return new CANOpenSocketCANBridgeHandler((Bridge) thing, driverManager, participants);
       }
+      if (GENERIC_BRIDGE_THING_TYPE.equals(thing.getThingTypeUID())) {
+        return new CANOpenGenericBridgeHandler((Bridge) thing);
+      }
+    }
+
+    if (SDO_THING_TYPE.equals(thing.getThingTypeUID())) {
+      return new SDOThingHandler(thing);
     }
 
     return null;

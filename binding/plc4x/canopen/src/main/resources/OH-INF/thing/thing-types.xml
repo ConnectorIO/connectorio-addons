@@ -64,7 +64,11 @@
     </config-description>
   </bridge-type>
 
-  <thing-type id="generic">
+  <bridge-type id="generic">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="socketcan"/>
+    </supported-bridge-type-refs>
+
     <label>Generic CANopen device</label>
     <description>A generic purpose CANopen device which can be polled for data via SDO requests.</description>
 
@@ -76,6 +80,71 @@
           Please be aware that this identifier impacts bus arbitration. If you wish high priority set it to values from 1 and above, if you don't want to interfere set it to 127 or less.
         </description>
       </parameter>
+      <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+        <label>Refresh interval</label>
+        <description>
+          Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+        </description>
+        <unitLabel>ms</unitLabel>
+        <default>0</default>
+      </parameter>
+    </config-description>
+  </bridge-type>
+
+  <thing-type id="sdo" extensible="switch,contact,number">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="generic"/>
+    </supported-bridge-type-refs>
+    <label>SDO</label>
+    <description>Service Data Object - a read/write object.</description>
+
+    <config-description>
+      <parameter name="field" type="text" required="true">
+        <label>Field</label>
+      </parameter>
+
+      <!--
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+      </parameter>
+      <parameter name="subIndex" type="integer" required="true">
+        <label>Sub index</label>
+      </parameter>
+      <parameter name="readType" type="text">
+        <label>Value type</label>
+        <options>
+          <option value="BOOLEAN">BOOLEAN</option>
+
+          <option value="UNSIGNED8">UNSIGNED8</option>
+          <option value="UNSIGNED16">UNSIGNED16</option>
+          <option value="UNSIGNED24">UNSIGNED24</option>
+          <option value="UNSIGNED32">UNSIGNED32</option>
+          <option value="UNSIGNED40">UNSIGNED40</option>
+          <option value="UNSIGNED48">UNSIGNED48</option>
+          <option value="UNSIGNED56">UNSIGNED56</option>
+          <option value="UNSIGNED64">UNSIGNED64</option>
+          <option value="INTEGER8">INTEGER8</option>
+          <option value="INTEGER16">INTEGER16</option>
+          <option value="INTEGER24">INTEGER24</option>
+          <option value="INTEGER32">INTEGER32</option>
+          <option value="INTEGER40">INTEGER40</option>
+          <option value="INTEGER48">INTEGER48</option>
+          <option value="INTEGER56">INTEGER56</option>
+          <option value="INTEGER64">INTEGER64</option>
+          <option value="REAL32">REAL32</option>
+          <option value="REAL64">REAL64</option>
+
+          <option value="RECORD">RECORD</option>
+
+          <option value="OCTET_STRING">OCTET_STRING</option>
+          <option value="VISIBLE_STRING">VISIBLE_STRING</option>
+          <option value="UNICODE_STRING">UNICODE_STRING</option>
+
+          <option value="TIME_OF_DAY">TIME_OF_DAY</option>
+          <option value="TIME_DIFFERENCE">TIME_DIFFERENCE</option>
+        </options>
+      </parameter>
+      -->
       <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
         <label>Refresh interval</label>
         <description>

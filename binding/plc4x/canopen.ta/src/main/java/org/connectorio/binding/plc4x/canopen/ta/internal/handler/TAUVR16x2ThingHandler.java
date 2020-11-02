@@ -21,11 +21,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionEvent;
+import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest.Builder;
+import org.apache.plc4x.java.api.messages.PlcSubscriptionResponse;
+import org.apache.plc4x.java.can.field.CANOpenPDOField;
+import org.apache.plc4x.java.can.field.CANOpenSDOField;
 import org.apache.plc4x.java.canopen.readwrite.IndexAddress;
 import org.apache.plc4x.java.canopen.readwrite.io.IndexAddressIO;
+import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
+import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
 import org.connectorio.binding.plc4x.canopen.config.CANopenNodeConfig;
@@ -34,11 +42,14 @@ import org.connectorio.binding.plc4x.canopen.ta.internal.TACANopenBindingConstan
 import org.connectorio.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
 import org.connectorio.binding.plc4x.canopen.ta.internal.handler.protocol.AbstractCallback;
+import org.connectorio.binding.plc4x.canopen.ta.internal.handler.protocol.AnalogOutputCallback;
+import org.connectorio.binding.plc4x.canopen.ta.internal.handler.protocol.DigitalOutputCallback;
 import org.connectorio.binding.plc4x.shared.handler.Plc4xThingHandler;
 import org.connectorio.binding.plc4x.shared.handler.base.PollingPlc4xThingHandler;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.library.CoreItemFactory;
 import org.openhab.core.library.types.QuantityType;
+import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -68,12 +79,53 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
     CANopenNodeConfig config = getConfigAs(CANopenNodeConfig.class);
     nodeId = config.nodeId;
 
-    updateStatus(ThingStatus.INITIALIZING);
+    updateStatus(ThingStatus.OFFLINE);
 
     getBridgeConnection().ifPresent(connection -> {
       try {
-        connection.subscriptionRequestBuilder().addEventField("config", "TRANSMIT_PDO_4:" + nodeId + ":RECORD")
-          .build().execute().get().getSubscriptionHandle("config").register(this);
+        logger.debug("Retrieving UVR {} configuration", nodeId);
+        connection.subscriptionRequestBuilder().addEventField("tpdo_0x480", "TRANSMIT_PDO_4:" + nodeId + ":RECORD")
+          .build().execute().get().getSubscriptionHandle("tpdo_0x480").register(this);
+
+        ValueListener valueListener = new ValueListener() {
+          @Override
+          public void analog(int index, ReadBuffer value) throws ParseException {
+            short val = value.readShort(16);
+            Channel channel = getThing().getChannel("analog#" + index);
+            logger.info("Analog channel {} (index {}) value {}", channel, index, val);
+          }
+
+          @Override
+          public void digital(int index, boolean value) {
+            Channel channel = getThing().getChannel("analog#" + index);
+            logger.info("Digital channel {} (index {}) value {}", channel, index, value);
+          }
+        };
+
+        subscribe(connection, "tpdo_0x180", "TRANSMIT_PDO_1:" + nodeId + ":RECORD", new DigitalOutputCallback(valueListener)); // digital
+        subscribe(connection, "rpdo_0x200", "RECEIVE_PDO_1:" + nodeId + ":RECORD", new AnalogOutputCallback(valueListener, 0));
+        subscribe(connection, "tpdo_0x280", "TRANSMIT_PDO_2:" + nodeId + ":RECORD", new AnalogOutputCallback(valueListener, 4));
+        subscribe(connection, "rpdo_0x300", "RECEIVE_PDO_2:" + nodeId + ":RECORD", new AnalogOutputCallback(valueListener, 8));
+        subscribe(connection, "tpdo_0x380", "TRANSMIT_PDO_3:" + nodeId + ":RECORD", new AnalogOutputCallback(valueListener, 12));
+        subscribe(connection, "rpdo_0x240", "RECEIVE_PDO_1:" + nodeId + 0x40 + ":RECORD", new AnalogOutputCallback(valueListener, 16));
+        subscribe(connection, "tpdo_0x2c0", "TRANSMIT_PDO_2:" + nodeId + 0x40 + ":RECORD", new AnalogOutputCallback(valueListener, 20));
+        subscribe(connection, "rpdo_0x340", "RECEIVE_PDO_2:" + nodeId + 0x40 + ":RECORD", new AnalogOutputCallback(valueListener, 24));
+        subscribe(connection, "tpdo_0x3c0", "TRANSMIT_PDO_3:" + nodeId + 0x40 + ":RECORD", new AnalogOutputCallback(valueListener, 28));
+        subscribe(connection, "tpdo_0x3c0", "TRANSMIT_PDO_3:" + nodeId + 0x40 + ":RECORD", new AnalogOutputCallback(valueListener, 28));
+
+        connection.writeRequestBuilder()
+          .addItem("mpdo", new CANOpenPDOField(0, CANOpenService.TRANSMIT_PDO_4, CANOpenDataType.RECORD),
+            //new CANOpenMPDO((short) (0x80 + nodeId), new IndexAddress(0x4e01, (short) 1), new byte[] {0,0,0,1})
+            (Byte) (byte) (0x80 + nodeId),
+            (Byte) (byte) 0x01,
+            (Byte) (byte) 0x4e,
+            (Byte) (byte) 0x01,
+            (Byte) (byte) 0x01,
+            (Byte) (byte) 0x00,
+            (Byte) (byte) 0x00,
+            (Byte) (byte) 0x00
+          )
+          .build().execute().get();
         updateStatus(ThingStatus.ONLINE);
       } catch (InterruptedException | ExecutionException e) {
         logger.error("Could not initialize device handler", e);
@@ -94,7 +146,7 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
 
   @Override
   public void accept(PlcSubscriptionEvent event) {
-    final byte[] bytes = AbstractCallback.getBytes(event, "config");
+    final byte[] bytes = AbstractCallback.getBytes(event, event.getFieldNames().iterator().next());
     try {
       ReadBuffer buffer = new ReadBuffer(bytes, true);
       int sender = buffer.readUnsignedShort(8);
@@ -110,11 +162,11 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
       int unit = buffer.readUnsignedShort(8);
 
       if (subIndex <= 32) { // analog
-        updateThingChannel(rawValue, unit, subIndex, "analog#", 0x228f, "Analog #", "Number:Dimensionless",
+        updateThingChannel(rawValue, unit, "analog#", 0x228f, subIndex, "Analog #", "Number:Dimensionless",
           TACANopenBindingConstants.ANALOG_OUTPUT_CHANNEL_TYPE);
       } else if (subIndex <= 64) { // digital
         final int digitalIndex = subIndex - 33;
-        updateThingChannel(rawValue, unit, digitalIndex, "digital#", 0x238f, "Digital #", CoreItemFactory.CONTACT,
+        updateThingChannel(rawValue, unit, "digital#", 0x238f, digitalIndex, "Digital #", CoreItemFactory.CONTACT,
           TACANopenBindingConstants.DIGITAL_OUTPUT_CHANNEL_TYPE);
       }
 
@@ -123,16 +175,18 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
     }
   }
 
-  private void updateThingChannel(int rawValue, int unit, int labelIndex, String channelId, int index, String fallbackLabel,
-    String contact, ChannelTypeUID channelTypeUID) {
-
+  private void updateThingChannel(int rawValue, int unit, String channelId, int sdoIndex, int labelIndex, String fallbackLabel, String contact, ChannelTypeUID channelTypeUID) {
     ChannelUID channelUID = new ChannelUID(getThing().getUID(), channelId + labelIndex);
 
-    String label = getBridgeConnection().map(connection ->
-      connection.readRequestBuilder()
-        .addItem("label", "SDO:" + nodeId + ":0x" + Integer.toHexString(labelIndex) + "/" + index + ":VISIBLE_STRING")
-        .build().execute().join().getString("label")
-    ).orElse(fallbackLabel + labelIndex);
+    String label = getBridgeConnection().map(connection -> {
+      CANOpenSDOField field = new CANOpenSDOField(nodeId, (short) sdoIndex, (short) labelIndex, CANOpenDataType.VISIBLE_STRING);
+      logger.info("Requesting data {}", field);
+      return connection.readRequestBuilder()
+        .addItem("label", field)
+        .build().execute()
+        .join()
+        .getString("label");
+    }).orElse(fallbackLabel + labelIndex);
 
     ThingBuilder thingBuilder = editThing();
     if (getThing().getChannel(channelUID) != null) {
@@ -172,6 +226,16 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
 
     // unknown
     return UnDefType.UNDEF;
+  }
+
+  private static void subscribe(PlcConnection connection, String name, String field, Consumer<PlcSubscriptionEvent> callback) throws ExecutionException, InterruptedException {
+    Builder subscriptionBuilder = connection.subscriptionRequestBuilder();
+    subscriptionBuilder.addEventField(name, field);
+
+    PlcSubscriptionResponse response = subscriptionBuilder.build().execute().get();
+    for (String subscriptionName : response.getFieldNames()) {
+      response.getSubscriptionHandle(subscriptionName).register(callback);
+    }
   }
 
 }
