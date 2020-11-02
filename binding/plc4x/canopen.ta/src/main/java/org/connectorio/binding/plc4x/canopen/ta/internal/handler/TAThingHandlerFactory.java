@@ -21,8 +21,11 @@ import static org.connectorio.binding.plc4x.canopen.ta.internal.TACANopenBinding
 
 import org.connectorio.binding.base.handler.factory.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.Thing;
+import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
+import org.osgi.service.component.annotations.Component;
 
+@Component(service = {TAThingHandlerFactory.class, BaseThingHandlerFactory.class, ThingHandlerFactory.class})
 public class TAThingHandlerFactory extends BaseThingHandlerFactory {
 
   public TAThingHandlerFactory() {

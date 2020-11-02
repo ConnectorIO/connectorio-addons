@@ -25,6 +25,8 @@ import org.connectorio.binding.plc4x.shared.Plc4xBindingConstants;
 
 public interface CANopenBindingConstants extends Plc4xBindingConstants {
 
-    String BINDING_ID = Plc4xBindingConstants.protocol("canopen");
+  String BINDING_ID = Plc4xBindingConstants.protocol("canopen");
+
+  Long DEFAULT_POLLING_INTERVAL = 1000L;
 
 }

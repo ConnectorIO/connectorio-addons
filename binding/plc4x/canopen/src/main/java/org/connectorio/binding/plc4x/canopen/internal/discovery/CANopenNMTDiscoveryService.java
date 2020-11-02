@@ -17,21 +17,16 @@
  */
 package org.connectorio.binding.plc4x.canopen.internal.discovery;
 
-import static org.connectorio.binding.plc4x.canopen.internal.CANopenBindingConstants.GENERIC_THING_TYPE;
+import static org.connectorio.binding.plc4x.canopen.internal.CANopenBindingConstants.GENERIC_BRIDGE_THING_TYPE;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
 import org.apache.plc4x.java.api.PlcConnection;
-import org.apache.plc4x.java.api.messages.PlcSubscriptionEvent;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest.Builder;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionResponse;
 import org.apache.plc4x.java.api.model.PlcConsumerRegistration;
 import org.apache.plc4x.java.api.types.PlcResponseCode;
-import org.apache.plc4x.java.api.value.PlcValue;
-import org.connectorio.binding.plc4x.canopen.discovery.CANopenDiscoveryParticipant;
 import org.connectorio.binding.plc4x.canopen.internal.handler.CANOpenSocketCANBridgeHandler;
 import org.eclipse.smarthome.config.discovery.AbstractDiscoveryService;
 import org.eclipse.smarthome.config.discovery.DiscoveryResult;
@@ -86,8 +81,7 @@ public class CANopenNMTDiscoveryService extends AbstractDiscoveryService impleme
               }
               // Discovery participants did not bring any information about discovery result, meaning that we have pretty
               // much a generic CANopen node which can be read via PDO/SDO requests. This is a fallback to create a generic thing.
-              DiscoveryResult genericResult = DiscoveryResultBuilder
-                .create(new ThingUID(GENERIC_THING_TYPE, handler.getThing().getUID(), "" + node))
+              DiscoveryResult genericResult = DiscoveryResultBuilder.create(new ThingUID(GENERIC_BRIDGE_THING_TYPE, handler.getThing().getUID(), "" + node))
                 .withLabel("Generic CANopen node " + node)
                 .withBridge(handler.getThing().getUID())
                 .withProperty("nodeId", node)

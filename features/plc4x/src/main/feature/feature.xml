@@ -91,7 +91,7 @@
   <feature name="plc4x-transport-socketcan">
     <feature prerequisite="true">wrap</feature>
     <feature>plc4x-shared-deps</feature>
-    <bundle>wrap:mvn:tel.schich/javacan/2.1.0</bundle>
+    <bundle>wrap:mvn:tel.schich/javacan/2.3.0</bundle>
     <bundle>mvn:org.apache.plc4x/plc4j-transport-socketcan/0.8.0-SNAPSHOT</bundle>
   </feature>
 
