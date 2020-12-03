@@ -32,7 +32,9 @@ public interface TACANopenBindingConstants extends CANopenBindingConstants {
 
   Set<ThingTypeUID> SUPPORTED_THINGS = Collections.singleton(TA_UVR_16x2_THING_TYPE);
 
-  ChannelTypeUID ANALOG_OUTPUT_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, "ta-analog-output");
+  String TA_ANALOG_OUTPUT = "ta-analog-output";
+
+  ChannelTypeUID ANALOG_OUTPUT_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, TA_ANALOG_OUTPUT);
   ChannelTypeUID DIGITAL_OUTPUT_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, "ta-digital-output");
 
 }

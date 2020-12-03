@@ -15,20 +15,27 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.binding.plc4x.canopen.handler;
+package org.connectorio.binding.plc4x.canopen.ta.internal.type;
 
-import java.util.List;
-import org.apache.plc4x.java.api.PlcConnection;
-import org.connectorio.binding.plc4x.canopen.config.CANopenNodeConfig;
-import org.connectorio.binding.plc4x.canopen.discovery.CANopenDiscoveryParticipant;
-import org.connectorio.binding.plc4x.shared.handler.Plc4xBridgeHandler;
+import java.nio.charset.StandardCharsets;
 
-public interface CANopenBridgeHandler<C extends CANopenNodeConfig> extends Plc4xBridgeHandler<PlcConnection, C> {
+public class TAString {
 
-  String getName();
+  private final byte[] value;
 
-  int getNodeId();
+  public TAString(byte[] value) {
+    this.value = value;
+  }
 
-  List<CANopenDiscoveryParticipant> getParticipants();
+  public String getValue() {
+    if (value.length < 4) {
+      return "";
+    }
+
+    byte[] text = new byte[value.length - 4];
+    // strip first and last two bytes.
+    System.arraycopy(value, 2, text, 0, value.length - 4);
+    return new String(text, StandardCharsets.UTF_16LE);
+  }
 
 }

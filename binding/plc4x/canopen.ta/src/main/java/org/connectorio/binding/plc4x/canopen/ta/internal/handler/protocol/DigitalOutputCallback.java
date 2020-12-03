@@ -34,8 +34,8 @@ public class DigitalOutputCallback extends AbstractCallback {
   }
 
   @Override
-  public void accept(PlcSubscriptionEvent plcSubscriptionEvent) {
-    byte[] data = getBytes(plcSubscriptionEvent, plcSubscriptionEvent.getFieldNames().iterator().next());
+  public void accept(PlcSubscriptionEvent event) {
+    byte[] data = getBytes(event, event.getFieldNames().iterator().next());
     ReadBuffer buffer = new ReadBuffer(data, true);
     try {
       for (int index = 0; index < 32; index++) {

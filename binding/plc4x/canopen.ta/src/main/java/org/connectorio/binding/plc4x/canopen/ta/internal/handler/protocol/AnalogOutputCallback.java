@@ -36,8 +36,8 @@ public class AnalogOutputCallback extends AbstractCallback {
   }
 
   @Override
-  public void accept(PlcSubscriptionEvent plcSubscriptionEvent) {
-    byte[] bytes = getBytes(plcSubscriptionEvent, plcSubscriptionEvent.getFieldNames().iterator().next());
+  public void accept(PlcSubscriptionEvent event) {
+    byte[] bytes = getBytes(event, event.getFieldNames().iterator().next());
 
     ReadBuffer buffer = new ReadBuffer(bytes, true);
     try {

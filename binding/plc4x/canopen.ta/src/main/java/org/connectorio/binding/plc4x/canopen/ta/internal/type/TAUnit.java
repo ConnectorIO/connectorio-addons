@@ -15,20 +15,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.binding.plc4x.canopen.handler;
+package org.connectorio.binding.plc4x.canopen.ta.internal.type;
 
-import java.util.List;
-import org.apache.plc4x.java.api.PlcConnection;
-import org.connectorio.binding.plc4x.canopen.config.CANopenNodeConfig;
-import org.connectorio.binding.plc4x.canopen.discovery.CANopenDiscoveryParticipant;
-import org.connectorio.binding.plc4x.shared.handler.Plc4xBridgeHandler;
+public interface TAUnit {
 
-public interface CANopenBridgeHandler<C extends CANopenNodeConfig> extends Plc4xBridgeHandler<PlcConnection, C> {
-
-  String getName();
-
-  int getNodeId();
-
-  List<CANopenDiscoveryParticipant> getParticipants();
+  int getIndex();
 
 }

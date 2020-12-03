@@ -19,6 +19,7 @@ package org.connectorio.binding.plc4x.canopen.ta.internal.discovery;
 
 import static org.connectorio.binding.plc4x.canopen.ta.internal.TACANopenBindingConstants.TA_UVR_16x2_THING_TYPE;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -34,6 +35,7 @@ import org.apache.plc4x.java.can.field.CANOpenSDOField;
 import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
 import org.connectorio.binding.plc4x.canopen.discovery.CANopenDiscoveryParticipant;
 import org.connectorio.binding.plc4x.canopen.ta.internal.TACANopenBindingConstants;
+import org.connectorio.binding.plc4x.canopen.ta.internal.handler.protocol.TAOperations;
 import org.eclipse.smarthome.config.discovery.AbstractDiscoveryService;
 import org.eclipse.smarthome.config.discovery.DiscoveryResult;
 import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
@@ -44,10 +46,9 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component(service = {CANopenDiscoveryParticipant.class, DiscoveryService.class})
+// FIXME Discovery participant running next to thing handler might interfere.
+//@Component(service = {CANopenDiscoveryParticipant.class, DiscoveryService.class})
 public class TACANopenDiscoveryParticipant extends AbstractDiscoveryService implements CANopenDiscoveryParticipant {
-
-  private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   private final Logger logger = LoggerFactory.getLogger(TACANopenDiscoveryParticipant.class);
 
@@ -57,46 +58,47 @@ public class TACANopenDiscoveryParticipant extends AbstractDiscoveryService impl
 
   @Override
   public DiscoveryResult nodeDiscovered(PlcConnection connection, ThingUID bridgeUID, int node) {
-    return CompletableFuture.supplyAsync(() -> {
-      try {
-        final PlcReadResponse response = connection.readRequestBuilder()
-          .addItem("type", new CANOpenSDOField(node, node + 83, (short) 0x23E2, (short) 0x01, CANOpenDataType.UNSIGNED8))
-          .build().execute().join();
+    int clientId = 60;
 
-        final Integer type = response.getInteger("type");
-        if (0x87 == type) {
-          final PlcReadResponse readResponse = connection.readRequestBuilder()
-            .addItem("name", new CANOpenSDOField(node, (short) 0x2512, (short) 0x00, CANOpenDataType.VISIBLE_STRING))
-            .addItem("function", new CANOpenSDOField(node, (short) 0x57E0, (short) 0x07, CANOpenDataType.VISIBLE_STRING))
-            .addItem("version", new CANOpenSDOField(node, (short) 0x57E0, (short) 0x00, CANOpenDataType.VISIBLE_STRING))
-            .addItem("serial", new CANOpenSDOField(node, (short) 0x57E0, (short) 0x01, CANOpenDataType.VISIBLE_STRING))
-            .addItem("production_date", new CANOpenSDOField(node, (short) 0x57E0, (short) 0x02, CANOpenDataType.VISIBLE_STRING))
-            .addItem("bootsector", new CANOpenSDOField(node, (short) 0x57E0, (short) 0x03, CANOpenDataType.VISIBLE_STRING))
-            .addItem("hardware_cover", new CANOpenSDOField(node, (short) 0x57E0, (short) 0x04, CANOpenDataType.VISIBLE_STRING))
-            .addItem("hardware_mains", new CANOpenSDOField(node, (short) 0x57E0, (short) 0x05, CANOpenDataType.VISIBLE_STRING))
-            .build().execute().join();
-
-          DiscoveryResultBuilder resultBuilder = DiscoveryResultBuilder.create(new ThingUID(TA_UVR_16x2_THING_TYPE, "" + node))
-            .withBridge(bridgeUID)
-            .withProperty("nodeId", node)
-            .withProperty(Thing.PROPERTY_VENDOR, "Technische Alternative RT GmbH");
-
-          Optional.ofNullable(readResponse.getString("name")).ifPresent(name -> resultBuilder.withLabel(name + " (TA UVR 16x2)"));
-          Optional.ofNullable(readResponse.getString("function")).ifPresent(value -> resultBuilder.withProperty("function", cleanup(value)));
-          Optional.ofNullable(readResponse.getString("version")).ifPresent(value -> resultBuilder.withProperty("version", cleanup(value)));
-          Optional.ofNullable(readResponse.getString("serial")).ifPresent(value -> resultBuilder.withProperty(Thing.PROPERTY_SERIAL_NUMBER, cleanup(value)));
-          Optional.ofNullable(readResponse.getString("production_date")).ifPresent(value -> resultBuilder.withProperty("production_date", cleanup(value)));
-          Optional.ofNullable(readResponse.getString("bootsector")).ifPresent(value -> resultBuilder.withProperty("bootsector", cleanup(value)));
-          Optional.ofNullable(readResponse.getString("hardware_cover")).ifPresent(value -> resultBuilder.withProperty("hardware_cover", cleanup(value)));
-          Optional.ofNullable(readResponse.getString("hardware_mains")).ifPresent(value -> resultBuilder.withProperty("hardware_mains", cleanup(value)));
-
-          return resultBuilder.build();
-        }
-      } catch (Exception e) {
-        logger.debug("Device identification request failed", e);
+    CompletableFuture<Map<String, String>> deviceInfo = new CompletableFuture<>();
+    TAOperations operations = new TAOperations(connection);
+    operations.subscribeStatus(loggedIn -> {
+      if (loggedIn) {
+        operations.identify(node).whenComplete((response, error) -> {
+          if (error == null) {
+            deviceInfo.complete(response);
+          }
+        });
       }
-      return null;
-    }, executor).join();
+    }, node, clientId);
+
+    operations.login(node, clientId);
+
+    try {
+      Map<String, String> info = deviceInfo.get(30, TimeUnit.SECONDS);
+      DiscoveryResultBuilder resultBuilder = DiscoveryResultBuilder.create(new ThingUID(TA_UVR_16x2_THING_TYPE, "" + node))
+        .withBridge(bridgeUID)
+        .withProperty("nodeId", node)
+        .withRepresentationProperty("nodeId")
+        .withProperty(Thing.PROPERTY_VENDOR, "Technische Alternative RT GmbH");
+
+      Optional.ofNullable(info.get("name")).ifPresent(name -> resultBuilder.withLabel(name + " (TA UVR 16x2)"));
+      Optional.ofNullable(info.get("function")).ifPresent(value -> resultBuilder.withProperty("function", cleanup(value)));
+      Optional.ofNullable(info.get("version")).ifPresent(value -> resultBuilder.withProperty("version", cleanup(value)));
+      Optional.ofNullable(info.get("serial")).ifPresent(value -> resultBuilder.withProperty(Thing.PROPERTY_SERIAL_NUMBER, cleanup(value)));
+      Optional.ofNullable(info.get("production_date")).ifPresent(value -> resultBuilder.withProperty("production_date", cleanup(value)));
+      Optional.ofNullable(info.get("bootsector")).ifPresent(value -> resultBuilder.withProperty("bootsector", cleanup(value)));
+      Optional.ofNullable(info.get("hardware_cover")).ifPresent(value -> resultBuilder.withProperty("hardware_cover", cleanup(value)));
+      Optional.ofNullable(info.get("hardware_mains")).ifPresent(value -> resultBuilder.withProperty("hardware_mains", cleanup(value)));
+
+      return resultBuilder.build();
+    } catch (InterruptedException | TimeoutException | ExecutionException e) {
+      logger.debug("Could not complete device identification", e);
+    } finally {
+      operations.logout(node, clientId);
+    }
+
+    return null;
   }
 
   private String cleanup(String value) {

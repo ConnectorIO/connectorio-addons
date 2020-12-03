@@ -129,6 +129,11 @@ public class CANOpenSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<Plc
   }
 
   @Override
+  public int getNodeId() {
+    return getBridgeConfig().map(cfg -> cfg.nodeId).orElseThrow(() -> new IllegalArgumentException("Bridge node id (client/server id) is not set"));
+  }
+
+  @Override
   public List<CANopenDiscoveryParticipant> getParticipants() {
     return participants;
   }
