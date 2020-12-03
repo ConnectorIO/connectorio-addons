@@ -22,12 +22,14 @@ import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Length;
 import org.openhab.core.library.unit.MetricPrefix;
 import org.openhab.core.library.unit.SIUnits;
+import tec.uom.se.AbstractConverter;
 import tec.uom.se.AbstractUnit;
 import tec.uom.se.format.SimpleUnitFormat;
+import tec.uom.se.unit.TransformedUnit;
 
 public class TAUnits {
 
-  public static final Unit<Dimensionless> IMPULSE = AbstractUnit.ONE;
+  public static final Unit<Dimensionless> IMPULSE = new TransformedUnit<>(AbstractUnit.ONE, AbstractConverter.IDENTITY);
   public static final Unit<Length> MILIMETRE = MetricPrefix.MILLI(SIUnits.METRE);
 
   static {

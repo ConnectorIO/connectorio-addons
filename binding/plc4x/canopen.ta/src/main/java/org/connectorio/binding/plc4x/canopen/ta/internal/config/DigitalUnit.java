@@ -26,7 +26,7 @@ import org.openhab.core.types.State;
 
 public enum DigitalUnit {
 
-  /* 43 digital */ OPEN_CLOSED (43, OpenClosedType.OPEN, OpenClosedType.CLOSED),
+  /* 43 digital */ OPEN_CLOSED (43, OpenClosedType.CLOSED, OpenClosedType.OPEN),
   /* 44 digital */ ON_OFF (44, OnOffType.OFF, OnOffType.ON),
   /* 47 digital */ UP_DOWN (47, OnOffType.OFF /* STOP ? */, OnOffType.ON, OnOffType.OFF);
 

@@ -20,15 +20,18 @@ package org.connectorio.binding.plc4x.canopen.ta.internal.config;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.measure.Dimension;
 import javax.measure.Unit;
+import javax.measure.quantity.Dimensionless;
 import org.connectorio.binding.plc4x.canopen.ta.TAUnits;
+import org.connectorio.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import org.openhab.core.library.unit.MetricPrefix;
 import org.openhab.core.library.unit.SIUnits;
 import org.openhab.core.library.unit.SmartHomeUnits;
 import tec.uom.se.AbstractUnit;
 import tec.uom.se.unit.Units;
 
-public enum AnalogUnit {
+public enum AnalogUnit implements TAUnit {
 
     /* 0  analog  */ DIMENSIONLESS (0, AbstractUnit.ONE, 1),
     /* 1  analog  */ CELSIUS  (1, SIUnits.CELSIUS, 0.1),
@@ -41,7 +44,7 @@ public enum AnalogUnit {
     /* 8  analog  */ HUMIDITY  (8, SmartHomeUnits.PERCENT, 1),
     /* 10 analog  */ KILOWATT (10, SmartHomeUnits.WATT.multiply(1000), 0.1),
     /* 11 analog  */ KILOWATT_HOUR (11, SmartHomeUnits.KILOWATT_HOUR, 1),
-    /* 12 analog  */ METAWATT_HOUR (12, SmartHomeUnits.MEGAWATT_HOUR, 1),
+    /* 12 analog  */ MEGAWATT_HOUR (12, SmartHomeUnits.MEGAWATT_HOUR, 1),
     /* 13 analog  */ VOLT  (13, SmartHomeUnits.VOLT, 0.01),
     /* 14 analog  */ MILLI_AMPERE (14, SmartHomeUnits.AMPERE.divide(1000), 0.1),
     /* 15 analog  */ HOUR (15, SmartHomeUnits.HOUR, 1),
@@ -89,11 +92,17 @@ public enum AnalogUnit {
     private final int index;
     private final Unit<?> unit;
     private final double scale;
+    private final Dimension dimension;
 
     AnalogUnit(int index, Unit<?> unit, double scale) {
+        this(index, unit, scale, unit.getDimension());
+    }
+
+    AnalogUnit(int index, Unit<?> unit, double scale, Dimension dimension) {
         this.index = index;
         this.unit = unit;
         this.scale = scale;
+        this.dimension = dimension;
     }
 
     public int getIndex() {
@@ -106,6 +115,10 @@ public enum AnalogUnit {
 
     public double getScale() {
         return scale;
+    }
+
+    public Dimension getDimension() {
+        return dimension;
     }
 
     public static AnalogUnit valueOf(int index) {

@@ -17,12 +17,13 @@
  */
 package org.connectorio.binding.plc4x.canopen.internal.discovery;
 
-import static org.connectorio.binding.plc4x.canopen.internal.CANopenBindingConstants.GENERIC_BRIDGE_THING_TYPE;
-
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutionException;
-import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest.Builder;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionResponse;
 import org.apache.plc4x.java.api.model.PlcConsumerRegistration;
@@ -30,21 +31,23 @@ import org.apache.plc4x.java.api.types.PlcResponseCode;
 import org.connectorio.binding.plc4x.canopen.internal.handler.CANOpenSocketCANBridgeHandler;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
-import org.openhab.core.config.discovery.DiscoveryResultBuilder;
 import org.openhab.core.config.discovery.DiscoveryService;
+import org.openhab.core.thing.ThingTypeUID;
 import org.openhab.core.thing.ThingUID;
 import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.binding.ThingHandlerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CANopenNMTDiscoveryService extends AbstractDiscoveryService implements DiscoveryService, ThingHandlerService {
+public class CANopenNMTDiscoveryService extends AbstractDiscoveryService implements DiscoveryService,
+  ThingHandlerService {
 
   private static final String SUBSCRIPTION_FIELD_NAME = "nmt-lifecycle-callback";
 
   private final Logger logger = LoggerFactory.getLogger(CANopenNMTDiscoveryService.class);
+  private final Set<Integer> discoveredNodes = new ConcurrentSkipListSet<>();
+
   private CANOpenSocketCANBridgeHandler handler;
-  private PlcConnection connection;
   private PlcConsumerRegistration registration;
 
   public CANopenNMTDiscoveryService() {
@@ -70,25 +73,8 @@ public class CANopenNMTDiscoveryService extends AbstractDiscoveryService impleme
         PlcSubscriptionResponse response = subscriptionBuilder.build().execute().get();
         PlcResponseCode responseCode = response.getResponseCode(SUBSCRIPTION_FIELD_NAME);
         if (responseCode == PlcResponseCode.OK) {
-          registration = response.getSubscriptionHandle(SUBSCRIPTION_FIELD_NAME).register(new SubscriptionCallback(SUBSCRIPTION_FIELD_NAME,
-            handler, connection, new DiscoveryCallback() {
-
-            @Override
-            public void thingAvailable(int node, DiscoveryResult result) {
-              if (result != null) {
-                thingDiscovered(result);
-                return;
-              }
-              // Discovery participants did not bring any information about discovery result, meaning that we have pretty
-              // much a generic CANopen node which can be read via PDO/SDO requests. This is a fallback to create a generic thing.
-              DiscoveryResult genericResult = DiscoveryResultBuilder.create(new ThingUID(GENERIC_BRIDGE_THING_TYPE, handler.getThing().getUID(), "" + node))
-                .withLabel("Generic CANopen node " + node)
-                .withBridge(handler.getThing().getUID())
-                .withProperty("nodeId", node)
-                .build();
-              thingDiscovered(genericResult);
-            }
-          }));
+          registration = response.getSubscriptionHandle(SUBSCRIPTION_FIELD_NAME).register(new NodeStateSubscriptionCallback(SUBSCRIPTION_FIELD_NAME,
+            handler, connection, discoveredNodes, new FallbackDiscoveryResultCallback(this::thingDiscovered, handler.getThing().getUID())));
           return;
         }
         logger.warn("Could not subscribe to heartbeat events, returned code: {}", responseCode);
@@ -104,6 +90,7 @@ public class CANopenNMTDiscoveryService extends AbstractDiscoveryService impleme
   protected void stopBackgroundDiscovery() {
     if (registration != null) {
       registration.unregister();
+      discoveredNodes.clear();
     }
   }
 
@@ -129,6 +116,23 @@ public class CANopenNMTDiscoveryService extends AbstractDiscoveryService impleme
   @Override
   public void deactivate() {
     super.deactivate();
+  }
+
+  @Override
+  protected void thingDiscovered(DiscoveryResult discoveryResult) {
+    super.thingDiscovered(discoveryResult);
+
+    Optional.ofNullable(discoveryResult.getProperties().get("nodeId"))
+      .filter(Integer.class::isInstance)
+      .map(Integer.class::cast)
+      .ifPresent(discoveredNodes::add);
+  }
+
+  @Override
+  protected void removeOlderResults(long timestamp, Collection<ThingTypeUID> thingTypeUIDs, ThingUID bridgeUID) {
+    discoveredNodes.clear();
+
+    super.removeOlderResults(timestamp, thingTypeUIDs, bridgeUID);
   }
 
 }

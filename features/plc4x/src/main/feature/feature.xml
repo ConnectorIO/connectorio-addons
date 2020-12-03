@@ -36,6 +36,7 @@
 
   <feature name="plc4x-api" description="PLC4X API and SPI" version="${plc4x.version}">
     <bundle>mvn:org.apache.commons/commons-lang3/3.9</bundle>
+    <bundle>mvn:commons-codec/commons-codec/1.15</bundle>
 
     <bundle>mvn:org.apache.plc4x/plc4j-api/${plc4x.version}</bundle>
     <bundle>mvn:org.apache.plc4x/plc4j-spi/${plc4x.version}</bundle>

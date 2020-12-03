@@ -21,10 +21,325 @@
   xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
+  <channel-type id="ta-analog-output-temperature">
+    <item-type>Number:Temperature</item-type>
+    <label>Analog output (temperature)</label>
+    <state readOnly="true" pattern="%.1f %unit%" />
+
+    <config-description>
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+        <description>Index of analog output.</description>
+      </parameter>
+
+      <parameter name="unit" type="text" required="true">
+        <label>Unit</label>
+        <description>Unit used by URV to report measured values.</description>
+        <default>CELSIUS</default>
+        <options>
+          <option value="CELSIUS">CELSIUS</option>
+          <option value="KELVIN">KELVIN</option>
+        </options>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="ta-analog-output-length">
+    <item-type>Number:Length</item-type>
+    <label>Analog output (Length)</label>
+    <state readOnly="true" pattern="%.1f %unit%" />
+
+    <config-description>
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+        <description>Index of analog output.</description>
+      </parameter>
+
+      <parameter name="unit" type="text" required="true">
+        <label>Unit</label>
+        <description>Unit used by URV to report measured values.</description>
+        <options>
+          <option value="KILO_METRE">KILO_METRE</option>
+          <option value="METRE">METRE</option>
+          <option value="MILLIMETER">MILLIMETER</option>
+        </options>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="ta-analog-output-volume">
+    <item-type>Number:Volume</item-type>
+    <label>Analog output (Volume)</label>
+    <state readOnly="true" pattern="%.1f %unit%" />
+
+    <config-description>
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+        <description>Index of analog output.</description>
+      </parameter>
+
+      <parameter name="unit" type="text" required="true">
+        <label>Unit</label>
+        <description>Unit used by URV to report measured values.</description>
+        <options>
+          <option value="LITRE">LITRE</option>
+          <option value="CUBIC_METRE">CUBIC_METRE</option>
+        </options>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="ta-analog-output-intensity">
+    <item-type>Number:Intensity</item-type>
+    <label>Analog output (Intensity)</label>
+    <state readOnly="true" pattern="%.1f %unit%" />
+
+    <config-description>
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+        <description>Index of analog output.</description>
+      </parameter>
+
+      <parameter name="unit" type="text" required="true">
+        <label>Unit</label>
+        <description>Unit used by URV to report measured values.</description>
+        <options>
+          <option value="IRRADIANCE">IRRADIANCE</option>
+        </options>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="ta-analog-output-time">
+    <item-type>Number:Time</item-type>
+    <label>Analog output (Time)</label>
+    <state readOnly="true" pattern="%.1f %unit%" />
+
+    <config-description>
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+        <description>Index of analog output.</description>
+      </parameter>
+
+      <parameter name="unit" type="text" required="true">
+        <label>Unit</label>
+        <description>Unit used by URV to report measured values.</description>
+        <options>
+          <option value="SECOND">SECOND</option>
+          <option value="MINUTE">MINUTE</option>
+          <option value="HOUR">HOUR</option>
+          <option value="DAY">DAY</option>
+        </options>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="ta-analog-output-power">
+    <item-type>Number:Power</item-type>
+    <label>Analog output (Power)</label>
+    <state readOnly="true" pattern="%.1f %unit%" />
+
+    <config-description>
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+        <description>Index of analog output.</description>
+      </parameter>
+
+      <parameter name="unit" type="text" required="true">
+        <label>Unit</label>
+        <description>Unit used by URV to report measured values.</description>
+        <default>CELSIUS</default>
+        <options>
+          <option value="KILOWATT">KILOWATT</option>
+        </options>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="ta-analog-output-energy">
+    <item-type>Number:Energy</item-type>
+    <label>Analog output (Energy)</label>
+    <state readOnly="true" pattern="%.1f %unit%" />
+
+    <config-description>
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+        <description>Index of analog output.</description>
+      </parameter>
+
+      <parameter name="unit" type="text" required="true">
+        <label>Unit</label>
+        <description>Unit used by URV to report measured values.</description>
+        <options>
+          <option value="KILOWATT_HOUR">KILOWATT_HOUR</option>
+          <option value="MEGAWATT_HOUR">MEGAWATT_HOUR</option>
+        </options>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="ta-analog-output-electric-potential">
+    <item-type>Number:ElectricPotential</item-type>
+    <label>Analog output (Electric Potential)</label>
+    <state readOnly="true" pattern="%.1f %unit%" />
+
+    <config-description>
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+        <description>Index of analog output.</description>
+      </parameter>
+
+      <parameter name="unit" type="text" required="true">
+        <label>Unit</label>
+        <description>Unit used by URV to report measured values.</description>
+        <options>
+          <option value="VOLT">VOLT</option>
+        </options>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="ta-analog-output-electric-current">
+    <item-type>Number:ElectricCurrent</item-type>
+    <label>Analog output (Electric Current)</label>
+    <state readOnly="true" pattern="%.1f %unit%" />
+
+    <config-description>
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+        <description>Index of analog output.</description>
+      </parameter>
+
+      <parameter name="unit" type="text" required="true">
+        <label>Unit</label>
+        <description>Unit used by URV to report measured values.</description>
+
+        <options>
+          <option value="MILLI_AMPERE">MILLI_AMPERE</option>
+        </options>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="ta-analog-output-electric-resistance">
+    <item-type>Number:ElectricResistance</item-type>
+    <label>Analog output (Electric Resistance)</label>
+    <state readOnly="true" pattern="%.1f %unit%" />
+
+    <config-description>
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+        <description>Index of analog output.</description>
+      </parameter>
+
+      <parameter name="unit" type="text" required="true">
+        <label>Unit</label>
+        <description>Unit used by URV to report measured values.</description>
+        <options>
+          <option value="KILOOHM">KILOOHM</option>
+        </options>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="ta-analog-output-speed">
+    <item-type>Number:Speed</item-type>
+    <label>Analog output (Speed)</label>
+    <state readOnly="true" pattern="%.1f %unit%" />
+
+    <config-description>
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+        <description>Index of analog output.</description>
+      </parameter>
+
+      <parameter name="unit" type="text" required="true">
+        <label>Unit</label>
+        <description>Unit used by URV to report measured values.</description>
+        <options>
+          <option value="KILOMETRE_PER_HOUR">KILOMETRE_PER_HOUR</option>
+          <option value="METRE_PER_SECOND">METRE_PER_SECOND</option>
+          <option value="MILLIMETER_PER_MINUTE">MILLIMETER_PER_MINUTE</option>
+          <option value="MILLIMETER_PER_HOUR">MILLIMETER_PER_HOUR</option>
+          <option value="MILLIMETER_PER_DAY">MILLIMETER_PER_DAY</option>
+        </options>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="ta-analog-volumetric-flow-rate">
+    <item-type>Number:VolumetricFlowRate</item-type>
+    <label>Analog output (Volumetric Flow Rate)</label>
+    <state readOnly="true" pattern="%.1f %unit%" />
+
+    <config-description>
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+        <description>Index of analog output.</description>
+      </parameter>
+
+      <parameter name="unit" type="text" required="true">
+        <label>Unit</label>
+        <description>Unit used by URV to report measured values.</description>
+        <options>
+          <option value="LITRE_PER_HOUR">LITRE_PER_HOUR</option>
+          <option value="LITRE_PER_MINUTE">LITRE_PER_MINUTE</option>
+          <option value="LITER_PER_DAY">LITER_PER_DAY</option>
+          <option value="CUBICMETRE_PER_MINUTE">CUBICMETRE_PER_MINUTE</option>
+          <option value="CUBICMETRE_PER_HOUR">CUBICMETRE_PER_HOUR</option>
+          <option value="CUBICMETRE_PER_DAY">CUBICMETRE_PER_DAY</option>
+        </options>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="ta-analog-pressure">
+    <item-type>Number:Pressure</item-type>
+    <label>Analog output (Pressure)</label>
+    <state readOnly="true" pattern="%.1f %unit%" />
+
+    <config-description>
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+        <description>Index of analog output.</description>
+      </parameter>
+
+      <parameter name="unit" type="text" required="true">
+        <label>Unit</label>
+        <description>Unit used by URV to report measured values.</description>
+        <options>
+          <option value="BAR">BAR</option>
+        </options>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="ta-analog-frequency">
+    <item-type>Number:Frequency</item-type>
+    <label>Analog output (Frequency)</label>
+    <state readOnly="true" pattern="%.1f %unit%" />
+
+    <config-description>
+      <parameter name="index" type="integer" required="true">
+        <label>Index</label>
+        <description>Index of analog output.</description>
+      </parameter>
+
+      <parameter name="unit" type="text" required="true">
+        <label>Unit</label>
+        <description>Unit used by URV to report measured values.</description>
+        <options>
+          <option value="HERTZ">HERTZ</option>
+        </options>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+
   <channel-type id="ta-analog-output">
     <item-type>Number:Dimensionless</item-type>
     <label>Analog output</label>
-    <state readOnly="true" pattern="%s" />
+    <state readOnly="true" pattern="%.1f %unit%" />
 
     <config-description>
       <parameter name="index" type="integer" required="true">
@@ -39,46 +354,15 @@
         <default>DIMENSIONLESS</default>
         <options>
           <option value="DIMENSIONLESS">DIMENSIONLESS</option>
-          <option value="CELSIUS">CELSIUS</option>
-          <option value="IRRADIANCE">IRRADIANCE</option>
-          <option value="LITRE_PER_HOUR">LITRE_PER_HOUR</option>
-          <option value="SECOND">SECOND</option>
-          <option value="MINUTE">MINUTE</option>
           <option value="LITRE_PER_IMPULSE">LITRE_PER_IMPULSE</option>
-          <option value="KELVIN">KELVIN</option>
           <option value="HUMIDITY">HUMIDITY</option>
-          <option value="KILOWATT">KILOWATT</option>
-          <option value="KILOWATT_HOUR">KILOWATT_HOUR</option>
-          <option value="METAWATT_HOUR">METAWATT_HOUR</option>
-          <option value="VOLT">VOLT</option>
-          <option value="MILLI_AMPERE">MILLI_AMPERE</option>
-          <option value="HOUR">HOUR</option>
-          <option value="DAY">DAY</option>
           <option value="IMPULSE">IMPULSE</option>
-          <option value="KILOOHM">KILOOHM</option>
-          <option value="LITRE">LITRE</option>
-          <option value="KILOMETRE_PER_HOUR">KILOMETRE_PER_HOUR</option>
-          <option value="HERTZ">HERTZ</option>
-          <option value="LITRE_PER_MINUTE">LITRE_PER_MINUTE</option>
-          <option value="BAR">BAR</option>
-          <option value="KILO_METRE">KILO_METRE</option>
-          <option value="METRE">METRE</option>
-          <option value="MILLIMETER">MILLIMETER</option>
-          <option value="CUBIC_METRE">CUBIC_METRE</option>
           <option value="HERTZ_KM_HOUR">HERTZ_KM_HOUR</option>
           <option value="HERTZ_M_SECOND">HERTZ_M_SECOND</option>
           <option value="KILOWATT_PER_IMPULSE">KILOWATT_PER_IMPULSE</option>
           <option value="CUBICMETRE_PER_IMPULSE">CUBICMETRE_PER_IMPULSE</option>
           <option value="MILLIMETRE_PER_IMPULSE">MILLIMETRE_PER_IMPULSE</option>
           <option value="LITER_PER_IMPULSE">LITER_PER_IMPULSE</option>
-          <option value="LITER_PER_DAY">LITER_PER_DAY</option>
-          <option value="METRE_PER_SECOND">METRE_PER_SECOND</option>
-          <option value="CUBICMETRE_PER_MINUTE">CUBICMETRE_PER_MINUTE</option>
-          <option value="CUBICMETRE_PER_HOUR">CUBICMETRE_PER_HOUR</option>
-          <option value="CUBICMETRE_PER_DAY">CUBICMETRE_PER_DAY</option>
-          <option value="MILLIMETER_PER_MINUTE">MILLIMETER_PER_MINUTE</option>
-          <option value="MILLIMETER_PER_HOUR">MILLIMETER_PER_HOUR</option>
-          <option value="MILLIMETER_PER_DAY">MILLIMETER_PER_DAY</option>
         </options>
       </parameter>
 

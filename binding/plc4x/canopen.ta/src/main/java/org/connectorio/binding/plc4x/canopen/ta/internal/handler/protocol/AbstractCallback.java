@@ -20,11 +20,12 @@ package org.connectorio.binding.plc4x.canopen.ta.internal.handler.protocol;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionEvent;
 
 public abstract class AbstractCallback implements Consumer<PlcSubscriptionEvent> {
 
-  public static byte[] getBytes(PlcSubscriptionEvent event, String field) {
+  public static byte[] getBytes(PlcReadResponse event, String field) {
     List<Byte> bytes = new ArrayList<>(event.getAllBytes(field));
     byte[] value = new byte[bytes.size()];
     for (int index = 0; index < bytes.size(); index++) {

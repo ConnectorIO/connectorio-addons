@@ -19,6 +19,7 @@ package org.connectorio.binding.plc4x.canopen.internal.discovery;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionEvent;
@@ -27,18 +28,24 @@ import org.connectorio.binding.plc4x.canopen.discovery.CANopenDiscoveryParticipa
 import org.connectorio.binding.plc4x.canopen.internal.handler.CANOpenSocketCANBridgeHandler;
 import org.openhab.core.config.discovery.DiscoveryResult;
 import org.openhab.core.thing.ThingUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-class SubscriptionCallback implements Consumer<PlcSubscriptionEvent> {
+class NodeStateSubscriptionCallback implements Consumer<PlcSubscriptionEvent> {
 
+  private final Logger logger = LoggerFactory.getLogger(NodeStateSubscriptionCallback.class);
   private final String fieldName;
   private final CANOpenSocketCANBridgeHandler handler;
   private final PlcConnection connection;
+  private final Set<Integer> discoveredNodes;
   private final DiscoveryCallback callback;
 
-  public SubscriptionCallback(String fieldName, CANOpenSocketCANBridgeHandler handler, PlcConnection connection, DiscoveryCallback callback) {
+  public NodeStateSubscriptionCallback(String fieldName, CANOpenSocketCANBridgeHandler handler, PlcConnection connection,
+    Set<Integer> discoveredNodes, DiscoveryCallback callback) {
     this.fieldName = fieldName;
     this.handler = handler;
     this.connection = connection;
+    this.discoveredNodes = discoveredNodes;
     this.callback = callback;
   }
 
@@ -51,6 +58,11 @@ class SubscriptionCallback implements Consumer<PlcSubscriptionEvent> {
       final Integer state = Optional.ofNullable(struct.get("state")).map(PlcValue::getInt).orElse(0);
 
       if (0x05 == state && node != 0) { // operational
+        if (discoveredNodes.contains(node)) {
+          logger.trace("Ignoring further discovery scans cause node {} been already checked.", node);
+          return;
+        }
+
         DiscoveryResult discoveryResult = null;
         ThingUID bridgeUID = handler.getThing().getUID();
         for (CANopenDiscoveryParticipant caNopenDiscoveryParticipant : handler.getParticipants()) {
@@ -61,6 +73,9 @@ class SubscriptionCallback implements Consumer<PlcSubscriptionEvent> {
         }
 
         callback.thingAvailable(node, discoveryResult);
+
+
+        discoveredNodes.add(node);
       }
     }
   }
