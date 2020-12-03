@@ -41,9 +41,9 @@
     <slf4j.version>1.7.21</slf4j.version>
     <fasterxml-classmate.version>1.5.1</fasterxml-classmate.version>
 
-    <assertj.version>3.17.2</assertj.version>
-    <junit-jupiter.version>5.5.2</junit-jupiter.version>
-    <mockito.version>3.2.4</mockito.version>
+    <assertj.version>3.18.1</assertj.version>
+    <junit-jupiter.version>5.7.0</junit-jupiter.version>
+    <mockito.version>3.6.28</mockito.version>
 
     <!-- various build related variables -->
     <feature.directory>${project.basedir}/target/test-classes/feature.xml</feature.directory>
@@ -148,12 +148,6 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>${slf4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-simple</artifactId>
-        <version>${slf4j.version}</version>
-        <scope>test</scope>
       </dependency>
 
       <dependency>
@@ -665,6 +659,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>${slf4j.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-api</artifactId>
         <version>${junit-jupiter.version}</version>
@@ -821,7 +821,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M4</version>
+        <version>3.0.0-M5</version>
       </plugin>
       <plugin>
         <groupId>org.apache.felix</groupId>
