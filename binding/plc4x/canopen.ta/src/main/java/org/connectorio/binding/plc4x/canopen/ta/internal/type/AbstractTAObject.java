@@ -23,12 +23,14 @@ import org.apache.plc4x.java.canopen.readwrite.IndexAddress;
 public class AbstractTAObject implements TAObject {
 
   protected final IndexAddress labelAddress;
+  private final int index;
   private final int unit;
   private String label;
 
-  public AbstractTAObject(short index, short subIndex, int unit) {
+  public AbstractTAObject(int index, int unit, IndexAddress labelAddress) {
+    this.index = index;
     this.unit = unit;
-    this.labelAddress = new IndexAddress(index, subIndex);
+    this.labelAddress = labelAddress;
   }
 
   public IndexAddress getLabelAddress() {
@@ -38,6 +40,11 @@ public class AbstractTAObject implements TAObject {
   @Override
   public Optional<String> getLabel() {
     return Optional.ofNullable(label);
+  }
+
+  @Override
+  public int getIndex() {
+    return index;
   }
 
   @Override

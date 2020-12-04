@@ -41,4 +41,8 @@ public class TypeEntry {
   public String getItemType() {
     return itemType;
   }
+
+  public String toString() {
+    return "TypeEntry [channelType=" + channelType + ", itemType=" + itemType + "]";
+  }
 }

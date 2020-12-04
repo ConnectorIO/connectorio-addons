@@ -23,6 +23,8 @@ public interface TAObject {
 
   Optional<String> getLabel();
 
+  int getIndex();
+
   int getUnit();
 
 }

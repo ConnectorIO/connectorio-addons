@@ -18,13 +18,14 @@
 package org.connectorio.binding.plc4x.canopen.ta.internal.type;
 
 import java.util.Optional;
+import org.apache.plc4x.java.canopen.readwrite.IndexAddress;
 
 public class TAADigitalOutput extends AbstractTAObject implements TAOutput {
 
   private TAValue value;
 
-  public TAADigitalOutput(short subIndex, int unit) {
-    super((short) 0x238f, subIndex, unit);
+  public TAADigitalOutput(int index, int unit) {
+    super(index, unit, new IndexAddress((short) 0x238f, (short) (index - 1)));
   }
 
   @Override
@@ -36,9 +37,8 @@ public class TAADigitalOutput extends AbstractTAObject implements TAOutput {
     this.value = value;
   }
 
-  @Override
-  public short getIndex() {
-    return labelAddress.getSubindex();
+  public String toString() {
+    return "TADigitalOutput [" + getIndex() + "]";
   }
 
 }

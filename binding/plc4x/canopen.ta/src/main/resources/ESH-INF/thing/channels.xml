@@ -267,7 +267,7 @@
     </config-description>
   </channel-type>
 
-  <channel-type id="ta-analog-volumetric-flow-rate">
+  <channel-type id="ta-analog-output-volumetric-flow-rate">
     <item-type>Number:VolumetricFlowRate</item-type>
     <label>Analog output (Volumetric Flow Rate)</label>
     <state readOnly="true" pattern="%.1f %unit%" />
@@ -293,7 +293,7 @@
     </config-description>
   </channel-type>
 
-  <channel-type id="ta-analog-pressure">
+  <channel-type id="ta-analog-output-pressure">
     <item-type>Number:Pressure</item-type>
     <label>Analog output (Pressure)</label>
     <state readOnly="true" pattern="%.1f %unit%" />
@@ -314,7 +314,7 @@
     </config-description>
   </channel-type>
 
-  <channel-type id="ta-analog-frequency">
+  <channel-type id="ta-analog-output-frequency">
     <item-type>Number:Frequency</item-type>
     <label>Analog output (Frequency)</label>
     <state readOnly="true" pattern="%.1f %unit%" />

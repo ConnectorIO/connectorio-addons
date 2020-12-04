@@ -26,8 +26,6 @@ public interface TAOutput extends TAObject {
 
   Optional<TAValue> getState();
 
-  short getIndex();
-
   IndexAddress getLabelAddress();
 
   void setLabel(String label);

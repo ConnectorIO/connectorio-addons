@@ -51,7 +51,6 @@ import org.connectorio.binding.plc4x.canopen.ta.internal.handler.ValueListener;
 import org.connectorio.binding.plc4x.canopen.ta.internal.type.TAADigitalOutput;
 import org.connectorio.binding.plc4x.canopen.ta.internal.type.TAAnalogOutput;
 import org.connectorio.binding.plc4x.canopen.ta.internal.type.TAObject;
-import org.connectorio.binding.plc4x.canopen.ta.internal.type.TAOutput;
 import org.connectorio.binding.plc4x.canopen.ta.internal.type.TAString;
 import org.connectorio.binding.plc4x.canopen.ta.internal.type.TAValue;
 import org.slf4j.Logger;
@@ -255,15 +254,19 @@ public class TAOperations {
         }
 
         if (subIndex <= 32) { // analog
-          TAAnalogOutput output = new TAAnalogOutput((short) subIndex, unit);
-          enrich(output);
+          TAAnalogOutput output = new TAAnalogOutput(subIndex, unit);
           output.setValue(value);
-          consumer.accept(output);
+          readLabel(nodeId, output.getLabelAddress()).exceptionally((error) -> {
+            logger.error("Could not retrieve {} label", output, error);
+            return output.toString();
+          }).thenAccept(output::setLabel).thenAccept(label -> consumer.accept(output));
         } else if (subIndex <= 64) { // digital
-          TAADigitalOutput output = new TAADigitalOutput((short) (subIndex - 33), unit);
-          enrich(output);
+          TAADigitalOutput output = new TAADigitalOutput(subIndex - 32, unit);
           output.setValue(value);
-          consumer.accept(output);
+          readLabel(nodeId, output.getLabelAddress()).exceptionally((error) -> {
+            logger.error("Could not retrieve {} label", output, error);
+            return output.toString();
+          }).thenAccept(output::setLabel).thenAccept(label -> consumer.accept(output));
         } else {
           logger.warn("Value {} out of range", subIndex);
         }
@@ -273,60 +276,58 @@ public class TAOperations {
       }
     }
 
-    private void enrich(TAOutput output) {
-      IndexAddress labelAddress = output.getLabelAddress();
-      CANOpenSDOField field = new CANOpenSDOField(nodeId, (short) labelAddress.getIndex(), labelAddress.getSubindex(), CANOpenDataType.RECORD);
-      connection.readRequestBuilder().addItem("label", field)
-        .build().execute().whenComplete((response, error) -> {
-          if (error != null) {
-            return;
-          }
-        byte[] label = AbstractCallback.getBytes(response, "label");
-        output.setLabel(new TAString(label).getValue());
-      }).join();
+    private CompletableFuture<String> readLabel(int nodeId, IndexAddress labelAddress) {
+      CANOpenSDOField field = new CANOpenSDOField(nodeId, (short) labelAddress.getIndex(), labelAddress.getSubindex(),
+        CANOpenDataType.RECORD);
+
+      return connection.readRequestBuilder().addItem("label", field)
+        .build().execute().thenApply(response -> {
+          byte[] label = AbstractCallback.getBytes(response, "label");
+          return new TAString(label).getValue();
+        });
     }
+}
+
+static class SubscriptionResponseCallback implements BiConsumer<PlcSubscriptionResponse, Throwable> {
+
+  private final Logger logger = LoggerFactory.getLogger(SubscriptionResponseCallback.class);
+  private final ExecutorService executor;
+  private final Consumer<PlcSubscriptionEvent> callback;
+  private final List<PlcConsumerRegistration> registrations;
+
+  SubscriptionResponseCallback(ExecutorService executor,
+    List<PlcConsumerRegistration> registrations, Consumer<PlcSubscriptionEvent> callback) {
+    this.executor = executor;
+    this.registrations = registrations;
+    this.callback = callback;
   }
 
-  static class SubscriptionResponseCallback implements BiConsumer<PlcSubscriptionResponse, Throwable> {
-
-    private final Logger logger = LoggerFactory.getLogger(SubscriptionResponseCallback.class);
-    private final ExecutorService executor;
-    private final Consumer<PlcSubscriptionEvent> callback;
-    private final List<PlcConsumerRegistration> registrations;
-
-    SubscriptionResponseCallback(ExecutorService executor,
-      List<PlcConsumerRegistration> registrations, Consumer<PlcSubscriptionEvent> callback) {
-      this.executor = executor;
-      this.registrations = registrations;
-      this.callback = callback;
+  @Override
+  public void accept(PlcSubscriptionResponse response, Throwable throwable) {
+    if (throwable != null) {
+      logger.warn("Could not complete subscribe request", throwable);
+      return;
     }
-
-    @Override
-    public void accept(PlcSubscriptionResponse response, Throwable throwable) {
-      if (throwable != null) {
-        logger.warn("Could not complete subscribe request", throwable);
-        return;
+    for (String subscriptionName : response.getFieldNames()) {
+      PlcSubscriptionField field = response.getRequest().getField(subscriptionName);
+      PlcResponseCode responseCode = response.getResponseCode(subscriptionName);
+      if (responseCode == PlcResponseCode.OK) {
+        registrations.add(response.getSubscriptionHandle(subscriptionName).register(new Consumer<PlcSubscriptionEvent>() {
+          @Override
+          public void accept(PlcSubscriptionEvent event) {
+            executor.submit(new Runnable() {
+              @Override
+              public void run() {
+                logger.debug("Dispatching event with fields {}", event.getFieldNames());
+                callback.accept(event);
+              }
+            });
+          }
+        }));
+        logger.info("Successfully subscribed to field {}", subscriptionName);
+      } else {
+        logger.info("Failed to subscribed to field {}. Returned code: {}", field, responseCode);
       }
-      for (String subscriptionName : response.getFieldNames()) {
-        PlcSubscriptionField field = response.getRequest().getField(subscriptionName);
-        PlcResponseCode responseCode = response.getResponseCode(subscriptionName);
-        if (responseCode == PlcResponseCode.OK) {
-          registrations.add(response.getSubscriptionHandle(subscriptionName).register(new Consumer<PlcSubscriptionEvent>() {
-            @Override
-            public void accept(PlcSubscriptionEvent event) {
-              executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                  logger.debug("Dispatching event {}", event);
-                  callback.accept(event);
-                }
-              });
-            }
-          }));
-          logger.info("Successfully subscribed to field {}", subscriptionName);
-        } else {
-          logger.info("Failed to subscribed to field {}. Returned code: {}", field, responseCode);
-        }
       }
     }
   }
