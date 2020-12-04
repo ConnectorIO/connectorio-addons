@@ -22,17 +22,22 @@ import java.util.List;
 import java.util.function.Consumer;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionEvent;
+import org.apache.plc4x.java.api.types.PlcResponseCode;
 
 public abstract class AbstractCallback implements Consumer<PlcSubscriptionEvent> {
 
   public static byte[] getBytes(PlcReadResponse event, String field) {
-    List<Byte> bytes = new ArrayList<>(event.getAllBytes(field));
-    byte[] value = new byte[bytes.size()];
-    for (int index = 0; index < bytes.size(); index++) {
-      value[index] = bytes.get(index);
-    }
+    if (event.getResponseCode(field) == PlcResponseCode.OK) {
 
-    return value;
+      List<Byte> bytes = new ArrayList<>(event.getAllBytes(field));
+      byte[] value = new byte[bytes.size()];
+      for (int index = 0; index < bytes.size(); index++) {
+        value[index] = bytes.get(index);
+      }
+
+      return value;
+    }
+    throw new IllegalStateException("Filed " + field + " retrieval failed. Reported code: " + event.getResponseCode(field));
   }
 
 }

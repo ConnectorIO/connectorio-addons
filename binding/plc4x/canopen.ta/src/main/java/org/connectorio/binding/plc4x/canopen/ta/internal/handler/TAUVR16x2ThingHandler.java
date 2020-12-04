@@ -119,6 +119,7 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
 
   @Override
   public void accept(TAObject object) {
+    logger.debug("Discovered new input/output {} for node {}", object, nodeId);
     if (object instanceof TAAnalogOutput) {
       updateThingChannel((TAOutput) object, "analog#","Analog #");
     } else if (object instanceof TAADigitalOutput) {
@@ -132,6 +133,7 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
     ChannelUID channelUID = new ChannelUID(getThing().getUID(), channelId + output.getIndex());
 
     TypeEntry channelType = ChannelTypeHelper.channelType(output);
+    logger.debug("Selected channel {} type {} for {} on node {}", channelUID, channelType, output, nodeId);
     String label = output.getLabel().orElse(fallbackLabel + output.getIndex());
 
     ThingBuilder thingBuilder = editThing();
@@ -152,9 +154,14 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
       .withConfiguration(configuration);
     thingBuilder.withChannel(channelBuilder.build());
 
-    updateThing(thingBuilder.build());
+    try {
+      updateThing(thingBuilder.build());
 
-    Optional.ofNullable(getCallback()).ifPresent(callback -> output.getState().ifPresent(value -> callback.stateUpdated(channelUID, createState(value))));
+      Optional.ofNullable(getCallback())
+        .ifPresent(callback -> output.getState().ifPresent(value -> callback.stateUpdated(channelUID, createState(value))));
+    } catch (Exception e) {
+      logger.error("Failed to configure channel {} for node {}", channelUID, nodeId, e);
+    }
   }
 
   private State createState(TAValue taValue) {
