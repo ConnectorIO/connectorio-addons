@@ -4,6 +4,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
+import org.connectorio.binding.plc4x.canopen.ta.internal.config.AnalogChannelConfig;
+import org.connectorio.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.binding.plc4x.canopen.ta.internal.type.TAValue;
 import org.eclipse.smarthome.core.library.types.OpenClosedType;
 import org.eclipse.smarthome.core.thing.Channel;
@@ -30,10 +32,10 @@ class ThingChannelValueListener implements ValueListener {
   public void analog(int index, ReadBuffer buffer) throws ParseException {
     short val = buffer.readShort(16);
     Channel channel = thing.getChannel("analog#" + index);
-    int unitIndex = Optional.ofNullable(channel.getConfiguration()).map(cfg -> cfg.get("unit"))
-      .filter(Number.class::isInstance)
-      .map(Number.class::cast)
-      .map(Number::intValue)
+    int unitIndex = Optional.ofNullable(channel.getConfiguration())
+      .map(cfg -> cfg.as(AnalogChannelConfig.class))
+      .map(cfg -> cfg.unit)
+      .map(AnalogUnit::getIndex)
       .orElse(0);
 
     TAValue value = new TAValue(unitIndex, val);

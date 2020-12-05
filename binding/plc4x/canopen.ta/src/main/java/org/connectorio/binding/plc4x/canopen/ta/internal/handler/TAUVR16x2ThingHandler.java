@@ -25,6 +25,8 @@ import javax.measure.Quantity;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.connectorio.binding.plc4x.canopen.config.CANopenNodeConfig;
 import org.connectorio.binding.plc4x.canopen.handler.CANopenBridgeHandler;
+import org.connectorio.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
+import org.connectorio.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
 import org.connectorio.binding.plc4x.canopen.ta.internal.handler.protocol.TAOperations;
 import org.connectorio.binding.plc4x.canopen.ta.internal.type.TAADigitalOutput;
 import org.connectorio.binding.plc4x.canopen.ta.internal.type.TAAnalogOutput;
@@ -146,7 +148,7 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
 
     Map<String, Object> properties = new HashMap<>();
     properties.put("index", output.getIndex());
-    properties.put("unit", output.getUnit());
+    properties.put("unit", (output instanceof TAAnalogOutput ? AnalogUnit.valueOf(output.getUnit()) : DigitalUnit.valueOf(output.getUnit())).name());
     Configuration configuration = new Configuration(properties);
 
     ChannelBuilder channelBuilder = ChannelBuilder.create(new Channel(channelUID, channelType.getItemType()))

@@ -20,5 +20,6 @@ package org.connectorio.binding.plc4x.canopen.ta.internal.config;
 public class DigitalChannelConfig {
 
   public int index = 0;
+  public DigitalUnit unit;
 
 }
