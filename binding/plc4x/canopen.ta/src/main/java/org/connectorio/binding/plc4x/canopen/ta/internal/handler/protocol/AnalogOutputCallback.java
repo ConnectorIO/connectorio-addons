@@ -41,7 +41,7 @@ public class AnalogOutputCallback extends AbstractCallback {
 
     ReadBuffer buffer = new ReadBuffer(bytes, true);
     try {
-      for (int index = 0; index < 4; index++) {
+      for (int index = 1; index < 5; index++) {
         // we could use here getBytes or just delegate reading to unit
         listener.analog(offset + index, buffer);
       }
