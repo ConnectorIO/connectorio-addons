@@ -39,8 +39,9 @@ public class DigitalOutputCallback extends AbstractCallback {
     ReadBuffer buffer = new ReadBuffer(data, true);
     try {
       for (int index = 0; index < 32; index++) {
-        logger.info("Digital Output {}={}", index, buffer.readBit());
-        listener.digital(index, buffer.readBit());
+        boolean status = buffer.readBit();
+        logger.info("Digital Output {}={}", index + 1, status);
+        listener.digital(index + 1, status);
       }
     } catch (ParseException e) {
       e.printStackTrace();
