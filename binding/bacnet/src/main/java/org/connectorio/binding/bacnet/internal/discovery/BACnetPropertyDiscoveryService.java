@@ -21,16 +21,7 @@
  */
 package org.connectorio.binding.bacnet.internal.discovery;
 
-import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.ANALOG_INPUT_THING_TYPE;
-import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.ANALOG_OUTPUT_THING_TYPE;
-import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.ANALOG_VALUE_THING_TYPE;
-import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.BINARY_INPUT_THING_TYPE;
-import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.BINARY_OUTPUT_THING_TYPE;
-import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.BINARY_VALUE_THING_TYPE;
-import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.IP_DEVICE_THING_TYPE;
-import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.MULTISTATE_INPUT_THING_TYPE;
-import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.MULTISTATE_OUTPUT_TYPE;
-import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.MULTISTATE_VALUE_TYPE;
+import static org.connectorio.binding.bacnet.internal.BACnetBindingConstants.*;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -88,33 +79,34 @@ public class BACnetPropertyDiscoveryService extends AbstractDiscoveryService imp
     DiscoveryResultBuilder builder;
     String id = "" + property.getId();
 
+    ThingUID bridgeUID = bridge.getThing().getUID();
     switch (property.getType()) {
       case ANALOG_INPUT:
-        builder = DiscoveryResultBuilder.create(new ThingUID(ANALOG_INPUT_THING_TYPE, id));
+        builder = DiscoveryResultBuilder.create(new ThingUID(ANALOG_INPUT_THING_TYPE, bridgeUID, id));
         break;
       case ANALOG_OUTPUT:
-        builder = DiscoveryResultBuilder.create(new ThingUID(ANALOG_OUTPUT_THING_TYPE, id));
+        builder = DiscoveryResultBuilder.create(new ThingUID(ANALOG_OUTPUT_THING_TYPE, bridgeUID, id));
         break;
       case ANALOG_VALUE:
-        builder = DiscoveryResultBuilder.create(new ThingUID(ANALOG_VALUE_THING_TYPE, id));
+        builder = DiscoveryResultBuilder.create(new ThingUID(ANALOG_VALUE_THING_TYPE, bridgeUID, id));
         break;
       case BINARY_INPUT:
-        builder = DiscoveryResultBuilder.create(new ThingUID(BINARY_INPUT_THING_TYPE, id));
+        builder = DiscoveryResultBuilder.create(new ThingUID(BINARY_INPUT_THING_TYPE, bridgeUID, id));
         break;
       case BINARY_OUTPUT:
-        builder = DiscoveryResultBuilder.create(new ThingUID(BINARY_OUTPUT_THING_TYPE, id));
+        builder = DiscoveryResultBuilder.create(new ThingUID(BINARY_OUTPUT_THING_TYPE, bridgeUID, id));
         break;
       case BINARY_VALUE:
-        builder = DiscoveryResultBuilder.create(new ThingUID(BINARY_VALUE_THING_TYPE, id));
+        builder = DiscoveryResultBuilder.create(new ThingUID(BINARY_VALUE_THING_TYPE, bridgeUID, id));
         break;
       case MULTISTATE_INPUT:
-        builder = DiscoveryResultBuilder.create(new ThingUID(MULTISTATE_INPUT_THING_TYPE, id));
+        builder = DiscoveryResultBuilder.create(new ThingUID(MULTISTATE_INPUT_THING_TYPE, bridgeUID, id));
         break;
       case MULTISTATE_OUTPUT:
-        builder = DiscoveryResultBuilder.create(new ThingUID(MULTISTATE_OUTPUT_TYPE, id));
+        builder = DiscoveryResultBuilder.create(new ThingUID(MULTISTATE_OUTPUT_THING_TYPE, bridgeUID, id));
         break;
       case MULTISTATE_VALUE:
-        builder = DiscoveryResultBuilder.create(new ThingUID(MULTISTATE_VALUE_TYPE, id));
+        builder = DiscoveryResultBuilder.create(new ThingUID(MULTISTATE_VALUE_THING_TYPE, bridgeUID, id));
         break;
       default:
         logger.info("Unsupported object type " + property.getType());
@@ -124,9 +116,10 @@ public class BACnetPropertyDiscoveryService extends AbstractDiscoveryService imp
 
     return builder.withLabel(property.getName())
       .withProperty("description", property.getDescription())
-      .withBridge(bridge.getThing().getUID())
+      .withBridge(bridgeUID)
       .withProperty("instance", property.getId())
-      .withRepresentationProperty("instance")
+      .withProperty("object", property.getBacNet4jIdentifier().toString())
+      .withRepresentationProperty("object")
       .build();
   }
 

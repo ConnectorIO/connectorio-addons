@@ -45,7 +45,8 @@ public class BACnetMstpDeviceDiscoveryService extends BACnetDeviceDiscoveryServi
 
   @Override
   protected ThingUID createThingId(MstpDevice device) {
-    return new ThingUID(MSTP_DEVICE_THING_TYPE, device.getNetworkNumber() + "_" + device.getInstanceNumber());
+    final ThingUID bridgeUID = getThingHandler().getThing().getUID();
+    return new ThingUID(MSTP_DEVICE_THING_TYPE, bridgeUID, device.getNetworkNumber() + "_" + device.getInstanceNumber());
   }
 
 }

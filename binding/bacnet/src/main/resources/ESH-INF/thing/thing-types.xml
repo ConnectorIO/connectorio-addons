@@ -58,7 +58,8 @@
 
   <thing-type id="analog-value">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Analog Value</label>
@@ -73,7 +74,8 @@
 
   <thing-type id="binary-input">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Binary Input</label>
@@ -88,7 +90,8 @@
 
   <thing-type id="binary-output">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Binary Output</label>
@@ -103,7 +106,8 @@
 
   <thing-type id="binary-value">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Binary Value</label>
@@ -118,7 +122,8 @@
 
   <thing-type id="calendar">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Calendar</label>
@@ -129,7 +134,8 @@
 
   <thing-type id="multistate-input">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Multi state input</label>
@@ -144,7 +150,8 @@
 
   <thing-type id="multistate-output">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Multi state output</label>
@@ -159,7 +166,8 @@
 
   <thing-type id="multistate-value">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Multi state value</label>
@@ -174,7 +182,8 @@
 
   <thing-type id="pulse-converter">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Pulse converter</label>
@@ -189,7 +198,8 @@
 
   <thing-type id="schedule">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Schedule</label>
@@ -204,7 +214,8 @@
 
   <thing-type id="character-string">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Character String</label>
@@ -219,7 +230,8 @@
 
   <thing-type id="date-time">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Date Time</label>
@@ -234,7 +246,8 @@
 
   <thing-type id="large-analog">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Large analog</label>
@@ -249,7 +262,8 @@
 
   <thing-type id="octet-string">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Octet string</label>
@@ -264,7 +278,8 @@
 
   <thing-type id="time">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Time</label>
@@ -279,7 +294,8 @@
 
   <thing-type id="integer">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Integer</label>
@@ -294,7 +310,8 @@
 
   <thing-type id="postitive-integer">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Positive Integer</label>
@@ -309,7 +326,8 @@
 
   <thing-type id="date-time-pattern">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Date Time pattern</label>
@@ -324,7 +342,8 @@
 
   <thing-type id="time-pattern">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Time pattern</label>
@@ -339,7 +358,8 @@
 
   <thing-type id="date-pattern">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Date pattern</label>
@@ -354,7 +374,8 @@
 
   <thing-type id="accumulator">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="device" />
+      <bridge-type-ref id="ip-device"/>
+      <bridge-type-ref id="mstp-device"/>
     </supported-bridge-type-refs>
 
     <label>BACnet Accumulator</label>
