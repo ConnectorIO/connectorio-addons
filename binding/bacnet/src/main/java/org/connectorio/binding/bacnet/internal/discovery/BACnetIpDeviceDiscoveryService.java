@@ -46,7 +46,8 @@ public class BACnetIpDeviceDiscoveryService extends BACnetDeviceDiscoveryService
 
   @Override
   protected ThingUID createThingId(IpDevice device) {
-    return new ThingUID(IP_DEVICE_THING_TYPE, device.getNetworkNumber() + "_" + device.getInstanceNumber());
+    final ThingUID bridgeUID = getThingHandler().getThing().getUID();
+    return new ThingUID(IP_DEVICE_THING_TYPE, bridgeUID, device.getNetworkNumber() + "_" + device.getInstanceNumber());
   }
 
 }
