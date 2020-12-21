@@ -27,7 +27,6 @@
     <relativePath>../parent/pom.xml</relativePath>
   </parent>
 
-  <groupId>org.connectorio.binding</groupId>
   <artifactId>features</artifactId>
   <packaging>pom</packaging>
 
@@ -35,10 +34,13 @@
   <description>Karaf related feature sets.</description>
 
   <modules>
-    <module>base</module>
-    <module>plc4x</module>
-    <module>distribution</module>
-    <module>distributions</module>
+    <module>org.connectorio.addons.feature</module>
+    <module>org.connectorio.addons.feature.bacnet</module>
+    <module>org.connectorio.addons.feature.beckhoff</module>
+    <module>org.connectorio.addons.feature.canopen</module>
+    <module>org.connectorio.addons.feature.openhab</module>
+    <module>org.connectorio.addons.feature.plc4x</module>
+    <module>org.connectorio.addons.feature.siemens</module>
   </modules>
 
 </project>

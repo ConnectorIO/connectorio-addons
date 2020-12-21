@@ -27,7 +27,7 @@
     <relativePath>../parent/pom.xml</relativePath>
   </parent>
 
-  <groupId>org.connectorio.binding</groupId>
+  <groupId>org.connectorio.addons</groupId>
   <artifactId>documentation</artifactId>
   <packaging>pom</packaging>
 
