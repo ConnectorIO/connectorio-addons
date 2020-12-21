@@ -37,13 +37,7 @@
 
   <modules>
     <module>parent</module>
-    <module>binding</module>
-    <module>transformation</module>
-    <!--
-    <module>sandbox</module>
-    -->
-    <module>telemetry</module>
-    <module>persistence</module>
+    <module>bundles</module>
     <module>features</module>
   </modules>
 

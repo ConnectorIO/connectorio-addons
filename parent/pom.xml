@@ -53,60 +53,74 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.connectorio.binding</groupId>
-        <artifactId>base</artifactId>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.binding</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.connectorio.binding</groupId>
-        <artifactId>can</artifactId>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.binding.can</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.connectorio.binding</groupId>
-        <artifactId>test</artifactId>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.binding.test</artifactId>
         <version>${project.version}</version>
         <scope>test</scope>
       </dependency>
 
       <dependency>
-        <groupId>org.connectorio.binding.plc4x</groupId>
-        <artifactId>shared</artifactId>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.binding.plc4x</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.connectorio.binding.plc4x</groupId>
-        <artifactId>beckhoff</artifactId>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.binding.plc4x</artifactId>
+        <version>${project.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.binding.plc4x.beckhoff</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.connectorio.binding.plc4x</groupId>
-        <artifactId>canopen</artifactId>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.binding.plc4x.canopen</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.connectorio.binding.plc4x</groupId>
-        <artifactId>canopen</artifactId>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.binding.plc4x.canopen</artifactId>
+        <version>${project.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.binding.plc4x.canopen.ta</artifactId>
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
       </dependency>
       <!-- maybe some day ?
       <dependency>
-        <groupId>org.connectorio.binding.plc4x</groupId>
+        <groupId>org.connectorio.addons</groupId>
         <artifactId>ethernetip</artifactId>
         <version>${project.version}</version>
       </dependency>
       -->
       <dependency>
-        <groupId>org.connectorio.binding.plc4x</groupId>
-        <artifactId>siemens</artifactId>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.binding.plc4x.siemens</artifactId>
         <version>${project.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>org.connectorio.binding.features</groupId>
-        <artifactId>base</artifactId>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.feature</artifactId>
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
@@ -114,8 +128,8 @@
       </dependency>
 
       <dependency>
-        <groupId>org.connectorio.binding.features</groupId>
-        <artifactId>plc4x</artifactId>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.feature.plc4x</artifactId>
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
@@ -613,8 +627,8 @@
         <version>${plc4x.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.plc4x.sandbox</groupId>
-        <artifactId>test-java-can-driver</artifactId>
+        <groupId>org.apache.plc4x</groupId>
+        <artifactId>plc4j-driver-canopen</artifactId>
         <version>${plc4x.version}</version>
       </dependency>
       <dependency>
