@@ -25,73 +25,83 @@
   back plc4x related ones to project.
   -->
 
-  <feature name="co7io-binding-plc4x-shared" description="ConnectorIO PLC4X Binding Shared" version="${project.version}">
+  <feature name="co7io-binding-plc4x" description="ConnectorIO PLC4X Binding - Base" version="${project.version}">
     <feature>co7io-binding-base</feature>
-    <feature>plc4x-api</feature>
+    <feature>plc4x-spi</feature>
 
     <bundle>mvn:org.connectorio.addons/org.connectorio.addons.binding.plc4x/${project.version}</bundle>
   </feature>
 
+  <feature name="plc4x-commons-lang" version="3.11" hidden="true">
+    <bundle>mvn:org.apache.commons/commons-lang3/3.11</bundle>
+  </feature>
+
   <!-- plc4x start -->
 
-  <feature name="plc4x-api" description="PLC4X API and SPI" version="${plc4x.version}">
-    <bundle>mvn:org.apache.commons/commons-lang3/3.9</bundle>
-    <bundle>mvn:commons-codec/commons-codec/1.15</bundle>
+  <feature name="plc4x-api" description="PLC4X API" version="${plc4x.version}">
+    <feature>plc4x-commons-lang</feature>
 
     <bundle>mvn:org.apache.plc4x/plc4j-api/${plc4x.version}</bundle>
+  </feature>
+
+  <feature name="plc4x-spi" description="PLC4X SPI" version="${plc4x.version}">
+    <feature>plc4x-api</feature>
+    <feature>plc4x-netty</feature>
+    <feature>plc4x-shared-deps</feature>
+    <bundle>mvn:commons-codec/commons-codec/1.15</bundle>
+
     <bundle>mvn:org.apache.plc4x/plc4j-spi/${plc4x.version}</bundle>
     <bundle>mvn:org.apache.plc4x/plc4j-osgi/${plc4x.version}</bundle>
 
-    <bundle>mvn:io.vavr/vavr/0.10.2</bundle>
-    <bundle>mvn:io.vavr/vavr-match/0.10.2</bundle>
+    <bundle>mvn:io.vavr/vavr/0.10.3</bundle>
+    <bundle>mvn:io.vavr/vavr-match/0.10.3</bundle>
   </feature>
 
   <feature name="plc4x-shared-deps" version="${plc4x.version}" hidden="true">
-    <feature>plc4x-api</feature>
-    <feature>plc4x-netty</feature>
-
+    <feature>plc4x-commons-lang</feature>
     <bundle>mvn:com.github.jinahya/bit-io/1.4.3</bundle>
 
     <!-- lets place all of commons here ..
     <bundle>mvn:commons-io/commons-io/2.6</bundle>
     -->
+    <bundle dependency="true">mvn:javax.mail/mail/1.4.4</bundle>
     <bundle>mvn:commons-beanutils/commons-beanutils/1.9.4</bundle>
-    <bundle>mvn:org.apache.commons/commons-text/1.8</bundle>
+    <bundle>mvn:org.apache.commons/commons-text/1.9</bundle>
     <bundle>mvn:org.apache.commons/commons-configuration2/2.7</bundle>
     <bundle>mvn:commons-collections/commons-collections/3.2.2</bundle>
     <bundle>mvn:commons-logging/commons-logging/1.2</bundle>
   </feature>
 
   <feature name="plc4x-netty" version="${plc4x.version}" hidden="true">
-    <bundle>mvn:io.netty/netty-codec/4.1.47.Final</bundle>
+    <bundle>mvn:io.netty/netty-codec/4.1.54.Final</bundle>
     <bundle>mvn:commons-codec/commons-codec/1.12</bundle>
-    <bundle>mvn:io.netty/netty-common/4.1.47.Final</bundle>
-    <bundle>mvn:io.netty/netty-transport/4.1.47.Final</bundle>
-    <bundle>mvn:io.netty/netty-resolver/4.1.47.Final</bundle>
-    <bundle>mvn:io.netty/netty-buffer/4.1.47.Final</bundle>
+    <bundle>mvn:io.netty/netty-common/4.1.54.Final</bundle>
+    <bundle>mvn:io.netty/netty-transport/4.1.54.Final</bundle>
+    <bundle>mvn:io.netty/netty-resolver/4.1.54.Final</bundle>
+    <bundle>mvn:io.netty/netty-buffer/4.1.54.Final</bundle>
   </feature>
 
   <feature name="plc4x-netty-serial" version="${plc4x.version}" hidden="true">
     <feature>plc4x-netty</feature>
     <bundle>mvn:com.neuronrobotics/nrjavaserial/3.14.0</bundle>
-    <bundle>mvn:io.netty/netty-transport-rxtx/4.1.47.Final</bundle>
+    <bundle>mvn:io.netty/netty-transport-rxtx/4.1.54.Final</bundle>
   </feature>
 
   <feature name="plc4x-transport-tcp">
-    <feature>plc4x-shared-deps</feature>
+    <feature>plc4x-spi</feature>
     <bundle>mvn:org.apache.plc4x/plc4j-transport-tcp/0.8.0-SNAPSHOT</bundle>
   </feature>
 
   <feature name="plc4x-transport-serial">
     <feature>plc4x-netty-serial</feature>
-    <feature>plc4x-shared-deps</feature>
-    <bundle>mvn:com.fazecast/jSerialComm/2.5.1</bundle>
+    <feature>plc4x-spi</feature>
+    <bundle>mvn:com.fazecast/jSerialComm/2.6.2</bundle>
     <bundle>mvn:org.apache.plc4x/plc4j-transport-serial/0.8.0-SNAPSHOT</bundle>
   </feature>
 
   <feature name="plc4x-transport-socketcan">
     <feature prerequisite="true">wrap</feature>
-    <feature>plc4x-shared-deps</feature>
+    <feature>plc4x-spi</feature>
     <bundle>wrap:mvn:tel.schich/javacan/2.3.0</bundle>
     <bundle>mvn:org.apache.plc4x/plc4j-transport-socketcan/0.8.0-SNAPSHOT</bundle>
   </feature>
@@ -108,8 +118,8 @@
     <bundle>wrap:mvn:com.github.snksoft/crc/1.0.1</bundle>
   </feature>
 
-  <feature name="plc4x-can-driver" description="Apache PLC4X - CAN driver" version="${plc4x.version}">
-    <details>Implementation of CAN related protocols.</details>
+  <feature name="plc4x-canopen-driver" description="Apache PLC4X - CANopen driver" version="${plc4x.version}">
+    <details>Implementation of CANopen related protocols.</details>
     <feature>scr</feature>
     <feature>plc4x-api</feature>
     <feature>plc4x-transport-socketcan</feature>

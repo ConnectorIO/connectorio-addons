@@ -58,6 +58,7 @@
         <executions>
           <execution>
             <id>karaf-feature-verification</id>
+            <phase>package</phase>
             <configuration>
               <features>
                 <feature>plc4x-*</feature>

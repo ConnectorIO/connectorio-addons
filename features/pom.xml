@@ -30,7 +30,7 @@
   <artifactId>features</artifactId>
   <packaging>pom</packaging>
 
-  <name>ConnectorIO - Binding - Features</name>
+  <name>ConnectorIO - Addons - Features</name>
   <description>Karaf related feature sets.</description>
 
   <modules>
