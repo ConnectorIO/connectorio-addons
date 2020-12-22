@@ -188,8 +188,10 @@
               <outputFile>${feature.directory}</outputFile>
             </configuration>
           </execution>
+          <!-- it is checked in prior modules, so we can skip it
           <execution>
             <id>karaf-feature-verification</id>
+            <phase>package</phase>
             <configuration>
               <descriptors>
                 <descriptor>mvn:org.openhab.core.features.karaf/org.openhab.core.features.karaf.openhab-core/${openhab.version}/xml/features</descriptor>
@@ -200,6 +202,7 @@
               </features>
             </configuration>
           </execution>
+          -->
         </executions>
       </plugin>
     </plugins>

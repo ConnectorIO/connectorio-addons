@@ -102,6 +102,7 @@
           </execution>
           <execution>
             <id>karaf-feature-verification</id>
+            <phase>package</phase>
             <configuration>
               <descriptors>
                 <descriptor>mvn:org.openhab.core.features.karaf/org.openhab.core.features.karaf.openhab-core/${openhab.version}/xml/features</descriptor>

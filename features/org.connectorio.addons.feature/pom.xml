@@ -53,6 +53,38 @@
       <plugin>
         <groupId>org.apache.karaf.tooling</groupId>
         <artifactId>karaf-maven-plugin</artifactId>
+        <configuration>
+          <startLevel>80</startLevel>
+          <enableGeneration>false</enableGeneration>
+          <aggregateFeatures>false</aggregateFeatures>
+          <checkDependencyChange>false</checkDependencyChange>
+          <failOnDependencyChange>false</failOnDependencyChange>
+          <logDependencyChanges>false</logDependencyChanges>
+          <overwriteChangedDependencies>false</overwriteChangedDependencies>
+          <ignoreDependencyFlag>true</ignoreDependencyFlag>
+          <archive>
+            <index>true</index>
+            <manifestEntries>
+              <Karaf-Feature-Start>false</Karaf-Feature-Start>
+            </manifestEntries>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <id>karaf-feature-verification</id>
+            <phase>package</phase>
+            <configuration>
+              <descriptors>
+                <descriptor>mvn:org.openhab.core.features.karaf/org.openhab.core.features.karaf.openhab-core/${openhab.version}/xml/features</descriptor>
+              </descriptors>
+              <distribution>org.apache.karaf.features:framework</distribution>
+              <features>
+                <feature>co7io-*</feature>
+              </features>
+              <javase>11</javase>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
