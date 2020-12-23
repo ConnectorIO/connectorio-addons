@@ -776,6 +776,7 @@
             <failOnDependencyChange>false</failOnDependencyChange>
             <logDependencyChanges>true</logDependencyChanges>
             <overwriteChangedDependencies>true</overwriteChangedDependencies>
+            <javase>11</javase>
           </configuration>
           <executions>
             <!--
@@ -805,7 +806,7 @@
                   <descriptor>file:${feature.directory}</descriptor>
                 </descriptors>
                 <distribution>org.apache.karaf.features:framework</distribution>
-                <javase>1.8</javase>
+                <javase>11</javase>
                 <framework>
                   <feature>framework</feature>
                 </framework>
