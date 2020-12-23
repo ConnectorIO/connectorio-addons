@@ -7,7 +7,7 @@ import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUni
 import org.junit.jupiter.api.Test;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.QuantityType;
-import org.openhab.core.library.unit.SmartHomeUnits;
+import org.openhab.core.library.unit.Units;
 import tec.uom.se.quantity.Quantities;
 
 class TAValueTest {
@@ -17,12 +17,12 @@ class TAValueTest {
     TAValue value = new TAValue(AnalogUnit.BAR.getIndex(), 100);
 
     assertThat(value.getValue()).isInstanceOf(Quantity.class)
-      .isEqualTo(Quantities.getQuantity(1.0, SmartHomeUnits.BAR));
+      .isEqualTo(Quantities.getQuantity(1.0, Units.BAR));
 
     Quantity<?> quantity = (Quantity<?>) value.getValue();
     QuantityType<?> quantityType = new QuantityType<>(quantity.getValue(), quantity.getUnit());
 
-    assertThat(quantityType.getUnit()).isEqualTo(SmartHomeUnits.BAR);
+    assertThat(quantityType.getUnit()).isEqualTo(Units.BAR);
     assertThat(quantityType.as(DecimalType.class)).isEqualTo(new DecimalType(1.0));
   }
 
