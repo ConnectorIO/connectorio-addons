@@ -81,7 +81,6 @@
               <features>
                 <feature>co7io-*</feature>
               </features>
-              <javase>11</javase>
             </configuration>
           </execution>
         </executions>
