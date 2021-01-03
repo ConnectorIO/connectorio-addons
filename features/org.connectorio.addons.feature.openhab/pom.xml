@@ -50,50 +50,43 @@
 
     <dependency>
       <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.feature.bacnet</artifactId>
-      <version>${project.version}</version>
+      <artifactId>org.connectorio.addons.binding.bacnet</artifactId>
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.binding.can</artifactId>
-      <version>${project.version}</version>
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.binding.plc4x.beckhoff</artifactId>
-      <version>${project.version}</version>
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.binding.plc4x.canopen</artifactId>
-      <version>${project.version}</version>
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.binding.plc4x.canopen.ta</artifactId>
-      <version>${project.version}</version>
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.binding.plc4x.siemens</artifactId>
-      <version>${project.version}</version>
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.binding.relayweblog</artifactId>
-      <version>${project.version}</version>
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>

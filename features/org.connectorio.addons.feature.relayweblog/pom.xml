@@ -44,7 +44,6 @@
     <dependency>
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.binding.relayweblog</artifactId>
-      <version>${project.version}</version>
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>

@@ -44,7 +44,6 @@
     <dependency>
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.binding.plc4x.beckhoff</artifactId>
-      <version>${project.version}</version>
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
