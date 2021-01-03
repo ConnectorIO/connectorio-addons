@@ -41,6 +41,7 @@
     <module>org.connectorio.addons.feature.openhab</module>
     <module>org.connectorio.addons.feature.plc4x</module>
     <module>org.connectorio.addons.feature.siemens</module>
+    <module>org.connectorio.addons.feature.relayweblog</module>
   </modules>
 
 </project>

@@ -43,6 +43,7 @@
     <module>org.connectorio.addons.binding.plc4x.canopen.ta</module>
     <module>org.connectorio.addons.binding.plc4x</module>
     <module>org.connectorio.addons.binding.plc4x.siemens</module>
+    <module>org.connectorio.addons.binding.relayweblog</module>
     <module>org.connectorio.addons.binding.test</module>
     <module>org.connectorio.addons.compute.consumption</module>
     <module>org.connectorio.addons.compute.cycle</module>
