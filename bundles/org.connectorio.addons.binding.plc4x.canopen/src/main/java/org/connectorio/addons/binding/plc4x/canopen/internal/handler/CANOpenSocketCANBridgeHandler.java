@@ -67,7 +67,7 @@ public class CANOpenSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<Plc
           String nodeId = "nodeId=" + config.nodeId;
           String heartbeat = "&heartbeat=" + config.heartbeat;
           AbstractPlcConnection connection = (AbstractPlcConnection) driverManager
-            .getConnection("canopen:javacan://" + config.name + "?" + nodeId + heartbeat);
+            .getConnection("canopen:socketcan://" + config.name + "?" + nodeId + heartbeat);
 
           if (!connection.isConnected()) {
             connection.connect();
