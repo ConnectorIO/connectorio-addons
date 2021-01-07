@@ -26,6 +26,11 @@
     <description>Defines a M-Bus/Wireless M-Bus gateway to access meter readings.</description>
 
     <config-description>
+      <parameter-group name="basic">
+        <label>Required configuration</label>
+        <description>Below fields are required in order to read/write data from BACnet object.</description>
+      </parameter-group>
+
       <parameter name="address" type="text" required="true">
         <label>Weblog Address</label>
         <description>
@@ -58,6 +63,11 @@
     <description>M-Bus or Wireless M-Bus meter data accessible through weblog interface.</description>
 
     <config-description>
+      <parameter-group name="basic">
+        <label>Required configuration</label>
+        <description>Below fields are required in order to read/write data from BACnet object.</description>
+      </parameter-group>
+
       <parameter name="id" type="text" required="true">
         <label>Meter identifier</label>
         <description>Identifier assigned by weblog to device. Be aware - it is not a hardware identifier!</description>
