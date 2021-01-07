@@ -20,6 +20,10 @@ package org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import javax.measure.Quantity;
 import org.apache.plc4x.java.api.PlcConnection;
@@ -58,9 +62,13 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
   private int nodeId;
   private int clientId;
   private TAOperations operations;
+  private final Semaphore semaphore;
+  private final Timer logoutTimer;
 
-  public TAUVR16x2ThingHandler(Thing thing) {
+  public TAUVR16x2ThingHandler(Thing thing, Semaphore semaphore) {
     super(thing);
+    this.logoutTimer = new Timer("canopen-ta-logout-" + thing.getLabel(), true);
+    this.semaphore = semaphore;
   }
 
   @Override
@@ -72,6 +80,9 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
     updateStatus(ThingStatus.OFFLINE);
 
     getBridgeConnection().ifPresent(connection -> {
+      // block initialisation of other handlers until we complete reading all SDOs
+      semaphore.acquireUninterruptibly();
+
       logger.debug("Retrieving UVR {} configuration", nodeId);
       operations = new TAOperations(connection);
 
@@ -80,6 +91,9 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
       operations.subscribeStatus(connected -> {
         if (connected) {
           operations.reload(nodeId);
+          // lets release SDO lock within 90 seconds, should be sufficient to complete all SDO detection in most of cases
+          logoutTimer.schedule(new LogoutTask(semaphore, operations, nodeId, clientId), TimeUnit.SECONDS.toMillis(90));
+
         }
         updateStatus(connected ? ThingStatus.ONLINE : ThingStatus.OFFLINE);
       }, nodeId, clientId);
@@ -91,7 +105,6 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
           updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, error.getMessage());
         }
       });
-      ;
     });
   }
 
@@ -187,4 +200,24 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
     return UnDefType.UNDEF;
   }
 
+  static class LogoutTask extends TimerTask {
+
+    private final Semaphore semaphore;
+    private final TAOperations operations;
+    private final int nodeId;
+    private final int clientId;
+
+    LogoutTask(Semaphore semaphore, TAOperations operations, int nodeId, int clientId) {
+      this.semaphore = semaphore;
+      this.operations = operations;
+      this.nodeId = nodeId;
+      this.clientId = clientId;
+    }
+
+    @Override
+    public void run() {
+      semaphore.release();
+      operations.logout(nodeId, clientId);
+    }
+  }
 }

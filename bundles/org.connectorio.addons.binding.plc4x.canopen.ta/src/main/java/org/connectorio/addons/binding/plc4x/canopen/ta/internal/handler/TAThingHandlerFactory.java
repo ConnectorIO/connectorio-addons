@@ -19,6 +19,7 @@ package org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler;
 
 import static org.connectorio.addons.binding.plc4x.canopen.ta.internal.TACANopenBindingConstants.TA_UVR_16x2_THING_TYPE;
 
+import java.util.concurrent.Semaphore;
 import org.connectorio.addons.binding.handler.factory.BaseThingHandlerFactory;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.binding.ThingHandlerFactory;
@@ -28,6 +29,8 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = {TAThingHandlerFactory.class, BaseThingHandlerFactory.class, ThingHandlerFactory.class})
 public class TAThingHandlerFactory extends BaseThingHandlerFactory {
 
+  private Semaphore semaphore = new Semaphore(1);
+
   public TAThingHandlerFactory() {
     super(TA_UVR_16x2_THING_TYPE);
   }
@@ -35,7 +38,7 @@ public class TAThingHandlerFactory extends BaseThingHandlerFactory {
   @Override
   protected ThingHandler createHandler(Thing thing) {
     if (TA_UVR_16x2_THING_TYPE.equals(thing.getThingTypeUID())) {
-      return new TAUVR16x2ThingHandler(thing);
+      return new TAUVR16x2ThingHandler(thing, semaphore);
     }
     return null;
   }
