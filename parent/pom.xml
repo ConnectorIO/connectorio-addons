@@ -34,7 +34,7 @@
   <description>Parent for ConnectorIO supplied bindings and extensions.</description>
 
   <properties>
-    <plc4x.version>0.8.0-SNAPSHOT</plc4x.version>
+    <plc4x.version>0.8.0-connectorio-1</plc4x.version>
     <openhab.version>3.0.0</openhab.version>
     <karaf.version>4.2.7</karaf.version>
 
