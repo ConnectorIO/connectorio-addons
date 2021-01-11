@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import org.apache.plc4x.java.ads.ADSPlcDriver;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.assertj.core.api.AbstractThrowableAssert;
@@ -65,7 +66,6 @@ class BeckhoffNetworkBridgeHandlerTest {
   void testHandlerInitializationWithConfig() {
     BeckhoffNetworkConfiguration cfg = new BeckhoffNetworkConfiguration();
     cfg.host = "127.0.0.1";
-    cfg.port = 4040;
     cfg.targetAmsId = "0.0.0.0.0.0";
     cfg.targetAmsPort = 4040;
 
@@ -105,7 +105,7 @@ class BeckhoffNetworkBridgeHandlerTest {
 
     thrownBy = thrownBy.getCause();
     thrownBy.isInstanceOf(ConnectException.class)
-      .hasMessageContaining("Connection refused: /%s:%d", cfg.host, cfg.port);
+      .hasMessageContaining("Connection refused: /%s:%d", cfg.host, ADSPlcDriver.TCP_PORT);
   }
 
 }

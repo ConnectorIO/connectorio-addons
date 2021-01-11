@@ -58,8 +58,8 @@ public class BeckhoffSerialBridgeHandler extends BeckhoffBridgeHandler<PlcConnec
       public void run() {
         try {
           BeckhoffSerialConfiguration config = getBridgeConfig().get();
-          String target = hostWithPort(config.targetAmsId, config.targetAmsPort);
-          String source = amsAds.sourceAmsId != null && amsAds.sourceAmsPort != null ? "/" + hostWithPort(amsAds.sourceAmsId, amsAds.sourceAmsPort) : "";
+          String target = "targetAmsNetId=" + config.targetAmsId + "&targetAmsPort=" + config.targetAmsPort;
+          String source = "&sourceAmsNetId=" + amsAds.sourceAmsId + "&sourceAmsPort=" + amsAds.sourceAmsPort;
           PlcConnection connection = driverManager.getConnection("ads:serial://" + config.port + "/" + target + source);
 
           if (!connection.isConnected()) {

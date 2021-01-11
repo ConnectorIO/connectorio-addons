@@ -119,11 +119,10 @@ public class BeckhoffNetworkBridgeHandler extends BeckhoffBridgeHandler<PlcConne
             }
           }
 
-          String host = hostWithPort(config.host, config.port);
           String target = "targetAmsNetId=" + config.targetAmsId + "&targetAmsPort=" + config.targetAmsPort;
           String source = "&sourceAmsNetId=" + amsAds.sourceAmsId + "&sourceAmsPort=" + amsAds.sourceAmsPort;
 
-          PlcConnection connection = driverManager.getConnection("ads:tcp://" + host + "?" + target + source);
+          PlcConnection connection = driverManager.getConnection("ads:tcp://" + config.host + "?" + target + source);
 
           if (connection.isConnected()) {
             updateStatus(ThingStatus.ONLINE);
