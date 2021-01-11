@@ -125,10 +125,6 @@ public class BeckhoffNetworkBridgeHandler extends BeckhoffBridgeHandler<PlcConne
 
           PlcConnection connection = driverManager.getConnection("ads:tcp://" + host + "?" + target + source);
 
-          if (!connection.isConnected()) {
-            connection.connect();
-          }
-
           if (connection.isConnected()) {
             updateStatus(ThingStatus.ONLINE);
             initializer.complete(connection);

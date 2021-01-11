@@ -69,10 +69,6 @@ public class CANOpenSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<Plc
           AbstractPlcConnection connection = (AbstractPlcConnection) driverManager
             .getConnection("canopen:socketcan://" + config.name + "?" + nodeId + heartbeat);
 
-          if (!connection.isConnected()) {
-            connection.connect();
-          }
-
           if (connection.isConnected()) {
             updateStatus(ThingStatus.ONLINE);
             initializer.complete(connection);

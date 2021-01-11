@@ -71,10 +71,6 @@ public class SiemensNetworkBridgeHandler extends PollingPlc4xBridgeHandler<PlcCo
           PlcConnection connection = driverManager
             .getConnection("s7://" + config.host + "?" + local + remote + pdu + type);
 
-          if (!connection.isConnected()) {
-            connection.connect();
-          }
-
           if (connection.isConnected()) {
             updateStatus(ThingStatus.ONLINE);
             initializer.complete(connection);
