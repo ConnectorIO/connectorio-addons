@@ -28,6 +28,7 @@ import java.util.function.Consumer;
 import javax.measure.Quantity;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.connectorio.addons.binding.plc4x.canopen.handler.CANopenBridgeHandler;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.ControllerConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.protocol.TAOperations;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAObject;
@@ -73,7 +74,7 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
 
   @Override
   public void initialize() {
-    CANopenNodeConfig config = getConfigAs(CANopenNodeConfig.class);
+    ControllerConfig config = getConfigAs(ControllerConfig.class);
     nodeId = config.nodeId;
     clientId = getBridgeHandler().map(CANopenBridgeHandler::getNodeId).orElse(-1);
 
@@ -89,13 +90,19 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
       ValueListener valueListener = new ThingChannelValueListener(getCallback(), getThing(), this::createState);
 
       operations.subscribeStatus(connected -> {
+        logoutTimer.schedule(new LogoutTask(semaphore, operations, nodeId, clientId), TimeUnit.SECONDS.toMillis(90));
         if (connected) {
           operations.reload(nodeId);
           // lets release SDO lock within 90 seconds, should be sufficient to complete all SDO detection in most of cases
-          logoutTimer.schedule(new LogoutTask(semaphore, operations, nodeId, clientId), TimeUnit.SECONDS.toMillis(90));
-
+          updateStatus(ThingStatus.ONLINE);
+          return;
         }
-        updateStatus(connected ? ThingStatus.ONLINE : ThingStatus.OFFLINE);
+        if (config.ignoreLoginFailure) {
+          operations.reload(nodeId);
+          updateStatus(ThingStatus.ONLINE);
+        } else {
+          updateStatus(ThingStatus.OFFLINE);
+        }
       }, nodeId, clientId);
       operations.subscribeInputOutputState(valueListener, nodeId);
       operations.subscribeInputOutputConfig(this, nodeId);

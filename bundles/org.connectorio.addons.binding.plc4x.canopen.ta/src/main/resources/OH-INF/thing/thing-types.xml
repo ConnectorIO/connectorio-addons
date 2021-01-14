@@ -36,6 +36,13 @@
           Identifier of device in CANopen network.
         </description>
       </parameter>
+      <parameter name="ignoreLoginFailure" type="boolean" required="true">
+        <label>Ignore login failure</label>
+        <description>
+          Determine if channel configuration should be refreshed even if controller refused "login" registration of this node.
+        </description>
+        <default>false</default>
+      </parameter>
     </config-description>
   </thing-type>
 
