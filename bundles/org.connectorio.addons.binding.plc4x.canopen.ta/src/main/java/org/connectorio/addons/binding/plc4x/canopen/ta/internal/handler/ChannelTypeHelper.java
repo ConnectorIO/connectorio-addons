@@ -20,6 +20,7 @@ package org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler;
 import static org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAObject;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.TACANopenBindingConstants;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
@@ -60,18 +61,25 @@ public class ChannelTypeHelper {
     put(CUBICMETRE_PER_HOUR, new TypeEntry("volumetric-flow-rate", "Number:VolumetricFlowRate"));
     put(CUBICMETRE_PER_DAY, new TypeEntry("volumetric-flow-rate", "Number:VolumetricFlowRate"));
     put(BAR, new TypeEntry("pressure", "Number:Pressure"));
+    put(MEGABAR, new TypeEntry("pressure", "Number:Pressure"));
     put(HERTZ, new TypeEntry("frequency", "Number:Frequency"));
+    put(TEMPERATURE_REGULATOR, new TypeEntry("temperature", "Number:Temperature"));
   }};
 
   public static TypeEntry channelType(TAObject object) {
     int unit = object.getUnit();
 
-    if (unit < 42) { // analog
-      AnalogUnit valueType = AnalogUnit.valueOf(unit);
+    DigitalUnit digital = DigitalUnit.valueOf(object.getUnit());
+    if (digital != null) {
+      return DEFAULT_DIGITAL_OUTPUT;
+    }
+
+    AnalogUnit valueType = AnalogUnit.valueOf(unit);
+    if (valueType != null) {
       return unitDimensions.getOrDefault(valueType, DEFAULT_ANALOG_OUTPUT);
     }
 
-    return DEFAULT_DIGITAL_OUTPUT;
+    return DEFAULT_ANALOG_OUTPUT;
   }
 
 }

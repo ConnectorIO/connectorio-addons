@@ -250,7 +250,7 @@ public class TAOperations {
         TAValue value = new TAValue(unit, rawValue);
         if (logger.isDebugEnabled()) {
           logger.debug("Received IO configuration from node: {}. Data {}, sub index: {}, raw {}, unit {}, converted to value {}.", sender, Hex.encodeHexString(bytes),
-            subIndex, rawValue, unit, value.getValue());
+            subIndex, Integer.toHexString(rawValue), unit, value.getValue());
         }
 
         if (subIndex <= 32) { // analog

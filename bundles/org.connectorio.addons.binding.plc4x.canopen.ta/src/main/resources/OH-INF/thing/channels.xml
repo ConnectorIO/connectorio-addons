@@ -309,6 +309,7 @@
         <description>Unit used by URV to report measured values.</description>
         <options>
           <option value="BAR">BAR</option>
+          <option value="MEGABAR">MEGABAR</option>
         </options>
       </parameter>
     </config-description>

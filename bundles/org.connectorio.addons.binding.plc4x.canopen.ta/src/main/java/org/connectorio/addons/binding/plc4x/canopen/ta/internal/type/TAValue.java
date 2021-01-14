@@ -40,17 +40,17 @@ public class TAValue {
   }
 
   public Object getValue() {
-    if (index < 42) {
-      final AnalogUnit unit = AnalogUnit.valueOf(index);
-      final double value = raw * unit.getScale();
-      return Quantities.getQuantity(value, unit.getUnit());
-    }
-
-    if (index < 47) {
+    DigitalUnit unit = DigitalUnit.valueOf(index);
+    if (unit != null) {
       // TODO this logic requires additional verification
-      DigitalUnit unit = DigitalUnit.valueOf(index);
       //int value = Short.toUnsignedInt(Short.valueOf((short) raw));
       return unit.parse(raw);
+    }
+
+    final AnalogUnit analog = AnalogUnit.valueOf(index);
+    if (analog != null) {
+      final double value = raw * analog.getScale();
+      return Quantities.getQuantity(value, analog.getUnit());
     }
 
     return raw;

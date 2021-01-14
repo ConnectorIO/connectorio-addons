@@ -158,7 +158,23 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
 
     Map<String, Object> properties = new HashMap<>();
     properties.put("index", output.getIndex());
-    properties.put("unit", (output instanceof TAAnalogOutput ? AnalogUnit.valueOf(output.getUnit()) : DigitalUnit.valueOf(output.getUnit())).name());
+    if (output instanceof TAAnalogOutput) {
+      AnalogUnit unit = AnalogUnit.valueOf(output.getUnit());
+      if (unit != null) {
+        properties.put("unit", unit.name());
+      } else {
+        logger.warn("Received output with unsupported analog unit {} ({}), falling back to dimensionless", output.getUnit(), Integer.toHexString(output.getUnit()));
+        properties.put("unit", AnalogUnit.DIMENSIONLESS.name());
+      }
+    } else if (output instanceof TAADigitalOutput) {
+      DigitalUnit unit = DigitalUnit.valueOf(output.getUnit());
+      if (unit != null) {
+        properties.put("unit", unit.name());
+      } else {
+        logger.warn("Received output with unsupported digital unit {} ({}), falling back to basic ON/OFF unit", output.getUnit(), Integer.toHexString(output.getUnit()));
+        properties.put("unit", DigitalUnit.ON_OFF.name());
+      }
+    }
     Configuration configuration = new Configuration(properties);
 
     ChannelBuilder channelBuilder = ChannelBuilder.create(channelUID)

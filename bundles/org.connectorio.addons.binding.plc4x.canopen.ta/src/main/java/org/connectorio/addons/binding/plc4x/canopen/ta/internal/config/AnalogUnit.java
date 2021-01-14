@@ -39,7 +39,7 @@ public enum AnalogUnit implements TAUnit {
     /* 5  analog  */ MINUTE (5, Units.MINUTE, 1),
     /* 6  analog  */ LITRE_PER_IMPULSE (6, Units.LITRE.divide(TAUnits.IMPULSE), 1),
     /* 7  analog  */ KELVIN  (7, Units.KELVIN, 1),
-    /* 8  analog  */ HUMIDITY  (8, Units.PERCENT, 1),
+    /* 8  analog  */ HUMIDITY  (8, Units.PERCENT, 0.1),
     /* 10 analog  */ KILOWATT (10, Units.WATT.multiply(1000), 0.1),
     /* 11 analog  */ KILOWATT_HOUR (11, Units.KILOWATT_HOUR, 1),
     /* 12 analog  */ MEGAWATT_HOUR (12, Units.MEGAWATT_HOUR, 1),
@@ -76,9 +76,13 @@ public enum AnalogUnit implements TAUnit {
 //    /* 43 digital */ new DigitalUnit("Aus/Ein", "", "Aus", "Ein"));
 //    /* 44 digital */ new DigitalUnit(44, "Nein/Ja", "", "Nein", "Ja"));
 //    /* 47 digital */ new DigitalUnit(47, "Stopp/Auf/Zu", "Mischerausgang", "Stopp", "Auf", "Zu"));
+
+    /* 46 analog  */ TEMPERATURE_REGULATOR  (46, SIUnits.CELSIUS, 0.1),
 //    /* 55 digital */ new RollerShutterUnit()); // Jalousie Position für Höhe und Neigung bei Lamelle
 //    /* 59 digital */ new ScaledUnit(59, "Prozent", "Jalousie Position", "%", 1, false)); // "Prozent ohne Komma für Jalousie Pos);
 //    /* 60 time?   */ new TimeUnit()
+
+    /* 65 analog  */ MEGABAR  (65, MetricPrefix.MEGA(Units.BAR), 0.1),
     ;
 
     private final static Map<Integer, AnalogUnit> UNIT_MAP = Arrays.stream(values()).collect(Collectors.toMap(
