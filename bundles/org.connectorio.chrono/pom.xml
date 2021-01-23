@@ -22,27 +22,42 @@
 
   <parent>
     <groupId>org.connectorio.addons</groupId>
-    <artifactId>parent</artifactId>
+    <artifactId>bundles</artifactId>
     <version>3.0.0-SNAPSHOT</version>
-    <relativePath>../parent/pom.xml</relativePath>
   </parent>
 
-  <artifactId>features</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>org.connectorio.chrono</artifactId>
+  <packaging>bundle</packaging>
 
-  <name>ConnectorIO - Addons - Features</name>
-  <description>Karaf related feature sets.</description>
+  <name>ConnectorIO - Chrono API</name>
+  <description>Utilities related to time calculations.</description>
 
-  <modules>
-    <module>org.connectorio.addons.feature</module>
-    <module>org.connectorio.addons.feature.automation</module>
-    <module>org.connectorio.addons.feature.bacnet</module>
-    <module>org.connectorio.addons.feature.beckhoff</module>
-    <module>org.connectorio.addons.feature.canopen</module>
-    <module>org.connectorio.addons.feature.openhab</module>
-    <module>org.connectorio.addons.feature.plc4x</module>
-    <module>org.connectorio.addons.feature.siemens</module>
-    <module>org.connectorio.addons.feature.relayweblog</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>osgi.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.service.component.annotations</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
