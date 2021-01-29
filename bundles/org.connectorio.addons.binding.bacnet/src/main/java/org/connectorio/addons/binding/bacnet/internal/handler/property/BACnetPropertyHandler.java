@@ -22,11 +22,13 @@
 package org.connectorio.addons.binding.bacnet.internal.handler.property;
 
 import com.serotonin.bacnet4j.obj.BACnetObject;
+import com.serotonin.bacnet4j.type.Encodable;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.api.Device;
 import org.code_house.bacnet4j.wrapper.api.Property;
@@ -65,6 +67,9 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
     if (device != null) {
       this.property = new Property(device, instance, type);
 
+      getThing().getChannels().stream()
+        .peek(channel -> poll(channel.getUID()))
+        .collect(Collectors.toList());
       updateStatus(ThingStatus.ONLINE);
     } else {
       updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE, "Link object to device");
@@ -91,8 +96,9 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
         public void run() {
           logger.debug("Dispatching command {} to property {}", command, property);
           client.join().setPropertyValue(property, command, (value) -> {
-            logger.trace("Command {} have been converter to BACnet value {} of type {}", command, value, value.getClass());
-            return BACnetValueConverter.openHabTypeToBacNetValue(type.getBacNetType(), value);
+            Encodable encodable = BACnetValueConverter.openHabTypeToBacNetValue(type.getBacNetType(), value);
+            logger.trace("Command {} have been converter to BACnet value {} of type {}", command, encodable, encodable.getClass());
+            return encodable;
           });
           logger.debug("Command {} for property {} executed successfully", command, property);
         }
@@ -100,8 +106,7 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
     }
   }
 
-  @Override
-  public void channelLinked(ChannelUID channelUID) {
+  private void poll(ChannelUID channelUID) {
     logger.info("BACnet channel linked {}", channelUID);
     Supplier<CompletableFuture<BacNetClient>> client = () -> getBridgeHandler().flatMap(bridge -> bridge.getClient()).orElse(
       // return failed future if client is not yet ready
@@ -117,14 +122,6 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
     if (property != null) {
       this.reader = scheduler.scheduleAtFixedRate(new ReadPropertyTask(client, getCallback(), property, channelUID),
         0, refreshInterval, TimeUnit.MILLISECONDS);
-    }
-  }
-
-  @Override
-  public void channelUnlinked(ChannelUID channelUID) {
-    logger.info("BACnet channel unlinked {}", channelUID);
-    if (reader != null) {
-      reader.cancel(true);
     }
   }
 
