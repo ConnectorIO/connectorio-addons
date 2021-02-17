@@ -94,13 +94,13 @@ public class BeckhoffNetworkBridgeHandler extends BeckhoffBridgeHandler<PlcConne
 
           if (config.username != null) {
             AmsNetId sendingAms = AmsConverter.createDiscoveryAms(amsAds.sourceAmsId);
-            AmsMagicString address = new AmsMagicString(amsAds.ipAddress.getBytes(StandardCharsets.UTF_8));
+            AmsMagicString routeName = new AmsMagicString(("openhab-" + amsAds.ipAddress).getBytes(StandardCharsets.UTF_8));
             AmsNetId target = AmsConverter.createDiscoveryAms(amsAds.sourceAmsId);
             AmsMagicString username = new AmsMagicString(config.username.getBytes(StandardCharsets.UTF_8));
             AmsMagicString password = new AmsMagicString(Optional.ofNullable(config.password).orElse("").getBytes(StandardCharsets.UTF_8));
-            AmsMagicString routeName = new AmsMagicString(("openhab-" + amsAds.ipAddress).getBytes(StandardCharsets.UTF_8));
+            AmsMagicString address = new AmsMagicString(amsAds.ipAddress.getBytes(StandardCharsets.UTF_8));
             RouteRequest request = new RouteRequest(Operation.ROUTE, Direction.REQUEST,
-              sendingAms, address, target, username, password, routeName);
+              sendingAms, routeName, target, username, password, address);
             logger.info("Making an attempt to setup route from {} to us using {}", config.host, request);
             sender.send(new Envelope(config.host, request));
 
