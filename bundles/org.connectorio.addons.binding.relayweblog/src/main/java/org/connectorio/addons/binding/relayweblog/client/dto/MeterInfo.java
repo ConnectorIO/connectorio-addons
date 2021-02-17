@@ -73,4 +73,20 @@ public class MeterInfo {
     return medium;
   }
 
+  public String getIntName() {
+    return INT_NAME;
+  }
+
+  public String getGroup() {
+    return GROUP;
+  }
+
+  public String getText1() {
+    return TXT1;
+  }
+
+  public String getText2() {
+    return TXT2;
+  }
+
 }

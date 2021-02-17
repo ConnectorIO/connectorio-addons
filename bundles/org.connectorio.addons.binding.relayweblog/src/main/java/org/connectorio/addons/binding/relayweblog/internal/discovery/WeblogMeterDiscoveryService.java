@@ -52,16 +52,37 @@ public class WeblogMeterDiscoveryService extends AbstractDiscoveryService implem
           DiscoveryResult result = DiscoveryResultBuilder.create(id)
             .withBridge(handler.getThing().getUID())
             .withRepresentationProperty("id")
+            .withProperty("INT_NAME", meter.getIntName())
+            .withProperty("GROUP", meter.getGroup())
             .withProperty("id", meter.getId())
+            .withProperty("TXT1", meter.getText1())
+            .withProperty("TXT2", meter.getText1())
             .withProperty(Thing.PROPERTY_VENDOR, meter.getManufacturer())
             .withProperty(Thing.PROPERTY_HARDWARE_VERSION, meter.getVersion())
             .withProperty("meter.identifier", meter.getIdentifier())
             .withProperty("meter.medium", meter.getMedium())
-            .withLabel(meter.getMedium() + " " + meter.getManufacturer() + "@" + meter.getIdentifier() + " ver." + meter.getVersion())
+            .withLabel(createLabel(meter))
             .build();
           thingDiscovered(result);
         }
       });
+  }
+
+  private String createLabel(MeterInfo meter) {
+    String label = meter.getMedium() + " " + meter.getManufacturer() + "@" + meter.getIdentifier();
+    boolean suffix = false;
+    if (meter.getText1() != null && !meter.getText1().isEmpty()) {
+      label += " " + meter.getText1();
+      suffix = true;
+    }
+    if (meter.getText2() != null && !meter.getText2().isEmpty()) {
+      label += " " + meter.getText2();
+      suffix = true;
+    }
+    if (!suffix) {
+      label += " ver." + meter.getVersion();
+    }
+    return label;
   }
 
   @Override
