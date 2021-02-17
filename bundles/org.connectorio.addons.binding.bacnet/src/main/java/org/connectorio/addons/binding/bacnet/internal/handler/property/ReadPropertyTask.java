@@ -21,6 +21,7 @@
  */
 package org.connectorio.addons.binding.bacnet.internal.handler.property;
 
+import com.serotonin.bacnet4j.exception.BACnetTimeoutException;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.enumerated.BinaryPV;
 import com.serotonin.bacnet4j.type.primitive.Boolean;
@@ -35,6 +36,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 import org.code_house.bacnet4j.wrapper.api.BacNetClient;
+import org.code_house.bacnet4j.wrapper.api.BacNetClientException;
 import org.code_house.bacnet4j.wrapper.api.BacNetToJavaConverter;
 import org.code_house.bacnet4j.wrapper.api.Property;
 import org.openhab.core.library.types.DateTimeType;
@@ -73,6 +75,8 @@ public class ReadPropertyTask implements Runnable, BacNetToJavaConverter<State> 
             logger.debug("Requesting state {} for property {}", state, property);
             callback.stateUpdated(channelUID, state);
           });
+      } catch (BacNetClientException e) {
+        logger.warn("Could not read property {} value. Client reported an error", property, e);
       } catch (InterruptedException | ExecutionException e) {
         logger.debug("Could not complete operation", e);
       }

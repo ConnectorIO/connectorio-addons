@@ -95,6 +95,17 @@
       <groupId>com.fasterxml</groupId>
       <artifactId>classmate</artifactId>
     </dependency>
+    <dependency>
+      <groupId>javax.measure</groupId>
+      <artifactId>unit-api</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>tec.uom</groupId>
+      <artifactId>uom-se</artifactId>
+      <version>1.0.10</version>
+      <scope>compile</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.osgi</groupId>

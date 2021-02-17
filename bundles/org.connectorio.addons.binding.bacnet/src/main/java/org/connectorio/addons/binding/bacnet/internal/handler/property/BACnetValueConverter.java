@@ -40,6 +40,7 @@ import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.OpenClosedType;
 import org.openhab.core.library.types.PercentType;
+import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.types.StringType;
 import org.openhab.core.types.State;
 import org.openhab.core.types.Type;
@@ -140,6 +141,8 @@ public class BACnetValueConverter {
   private static Encodable encodeFloat(Type type) {
     if (type instanceof DecimalType) {
       return new Real(((DecimalType) type).floatValue());
+    } else if (type instanceof QuantityType) {
+      return new Real(((QuantityType<?>) type).floatValue());
     } else if (type instanceof StringType) {
       try {
         return new Real(Float.parseFloat(((StringType) type).toString()));
@@ -154,6 +157,8 @@ public class BACnetValueConverter {
   private static Encodable encodeUnsigned(Type type) {
     if (type instanceof DecimalType) {
       return new UnsignedInteger(((DecimalType) type).intValue());
+    } else if (type instanceof QuantityType) {
+      return new UnsignedInteger(((QuantityType) type).intValue());
     } else if (type instanceof StringType) {
       try {
         return new UnsignedInteger(Integer.parseInt(((StringType) type).toString()));
