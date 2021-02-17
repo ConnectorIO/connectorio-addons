@@ -18,19 +18,23 @@
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler;
 
 import static org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit.*;
+import static org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.ComplexUnit.*;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAObject;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.TACANopenBindingConstants;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.ComplexUnit;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAObject;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 
 public class ChannelTypeHelper {
 
   private final static TypeEntry DEFAULT_ANALOG_OUTPUT = new TypeEntry(TACANopenBindingConstants.ANALOG_OUTPUT_CHANNEL_TYPE,"Number:Dimensionless");
   private final static TypeEntry DEFAULT_DIGITAL_OUTPUT = new TypeEntry(TACANopenBindingConstants.DIGITAL_OUTPUT_CHANNEL_TYPE, "Contact");
 
-  private final static Map<AnalogUnit, TypeEntry> unitDimensions = new LinkedHashMap<AnalogUnit, TypeEntry>() {{
+  private final static Map<TAUnit, TypeEntry> unitDimensions = new LinkedHashMap<TAUnit, TypeEntry>() {{
     put(CELSIUS, new TypeEntry("temperature", "Number:Temperature"));
     put(KELVIN, new TypeEntry("temperature", "Number:Temperature"));
     put(KILO_METRE, new TypeEntry("length", "Number:Length"));
@@ -63,7 +67,7 @@ public class ChannelTypeHelper {
     put(BAR, new TypeEntry("pressure", "Number:Pressure"));
     put(MEGABAR, new TypeEntry("pressure", "Number:Pressure"));
     put(HERTZ, new TypeEntry("frequency", "Number:Frequency"));
-    put(TEMPERATURE_REGULATOR, new TypeEntry("temperature", "Number:Temperature"));
+    put(RAS_TEMPERATURE, new TypeEntry("temperature", "Number:Temperature"));
   }};
 
   public static TypeEntry channelType(TAObject object) {
@@ -77,6 +81,11 @@ public class ChannelTypeHelper {
     AnalogUnit valueType = AnalogUnit.valueOf(unit);
     if (valueType != null) {
       return unitDimensions.getOrDefault(valueType, DEFAULT_ANALOG_OUTPUT);
+    }
+
+    ComplexUnit complexType = ComplexUnit.valueOf(unit);
+    if (complexType != null) {
+      return unitDimensions.getOrDefault(complexType, DEFAULT_ANALOG_OUTPUT);
     }
 
     return DEFAULT_ANALOG_OUTPUT;

@@ -19,6 +19,8 @@ package org.connectorio.addons.binding.plc4x.canopen.ta.internal.type;
 
 public interface TAUnit {
 
+  // merges with enum name
+  String name();
   int getIndex();
 
 }

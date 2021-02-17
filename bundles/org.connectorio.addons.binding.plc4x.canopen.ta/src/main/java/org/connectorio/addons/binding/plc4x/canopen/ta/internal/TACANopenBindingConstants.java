@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Set;
 import org.connectorio.addons.binding.plc4x.canopen.CANopenBindingConstants;
 import org.openhab.core.thing.ThingTypeUID;
+import org.openhab.core.thing.type.ChannelGroupTypeUID;
 import org.openhab.core.thing.type.ChannelTypeUID;
 
 public interface TACANopenBindingConstants extends CANopenBindingConstants {
@@ -33,6 +34,9 @@ public interface TACANopenBindingConstants extends CANopenBindingConstants {
   Set<ThingTypeUID> SUPPORTED_THINGS = Collections.singleton(TA_UVR_16x2_THING_TYPE);
 
   String TA_ANALOG_OUTPUT = "ta-analog-output";
+  String TA_RAS_TEMPERATURE = "ta-ras-temperature";
+
+  ChannelGroupTypeUID ANALOG_RAS_TEMPERATURE_CHANNEL_TYPE = new ChannelGroupTypeUID(BINDING_ID, TA_RAS_TEMPERATURE);
 
   ChannelTypeUID ANALOG_OUTPUT_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, TA_ANALOG_OUTPUT);
   ChannelTypeUID DIGITAL_OUTPUT_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, "ta-digital-output");

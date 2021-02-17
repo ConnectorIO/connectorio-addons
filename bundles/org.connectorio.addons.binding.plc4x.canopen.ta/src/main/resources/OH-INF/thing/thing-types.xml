@@ -29,6 +29,10 @@
     <label>Technische Alternative UVR 16x2</label>
     <description>Freely programmable logic controller.</description>
 
+    <channel-groups>
+      <channel-group id="ras-temperature" typeId="ta-ras-temperature" />
+    </channel-groups>
+
     <config-description>
       <parameter name="nodeId" type="integer" required="true">
         <label>CANopen Node ID</label>

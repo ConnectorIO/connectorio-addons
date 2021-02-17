@@ -18,6 +18,7 @@
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Timer;
@@ -28,6 +29,7 @@ import java.util.function.Consumer;
 import javax.measure.Quantity;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.connectorio.addons.binding.plc4x.canopen.handler.CANopenBridgeHandler;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.ComplexUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.ControllerConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.protocol.TAOperations;
@@ -37,6 +39,7 @@ import org.connectorio.addons.binding.plc4x.canopen.config.CANopenNodeConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAADigitalOutput;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAAnalogOutput;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAValue;
 import org.connectorio.addons.binding.plc4x.handler.Plc4xThingHandler;
 import org.connectorio.addons.binding.plc4x.handler.base.PollingPlc4xThingHandler;
@@ -166,12 +169,17 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
     Map<String, Object> properties = new HashMap<>();
     properties.put("index", output.getIndex());
     if (output instanceof TAAnalogOutput) {
-      AnalogUnit unit = AnalogUnit.valueOf(output.getUnit());
+      TAUnit unit = AnalogUnit.valueOf(output.getUnit());
       if (unit != null) {
         properties.put("unit", unit.name());
       } else {
-        logger.warn("Received output with unsupported analog unit {} ({}), falling back to dimensionless", output.getUnit(), Integer.toHexString(output.getUnit()));
-        properties.put("unit", AnalogUnit.DIMENSIONLESS.name());
+        ComplexUnit complexUnit = ComplexUnit.valueOf(output.getUnit());
+        if (complexUnit != null) {
+          properties.put("unit", complexUnit.name());
+        } else {
+          logger.warn("Received output with unsupported analog unit {} ({}), falling back to dimensionless", output.getUnit(), Integer.toHexString(output.getUnit()));
+          properties.put("unit", AnalogUnit.DIMENSIONLESS.name());
+        }
       }
     } else if (output instanceof TAADigitalOutput) {
       DigitalUnit unit = DigitalUnit.valueOf(output.getUnit());
@@ -212,11 +220,19 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
     // analog
     if (value instanceof Quantity) {
       Quantity<?> quantity = (Quantity<?>) value;
-      return new QuantityType(quantity.getValue(), quantity.getUnit());
+      return new QuantityType<>(quantity.getValue(), quantity.getUnit());
     }
 
     if (value instanceof Number) {
       return QuantityType.valueOf(((Number) value).doubleValue(), AbstractUnit.ONE);
+    }
+
+    if (value instanceof List<?>) {
+      List<?> list = (List<?>) value;
+      if (list.size() > 0 && list.get(0) instanceof Quantity) {
+        Quantity<?> quantity = (Quantity<?>) list.get(0);
+        return new QuantityType<>(quantity.getValue(), quantity.getUnit());
+      }
     }
 
     // unknown

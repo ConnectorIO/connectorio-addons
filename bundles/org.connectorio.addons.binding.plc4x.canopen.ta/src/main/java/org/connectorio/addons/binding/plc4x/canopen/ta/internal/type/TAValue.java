@@ -18,6 +18,7 @@
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.type;
 
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.ComplexUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
 import tec.uom.se.quantity.Quantities;
 
@@ -45,6 +46,12 @@ public class TAValue {
       // TODO this logic requires additional verification
       //int value = Short.toUnsignedInt(Short.valueOf((short) raw));
       return unit.parse(raw);
+    }
+
+    // must be checked before analog since complex unit here overrides standard analog decoding logic.
+    final ComplexUnit complex = ComplexUnit.valueOf(index);
+    if (complex != null) {
+      return complex.parse(raw);
     }
 
     final AnalogUnit analog = AnalogUnit.valueOf(index);
