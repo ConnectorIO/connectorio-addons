@@ -56,6 +56,14 @@
       <artifactId>org.openhab.core.config.discovery</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.plc4x.decorator.retry</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.plc4x.decorator.phase</artifactId>
+    </dependency>
 
     <!--
     <dependency>

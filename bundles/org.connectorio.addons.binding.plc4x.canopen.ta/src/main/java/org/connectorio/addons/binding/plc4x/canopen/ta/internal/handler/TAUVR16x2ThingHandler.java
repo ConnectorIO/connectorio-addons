@@ -22,9 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import javax.measure.Quantity;
 import org.apache.plc4x.java.api.PlcConnection;
@@ -33,6 +31,7 @@ import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.ComplexUn
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.ControllerConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.protocol.TAOperations;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.provider.ChannelTypeEntry;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAObject;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAOutput;
 import org.connectorio.addons.binding.plc4x.canopen.config.CANopenNodeConfig;
@@ -43,6 +42,11 @@ import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAValue;
 import org.connectorio.addons.binding.plc4x.handler.Plc4xThingHandler;
 import org.connectorio.addons.binding.plc4x.handler.base.PollingPlc4xThingHandler;
+import org.connectorio.plc4x.decorator.CompositeDecorator;
+import org.connectorio.plc4x.decorator.DecoratorConnection;
+import org.connectorio.plc4x.decorator.phase.Phase;
+import org.connectorio.plc4x.decorator.phase.PhaseDecorator;
+import org.connectorio.plc4x.decorator.retry.RetryDecorator;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.thing.ChannelUID;
@@ -88,12 +92,22 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
       semaphore.acquireUninterruptibly();
 
       logger.debug("Retrieving UVR {} configuration", nodeId);
-      operations = new TAOperations(connection);
+      CompositeDecorator decorator = new CompositeDecorator();
+      decorator.add(new RetryDecorator(2));
+      decorator.add(new PhaseDecorator());
+      operations = new TAOperations(new DecoratorConnection(connection, decorator, decorator, decorator, decorator));
 
       ValueListener valueListener = new ThingChannelValueListener(getCallback(), getThing(), this::createState);
 
+      Phase phase = Phase.create("Initialize " + thing.getUID() + " " + thing.getLabel());
+      phase.addCallback(new Runnable() {
+        @Override
+        public void run() {
+          operations.logout(nodeId, clientId);
+        }
+      });
+
       operations.subscribeStatus(connected -> {
-        logoutTimer.schedule(new LogoutTask(semaphore, operations, nodeId, clientId), TimeUnit.SECONDS.toMillis(90));
         if (connected) {
           operations.reload(nodeId);
           // lets release SDO lock within 90 seconds, should be sufficient to complete all SDO detection in most of cases
@@ -157,7 +171,7 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
   private void updateThingChannel(TAOutput output, String channelId, String fallbackLabel) {
     ChannelUID channelUID = new ChannelUID(getThing().getUID(), channelId + output.getIndex());
 
-    TypeEntry channelType = ChannelTypeHelper.channelType(output);
+    ChannelTypeEntry channelType = ChannelTypeHelper.channelType(output);
     logger.debug("Selected channel {} type {} for {} on node {}", channelUID, channelType, output, nodeId);
     String label = output.getLabel().orElse(fallbackLabel + output.getIndex());
 
@@ -239,24 +253,4 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
     return UnDefType.UNDEF;
   }
 
-  static class LogoutTask extends TimerTask {
-
-    private final Semaphore semaphore;
-    private final TAOperations operations;
-    private final int nodeId;
-    private final int clientId;
-
-    LogoutTask(Semaphore semaphore, TAOperations operations, int nodeId, int clientId) {
-      this.semaphore = semaphore;
-      this.operations = operations;
-      this.nodeId = nodeId;
-      this.clientId = clientId;
-    }
-
-    @Override
-    public void run() {
-      semaphore.release();
-      operations.logout(nodeId, clientId);
-    }
-  }
 }

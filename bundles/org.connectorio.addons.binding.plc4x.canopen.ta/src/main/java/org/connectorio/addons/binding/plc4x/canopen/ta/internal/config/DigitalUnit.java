@@ -20,11 +20,12 @@ package org.connectorio.addons.binding.plc4x.canopen.ta.internal.config;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.OpenClosedType;
 import org.openhab.core.types.State;
 
-public enum DigitalUnit {
+public enum DigitalUnit implements TAUnit {
 
   /* 43 digital */ OPEN_CLOSED (43, OpenClosedType.CLOSED, OpenClosedType.OPEN),
   /* 44 digital */ ON_OFF (44, OnOffType.OFF, OnOffType.ON),

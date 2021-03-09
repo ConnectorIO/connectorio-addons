@@ -28,7 +28,7 @@ import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest.Builder;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionResponse;
 import org.apache.plc4x.java.api.model.PlcConsumerRegistration;
 import org.apache.plc4x.java.api.types.PlcResponseCode;
-import org.connectorio.addons.binding.plc4x.canopen.internal.handler.CANOpenSocketCANBridgeHandler;
+import org.connectorio.addons.binding.plc4x.canopen.internal.handler.CANopenSocketCANBridgeHandler;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
 import org.openhab.core.config.discovery.DiscoveryService;
@@ -47,7 +47,7 @@ public class CANopenNMTDiscoveryService extends AbstractDiscoveryService impleme
   private final Logger logger = LoggerFactory.getLogger(CANopenNMTDiscoveryService.class);
   private final Set<Integer> discoveredNodes = new ConcurrentSkipListSet<>();
 
-  private CANOpenSocketCANBridgeHandler handler;
+  private CANopenSocketCANBridgeHandler handler;
   private PlcConsumerRegistration registration;
 
   public CANopenNMTDiscoveryService() {
@@ -96,8 +96,8 @@ public class CANopenNMTDiscoveryService extends AbstractDiscoveryService impleme
 
   @Override
   public void setThingHandler(ThingHandler handler) {
-    if (handler instanceof CANOpenSocketCANBridgeHandler) {
-      this.handler = (CANOpenSocketCANBridgeHandler) handler;
+    if (handler instanceof CANopenSocketCANBridgeHandler) {
+      this.handler = (CANopenSocketCANBridgeHandler) handler;
     }
   }
 

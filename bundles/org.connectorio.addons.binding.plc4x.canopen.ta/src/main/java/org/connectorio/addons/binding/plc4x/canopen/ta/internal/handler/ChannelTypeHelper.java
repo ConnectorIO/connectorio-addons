@@ -26,51 +26,53 @@ import org.connectorio.addons.binding.plc4x.canopen.ta.internal.TACANopenBinding
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.ComplexUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.provider.ChannelTypeEntry;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAObject;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 
+@Deprecated
 public class ChannelTypeHelper {
 
-  private final static TypeEntry DEFAULT_ANALOG_OUTPUT = new TypeEntry(TACANopenBindingConstants.ANALOG_OUTPUT_CHANNEL_TYPE,"Number:Dimensionless");
-  private final static TypeEntry DEFAULT_DIGITAL_OUTPUT = new TypeEntry(TACANopenBindingConstants.DIGITAL_OUTPUT_CHANNEL_TYPE, "Contact");
+  private final static ChannelTypeEntry DEFAULT_ANALOG_OUTPUT = new ChannelTypeEntry(TACANopenBindingConstants.ANALOG_OUTPUT_CHANNEL_TYPE,"Number:Dimensionless");
+  private final static ChannelTypeEntry DEFAULT_DIGITAL_OUTPUT = new ChannelTypeEntry(TACANopenBindingConstants.DIGITAL_OUTPUT_CHANNEL_TYPE, "Contact");
 
-  private final static Map<TAUnit, TypeEntry> unitDimensions = new LinkedHashMap<TAUnit, TypeEntry>() {{
-    put(CELSIUS, new TypeEntry("temperature", "Number:Temperature"));
-    put(KELVIN, new TypeEntry("temperature", "Number:Temperature"));
-    put(KILO_METRE, new TypeEntry("length", "Number:Length"));
-    put(METRE, new TypeEntry("length", "Number:Length"));
-    put(MILLIMETER, new TypeEntry("length", "Number:Length"));
-    put(LITRE, new TypeEntry("volume", "Number:Volume"));
-    put(CUBIC_METRE, new TypeEntry("volume", "Number:Volume"));
-    put(IRRADIANCE, new TypeEntry("intensity", "Number:Intensity"));
-    put(SECOND, new TypeEntry("time", "Number:Time"));
-    put(MINUTE, new TypeEntry("time", "Number:Time"));
-    put(HOUR, new TypeEntry("time", "Number:Time"));
-    put(DAY, new TypeEntry("time", "Number:Time"));
-    put(KILOWATT, new TypeEntry("power", "Number:Power"));
-    put(KILOWATT_HOUR, new TypeEntry("energy", "Number:Energy"));
-    put(MEGAWATT_HOUR, new TypeEntry("energy", "Number:Energy"));
-    put(VOLT, new TypeEntry("electric-potential", "Number:ElectricPotential"));
-    put(MILLI_AMPERE, new TypeEntry("electric-current", "Number:ElectricCurrent"));
-    put(KILOOHM, new TypeEntry("electric-resistance", "Number:ElectricResistance"));
-    put(KILOMETRE_PER_HOUR, new TypeEntry("speed", "Number:Speed"));
-    put(METRE_PER_SECOND, new TypeEntry("speed", "Number:Speed"));
-    put(MILLIMETER_PER_MINUTE, new TypeEntry("speed", "Number:Speed"));
-    put(MILLIMETER_PER_HOUR, new TypeEntry("speed", "Number:Speed"));
-    put(MILLIMETER_PER_DAY, new TypeEntry("speed", "Number:Speed"));
-    put(LITRE_PER_HOUR, new TypeEntry("volumetric-flow-rate", "Number:VolumetricFlowRate"));
-    put(LITRE_PER_MINUTE, new TypeEntry("volumetric-flow-rate", "Number:VolumetricFlowRate"));
-    put(LITER_PER_DAY, new TypeEntry("volumetric-flow-rate", "Number:VolumetricFlowRate"));
-    put(CUBICMETRE_PER_MINUTE, new TypeEntry("volumetric-flow-rate", "Number:VolumetricFlowRate"));
-    put(CUBICMETRE_PER_HOUR, new TypeEntry("volumetric-flow-rate", "Number:VolumetricFlowRate"));
-    put(CUBICMETRE_PER_DAY, new TypeEntry("volumetric-flow-rate", "Number:VolumetricFlowRate"));
-    put(BAR, new TypeEntry("pressure", "Number:Pressure"));
-    put(MEGABAR, new TypeEntry("pressure", "Number:Pressure"));
-    put(HERTZ, new TypeEntry("frequency", "Number:Frequency"));
-    put(RAS_TEMPERATURE, new TypeEntry("temperature", "Number:Temperature"));
+  private final static Map<TAUnit, ChannelTypeEntry> unitDimensions = new LinkedHashMap<TAUnit, ChannelTypeEntry>() {{
+    put(CELSIUS, new ChannelTypeEntry("temperature", "Number:Temperature"));
+    put(KELVIN, new ChannelTypeEntry("temperature", "Number:Temperature"));
+    put(KILO_METRE, new ChannelTypeEntry("length", "Number:Length"));
+    put(METRE, new ChannelTypeEntry("length", "Number:Length"));
+    put(MILLIMETER, new ChannelTypeEntry("length", "Number:Length"));
+    put(LITRE, new ChannelTypeEntry("volume", "Number:Volume"));
+    put(CUBIC_METRE, new ChannelTypeEntry("volume", "Number:Volume"));
+    put(IRRADIANCE, new ChannelTypeEntry("intensity", "Number:Intensity"));
+    put(SECOND, new ChannelTypeEntry("time", "Number:Time"));
+    put(MINUTE, new ChannelTypeEntry("time", "Number:Time"));
+    put(HOUR, new ChannelTypeEntry("time", "Number:Time"));
+    put(DAY, new ChannelTypeEntry("time", "Number:Time"));
+    put(KILOWATT, new ChannelTypeEntry("power", "Number:Power"));
+    put(KILOWATT_HOUR, new ChannelTypeEntry("energy", "Number:Energy"));
+    put(MEGAWATT_HOUR, new ChannelTypeEntry("energy", "Number:Energy"));
+    put(VOLT, new ChannelTypeEntry("electric-potential", "Number:ElectricPotential"));
+    put(MILLI_AMPERE, new ChannelTypeEntry("electric-current", "Number:ElectricCurrent"));
+    put(KILOOHM, new ChannelTypeEntry("electric-resistance", "Number:ElectricResistance"));
+    put(KILOMETRE_PER_HOUR, new ChannelTypeEntry("speed", "Number:Speed"));
+    put(METRE_PER_SECOND, new ChannelTypeEntry("speed", "Number:Speed"));
+    put(MILLIMETER_PER_MINUTE, new ChannelTypeEntry("speed", "Number:Speed"));
+    put(MILLIMETER_PER_HOUR, new ChannelTypeEntry("speed", "Number:Speed"));
+    put(MILLIMETER_PER_DAY, new ChannelTypeEntry("speed", "Number:Speed"));
+    put(LITRE_PER_HOUR, new ChannelTypeEntry("volumetric-flow-rate", "Number:VolumetricFlowRate"));
+    put(LITRE_PER_MINUTE, new ChannelTypeEntry("volumetric-flow-rate", "Number:VolumetricFlowRate"));
+    put(LITER_PER_DAY, new ChannelTypeEntry("volumetric-flow-rate", "Number:VolumetricFlowRate"));
+    put(CUBICMETRE_PER_MINUTE, new ChannelTypeEntry("volumetric-flow-rate", "Number:VolumetricFlowRate"));
+    put(CUBICMETRE_PER_HOUR, new ChannelTypeEntry("volumetric-flow-rate", "Number:VolumetricFlowRate"));
+    put(CUBICMETRE_PER_DAY, new ChannelTypeEntry("volumetric-flow-rate", "Number:VolumetricFlowRate"));
+    put(BAR, new ChannelTypeEntry("pressure", "Number:Pressure"));
+    put(MEGABAR, new ChannelTypeEntry("pressure", "Number:Pressure"));
+    put(HERTZ, new ChannelTypeEntry("frequency", "Number:Frequency"));
+    put(RAS_TEMPERATURE, new ChannelTypeEntry("temperature", "Number:Temperature"));
   }};
 
-  public static TypeEntry channelType(TAObject object) {
+  public static ChannelTypeEntry channelType(TAObject object) {
     int unit = object.getUnit();
 
     DigitalUnit digital = DigitalUnit.valueOf(object.getUnit());

@@ -37,6 +37,14 @@
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.binding.plc4x.canopen</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.plc4x.decorator.phase</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.plc4x.decorator.retry</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.connectorio.addons</groupId>

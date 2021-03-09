@@ -18,10 +18,13 @@
 package org.connectorio.addons.binding.plc4x.canopen.handler;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import org.apache.plc4x.java.api.PlcConnection;
+import org.connectorio.addons.binding.plc4x.canopen.api.CoConnection;
 import org.connectorio.addons.binding.plc4x.canopen.config.CANopenNodeConfig;
 import org.connectorio.addons.binding.plc4x.canopen.discovery.CANopenDiscoveryParticipant;
 import org.connectorio.addons.binding.plc4x.handler.Plc4xBridgeHandler;
+import org.connectorio.plc4x.decorator.Decorator;
 
 public interface CANopenBridgeHandler<C extends CANopenNodeConfig> extends Plc4xBridgeHandler<PlcConnection, C> {
 
@@ -30,5 +33,7 @@ public interface CANopenBridgeHandler<C extends CANopenNodeConfig> extends Plc4x
   int getNodeId();
 
   List<CANopenDiscoveryParticipant> getParticipants();
+
+  CompletableFuture<CoConnection> getCANopenConnection(Decorator... decorators);
 
 }

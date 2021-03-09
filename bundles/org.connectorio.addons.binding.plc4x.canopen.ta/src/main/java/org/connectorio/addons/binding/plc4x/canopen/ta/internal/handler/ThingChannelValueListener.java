@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogChannelConfig;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.OldAnalogChannelConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAValue;
 import org.openhab.core.library.types.OpenClosedType;
@@ -50,7 +50,7 @@ class ThingChannelValueListener implements ValueListener {
     short val = buffer.readShort(16);
     Channel channel = thing.getChannel("analog#" + index);
     AnalogUnit unit = Optional.ofNullable(channel.getConfiguration())
-      .map(cfg -> cfg.as(AnalogChannelConfig.class))
+      .map(cfg -> cfg.as(OldAnalogChannelConfig.class))
       .map(cfg -> cfg.unit)
       .orElse(AnalogUnit.DIMENSIONLESS);
 

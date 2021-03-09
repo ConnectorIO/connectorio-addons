@@ -30,6 +30,9 @@
     <feature>plc4x-spi</feature>
 
     <bundle>mvn:org.connectorio.addons/org.connectorio.addons.binding.plc4x/${project.version}</bundle>
+    <bundle>mvn:org.connectorio.addons/org.connectorio.plc4x.decorator/${project.version}</bundle>
+    <bundle>mvn:org.connectorio.addons/org.connectorio.plc4x.decorator.phase/${project.version}</bundle>
+    <bundle>mvn:org.connectorio.addons/org.connectorio.plc4x.decorator.retry/${project.version}</bundle>
   </feature>
 
   <feature name="plc4x-commons-lang" version="3.11" hidden="true">

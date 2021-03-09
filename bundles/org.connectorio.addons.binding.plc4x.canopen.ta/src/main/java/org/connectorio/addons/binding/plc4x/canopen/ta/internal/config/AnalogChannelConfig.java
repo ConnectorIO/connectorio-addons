@@ -19,7 +19,6 @@ package org.connectorio.addons.binding.plc4x.canopen.ta.internal.config;
 
 public class AnalogChannelConfig {
 
-  public int index = 0;
   public AnalogUnit unit;
 
 

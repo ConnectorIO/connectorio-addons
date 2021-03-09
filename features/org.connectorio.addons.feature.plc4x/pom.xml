@@ -34,6 +34,19 @@
   <dependencies>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.plc4x.decorator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.plc4x.decorator.phase</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.plc4x.decorator.retry</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.feature</artifactId>
       <classifier>features</classifier>
       <type>xml</type>

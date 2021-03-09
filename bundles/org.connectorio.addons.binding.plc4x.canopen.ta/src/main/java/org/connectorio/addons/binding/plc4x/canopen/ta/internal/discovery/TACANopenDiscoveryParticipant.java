@@ -42,7 +42,7 @@ public class TACANopenDiscoveryParticipant extends AbstractDiscoveryService impl
   private final Logger logger = LoggerFactory.getLogger(TACANopenDiscoveryParticipant.class);
 
   public TACANopenDiscoveryParticipant() {
-    super(TACANopenBindingConstants.SUPPORTED_THINGS,30, true);
+    super(TACANopenBindingConstants.SUPPORTED_DEVICES,30, true);
   }
 
   @Override
@@ -65,8 +65,7 @@ public class TACANopenDiscoveryParticipant extends AbstractDiscoveryService impl
 
     try {
       Map<String, String> info = deviceInfo.get(30, TimeUnit.SECONDS);
-      DiscoveryResultBuilder resultBuilder = DiscoveryResultBuilder.create(new ThingUID(
-        TACANopenBindingConstants.TA_UVR_16x2_THING_TYPE, "" + node))
+      DiscoveryResultBuilder resultBuilder = DiscoveryResultBuilder.create(new ThingUID(TACANopenBindingConstants.TA_UVR_16x2_THING_TYPE, "" + node))
         .withBridge(bridgeUID)
         .withProperty("nodeId", node)
         .withRepresentationProperty("nodeId")

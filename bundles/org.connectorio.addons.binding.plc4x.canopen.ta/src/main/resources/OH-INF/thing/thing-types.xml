@@ -21,6 +21,40 @@
   xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
+  <bridge-type id="ta-device">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="socketcan"/>
+    </supported-bridge-type-refs>
+
+    <label>Technische Alternative Device</label>
+    <description>Freely programmable logic controller (UVR 16x2, RSM 610).</description>
+
+    <config-description>
+      <parameter name="nodeId" type="integer" required="true">
+        <label>CANopen Node ID</label>
+        <description>
+          Identifier of device in CANopen network.
+        </description>
+      </parameter>
+      <parameter name="ignoreLoginFailure" type="boolean" required="true">
+        <label>Ignore login failure</label>
+        <description>
+          Determine if channel configuration should be refreshed even if controller refused "login" registration of this node.
+        </description>
+        <default>false</default>
+      </parameter>
+      <parameter name="deviceType" type="text" required="true">
+        <label>Device type</label>
+        <description>Device model/type</description>
+        <options>
+          <option value="UVR16x2">UVR 16x2</option>
+          <option value="RSM610">RSM 610</option>
+        </options>
+        <default>UVR16x2</default>
+      </parameter>
+    </config-description>
+  </bridge-type>
+
   <thing-type id="ta-uvr16x2">
     <supported-bridge-type-refs>
       <bridge-type-ref id="socketcan"/>
@@ -28,10 +62,6 @@
 
     <label>Technische Alternative UVR 16x2</label>
     <description>Freely programmable logic controller.</description>
-
-    <channel-groups>
-      <channel-group id="ras-temperature" typeId="ta-ras-temperature" />
-    </channel-groups>
 
     <config-description>
       <parameter name="nodeId" type="integer" required="true">

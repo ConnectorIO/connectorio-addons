@@ -25,7 +25,7 @@ import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionEvent;
 import org.apache.plc4x.java.api.value.PlcValue;
 import org.connectorio.addons.binding.plc4x.canopen.discovery.CANopenDiscoveryParticipant;
-import org.connectorio.addons.binding.plc4x.canopen.internal.handler.CANOpenSocketCANBridgeHandler;
+import org.connectorio.addons.binding.plc4x.canopen.internal.handler.CANopenSocketCANBridgeHandler;
 import org.openhab.core.config.discovery.DiscoveryResult;
 import org.openhab.core.thing.ThingUID;
 import org.slf4j.Logger;
@@ -35,12 +35,12 @@ class NodeStateSubscriptionCallback implements Consumer<PlcSubscriptionEvent> {
 
   private final Logger logger = LoggerFactory.getLogger(NodeStateSubscriptionCallback.class);
   private final String fieldName;
-  private final CANOpenSocketCANBridgeHandler handler;
+  private final CANopenSocketCANBridgeHandler handler;
   private final PlcConnection connection;
   private final Set<Integer> discoveredNodes;
   private final DiscoveryCallback callback;
 
-  public NodeStateSubscriptionCallback(String fieldName, CANOpenSocketCANBridgeHandler handler, PlcConnection connection,
+  public NodeStateSubscriptionCallback(String fieldName, CANopenSocketCANBridgeHandler handler, PlcConnection connection,
     Set<Integer> discoveredNodes, DiscoveryCallback callback) {
     this.fieldName = fieldName;
     this.handler = handler;

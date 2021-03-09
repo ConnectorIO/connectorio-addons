@@ -17,10 +17,12 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler;
 
-import static org.connectorio.addons.binding.plc4x.canopen.ta.internal.TACANopenBindingConstants.TA_UVR_16x2_THING_TYPE;
+import static org.connectorio.addons.binding.plc4x.canopen.ta.internal.TACANopenBindingConstants.*;
 
 import java.util.concurrent.Semaphore;
 import org.connectorio.addons.binding.handler.factory.BaseThingHandlerFactory;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.TACANopenBindingConstants;
+import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.binding.ThingHandlerFactory;
 import org.openhab.core.thing.binding.ThingHandler;
@@ -32,14 +34,33 @@ public class TAThingHandlerFactory extends BaseThingHandlerFactory {
   private Semaphore semaphore = new Semaphore(1);
 
   public TAThingHandlerFactory() {
-    super(TA_UVR_16x2_THING_TYPE);
+    super(TACANopenBindingConstants.ALL_SUPPORTED_THINGS);
   }
 
   @Override
   protected ThingHandler createHandler(Thing thing) {
+    if (thing instanceof Bridge) {
+      if (TA_DEVICE_THING_TYPE.equals(thing.getThingTypeUID())) {
+        return new TADeviceThingHandler(((Bridge) thing));
+      }
+    }
+
     if (TA_UVR_16x2_THING_TYPE.equals(thing.getThingTypeUID())) {
       return new TAUVR16x2ThingHandler(thing, semaphore);
     }
+
+
+    if (TA_UVR_16x2_THING_TYPE.equals(thing.getThingTypeUID())) {
+      return new TAUVR16x2ThingHandler(thing, semaphore);
+    }
+
+    if (TACANopenBindingConstants.DISCOVERABLE_CAN_THINGS.contains(thing.getThingTypeUID())) {
+      if (thing.getThingTypeUID().getId().startsWith(TA_ANALOG_PREFIX)) {
+        return new TAAnalogThingHandler(thing);
+      }
+      return new TADigitalThingHandler(thing);
+    }
+
     return null;
   }
 }

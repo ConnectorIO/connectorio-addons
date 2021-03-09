@@ -52,6 +52,9 @@
     <module>org.connectorio.addons.compute.efficiency</module>
     <module>org.connectorio.addons.transformation.inverse</module>
     <module>org.connectorio.chrono</module>
+    <module>org.connectorio.plc4x.decorator</module>
+    <module>org.connectorio.plc4x.decorator.retry</module>
+    <module>org.connectorio.plc4x.decorator.phase</module>
   </modules>
 
 </project>

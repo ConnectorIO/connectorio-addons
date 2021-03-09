@@ -66,6 +66,21 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.plc4x.decorator</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.plc4x.decorator.phase</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.plc4x.decorator.retry</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.automation.calculation</artifactId>
         <version>${project.version}</version>
       </dependency>
