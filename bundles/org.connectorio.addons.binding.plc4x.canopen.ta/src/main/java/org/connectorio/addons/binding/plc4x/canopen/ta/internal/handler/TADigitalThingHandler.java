@@ -17,124 +17,44 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler;
 
-import java.util.Optional;
-import javax.measure.Quantity;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogChannelConfig;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogObjectConfig;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalChannelConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalObjectConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.OldAnalogChannelConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.TADevice;
-import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.ValueCallback;
-import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.AnalogValue;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TADigitalInput;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TADigitalOutput;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.DigitalValue;
-import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.Value;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.OpenClosedType;
-import org.openhab.core.library.types.QuantityType;
-import org.openhab.core.thing.Bridge;
-import org.openhab.core.thing.Channel;
-import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
-import org.openhab.core.thing.ThingStatus;
-import org.openhab.core.thing.ThingStatusDetail;
-import org.openhab.core.thing.binding.BaseThingHandler;
-import org.openhab.core.thing.binding.ThingHandler;
-import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class TADigitalThingHandler extends BaseThingHandler implements ValueCallback<Value<?>> {
-
-  private final Logger logger = LoggerFactory.getLogger(TAAnalogThingHandler.class);
-  private DigitalObjectConfig config;
-  private TADevice device;
-
-  private DigitalUnit unit;
+public class TADigitalThingHandler extends TABaseObjectThingHandler<DigitalValue, DigitalUnit, DigitalObjectConfig> {
 
   public TADigitalThingHandler(Thing thing) {
-    super(thing);
+    super(thing, DigitalObjectConfig.class, DigitalValue.class);
   }
 
   @Override
-  public void initialize() {
-    TADeviceThingHandler handler = Optional.ofNullable(getBridge()).map(Bridge::getHandler)
-      .filter(TADeviceThingHandler.class::isInstance)
-      .map(TADeviceThingHandler.class::cast)
-      .orElse(null);
-
-    this.config = getConfigAs(DigitalObjectConfig.class);
-
-    if (handler == null) {
-      updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_UNINITIALIZED);
-      return;
-    }
-
-    handler.getDevice().whenComplete((result, error) -> {
-      if (error != null) {
-        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE, error != null ? error.getMessage() : "Unknown error");
-        return;
-      }
-
-      Channel channel = getThing().getChannel(getThing().getThingTypeUID().getId());
-      DigitalChannelConfig channelConfig = channel.getConfiguration().as(DigitalChannelConfig.class);
-      if (channelConfig != null && channelConfig.unit != null) {
-        unit = channelConfig.unit;
-      }
-
-      if (config.readObjectIndex != 0) {
-        result.addValueCallback(this);
-        result.addDigitalOutput(config.readObjectIndex, unit);
-      }
-      if (config.writeObjectIndex != 0) {
-        result.addValueCallback(this);
-        result.addDigitalInput(config.writeObjectIndex, unit);
-      }
-
-      this.device = result;
-      updateStatus(ThingStatus.ONLINE);
-    });
+  protected DigitalUnit determineUnit(Thing thing) {
+    return DigitalUnit.OPEN_CLOSED;
   }
 
   @Override
-  public void handleCommand(ChannelUID channelUID, Command command) {
-    if (config.writeObjectIndex == 0) {
-      logger.warn("Ignoring write request {} to channel {} cause write object index is not set", command, channelUID);
-      return;
-    }
-
-    // push update to controller
-    device.write(config.writeObjectIndex, createValue(command));
+  protected void registerInput(int writeObjectIndex, TADevice device) {
+    device.addDigitalInput(writeObjectIndex, new TADigitalInput(device, writeObjectIndex, DigitalUnit.OPEN_CLOSED.getIndex()));
   }
 
-  private Value<?> createValue(Command command) {
+  @Override
+  protected void registerOutput(int readObjectIndex, TADevice device) {
+    device.addDigitalOutput(readObjectIndex, new TADigitalOutput(device, readObjectIndex, DigitalUnit.OPEN_CLOSED.getIndex(), false));
+  }
+
+  protected DigitalValue createValue(Command command) {
     if (command == OnOffType.ON || command == OpenClosedType.OPEN) {
       return new DigitalValue(true, unit);
     }
     return new DigitalValue(false, unit);
-  }
-
-  @Override
-  public void accept(int index, Value<?> value) {
-    if (config.readObjectIndex == index && value instanceof DigitalValue) {
-      DigitalValue digital = (DigitalValue) value;
-      logger.debug("Received update of matching digital object {} with value {}", index, digital);
-
-      ThingHandlerCallback callback = getCallback();
-      if (callback != null) {
-        Thing thing = getThing();
-        Channel channel = thing.getChannel(thing.getThingTypeUID().getId());
-        if (channel != null) {
-          callback.stateUpdated(channel.getUID(), createState(digital));
-        }
-      } else {
-        logger.warn("Ignoring state update {} for {}, handler not ready", digital, config.readObjectIndex);
-      }
-    }
   }
 
   protected State createState(DigitalValue value) {

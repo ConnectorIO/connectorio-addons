@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val;
 
+import java.util.Objects;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 
@@ -44,4 +45,20 @@ public class DigitalValue implements Value<Boolean> {
     return "DigitalValue [" + value + ", unit=" + unit + "]";
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof DigitalValue)) {
+      return false;
+    }
+    DigitalValue that = (DigitalValue) o;
+    return getValue() == that.getValue() && getUnit() == that.getUnit();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getValue(), getUnit());
+  }
 }

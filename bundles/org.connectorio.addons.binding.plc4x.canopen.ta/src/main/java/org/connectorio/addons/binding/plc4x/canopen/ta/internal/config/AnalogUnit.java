@@ -24,6 +24,8 @@ import javax.measure.Dimension;
 import javax.measure.Unit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.TAUnits;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.AnalogValue;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.RASValue;
 import org.openhab.core.library.unit.MetricPrefix;
 import org.openhab.core.library.unit.SIUnits;
 import org.openhab.core.library.unit.Units;
@@ -77,7 +79,12 @@ public enum AnalogUnit implements TAUnit {
 //    /* 44 digital */ new DigitalUnit(44, "Nein/Ja", "", "Nein", "Ja"));
 //    /* 47 digital */ new DigitalUnit(47, "Stopp/Auf/Zu", "Mischerausgang", "Stopp", "Auf", "Zu"));
 
-    /* 46 analog  */ TEMPERATURE_REGULATOR  (46, SIUnits.CELSIUS, 0.1),
+    /* 46 analog  */ TEMPERATURE_REGULATOR  (46, SIUnits.CELSIUS, 0.1) {
+        @Override
+        public AnalogValue parse(short raw) {
+            return new RASValue(raw, this);
+        }
+    }, // complex unit
 //    /* 55 digital */ new RollerShutterUnit()); // Jalousie Position für Höhe und Neigung bei Lamelle
 //    /* 59 digital */ new ScaledUnit(59, "Prozent", "Jalousie Position", "%", 1, false)); // "Prozent ohne Komma für Jalousie Pos);
 //    /* 60 time?   */ new TimeUnit()
@@ -125,6 +132,10 @@ public enum AnalogUnit implements TAUnit {
 
     public static AnalogUnit valueOf(int index) {
         return UNIT_MAP.get(index);
+    }
+
+    public AnalogValue parse(short raw) {
+        return new AnalogValue(raw, this);
     }
 
 }

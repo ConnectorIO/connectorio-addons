@@ -24,7 +24,7 @@ public class TAAnalogInput extends TACanInputOutputObject<AnalogValue> {
 
   private AnalogValue value;
 
-  public TAAnalogInput(TADevice device, short index, short unit) {
+  public TAAnalogInput(TADevice device, int index, int unit) {
     this(device, 0x0000, index, unit);
   }
 

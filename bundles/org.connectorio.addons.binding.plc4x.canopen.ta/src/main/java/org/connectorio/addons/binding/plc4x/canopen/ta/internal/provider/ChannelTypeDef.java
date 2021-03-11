@@ -25,6 +25,8 @@ import org.connectorio.addons.binding.plc4x.canopen.ta.internal.TACANopenBinding
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import org.openhab.core.thing.ThingTypeUID;
 import org.openhab.core.thing.type.ChannelTypeUID;
+import org.openhab.core.types.StateDescriptionFragment;
+import org.openhab.core.types.StateDescriptionFragmentBuilder;
 
 public class ChannelTypeDef {
 
@@ -34,7 +36,7 @@ public class ChannelTypeDef {
   private final String label;
   private final List<TAUnit> units;
 
-  public ChannelTypeDef(ThingTypeUID dimension, String itemType, TAUnit ... units) {
+  ChannelTypeDef(ThingTypeUID dimension, String itemType, TAUnit ... units) {
     this(dimension.getId(), new ChannelTypeUID(TACANopenBindingConstants.BINDING_ID, dimension.getId()),
       itemType, label(dimension.getId()), Arrays.asList(units));
   }
@@ -69,6 +71,10 @@ public class ChannelTypeDef {
 
   public List<TAUnit> getUnits() {
     return units;
+  }
+
+  public StateDescriptionFragment getStateDescriptionFragment() {
+    return StateDescriptionFragmentBuilder.create().withPattern("%.1f %unit%").build();
   }
 
   private static String label(String dimension) {

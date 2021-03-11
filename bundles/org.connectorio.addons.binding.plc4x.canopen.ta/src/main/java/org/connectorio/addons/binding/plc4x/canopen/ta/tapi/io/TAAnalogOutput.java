@@ -40,7 +40,7 @@ public class TAAnalogOutput extends TACanOutputObject<AnalogValue> {
   }
 
   public void update(short raw) {
-    this.value = new AnalogValue(raw, AnalogUnit.valueOf(getUnit()));
+    this.value = AnalogUnit.valueOf(getUnit()).parse(raw);
   }
 
   @Override

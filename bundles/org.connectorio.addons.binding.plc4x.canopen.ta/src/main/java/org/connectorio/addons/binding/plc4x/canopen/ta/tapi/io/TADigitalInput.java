@@ -25,7 +25,7 @@ public class TADigitalInput extends TACanInputOutputObject<DigitalValue> {
 
   private DigitalValue value;
 
-  public TADigitalInput(TADevice device, short index, short unit) {
+  public TADigitalInput(TADevice device, int index, int unit) {
     this(device, 0x0000, index, unit);
   }
 

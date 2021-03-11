@@ -298,59 +298,59 @@ public abstract class TADevice {
     valueCallbacks.forEach(callback -> callback.accept(index, digitalOutput.getValue()));
   }
 
-  public void addAnalogOutput(int index, TAUnit unit) {
+  public void addAnalogOutput(int index, TAAnalogOutput output) {
     if (analogOutputs.containsKey(index)) {
       TAAnalogOutput base = analogOutputs.get(index);
-      if (base.getUnit() != unit.getIndex() && base.getUnit() == AnalogUnit.DIMENSIONLESS.getIndex()) {
-        analogOutputs.put(index, new TAAnalogOutput(this, false, base.getIndex(), unit.getIndex(),  (short) 0));
-        logger.debug("Update of analog output {} unit from {} to {}", index, base.getUnit(), unit.getIndex());
+      if (base.getUnit() != output.getUnit() && base.getUnit() == AnalogUnit.DIMENSIONLESS.getIndex()) {
+        analogOutputs.put(index, output);
+        logger.debug("Update of analog output {} unit from {} to {}", index, base.getUnit(), output.getIndex());
       } else {
         logger.debug("Skipping update of analog output {}, object already initialized with non-default unit {}", index, base.getUnit());
       }
     } else {
-      analogOutputs.put(index, new TAAnalogOutput(this, false, index, unit.getIndex(),  (short) 0));
+      analogOutputs.put(index, output);
     }
   }
 
-  public void addAnalogInput(int index, TAUnit unit) {
+  public void addAnalogInput(int index, TAAnalogInput input) {
     if (analogInput.containsKey(index)) {
       TAAnalogInput base = analogInput.get(index);
-      if (base.getUnit() != unit.getIndex() && base.getUnit() == AnalogUnit.DIMENSIONLESS.getIndex()) {
-        analogInput.put(index, new TAAnalogInput(this, false, base.getIndex(), unit.getIndex(),  (short) 0));
-        logger.debug("Update of analog input {} unit from {} to {}", index, base.getUnit(), unit.getIndex());
+      if (base.getUnit() != input.getUnit() && base.getUnit() == AnalogUnit.DIMENSIONLESS.getIndex()) {
+        analogInput.put(index, input);
+        logger.debug("Update of analog input {} unit from {} to {}", index, base.getUnit(), input.getIndex());
       } else {
         logger.debug("Skipping update of analog input {}, object already initialized with non-default unit {}", index, base.getUnit());
       }
     } else {
-      analogInput.put(index, new TAAnalogInput(this, false, index, unit.getIndex(),  (short) 0));
+      analogInput.put(index, input);
     }
   }
 
-  public void addDigitalOutput(int index, TAUnit unit) {
+  public void addDigitalOutput(int index, TADigitalOutput output) {
     if (digitalOutputs.containsKey(index)) {
       TADigitalOutput base = digitalOutputs.get(index);
-      if (base.getUnit() != unit.getIndex() && base.getUnit() == DigitalUnit.OPEN_CLOSED.getIndex()) {
-        digitalOutputs.put(index, new TADigitalOutput(this, false, base.getIndex(), unit.getIndex(), false));
-        logger.debug("Update of digital output {} unit from {} to {}", index, base.getUnit(), unit.getIndex());
+      if (base.getUnit() != output.getIndex() && base.getUnit() == DigitalUnit.OPEN_CLOSED.getIndex()) {
+        digitalOutputs.put(index, output);
+        logger.debug("Update of digital output {} unit from {} to {}", index, base.getUnit(), output.getIndex());
       } else {
         logger.debug("Skipping update of digital output {}, object already initialized with non-default unit {}", index, base.getUnit());
       }
     } else {
-      digitalOutputs.put(index, new TADigitalOutput(this, false, index, unit.getIndex(), false));
+      digitalOutputs.put(index, output);
     }
   }
 
-  public void addDigitalInput(int index, TAUnit unit) {
+  public void addDigitalInput(int index, TADigitalInput input) {
     if (digitalInput.containsKey(index)) {
       TADigitalInput base = digitalInput.get(index);
-      if (base.getUnit() != unit.getIndex() && base.getUnit() == DigitalUnit.OPEN_CLOSED.getIndex()) {
-        digitalInput.put(index, new TADigitalInput(this, false, base.getIndex(), unit.getIndex(),  (short) 0));
-        logger.debug("Update of digital input {} unit from {} to {}", index, base.getUnit(), unit.getIndex());
+      if (base.getUnit() != input.getUnit() && base.getUnit() == DigitalUnit.OPEN_CLOSED.getIndex()) {
+        digitalInput.put(index, input);
+        logger.debug("Update of digital input {} unit from {} to {}", index, base.getUnit(), input.getIndex());
       } else {
         logger.debug("Skipping update of digital input {}, object already initialized with non-default unit {}", index, base.getUnit());
       }
     } else {
-      digitalInput.put(index, new TADigitalInput(this, false, index, unit.getIndex(),  (short) 0));
+      digitalInput.put(index, input);
     }
   }
 

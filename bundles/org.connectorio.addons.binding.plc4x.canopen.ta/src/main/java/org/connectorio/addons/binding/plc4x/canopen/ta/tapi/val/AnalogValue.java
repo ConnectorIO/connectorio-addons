@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val;
 
+import java.util.Objects;
 import javax.measure.Quantity;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
@@ -46,17 +47,34 @@ public class AnalogValue implements Value<Quantity<?>> {
     return unit;
   }
 
+  public short encode() {
+    if (unit instanceof AnalogUnit) {
+      AnalogUnit taUnit = (AnalogUnit) unit;
+      return (short) (value.getValue().doubleValue() / taUnit.getScale());
+    }
+
+    return 0;
+  }
+
   public String toString() {
     return "AnalogValue [" + value + ", unit=" + unit + "]";
   }
 
-  public short encode() {
-    if (unit instanceof AnalogUnit) {
-      AnalogUnit taUnit = (AnalogUnit) unit;
-      return (short) (taUnit.getScale() * value.getValue().doubleValue());
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
+    if (!(o instanceof AnalogValue)) {
+      return false;
+    }
+    AnalogValue that = (AnalogValue) o;
+    return Objects.equals(getValue(), that.getValue()) && Objects.equals(getUnit(), that.getUnit());
+  }
 
-    return 0;
+  @Override
+  public int hashCode() {
+    return Objects.hash(getValue(), getUnit());
   }
 
   private static Quantity<?> parse(short raw, TAUnit unit) {

@@ -16,11 +16,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev;
-
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.ComplexUnit;
+;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TAAnalogOutput;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TADigitalOutput;
-import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TARasOutput;
 
 public class DefaultObjectFactory implements ObjectFactory {
 
@@ -34,9 +32,6 @@ public class DefaultObjectFactory implements ObjectFactory {
   public TAAnalogOutput createAnalogOutput(int index, int unit, short value) {
     if (unit == -1) {
       return new TAAnalogOutput(device, false, index, 0, value);
-    }
-    if (unit == ComplexUnit.RAS_TEMPERATURE.getIndex()) {
-      new TARasOutput(device, index, unit, value);
     }
     return new TAAnalogOutput(device, index, unit, value);
   }

@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.provider;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +27,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.connectorio.addons.binding.plc4x.canopen.CANopenBindingConstants;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.TACANopenBindingConstants;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
 import org.openhab.core.config.core.ConfigDescription;
 import org.openhab.core.config.core.ConfigDescriptionBuilder;
@@ -39,7 +42,9 @@ import org.openhab.core.thing.type.ChannelTypeBuilder;
 import org.openhab.core.thing.type.ChannelTypeProvider;
 import org.openhab.core.thing.type.ChannelTypeUID;
 import org.openhab.core.thing.type.StateChannelTypeBuilder;
+import org.openhab.core.types.StateDescriptionFragment;
 import org.openhab.core.types.StateDescriptionFragmentBuilder;
+import org.openhab.core.types.StateOption;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
@@ -67,7 +72,18 @@ public class TAChannelTypeProvider implements ChannelTypeProvider, ConfigDescrip
     new ChannelTypeDef(TA_ANALOG_FREQUENCY_THING_TYPE, "Number:Frequency", HERTZ),
     new ChannelTypeDef(TA_ANALOG_PULSE_THING_TYPE, "Number:Dimensionless", LITRE_PER_IMPULSE, IMPULSE, KILOWATT_PER_IMPULSE, CUBICMETRE_PER_IMPULSE, MILLIMETRE_PER_IMPULSE, LITER_PER_IMPULSE),
     new ChannelTypeDef(TA_ANALOG_GENERIC_THING_TYPE, "Number:Dimensionless", DIMENSIONLESS, HUMIDITY),
-    new ChannelTypeDef(TA_DIGITAL_SWITCH_THING_TYPE, "Switch", OPEN_CLOSED, ON_OFF)
+    new ChannelTypeDef(TA_DIGITAL_SWITCH_THING_TYPE, "Switch", OPEN_CLOSED, ON_OFF),
+    new ChannelTypeDef("ras", new ChannelTypeUID(TACANopenBindingConstants.BINDING_ID, TA_ANALOG_RAS), "Number", "Mode", Arrays.asList(TEMPERATURE_REGULATOR)) {
+      @Override
+      public StateDescriptionFragment getStateDescriptionFragment() {
+        return StateDescriptionFragmentBuilder.create()
+          .withOption(new StateOption("0", "AUTO"))
+          .withOption(new StateOption("1", "Mode #1"))
+          .withOption(new StateOption("2", "Mode #2"))
+          .withOption(new StateOption("3", "FROST"))
+          .build();
+      }
+    }
   ));
 
   private final Map<ChannelTypeUID, ChannelType> channelTypes = new HashMap<>();
@@ -82,7 +98,7 @@ public class TAChannelTypeProvider implements ChannelTypeProvider, ConfigDescrip
 
       StateChannelTypeBuilder channelTypeBuilder = ChannelTypeBuilder.state(def.getChannelType(), def.getLabel(), def.getItemType());
       channelTypeBuilder.withConfigDescriptionURI(configDescriptor.getUID());
-      channelTypeBuilder.withStateDescriptionFragment(StateDescriptionFragmentBuilder.create().withPattern("%.1f %unit%").build());
+      channelTypeBuilder.withStateDescriptionFragment(def.getStateDescriptionFragment());
       ChannelType channelType = channelTypeBuilder.build();
       channelTypes.put(channelType.getUID(), channelType);
     }

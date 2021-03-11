@@ -71,7 +71,7 @@ public class TAThingTypeProvider implements ThingTypeProvider, ConfigDescription
     new ThingTypeDef(TA_ANALOG_PRESSURE_THING_TYPE),
     new ThingTypeDef(TA_ANALOG_FREQUENCY_THING_TYPE),
     new ThingTypeDef(TA_ANALOG_RAS_THING_TYPE, Arrays.asList(
-      new ChannelTypeUID(BINDING_ID, "ta-ras-mode"),
+      new ChannelTypeUID(BINDING_ID, TA_ANALOG_RAS), // mode
       new ChannelTypeUID(BINDING_ID, TA_ANALOG_TEMPERATURE)
     )),
     new ThingTypeDef(TA_DIGITAL_SWITCH_THING_TYPE)
