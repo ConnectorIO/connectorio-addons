@@ -19,8 +19,13 @@ package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.plc4x.java.spi.generation.ParseException;
+import org.apache.plc4x.java.spi.generation.WriteBuffer;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -56,6 +61,57 @@ class DigitalOutputCallbackTest extends AbstractCallbackTest {
       verify(device).updateDigital(index, false);
     }
     verify(device).updateDigital(32, true);
+    verifyNoMoreInteractions(device);
+  }
+
+  @Test
+  void testDigitalOutputCallbackWith8thBit() {
+    trigger(callback, "01 00 00 00 00 00 00 00");
+    for (int index = 1; index < 8; index++) {
+      verify(device).updateDigital(index, false);
+    }
+    verify(device).updateDigital(8, true);
+    for (int index = 9; index < 33; index++) {
+      verify(device).updateDigital(index, false);
+    }
+    verifyNoMoreInteractions(device);
+  }
+
+  @Test
+  void testDigitalOutputCallbackWith1stBit() {
+    trigger(callback, "80 00 00 00 00 00 00 00");
+    verify(device).updateDigital(1, true);
+    for (int index = 2; index < 33; index++) {
+      verify(device).updateDigital(index, false);
+    }
+    verifyNoMoreInteractions(device);
+  }
+
+  @Test
+  void testByteArray() {
+    trigger(callback, new byte[] {-128, 0, 0, 0, 0, 0, 0, 0});
+
+    verify(device).updateDigital(1, true);
+    for (int index = 2; index < 33; index++) {
+      verify(device).updateDigital(index, false);
+    }
+    verifyNoMoreInteractions(device);
+  }
+
+  @Test
+  void testWriteAndTrigger() throws ParseException {
+    WriteBuffer buffer = new WriteBuffer(8);
+    buffer.writeBit(true);
+    for (int index = 2; index < 32; index++) {
+      buffer.writeBit(false);
+    }
+
+    trigger(callback, buffer.getData());
+
+    verify(device).updateDigital(1, true);
+    for (int index = 2; index < 33; index++) {
+      verify(device).updateDigital(index, false);
+    }
     verifyNoMoreInteractions(device);
   }
 

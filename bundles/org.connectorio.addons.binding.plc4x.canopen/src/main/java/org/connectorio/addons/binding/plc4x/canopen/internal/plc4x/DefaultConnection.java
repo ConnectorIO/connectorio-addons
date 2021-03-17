@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2019-2020 ConnectorIO Sp. z o.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package org.connectorio.addons.binding.plc4x.canopen.internal.plc4x;
 
 import java.util.ArrayList;
@@ -5,9 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest;
+import org.apache.plc4x.java.api.messages.PlcWriteRequest;
 import org.apache.plc4x.java.api.value.PlcValue;
 import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
 import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
@@ -53,9 +72,7 @@ public class DefaultConnection implements CoConnection {
   @Override
   public void send(int nodeId, CANOpenService service, PlcValue value) {
     connection.writeRequestBuilder().addItem("pdo", service.name() + ":" + nodeId + ":" + CANOpenDataType.RECORD, value)
-      .build().execute().whenComplete((response, error) -> {
-      logger.info("Dispatched PDO node {}, service {}, cob {}, data {}", nodeId, service, Integer.toHexString(service.getMin() + nodeId), value, error);
-    });
+      .build().execute().whenComplete(new PDOWriteCallback(nodeId, service, value));
   }
 
   @Override

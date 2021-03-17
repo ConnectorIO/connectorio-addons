@@ -17,12 +17,15 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.InputOutputObjectConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.TADevice;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.ValueCallback;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.Value;
+import org.openhab.core.config.core.Configuration;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
@@ -31,12 +34,16 @@ import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.thing.binding.BaseThingHandler;
 import org.openhab.core.thing.binding.ThingHandlerCallback;
+import org.openhab.core.thing.binding.builder.ThingBuilder;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class TABaseObjectThingHandler<T extends Value<?>, U extends TAUnit, C extends InputOutputObjectConfig> extends BaseThingHandler implements ValueCallback<T> {
+
+  public static final String OUTPUT = "output";
+  public static final String INPUT = "input";
 
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -67,6 +74,32 @@ public abstract class TABaseObjectThingHandler<T extends Value<?>, U extends TAU
       return;
     }
 
+    // case for first run of discovered thing - user didn't have chances to set read/write object identifiers
+    // but these are known to discovery process
+    boolean modified = false;
+    Map<String, String> properties = new LinkedHashMap<>(getThing().getProperties());
+    Map<String, Object> configuration = new LinkedHashMap<>(getThing().getConfiguration().getProperties());
+    ThingBuilder thingBuilder = editThing();
+    if (config.readObjectIndex == 0 && properties.containsKey(OUTPUT)) {
+      int outputId = readProperty(properties, OUTPUT);
+      configuration.put("readObjectIndex", outputId);
+      thingBuilder.withProperties(properties);
+      thingBuilder.withConfiguration(new Configuration(configuration));
+      modified = true;
+    }
+    if (config.writeObjectIndex == 0 && properties.containsKey(INPUT)) {
+      int inputId = readProperty(properties, INPUT);
+      configuration.put("writeObjectIndex", inputId);
+      thingBuilder.withProperties(properties);
+      thingBuilder.withConfiguration(new Configuration(configuration));
+      modified = true;
+    }
+
+    if (modified) {
+      updateThing(thingBuilder.build());
+      this.config = getConfigAs(configType);
+    }
+
     handler.getDevice().whenComplete((result, error) -> {
       if (error != null) {
         updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE, error.getMessage());
@@ -82,16 +115,29 @@ public abstract class TABaseObjectThingHandler<T extends Value<?>, U extends TAU
       }
       if (config.writeObjectIndex != 0) {
         registerInput(config.writeObjectIndex, device);
-        result.addValueCallback(new FilterValueCallback<>(this, config.writeObjectIndex, valueType));
       }
 
       updateStatus(ThingStatus.ONLINE);
     });
   }
 
+  private int readProperty(Map<String, String> properties, String output) {
+    String value = properties.remove(output);
+    try {
+      return ((Double) Double.parseDouble(value)).intValue();
+    } catch (NumberFormatException e) {
+      try {
+        return Integer.parseInt(value);
+      } catch (NumberFormatException ex) {
+
+      }
+    }
+    return 0;
+  }
+
   @Override
   public void handleCommand(ChannelUID channelUID, Command command) {
-    if (config.writeObjectIndex == 0) {
+   if (config.writeObjectIndex == 0) {
       logger.warn("Ignoring write request {} to channel {} cause write object index is not set", command, channelUID);
       return;
     }

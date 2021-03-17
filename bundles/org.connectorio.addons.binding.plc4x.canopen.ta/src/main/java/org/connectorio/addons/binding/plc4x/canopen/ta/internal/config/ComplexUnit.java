@@ -30,6 +30,7 @@ import tec.uom.se.unit.Units;
 /**
  * Compound units whcih require additional parsing. Result of computation is list and not single value.
  */
+@Deprecated
 public enum ComplexUnit implements TAUnit {
 
   /* 46 analog  */ RAS_TEMPERATURE(46, (Integer raw) -> {

@@ -28,6 +28,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import org.openhab.core.config.core.ConfigDescription;
 import org.openhab.core.config.core.ConfigDescriptionBuilder;
 import org.openhab.core.config.core.ConfigDescriptionParameter;
@@ -88,7 +90,7 @@ public class TAThingTypeProvider implements ThingTypeProvider, ConfigDescription
     this.channelTypeProvider = channelTypeProvider;
     for (ThingTypeDef entry : entries) {
       TAChannelTypeProvider.ConfigUID configUID = new TAChannelTypeProvider.ConfigUID(entry.getDimension());
-      ConfigDescription configDescriptor = createChannelConfigDescriptor(configUID, entry);
+      ConfigDescription configDescriptor = createChannelConfigDescriptor(configUID);
       configDescriptions.put(configDescriptor.getUID(), configDescriptor);
 
       ThingTypeUID uid = entry.getThingTypeUID();
@@ -115,7 +117,7 @@ public class TAThingTypeProvider implements ThingTypeProvider, ConfigDescription
     return channelType;
   }
 
-  private ConfigDescription createChannelConfigDescriptor(TAChannelTypeProvider.ConfigUID configUID, ThingTypeDef def) {
+  private ConfigDescription createChannelConfigDescriptor(TAChannelTypeProvider.ConfigUID configUID) {
     ConfigDescriptionBuilder builder = ConfigDescriptionBuilder.create(URI.create(configUID.getAsString()));
 
     ConfigDescriptionParameter readObjectIndex = ConfigDescriptionParameterBuilder.create("readObjectIndex", Type.INTEGER)

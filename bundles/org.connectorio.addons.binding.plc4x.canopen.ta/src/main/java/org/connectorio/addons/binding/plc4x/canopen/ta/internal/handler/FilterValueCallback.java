@@ -34,6 +34,9 @@ public class FilterValueCallback<T extends Value<?>> implements ValueCallback<Va
 
   @Override
   public void accept(int index, Value<?> value) {
+    if (this.index == 0) {
+      return;
+    }
     if (this.index == index && type.isInstance(value)) {
       delegate.accept(index, (T) value);
     }

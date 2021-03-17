@@ -22,7 +22,6 @@ import javax.measure.Quantity;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.TACANopenBindingConstants;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogObjectConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.ComplexUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.TADevice;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TAAnalogInput;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TAAnalogOutput;
@@ -78,18 +77,18 @@ public class TARASValueThingHandler extends TABaseObjectThingHandler<RASValue, A
   protected RASValue createValue(Command command) {
     RASValue value = this.rasValue.get();
     if (value == null) {
-      value = new RASValue(Quantities. getQuantity(0, AnalogUnit.CELSIUS.getUnit()), 0, ComplexUnit.RAS_TEMPERATURE);
+      value = new RASValue(Quantities. getQuantity(0, AnalogUnit.CELSIUS.getUnit()), 0, AnalogUnit.TEMPERATURE_REGULATOR);
     }
 
     if (command instanceof QuantityType) {
       // temperature channel
       QuantityType<?> type = (QuantityType<?>) command;
       Quantity<?> quantity = Quantities.getQuantity(((QuantityType<?>) command).doubleValue(), type.getUnit());
-      value = new RASValue(quantity, value.getMode(), ComplexUnit.RAS_TEMPERATURE);
+      value = new RASValue(quantity, value.getMode(), AnalogUnit.TEMPERATURE_REGULATOR);
     } else if (command instanceof DecimalType) {
       // mode
       int mode = ((DecimalType) command).intValue();
-      value = new RASValue(value.getValue(), mode, ComplexUnit.RAS_TEMPERATURE);
+      value = new RASValue(value.getValue(), mode, AnalogUnit.TEMPERATURE_REGULATOR);
     }
 
     this.rasValue.set(value);
@@ -98,8 +97,6 @@ public class TARASValueThingHandler extends TABaseObjectThingHandler<RASValue, A
 
   @Override
   public void accept(int index, RASValue value) {
-    logger.debug("Received update of matching object {} with value {}", index, value);
-
     rasValue.set(value);
 
     ThingHandlerCallback callback = getCallback();

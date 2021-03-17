@@ -1,6 +1,7 @@
 package org.connectorio.addons.binding.plc4x.canopen.ta.tapi;
 
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CompletableFuture;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,17 +11,25 @@ public class TACanString {
   private final Logger logger = LoggerFactory.getLogger(TACanString.class);
   private final short index;
   private final short subIndex;
+  private final CompletableFuture<String> future;
 
   String value;
 
   public TACanString(CoNode node, short index, short subIndex) {
     this.index = index;
     this.subIndex = subIndex;
-    node.read(index, subIndex).whenComplete((response, error) -> {
+    this.future = node.read(index, subIndex)
+      .thenApply(value -> new String(value, StandardCharsets.UTF_16LE))
+      .whenComplete((response, error) -> {
       if (error == null) {
-        this.value = new String(response, StandardCharsets.UTF_16LE);
+        this.value = response;
       } else {
-        logger.debug("Failed to load string 0x{}/0x{}", Integer.toHexString(index), Integer.toHexString(subIndex), error);
+        if (logger.isInfoEnabled()) {
+          logger.debug("Failed to load string 0x{}/0x{}", Integer.toHexString(index), Integer.toHexString(subIndex));
+        }
+        if (logger.isTraceEnabled()) {
+          logger.trace("Failed to load string 0x{}/0x{}", Integer.toHexString(index), Integer.toHexString(subIndex), error);
+        }
       }
     });
   }
@@ -39,6 +48,10 @@ public class TACanString {
     }
 
     return output + (Integer.toHexString(index) + ", " + Integer.toHexString(subIndex) + "]");
+  }
+
+  public CompletableFuture<String> toFuture() {
+    return future;
   }
 
 }

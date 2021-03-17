@@ -19,31 +19,35 @@ package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io;
 
 import static org.apache.plc4x.java.canopen.readwrite.types.CANOpenService.*;
 
+import java.util.Objects;
 import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
 
+/**
+ * Analog inputs and outputs are packed up in several groups. Each having exactly 4 members.
+ *
+ * This class counts additional information which is needed to work with CAN level message exchanges. First of all it
+ * picks up valid PDO address space (RPDO 1..2, TPDO 2..3) as well as node identifier which has 0x40 offset above 17th
+ * element.
+ */
 public class AnalogGroup {
 
-  private final int index;
   private final CANOpenService service;
   private final int node;
+  private int startBoundary;
 
   public AnalogGroup(int node, int index) {
-    this.index = index;
     this.service = calculateService(index);
     this.node = calculateNode(index, node);
-  }
-
-  public int getIndex() {
-    return index;
+    // boundary is tied to object index!
+    this.startBoundary = calculateStartBoundary(index);
   }
 
   public int getStartBoundary() {
-    // boundary is tied to object index!
-    return 1 + index - (index % 4);
+    return startBoundary;
   }
 
   public int getEndBoundary() {
-    return getStartBoundary() + 4;
+    return getStartBoundary() + 3;
   }
 
   public CANOpenService getService() {
@@ -56,6 +60,34 @@ public class AnalogGroup {
 
   public int getCobId() {
     return service.getMin() + node;
+  }
+
+  public String toString() {
+    return "Analog Group [" + getStartBoundary() + "," + getEndBoundary() + "]";
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof AnalogGroup)) {
+      return false;
+    }
+    AnalogGroup that = (AnalogGroup) o;
+    return node == that.node && getService() == that.getService();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getService(), node);
+  }
+
+  private int calculateStartBoundary(int index) {
+    if (index % 4 == 0) {
+      return 1 + index - 4;
+    }
+    return 1 + index - (index % 4);
   }
 
   private static CANOpenService calculateService(int index) {
@@ -77,16 +109,6 @@ public class AnalogGroup {
       return TRANSMIT_PDO_3; //service(0x3C0);
     }
     throw new IllegalStateException("Could not determine CANopen service for analog " + index);
-  }
-
-  private static CANOpenService service(int value) {
-    for (CANOpenService service : CANOpenService.values()) {
-      if (service.getMin() >= value && service.getMax() >= value) {
-        System.out.println(value + "=" + service);
-        return service;
-      }
-    }
-    return null;
   }
 
   private static int calculateNode(int index, int nodeId) {

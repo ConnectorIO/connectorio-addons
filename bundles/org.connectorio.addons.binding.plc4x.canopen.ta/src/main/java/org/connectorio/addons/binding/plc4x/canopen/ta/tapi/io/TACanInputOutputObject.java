@@ -17,6 +17,8 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io;
 
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.TACanString;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.TACanStringPointer;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.TADevice;
@@ -50,6 +52,10 @@ public abstract class TACanInputOutputObject<T extends Value> {
       this.sourceObject = new TACanStringPointer(device.getNode(), baseIndex + 0x2000 + 0x51, index);
       this.sourceVariable = new TACanStringPointer(device.getNode(), baseIndex + 0x2000 + 0x52, index);
     }
+  }
+
+  public CompletableFuture<String> getName() {
+    return name.toFuture();
   }
 
   public int getIndex() {

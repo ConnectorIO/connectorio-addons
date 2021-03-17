@@ -17,12 +17,23 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.logging.log4j.core.util.ExecutorServices;
 import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.WriteBuffer;
@@ -32,7 +43,6 @@ import org.apache.plc4x.java.spi.values.PlcValues;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoNode;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.TACanString;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.func.BasicFunction;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.func.TAFunction;
@@ -44,6 +54,7 @@ import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TADigitalOutput;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.AnalogValue;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.DigitalValue;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.Value;
+import org.openhab.core.common.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +76,7 @@ public abstract class TADevice {
   private final List<Consumer<Boolean>> statusCallbacks = new CopyOnWriteArrayList<>();
   private final List<ValueCallback> valueCallbacks = new CopyOnWriteArrayList<>();
   private final List<InOutCallback> inOutCallbacks = new CopyOnWriteArrayList<>();
+  private final ScheduledExecutorService broadcaster;
 
   private final TACanString name;
   private /*final*/ TACanString function;
@@ -109,8 +121,43 @@ public abstract class TADevice {
 //    bootsector = new TACanString(node, (short) 0x57E0, (short) 0x03);
 //    hardwareCover = new TACanString(node, (short) 0x57E0, (short) 0x04);
 //    hardwareMains = new TACanString(node, (short) 0x57E0, (short) 0x05);
-  }
 
+    //timer.schedule(new InputWriterTask(this), 60_000);
+    broadcaster = Executors.newScheduledThreadPool(1, new NamedThreadFactory("ta-device-input-writer-" + node.getNodeId()) {
+      @Override
+      public Thread newThread(Runnable runnable) {
+        Thread thread = super.newThread(runnable);
+        thread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+          @Override
+          public void uncaughtException(Thread thread, Throwable error) {
+            logger.error("Thread {} ended with unhandled error {}", thread, error);
+          }
+        });
+        thread.setContextClassLoader(getClass().getClassLoader());
+        return thread;
+      }
+    });
+    broadcaster.scheduleAtFixedRate(new Runnable() {
+      @Override
+      public void run() {
+        for (int index = 1; index < analogInput.size(); index += 4) {
+          AnalogGroup group = new AnalogGroup(clientId, index);
+          logger.debug("Sending automated update of analog group {}", group);
+          sendAnalog(group);
+        }
+      }
+    }, 60, 60, TimeUnit.SECONDS);
+    broadcaster.scheduleAtFixedRate(this::sendDigital, 60, 60, TimeUnit.SECONDS);
+    //* test of automated I/O discovery
+    broadcaster.schedule(new Runnable() {
+      @Override
+      public void run() {
+        discoverAnalogOutput(new TAAnalogOutput(TADevice.this, 12, AnalogUnit.CELSIUS.getIndex(), (short) 0));
+        discoverAnalogOutput(new TAAnalogOutput(TADevice.this, 13, AnalogUnit.TEMPERATURE_REGULATOR.getIndex(), (short) 0x46ea));
+      }
+    }, 30000, TimeUnit.MILLISECONDS);
+    // */
+  }
 
   public Optional<String> getName() {
     return Optional.ofNullable(name.get());
@@ -162,55 +209,78 @@ public abstract class TADevice {
   }
 
   public void write(int index, Value<?> value) {
-    int writeIndex = 0;
     if (value instanceof AnalogValue) {
       analogInput.get(index).update((AnalogValue) value);
-      try {
-        WriteBuffer buffer = new WriteBuffer(8);
-
-        AnalogGroup analogGroup = new AnalogGroup(node.getNodeId(), index);
-        logger.debug("Sending update of analog input {} with neighbors - from {} to {}", index, analogGroup.getStartBoundary(), analogGroup.getEndBoundary());
-
-        for (int objectIndex = analogGroup.getStartBoundary(); objectIndex < analogGroup.getEndBoundary(); objectIndex++) {
-          TAAnalogInput input = analogInput.get(objectIndex);
-          if (input == null) {
-            logger.debug("Uninitialized input {}. assuming empty value", objectIndex);
-            buffer.writeInt(16, 0);
-            continue;
-          }
-
-          buffer.writeShort(16, input.getValue().encode());
-          writeIndex++;
-        }
-
-        send(analogGroup.getNodeId(), analogGroup.getService(), buffer);
-      } catch (ParseException e) {
-        logger.error("Failed to update analog input {}, failure at index {}", index, writeIndex, e);
-      }
+      sendAnalog(new AnalogGroup(clientId, index));
     } else if (value instanceof DigitalValue) {
       digitalInput.get(index).update((DigitalValue) value);
-      try {
-        WriteBuffer buffer = new WriteBuffer(8);
-        for (TADigitalInput input : digitalInput.values()) {
-          buffer.writeBit(input.getValue().getValue());
-          writeIndex++;
-        }
-        for (int padding = writeIndex; padding <= 64; padding++) {
-          buffer.writeBit(false);
-          writeIndex++;
+      sendDigital();
+    } else {
+      logger.error("Unsupported write value {} {}.", index, value);
+    }
+  }
+
+  void sendAnalog(AnalogGroup group) {
+    int writeIndex = 0;
+    try {
+      WriteBuffer buffer = new WriteBuffer(8, true);
+      logger.debug("Sending update of analog inputs from {} to {}", group.getStartBoundary(), group.getEndBoundary());
+
+      for (int objectIndex = group.getStartBoundary(); objectIndex <= group.getEndBoundary(); objectIndex++) {
+        TAAnalogInput input = analogInput.get(objectIndex);
+        if (input == null) {
+          logger.debug("Uninitialized input {}. assuming empty value", objectIndex);
+          buffer.writeInt(16, 0);
+          continue;
         }
 
-        send(node.getNodeId(), CANOpenService.TRANSMIT_PDO_1, buffer);
-      } catch (ParseException e) {
-        logger.error("Failed to update digital input {}, failure at index {}", index, writeIndex, e);
+        AnalogValue value = input.getValue();
+        if (value == null) {
+          buffer.writeInt(16, 0);
+        } else {
+          short encode = value.encode();
+          logger.trace("Writing encoded value {} (0x{}) for {}", encode, Integer.toHexString(encode), value);
+          buffer.writeShort(16, encode);
+        }
+        writeIndex++;
       }
-    } else {
-      logger.error("Unsupported write value {} {}", index, value);
+
+      send(group.getNodeId(), group.getService(), buffer);
+    } catch (ParseException e) {
+      logger.error("Failed to update analog group {}, failure at index {}", group, writeIndex, e);
+    } catch (Exception e) {
+      logger.error("An unexpected error while update of group {}, failure at index {}", group, writeIndex, e);
+    }
+  }
+
+  private void sendDigital() {
+    int writeIndex = 0;
+    try {
+      logger.trace("Sending update of {} digital inputs.", digitalInput.size());
+      WriteBuffer buffer = new WriteBuffer(8, true);
+      int sum = 0;
+      for (Entry<Integer, TADigitalInput> entry : digitalInput.entrySet()) {
+        int index = entry.getKey();
+        TADigitalInput input = entry.getValue();
+        if (input != null && input.getValue() != null) {
+          sum += (input.getValue().getValue() ? 1 : 0) << (index - 1);
+        }
+        writeIndex++;
+      }
+      buffer.writeInt(32, sum);
+      buffer.writeInt(32, 0);
+
+      send(clientId, CANOpenService.TRANSMIT_PDO_1, buffer);
+    } catch (ParseException e) {
+      logger.error("Failed to update digital inputs, failure at index {}", writeIndex, e);
+    } catch (Exception e) {
+      logger.error("An unexpected error while update of digital outputs, failure at index {}", writeIndex, e);
     }
   }
 
   private void send(int nodeId, CANOpenService service, WriteBuffer buffer) {
     byte[] data = buffer.getData();
+    logger.trace("Send to node {} {} (cob {}) data: {}", nodeId, service, Integer.toHexString(service.getMin() + nodeId), Hex.encodeHexString(data));
     node.getConnection().send(nodeId, service, PlcValues.of(
       new PlcSINT(data[0]), new PlcSINT(data[1]), new PlcSINT(data[2]), new PlcSINT(data[3]),
       new PlcSINT(data[4]), new PlcSINT(data[5]), new PlcSINT(data[6]), new PlcSINT(data[7])
@@ -249,6 +319,7 @@ public abstract class TADevice {
   }
 
   public void close() {
+    broadcaster.shutdownNow();
     node.close();
   }
 
@@ -275,7 +346,7 @@ public abstract class TADevice {
   void updateAnalog(int index, short value) {
     logger.trace("Received update of analog output {} with value {} (0x{})", index, value, Integer.toHexString(value));
 
-    if (!analogInput.containsKey(index)) {
+    if (!analogOutputs.containsKey(index)) {
       logger.trace("Lazy initialization of analog output {} with unknown unit", index);
       analogOutputs.put(index, objectFactory.createAnalogOutput(index, -1, value));
     }
