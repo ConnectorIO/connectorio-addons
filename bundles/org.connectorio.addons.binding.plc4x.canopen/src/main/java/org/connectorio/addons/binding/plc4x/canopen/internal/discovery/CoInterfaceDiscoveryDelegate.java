@@ -35,12 +35,12 @@ import org.osgi.service.component.annotations.Component;
  * Basic discovery service which rely on discovery of CAN interfaces.
  */
 @Component(service = {DiscoveryService.class, CANInterfaceDiscoveryDelegate.class})
-public class CANopenInterfaceDiscoveryDelegate extends AbstractDiscoveryService implements DiscoveryService,
+public class CoInterfaceDiscoveryDelegate extends AbstractDiscoveryService implements DiscoveryService,
   CANInterfaceDiscoveryDelegate {
 
   private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES = Collections.singleton(CANopenBindingConstants.SOCKETCAN_BRIDGE_THING_TYPE);
 
-  public CANopenInterfaceDiscoveryDelegate() throws IllegalArgumentException {
+  public CoInterfaceDiscoveryDelegate() throws IllegalArgumentException {
     super(SUPPORTED_THING_TYPES, 30, true);
   }
 

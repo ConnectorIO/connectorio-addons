@@ -15,30 +15,31 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.protocol;
+package org.connectorio.addons.binding.plc4x.canopen.internal.plc4x;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.Function;
+import org.apache.plc4x.java.api.messages.PlcFieldResponse;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionEvent;
 import org.apache.plc4x.java.api.types.PlcResponseCode;
 
-@Deprecated
-public abstract class AbstractCallback implements Consumer<PlcSubscriptionEvent> {
+public class CoRecordReader extends AbstractReader<PlcReadResponse, byte[]> {
 
-  public static byte[] getBytes(PlcReadResponse event, String field) {
-    if (event.getResponseCode(field) == PlcResponseCode.OK) {
+  public CoRecordReader(String field) {
+    super(field);
+  }
 
-      List<Byte> bytes = new ArrayList<>(event.getAllBytes(field));
-      byte[] value = new byte[bytes.size()];
-      for (int index = 0; index < bytes.size(); index++) {
-        value[index] = bytes.get(index);
-      }
-
-      return value;
+  @Override
+  protected byte[] extract(PlcReadResponse response, String field) {
+    List<Byte> bytes = new ArrayList<>(response.getAllBytes(field));
+    byte[] value = new byte[bytes.size()];
+    for (int index = 0; index < bytes.size(); index++) {
+      value[index] = bytes.get(index);
     }
-    throw new IllegalStateException("Filed " + field + " retrieval failed. Reported code: " + event.getResponseCode(field));
+
+    return value;
   }
 
 }

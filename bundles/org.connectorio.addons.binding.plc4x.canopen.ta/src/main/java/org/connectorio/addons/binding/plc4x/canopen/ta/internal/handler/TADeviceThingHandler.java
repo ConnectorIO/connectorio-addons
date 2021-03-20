@@ -26,7 +26,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoConnection;
-import org.connectorio.addons.binding.plc4x.canopen.handler.CANopenBridgeHandler;
+import org.connectorio.addons.binding.plc4x.canopen.handler.CoBridgeHandler;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DeviceConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.discovery.DiscoveryThingHandlerService;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.TADeviceFactory;
@@ -38,6 +38,7 @@ import org.connectorio.plc4x.decorator.phase.PhaseDecorator;
 import org.connectorio.plc4x.decorator.retry.RetryDecorator;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.thing.binding.ThingHandlerService;
@@ -46,7 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnection, DeviceConfig>
-  implements Plc4xBridgeHandler<PlcConnection, DeviceConfig>, Consumer<Boolean> {
+  implements Plc4xBridgeHandler<PlcConnection, DeviceConfig>, Consumer<Boolean>, Runnable {
 
   private final Logger logger = LoggerFactory.getLogger(TADeviceThingHandler.class);
   private int nodeId;
@@ -64,12 +65,15 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
   public void initialize() {
     DeviceConfig config = getConfigAs(DeviceConfig.class);
     nodeId = config.nodeId;
-    clientId = getBridgeHandler().map(CANopenBridgeHandler::getNodeId).orElse(-1);
+    clientId = getBridgeHandler().map(CoBridgeHandler::getNodeId).orElse(-1);
+    scheduler.execute(this);
+  }
 
-    getBridgeConnection().ifPresent(connection -> {
+  public void run() {
+    getPlcConnection().thenAccept(connection -> {
       logger.debug("Activation of handler for CANopen node {}", nodeId);
 
-      CompletableFuture<CoConnection> network = getBridgeHandler().get().getCANopenConnection(new PhaseDecorator(), new RetryDecorator(2));
+      CompletableFuture<CoConnection> network = getBridgeHandler().get().getCoConnection(new PhaseDecorator(), new RetryDecorator(2));
 
       network.thenCompose((networkConnection) -> {
         this.network = networkConnection;
@@ -99,14 +103,14 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
         this.device.complete(device);
 
         Map<String, String> properties = new LinkedHashMap<>(getThing().getProperties());
-        device.getName().ifPresent(value -> properties.put("Name", value));
-//          device.getFunction().ifPresent(value -> properties.put("Function", value));
-//          device.getVersion().ifPresent(value -> properties.put("Version", value));
-//          device.getSerial().ifPresent(value -> properties.put(Thing.PROPERTY_SERIAL_NUMBER, value));
-//          device.getProductionDate().ifPresent(value -> properties.put("ProductionDate", value));
-//          device.getBootsector().ifPresent(value -> properties.put("Bootsector", value));
-//          device.getHardwareCover().ifPresent(value -> properties.put("HardwareCover", value));
-//          device.getHardwareMains().ifPresent(value -> properties.put("HardwareMains", value));
+        device.getName().thenApply(value -> properties.put("Name", value));
+        device.getFunction().thenApply(value -> properties.put("Function", value));
+        device.getVersion().thenApply(value -> properties.put("Version", value));
+        device.getSerial().thenApply(value -> properties.put(Thing.PROPERTY_SERIAL_NUMBER, value));
+        device.getProductionDate().thenApply(value -> properties.put("ProductionDate", value));
+        device.getBootsector().thenApply(value -> properties.put("Bootsector", value));
+        device.getHardwareCover().thenApply(value -> properties.put("HardwareCover", value));
+        device.getHardwareMains().thenApply(value -> properties.put("HardwareMains", value));
         editThing().withProperties(properties).build();
 
         updateStatus(ThingStatus.ONLINE);
@@ -116,11 +120,11 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
   }
 
   @SuppressWarnings("unchecked")
-  private Optional<CANopenBridgeHandler<?>> getBridgeHandler() {
+  private Optional<CoBridgeHandler<?>> getBridgeHandler() {
     return Optional.ofNullable(getBridge())
       .map(Bridge::getHandler)
-      .filter(CANopenBridgeHandler.class::isInstance)
-      .map(CANopenBridgeHandler.class::cast);
+      .filter(CoBridgeHandler.class::isInstance)
+      .map(CoBridgeHandler.class::cast);
   }
 
   @Override

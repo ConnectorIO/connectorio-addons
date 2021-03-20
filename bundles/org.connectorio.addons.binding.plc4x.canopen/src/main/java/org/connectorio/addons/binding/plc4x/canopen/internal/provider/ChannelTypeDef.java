@@ -15,12 +15,32 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.plc4x.canopen.config;
+package org.connectorio.addons.binding.plc4x.canopen.internal.provider;
 
-import org.connectorio.addons.binding.config.PollingConfiguration;
+import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
 
-public class CANopenNodeConfig extends PollingConfiguration {
+public class ChannelTypeDef {
 
-  public int nodeId;
+  private final CANOpenDataType type;
+  private final String pattern;
+  private final String itemType;
+
+  public ChannelTypeDef(CANOpenDataType type, String pattern, String itemType) {
+    this.type = type;
+    this.pattern = pattern;
+    this.itemType = itemType;
+  }
+
+  public CANOpenDataType getType() {
+    return type;
+  }
+
+  public String getPattern() {
+    return pattern;
+  }
+
+  public String getItemType() {
+    return itemType;
+  }
 
 }

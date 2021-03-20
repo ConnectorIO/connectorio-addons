@@ -21,8 +21,8 @@ import org.connectorio.addons.binding.plc4x.canopen.api.CoNode;
 
 public class TAUvr16x2Device extends TADevice {
 
-  public TAUvr16x2Device(CoNode node, int clientId) {
-    super(node, clientId, 0x80, 16, 16);
+  public TAUvr16x2Device(CoNode node, int clientId, boolean identifyOnly) {
+    super(node, clientId, identifyOnly, 0x80, 16, 16);
   }
 
 }

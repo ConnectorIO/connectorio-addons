@@ -17,7 +17,7 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.discovery;
 
-import org.apache.plc4x.java.api.PlcConnection;
+import org.connectorio.addons.binding.plc4x.canopen.api.CoNode;
 import org.openhab.core.config.discovery.DiscoveryResult;
 import org.openhab.core.thing.ThingUID;
 
@@ -32,16 +32,15 @@ import org.openhab.core.thing.ThingUID;
  * It is advised to abstain from giving discovery result implementer processing returned unclear results.
  * This means that in case of failed reads or writes there should be no assumptions to let subsequent participants do their job.
  */
-public interface CANopenDiscoveryParticipant {
+public interface CoDiscoveryParticipant {
 
   /**
    * Inform discovery participant that a new CANopen node is found.
    *
-   * @param connection Connection for which node is found.
-   * @param bridgeUID
-   * @param node CANopen node identifier.
+   * @param bridgeUID The bridge (thing representing an connection) to which thing must be linked.
+   * @param node CANopen node which is just found.
    * @return Discovery result if node was identified or null if not.
    */
-  DiscoveryResult nodeDiscovered(PlcConnection connection, ThingUID bridgeUID, int node);
+  DiscoveryResult nodeDiscovered(ThingUID bridgeUID, CoNode node);
 
 }

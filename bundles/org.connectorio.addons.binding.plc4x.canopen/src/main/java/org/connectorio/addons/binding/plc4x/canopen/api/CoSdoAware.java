@@ -20,10 +20,10 @@ package org.connectorio.addons.binding.plc4x.canopen.api;
 import java.util.concurrent.CompletableFuture;
 import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
 
-public interface CoSDOAware {
+public interface CoSdoAware {
 
   CompletableFuture<byte[]> read(short index, short subindex);
 
-  <T> CompletableFuture<T> read(short i, short i1, CANOpenDataType type);
+  <T> CompletableFuture<T> read(short index, short subIndex, CANOpenDataType type);
 
 }

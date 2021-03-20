@@ -23,12 +23,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.ExecutionException;
-import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest.Builder;
-import org.apache.plc4x.java.api.messages.PlcSubscriptionResponse;
-import org.apache.plc4x.java.api.model.PlcConsumerRegistration;
-import org.apache.plc4x.java.api.types.PlcResponseCode;
-import org.connectorio.addons.binding.plc4x.canopen.internal.handler.CANopenSocketCANBridgeHandler;
+import java.util.function.BiConsumer;
+import org.connectorio.addons.binding.plc4x.canopen.api.CoConnection;
+import org.connectorio.addons.binding.plc4x.canopen.api.CoSubscription;
+import org.connectorio.addons.binding.plc4x.canopen.internal.handler.CoSocketCANBridgeHandler;
+import org.connectorio.plc4x.decorator.phase.PhaseDecorator;
+import org.connectorio.plc4x.decorator.retry.RetryDecorator;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
 import org.openhab.core.config.discovery.DiscoveryService;
@@ -39,18 +39,16 @@ import org.openhab.core.thing.binding.ThingHandlerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CANopenNMTDiscoveryService extends AbstractDiscoveryService implements DiscoveryService,
-  ThingHandlerService {
+public class CoNetworkDiscoveryService extends AbstractDiscoveryService implements DiscoveryService,
+  ThingHandlerService, BiConsumer<CoConnection, Throwable> {
 
-  private static final String SUBSCRIPTION_FIELD_NAME = "nmt-lifecycle-callback";
-
-  private final Logger logger = LoggerFactory.getLogger(CANopenNMTDiscoveryService.class);
+  private final Logger logger = LoggerFactory.getLogger(CoNetworkDiscoveryService.class);
   private final Set<Integer> discoveredNodes = new ConcurrentSkipListSet<>();
 
-  private CANopenSocketCANBridgeHandler handler;
-  private PlcConsumerRegistration registration;
+  private CoSocketCANBridgeHandler handler;
+  private CoSubscription subscription;
 
-  public CANopenNMTDiscoveryService() {
+  public CoNetworkDiscoveryService() {
     super(null, 30, true);
   }
 
@@ -61,43 +59,39 @@ public class CANopenNMTDiscoveryService extends AbstractDiscoveryService impleme
 
   @Override
   protected void startBackgroundDiscovery() {
-    handler.getConnection().whenComplete((connection, error) -> {
-      if (error != null) {
-        logger.info("Could not start background discovery, CAN connection failed", error);
-        return;
-      }
-      final Builder subscriptionBuilder = connection.subscriptionRequestBuilder();
-      subscriptionBuilder.addEventField(SUBSCRIPTION_FIELD_NAME, "HEARTBEAT"); // 0 == all nodes
+    handler.getCoConnection(new PhaseDecorator(), new RetryDecorator(2)).whenComplete(this);
+  }
 
-      try {
-        PlcSubscriptionResponse response = subscriptionBuilder.build().execute().get();
-        PlcResponseCode responseCode = response.getResponseCode(SUBSCRIPTION_FIELD_NAME);
-        if (responseCode == PlcResponseCode.OK) {
-          registration = response.getSubscriptionHandle(SUBSCRIPTION_FIELD_NAME).register(new NodeStateSubscriptionCallback(SUBSCRIPTION_FIELD_NAME,
-            handler, connection, discoveredNodes, new FallbackDiscoveryResultCallback(this::thingDiscovered, handler.getThing().getUID())));
+  @Override
+  public void accept(CoConnection connection, Throwable error) {
+    if (error != null) {
+      logger.info("Could not start background discovery, CAN connection failed", error);
+      return;
+    }
+
+    FallbackDiscoveryResultCallback callback = new FallbackDiscoveryResultCallback(this::thingDiscovered, handler.getThing().getUID());
+    connection.heartbeat(0, new NodeStateSubscriptionCallback(handler, connection, discoveredNodes, callback))
+      .whenComplete((response, failure) -> {
+        if (failure != null) {
+          logger.info("Failed to subscribe to NMT/HEARTBEAT information. Discovery of CAN nodes will not work", failure);
           return;
         }
-        logger.warn("Could not subscribe to heartbeat events, returned code: {}", responseCode);
-      } catch (InterruptedException e) {
-        logger.info("Discovery process have been interrupted", e);
-      } catch (ExecutionException e) {
-        logger.warn("Failed to subscribe for NMT events", e);
-      }
-    });
+        subscription = response;
+      });
   }
 
   @Override
   protected void stopBackgroundDiscovery() {
-    if (registration != null) {
-      registration.unregister();
+    if (subscription != null) {
+      subscription.unsubscribe();
       discoveredNodes.clear();
     }
   }
 
   @Override
   public void setThingHandler(ThingHandler handler) {
-    if (handler instanceof CANopenSocketCANBridgeHandler) {
-      this.handler = (CANopenSocketCANBridgeHandler) handler;
+    if (handler instanceof CoSocketCANBridgeHandler) {
+      this.handler = (CoSocketCANBridgeHandler) handler;
     }
   }
 

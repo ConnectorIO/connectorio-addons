@@ -24,15 +24,15 @@ import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class PDOWriteCallback implements BiConsumer<PlcWriteResponse, Throwable> {
+class PdoWriteCallback implements BiConsumer<PlcWriteResponse, Throwable> {
 
-  private final Logger logger = LoggerFactory.getLogger(PDOWriteCallback.class);
+  private final Logger logger = LoggerFactory.getLogger(PdoWriteCallback.class);
 
   private final int nodeId;
   private final CANOpenService service;
   private final PlcValue value;
 
-  PDOWriteCallback(int nodeId, CANOpenService service, PlcValue value) {
+  PdoWriteCallback(int nodeId, CANOpenService service, PlcValue value) {
     this.nodeId = nodeId;
     this.service = service;
     this.value = value;
@@ -45,7 +45,7 @@ class PDOWriteCallback implements BiConsumer<PlcWriteResponse, Throwable> {
       return;
     }
 
-    logger.info("Dispatched PDO node {}, service {}, cob {}, data {}", nodeId, service, Integer.toHexString(service.getMin() + nodeId), value);
+    logger.trace("Dispatched PDO node {}, service {}, cob {}, data {}", nodeId, service, Integer.toHexString(service.getMin() + nodeId), value);
   }
 
 }

@@ -17,9 +17,9 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.config;
 
-import org.connectorio.addons.binding.plc4x.canopen.config.CANopenNodeConfig;
+import org.connectorio.addons.binding.plc4x.canopen.config.CoNodeConfig;
 
-public class ControllerConfig extends CANopenNodeConfig {
+public class ControllerConfig extends CoNodeConfig {
 
   public boolean ignoreLoginFailure;
 

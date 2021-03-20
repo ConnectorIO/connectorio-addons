@@ -17,6 +17,10 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.internal;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.openhab.core.thing.ThingTypeUID;
 
 public interface CANopenBindingConstants extends org.connectorio.addons.binding.plc4x.canopen.CANopenBindingConstants {
@@ -24,13 +28,16 @@ public interface CANopenBindingConstants extends org.connectorio.addons.binding.
   // bridge types
   String SOCKETCAN_BRIDGE_TYPE = "socketcan";
 
-  String GENERIC_THING = "generic";
-  String SDO_THING = "sdo";
+  String NODE_THING = "node";
+  String RECEIVE_PDO_THING = "rpdo";
+  String TRANSMIT_PDO_THING = "tpdo";
 
   ThingTypeUID SOCKETCAN_BRIDGE_THING_TYPE = new ThingTypeUID(BINDING_ID, SOCKETCAN_BRIDGE_TYPE);
+  ThingTypeUID NODE_BRIDGE_TYPE = new ThingTypeUID(BINDING_ID, NODE_THING);
+  ThingTypeUID RECEIVE_PDO_THING_TYPE = new ThingTypeUID(BINDING_ID, RECEIVE_PDO_THING);
+  ThingTypeUID TRANSMIT_PDO_THING_TYPE = new ThingTypeUID(BINDING_ID, TRANSMIT_PDO_THING);
 
-  ThingTypeUID GENERIC_BRIDGE_THING_TYPE = new ThingTypeUID(BINDING_ID, GENERIC_THING);
-
-  ThingTypeUID SDO_THING_TYPE = new ThingTypeUID(BINDING_ID, SDO_THING);
-
+  Set<ThingTypeUID> SUPPORTED_THINGS = new HashSet<>(Arrays.asList(SOCKETCAN_BRIDGE_THING_TYPE,
+    NODE_BRIDGE_TYPE, RECEIVE_PDO_THING_TYPE, TRANSMIT_PDO_THING_TYPE
+  ));
 }

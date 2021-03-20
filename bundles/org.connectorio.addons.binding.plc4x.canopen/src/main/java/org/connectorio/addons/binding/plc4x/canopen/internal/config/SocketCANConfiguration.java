@@ -17,9 +17,9 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.internal.config;
 
-import org.connectorio.addons.binding.plc4x.canopen.config.CANopenNodeConfig;
+import org.connectorio.addons.binding.plc4x.canopen.config.CoNodeConfig;
 
-public class SocketCANConfiguration extends CANopenNodeConfig {
+public class SocketCANConfiguration extends CoNodeConfig {
 
   public boolean heartbeat = true;
 

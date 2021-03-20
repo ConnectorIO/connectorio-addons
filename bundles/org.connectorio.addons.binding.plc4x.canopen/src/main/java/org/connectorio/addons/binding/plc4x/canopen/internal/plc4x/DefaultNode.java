@@ -24,7 +24,7 @@ import org.connectorio.addons.binding.plc4x.canopen.api.CoConnection;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoNode;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoSubscription;
 
-public class DefaultNode extends DefaultSDOAware implements CoNode {
+public class DefaultNode extends DefaultSdoAware implements CoNode {
 
   public DefaultNode(DefaultConnection connection, int nodeId) {
     super(connection, nodeId);

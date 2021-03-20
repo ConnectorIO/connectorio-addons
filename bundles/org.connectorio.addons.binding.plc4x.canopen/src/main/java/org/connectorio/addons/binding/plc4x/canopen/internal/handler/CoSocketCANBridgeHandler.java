@@ -26,9 +26,9 @@ import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.apache.plc4x.java.spi.connection.AbstractPlcConnection;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoConnection;
-import org.connectorio.addons.binding.plc4x.canopen.handler.CANopenBridgeHandler;
-import org.connectorio.addons.binding.plc4x.canopen.internal.discovery.CANopenNMTDiscoveryService;
-import org.connectorio.addons.binding.plc4x.canopen.discovery.CANopenDiscoveryParticipant;
+import org.connectorio.addons.binding.plc4x.canopen.handler.CoBridgeHandler;
+import org.connectorio.addons.binding.plc4x.canopen.internal.discovery.CoNetworkDiscoveryService;
+import org.connectorio.addons.binding.plc4x.canopen.discovery.CoDiscoveryParticipant;
 import org.connectorio.addons.binding.plc4x.canopen.internal.config.DiscoveryMode;
 import org.connectorio.addons.binding.plc4x.canopen.internal.config.SocketCANConfiguration;
 import org.connectorio.addons.binding.plc4x.canopen.internal.plc4x.DefaultConnection;
@@ -45,15 +45,15 @@ import org.openhab.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CANopenSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<PlcConnection, SocketCANConfiguration>
-  implements CANopenBridgeHandler<SocketCANConfiguration> {
+public class CoSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<PlcConnection, SocketCANConfiguration>
+  implements CoBridgeHandler<SocketCANConfiguration> {
 
-  private final Logger logger = LoggerFactory.getLogger(CANopenSocketCANBridgeHandler.class);
+  private final Logger logger = LoggerFactory.getLogger(CoSocketCANBridgeHandler.class);
   private final PlcDriverManager driverManager;
   private CompletableFuture<PlcConnection> initializer = new CompletableFuture<>();
-  private List<CANopenDiscoveryParticipant> participants;
+  private List<CoDiscoveryParticipant> participants;
 
-  public CANopenSocketCANBridgeHandler(Bridge thing, PlcDriverManager driverManager, List<CANopenDiscoveryParticipant> participants) {
+  public CoSocketCANBridgeHandler(Bridge thing, PlcDriverManager driverManager, List<CoDiscoveryParticipant> participants) {
     super(thing);
     this.driverManager = driverManager;
     this.participants = participants;
@@ -104,13 +104,12 @@ public class CANopenSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<Plc
     return initializer;
   }
 
-
   @Override
   public Collection<Class<? extends ThingHandlerService>> getServices() {
     DiscoveryMode discoveryMode = getBridgeConfig().map(config -> config.discoveryMode).orElse(DiscoveryMode.NMT_LISTEN);
     switch (discoveryMode) {
       case NMT_LISTEN:
-        return Collections.singleton(CANopenNMTDiscoveryService.class);
+        return Collections.singleton(CoNetworkDiscoveryService.class);
       case SDO_SCAN:
         logger.warn("SDO scan discovery not implemented");
     }
@@ -134,17 +133,17 @@ public class CANopenSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<Plc
   }
 
   @Override
-  public List<CANopenDiscoveryParticipant> getParticipants() {
+  public List<CoDiscoveryParticipant> getParticipants() {
     return participants;
   }
 
   @Override
-  public CompletableFuture<CoConnection> getCANopenConnection(Decorator... decorators) {
+  public CompletableFuture<CoConnection> getCoConnection(Decorator... decorators) {
     final CompositeDecorator composition = new CompositeDecorator();
     for (Decorator extension : decorators) {
       composition.add(extension);
     }
-    return getPlcConnection().thenApply(connection -> new DefaultConnection(connection, composition));
+    return getPlcConnection().thenApply(connection -> new DefaultConnection(getNodeId(), connection, composition));
   }
 
 }

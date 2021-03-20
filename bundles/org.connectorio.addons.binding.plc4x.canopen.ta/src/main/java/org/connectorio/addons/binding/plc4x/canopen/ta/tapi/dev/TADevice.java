@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -76,7 +77,7 @@ public abstract class TADevice {
   private final List<Consumer<Boolean>> statusCallbacks = new CopyOnWriteArrayList<>();
   private final List<ValueCallback> valueCallbacks = new CopyOnWriteArrayList<>();
   private final List<InOutCallback> inOutCallbacks = new CopyOnWriteArrayList<>();
-  private final ScheduledExecutorService broadcaster;
+  private ScheduledExecutorService broadcaster;
 
   private final TACanString name;
   private /*final*/ TACanString function;
@@ -87,12 +88,32 @@ public abstract class TADevice {
   private /*final*/ TACanString hardwareCover;
   private /*final*/ TACanString hardwareMains;
 
-  public TADevice(CoNode node, int clientId, int functions, int physicalInputLimit, int physicalOutputLimit) {
+  public TADevice(CoNode node, int clientId, boolean identifyOnly, int functions, int physicalInputLimit, int physicalOutputLimit) {
     this.node = node;
     this.clientId = clientId;
     this.maxFunctions = functions;
     this.physicalInput = physicalInputLimit;
     this.physicalOutput = physicalOutputLimit;
+
+    name = new TACanString(node, (short) 0x2512, (short) 0x00);
+    function = new TACanString(node, (short) 0x57E0, (short) 0x07);
+    version = new TACanString(node, (short) 0x57E0, (short) 0x00);
+    serial = new TACanString(node, (short) 0x57E0, (short) 0x01);
+    productionDate = new TACanString(node, (short) 0x57E0, (short) 0x02);
+    bootsector = new TACanString(node, (short) 0x57E0, (short) 0x03);
+    hardwareCover = new TACanString(node, (short) 0x57E0, (short) 0x04);
+    hardwareMains = new TACanString(node, (short) 0x57E0, (short) 0x05);
+
+    subscribe(node.getNodeId(), CANOpenService.RECEIVE_PDO_3, new StatusCallback(clientId, new Consumer<Boolean>() {
+      @Override
+      public void accept(Boolean loggedIn) {
+        statusCallbacks.forEach(callback -> callback.accept(loggedIn));
+      }
+    }));
+
+    if (identifyOnly) {
+      return;
+    }
 
     subscribe(node.getNodeId(), CANOpenService.RECEIVE_PDO_1, new AnalogOutputCallback(this, 0));
     subscribe(node.getNodeId(), CANOpenService.TRANSMIT_PDO_2, new AnalogOutputCallback(this, 4));
@@ -106,21 +127,6 @@ public abstract class TADevice {
     subscribe(node.getNodeId() + 0x40, CANOpenService.TRANSMIT_PDO_3, new AnalogOutputCallback(this, 28));
 
     subscribe(node.getNodeId(), CANOpenService.TRANSMIT_PDO_4, new ConfigurationCallback(this, objectFactory));
-    subscribe(node.getNodeId(), CANOpenService.RECEIVE_PDO_3, new StatusCallback(clientId, new Consumer<Boolean>() {
-      @Override
-      public void accept(Boolean loggedIn) {
-        statusCallbacks.forEach(callback -> callback.accept(loggedIn));
-      }
-    }));
-
-    name = new TACanString(node, (short) 0x2512, (short) 0x00);
-//    function = new TACanString(node, (short) 0x57E0, (short) 0x07);
-//    version = new TACanString(node, (short) 0x57E0, (short) 0x00);
-//    serial = new TACanString(node, (short) 0x57E0, (short) 0x01);
-//    productionDate = new TACanString(node, (short) 0x57E0, (short) 0x02);
-//    bootsector = new TACanString(node, (short) 0x57E0, (short) 0x03);
-//    hardwareCover = new TACanString(node, (short) 0x57E0, (short) 0x04);
-//    hardwareMains = new TACanString(node, (short) 0x57E0, (short) 0x05);
 
     //timer.schedule(new InputWriterTask(this), 60_000);
     broadcaster = Executors.newScheduledThreadPool(1, new NamedThreadFactory("ta-device-input-writer-" + node.getNodeId()) {
@@ -159,29 +165,29 @@ public abstract class TADevice {
     // */
   }
 
-  public Optional<String> getName() {
-    return Optional.ofNullable(name.get());
+  public CompletableFuture<String> getName() {
+    return name.toFuture();
   }
-  public Optional<String> getFunction() {
-    return Optional.ofNullable(function.get());
+  public CompletableFuture<String> getFunction() {
+    return function.toFuture();
   }
-  public Optional<String> getVersion() {
-    return Optional.ofNullable(version.get());
+  public CompletableFuture<String> getVersion() {
+    return version.toFuture();
   }
-  public Optional<String> getSerial() {
-    return Optional.ofNullable(serial.get());
+  public CompletableFuture<String> getSerial() {
+    return serial.toFuture();
   }
-  public Optional<String> getProductionDate() {
-    return Optional.ofNullable(productionDate.get());
+  public CompletableFuture<String> getProductionDate() {
+    return productionDate.toFuture();
   }
-  public Optional<String> getBootsector() {
-    return Optional.ofNullable(bootsector.get());
+  public CompletableFuture<String> getBootsector() {
+    return bootsector.toFuture();
   }
-  public Optional<String> getHardwareCover() {
-    return Optional.ofNullable(hardwareCover.get());
+  public CompletableFuture<String> getHardwareCover() {
+    return hardwareCover.toFuture();
   }
-  public Optional<String> getHardwareMains() {
-    return Optional.ofNullable(hardwareMains.get());
+  public CompletableFuture<String> getHardwareMains() {
+    return hardwareMains.toFuture();
   }
 
   public void addValueCallback(ValueCallback<?> callback) {

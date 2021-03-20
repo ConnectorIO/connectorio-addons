@@ -17,23 +17,38 @@
  */
 package org.connectorio.plc4x.decorator.phase;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
+import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
+import org.apache.plc4x.java.api.messages.PlcWriteRequest;
+import org.apache.plc4x.java.api.messages.PlcWriteResponse;
 import org.apache.plc4x.java.simulated.connection.SimulatedConnection;
 import org.apache.plc4x.java.simulated.connection.SimulatedDevice;
 import org.connectorio.plc4x.decorator.DecoratorConnection;
 import org.junit.jupiter.api.Test;
 
-class PhaseDecoratorTest {
+class PhaseDecoratorErrorTest {
 
   public static final String TEST_FIELD_NAME = "test";
-  private int failureLimit = 0;
 
   @Test
   void check() throws Exception {
     SimulatedDevice device = new SimulatedDevice("fo");
-    SimulatedConnection connection = new SimulatedConnection(device);
+    SimulatedConnection connection = new SimulatedConnection(device) {
+      AtomicInteger attempts = new AtomicInteger();
+      @Override
+      public CompletableFuture<PlcWriteResponse> write(PlcWriteRequest writeRequest) {
+        if (attempts.getAndIncrement() > 2) {
+          CompletableFuture<PlcWriteResponse> future = new CompletableFuture<>();
+          future.completeExceptionally(new PlcRuntimeException("Runtime error"));
+          return future;
+        }
+        return super.write(writeRequest);
+      }
+    };
 
     CountDownLatch start = new CountDownLatch(1);
     CountDownLatch latch = new CountDownLatch(3);
@@ -47,7 +62,7 @@ class PhaseDecoratorTest {
     latch.await();
   }
 
-  private void write(SimulatedConnection delegate, String phaseName, CountDownLatch start, CountDownLatch latch) throws InterruptedException, java.util.concurrent.ExecutionException {
+  private void write(SimulatedConnection delegate, String phaseName, CountDownLatch start, CountDownLatch latch) throws InterruptedException, ExecutionException {
     new Thread(new Runnable() {
       @Override
       public void run() {

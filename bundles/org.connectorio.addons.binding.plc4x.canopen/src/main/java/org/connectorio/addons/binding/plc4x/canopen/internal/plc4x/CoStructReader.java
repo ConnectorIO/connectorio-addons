@@ -15,27 +15,28 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.plc4x.canopen.api;
+package org.connectorio.addons.binding.plc4x.canopen.internal.plc4x;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
+import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.value.PlcValue;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
 import org.apache.plc4x.java.spi.values.PlcStruct;
 
-public interface CoConnection {
+public class CoStructReader extends AbstractReader<PlcReadResponse, PlcStruct> {
 
-  CoNode getNode(int nodeId);
+  public CoStructReader(String field) {
+    super(field);
+  }
 
-  CompletableFuture<CoSubscription> subscribe(int nodeId, CANOpenService service, Consumer<byte[]> consumer);
+  @Override
+  protected PlcStruct extract(PlcReadResponse response, String field) {
+    PlcValue value = response.getPlcValue(field);
+    if (value == null) {
+      return null;
+    }
 
-  CompletableFuture<CoSubscription> heartbeat(int nodeId, Consumer<PlcStruct> consumer);
-
-  void close();
-
-  void send(int nodeId, CANOpenService service, PlcValue value);
-
-  // local node
-  CoNode getLocalNode();
-
+    if (value instanceof PlcStruct) {
+      return (PlcStruct) value;
+    }
+    throw new IllegalStateException("Could not extract value of field " + field + ". Result is " + value.getClass());
+  }
 }

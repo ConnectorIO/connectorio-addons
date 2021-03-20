@@ -15,14 +15,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev;
+package org.connectorio.addons.binding.plc4x.canopen.config;
 
-import org.connectorio.addons.binding.plc4x.canopen.api.CoNode;
+public class ReceivePdoConfig extends CoPdoConfig {
 
-public class TARsm610Device extends TADevice {
-
-  public TARsm610Device(CoNode node, int clientId, boolean identifyOnly) {
-    super(node, clientId, identifyOnly, 44, 6, 10);
-  }
+  int nodeOffset = 0;
 
 }

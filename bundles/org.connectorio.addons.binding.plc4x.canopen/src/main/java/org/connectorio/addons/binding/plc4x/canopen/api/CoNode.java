@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
 
-public interface CoNode extends CoSDOAware, CoNodeAware {
+public interface CoNode extends CoSdoAware, CoNodeAware {
 
   CompletableFuture<CoSubscription> subscribe(CANOpenService service, Consumer<byte[]> consumer);
 

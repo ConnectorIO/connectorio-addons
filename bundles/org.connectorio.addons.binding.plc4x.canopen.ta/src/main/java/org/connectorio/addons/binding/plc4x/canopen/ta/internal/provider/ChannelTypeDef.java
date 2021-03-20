@@ -80,7 +80,7 @@ public class ChannelTypeDef {
   private static String label(String dimension) {
     String label = dimension.replace(TACANopenBindingConstants.TA_ANALOG_PREFIX + "-", "")
       .replace(TACANopenBindingConstants.TA_DIGITAL_PREFIX + "-", "")
-      .replace("-", " ").toLowerCase(Locale.ROOT);
+      .replace("-", " ").toLowerCase();
     return label.substring(0, 1).toUpperCase() + label.substring(1);
   }
 

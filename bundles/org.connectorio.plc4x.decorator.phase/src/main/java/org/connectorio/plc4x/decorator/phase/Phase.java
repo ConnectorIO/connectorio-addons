@@ -33,41 +33,47 @@ public class Phase {
   private final static Timer completionTimer = new Timer("phase-completer");
   private final static AtomicReference<Phase> PHASE = new AtomicReference<>();
   private final static Semaphore LOCK = new Semaphore(1);
+  private final Logger logger = LoggerFactory.getLogger(Phase.class);
 
   private final AtomicInteger counter = new AtomicInteger();
   private final List<Runnable> callbacks = new ArrayList<>();
   private final String label;
   private final long closeTime;
 
-  public Phase(String label) {
-    this(label, 5_000);
-  }
-
-  public Phase(String label, long closeTime) {
+  Phase(String label, long closeTime) {
     this.label = label;
     this.closeTime = closeTime;
+    logger.debug("Created new phase {}. Close time: {}", label, closeTime);
   }
 
   public static Phase create(String label) {
-    LOCK.acquireUninterruptibly();
-    Phase phase = new Phase(label);
-    PHASE.set(phase);
-    return phase;
+    return create(label, 5_000);
   }
 
-  public void addCallback(Runnable runnable) {
-    callbacks.add(runnable);
+  public static Phase create(String label, int closeTime) {
+    LOCK.acquireUninterruptibly();
+    Phase phase = new Phase(label, closeTime);
+    PHASE.set(phase);
+    return phase;
   }
 
   static Optional<Phase> get() {
     return Optional.ofNullable(PHASE.get());
   }
 
-  void register() {
-    counter.incrementAndGet();
+  public void addCallback(Runnable runnable) {
+    callbacks.add(runnable);
+    logger.debug("Phase {}, registered completion callback {}", label, runnable);
+  }
+
+  int register() {
+    int counter = this.counter.incrementAndGet();
+    logger.debug("Registered a new task in phase {}. Current balance: {}", label, counter);
+    return counter;
   }
 
   void arrive() {
+    logger.debug("Arrival of task in phase {}. Current balance: {}. Scheduling close of phase.", label, counter.get());
     completionTimer.schedule(new CompletionTimer(this), closeTime);
   }
 
@@ -91,15 +97,19 @@ public class Phase {
     @Override
     public void run() {
       if (phase.counter.decrementAndGet() == 0) {
+        logger.debug("All phase {} tasks completed. Calling completion.", phase.label);
         try {
           phase.complete();
+          logger.debug("Phase {} closed successfully.", phase.label);
         } catch (Exception e) {
-          logger.error("Phase completion or one of its callback reported an error", e);
+          logger.error("Phase {} completion or one of its callback reported an error", phase.label, e);
         } finally {
           PHASE.set(null);
           LOCK.release();
         }
+        return;
       }
+      logger.debug("Phase {} not completed yet. Current balance: {}.", phase.label, phase.counter.get());
     }
   }
 

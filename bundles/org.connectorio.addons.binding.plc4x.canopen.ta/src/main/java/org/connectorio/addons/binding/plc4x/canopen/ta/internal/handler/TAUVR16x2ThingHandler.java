@@ -26,7 +26,7 @@ import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
 import javax.measure.Quantity;
 import org.apache.plc4x.java.api.PlcConnection;
-import org.connectorio.addons.binding.plc4x.canopen.handler.CANopenBridgeHandler;
+import org.connectorio.addons.binding.plc4x.canopen.handler.CoBridgeHandler;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.ComplexUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.ControllerConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
@@ -34,7 +34,7 @@ import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.protocol
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.provider.ChannelTypeEntry;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAObject;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAOutput;
-import org.connectorio.addons.binding.plc4x.canopen.config.CANopenNodeConfig;
+import org.connectorio.addons.binding.plc4x.canopen.config.CoNodeConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAADigitalOutput;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAAnalogOutput;
@@ -63,8 +63,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tec.uom.se.AbstractUnit;
 
-public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnection, CANopenBridgeHandler<?>, CANopenNodeConfig>
-  implements Plc4xThingHandler<PlcConnection, CANopenBridgeHandler<?>, CANopenNodeConfig>, Consumer<TAObject> {
+public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnection, CoBridgeHandler<?>, CoNodeConfig>
+  implements Plc4xThingHandler<PlcConnection, CoBridgeHandler<?>, CoNodeConfig>, Consumer<TAObject> {
 
   private final Logger logger = LoggerFactory.getLogger(TAUVR16x2ThingHandler.class);
   private int nodeId;
@@ -83,7 +83,7 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
   public void initialize() {
     ControllerConfig config = getConfigAs(ControllerConfig.class);
     nodeId = config.nodeId;
-    clientId = getBridgeHandler().map(CANopenBridgeHandler::getNodeId).orElse(-1);
+    clientId = getBridgeHandler().map(CoBridgeHandler::getNodeId).orElse(-1);
 
     updateStatus(ThingStatus.OFFLINE);
 

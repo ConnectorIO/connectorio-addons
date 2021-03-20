@@ -17,9 +17,9 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.config;
 
-import org.connectorio.addons.binding.plc4x.canopen.config.CANopenNodeConfig;
+import org.connectorio.addons.binding.plc4x.canopen.config.CoNodeConfig;
 
-public class DeviceConfig extends CANopenNodeConfig {
+public class DeviceConfig extends CoNodeConfig {
 
   public boolean ignoreLoginFailure;
   public DeviceType deviceType;

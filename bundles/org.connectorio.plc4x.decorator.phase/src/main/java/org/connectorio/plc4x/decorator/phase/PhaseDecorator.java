@@ -63,10 +63,11 @@ public class PhaseDecorator implements ReadDecorator, WriteDecorator, SubscribeD
     return new DecoratorReadRequest(delegate, this) {
       @Override
       public CompletableFuture<? extends PlcReadResponse> execute() {
-        phase.ifPresent(Phase::register);
+        int id = phase.map(Phase::register).orElse(0);
+        logger.trace("Registered task in phase {}", phase);
         CompletableFuture<PlcReadResponse> answer = new CompletableFuture<>();
         CompletableFuture<? extends PlcReadResponse> delegate = super.execute();
-        delegate.whenComplete(new PhaseCallback<>(phase.orElse(null), answer));
+        delegate.whenComplete(new PhaseCallback<>(phase.orElse(null), id, answer));
         return answer;
       }
     };
@@ -92,9 +93,9 @@ public class PhaseDecorator implements ReadDecorator, WriteDecorator, SubscribeD
     return new DecoratorWriteRequest(delegate, this) {
       @Override
       public CompletableFuture<? extends PlcWriteResponse> execute() {
-        phase.ifPresent(Phase::register);
+        int id = phase.map(Phase::register).orElse(0);
         CompletableFuture<PlcWriteResponse> answer = new CompletableFuture<>();
-        super.execute().whenComplete(new PhaseCallback<>(phase.orElse(null), answer));
+        super.execute().whenComplete(new PhaseCallback<>(phase.orElse(null), id, answer));
         return answer;
       }
     };
@@ -107,25 +108,27 @@ public class PhaseDecorator implements ReadDecorator, WriteDecorator, SubscribeD
 
   @Override
   public PlcSubscriptionRequest.Builder decorateSubscribe(PlcSubscriptionRequest.Builder delegate) {
-    return new DecoratorSubscriptionRequestBuilder(delegate, this);
+    return delegate;
+    //return new DecoratorSubscriptionRequestBuilder(delegate, this);
   }
 
   @Override
   public PlcSubscriptionRequest decorateSubscribeRequest(PlcSubscriptionRequest delegate) {
-    Optional<Phase> phase = Phase.get();
-    if (!phase.isPresent()) {
-      return delegate;
-    }
-
-    return new DecoratorSubscriptionRequest(delegate, this) {
-      @Override
-      public CompletableFuture<? extends PlcSubscriptionResponse> execute() {
-        phase.ifPresent(Phase::register);
-        CompletableFuture<PlcSubscriptionResponse> answer = new CompletableFuture<>();
-        super.execute().whenComplete(new PhaseCallback<>(phase.orElse(null), answer));
-        return answer;
-      }
-    };
+    return delegate;
+//    Optional<Phase> phase = Phase.get();
+//    if (!phase.isPresent()) {
+//      return delegate;
+//    }
+//
+//    return new DecoratorSubscriptionRequest(delegate, this) {
+//      @Override
+//      public CompletableFuture<? extends PlcSubscriptionResponse> execute() {
+//        phase.ifPresent(Phase::register);
+//        CompletableFuture<PlcSubscriptionResponse> answer = new CompletableFuture<>();
+//        super.execute().whenComplete(new PhaseCallback<>(phase.orElse(null), answer));
+//        return answer;
+//      }
+//    };
   }
 
   @Override
@@ -135,25 +138,27 @@ public class PhaseDecorator implements ReadDecorator, WriteDecorator, SubscribeD
 
   @Override
   public PlcUnsubscriptionRequest.Builder decorateUnsubscribe(PlcUnsubscriptionRequest.Builder delegate) {
-    return new DecoratorUnsubscriptionRequestBuilder(delegate, this);
+    return delegate;
+    //return new DecoratorUnsubscriptionRequestBuilder(delegate, this);
   }
 
   @Override
   public PlcUnsubscriptionRequest decorateUnsubscribeRequest(PlcUnsubscriptionRequest delegate) {
-    Optional<Phase> phase = Phase.get();
-    if (!phase.isPresent()) {
-      return delegate;
-    }
-
-    return new DecoratorUnsubscriptionRequest(delegate, this) {
-      @Override
-      public CompletableFuture<PlcUnsubscriptionResponse> execute() {
-        phase.ifPresent(Phase::register);
-        CompletableFuture<PlcUnsubscriptionResponse> answer = new CompletableFuture<>();
-        super.execute().whenComplete(new PhaseCallback<>(phase.orElse(null), answer));
-        return answer;
-      }
-    };
+    return delegate;
+//    Optional<Phase> phase = Phase.get();
+//    if (!phase.isPresent()) {
+//      return delegate;
+//    }
+//
+//    return new DecoratorUnsubscriptionRequest(delegate, this) {
+//      @Override
+//      public CompletableFuture<PlcUnsubscriptionResponse> execute() {
+//        phase.ifPresent(Phase::register);
+//        CompletableFuture<PlcUnsubscriptionResponse> answer = new CompletableFuture<>();
+//        super.execute().whenComplete(new PhaseCallback<>(phase.orElse(null), answer));
+//        return answer;
+//      }
+//    };
   }
 
   @Override
@@ -164,24 +169,28 @@ public class PhaseDecorator implements ReadDecorator, WriteDecorator, SubscribeD
   // an universal callback which notify phase about completion of task.
   static class PhaseCallback<T> implements BiConsumer<T, Throwable> {
 
+    private final Logger logger = LoggerFactory.getLogger(PhaseCallback.class);
     private final Phase phase;
+    private final int id;
     private final CompletableFuture<T> answer;
 
-    public PhaseCallback(Phase phase, CompletableFuture<T> answer) {
+    public PhaseCallback(Phase phase, int id, CompletableFuture<T> answer) {
       this.phase = phase;
+      this.id = id;
       this.answer = answer;
     }
 
     @Override
     public void accept(T response, Throwable error) {
+      if (phase != null) {
+        logger.trace("Recorded completion of task {} in phase {}", phase, id);
+        phase.arrive();
+      }
+
       if (error != null) {
         answer.completeExceptionally(error);
       } else {
         answer.complete(response);
-      }
-
-      if (phase != null) {
-        phase.arrive();
       }
     }
   }

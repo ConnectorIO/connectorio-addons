@@ -22,14 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest;
-import org.apache.plc4x.java.api.messages.PlcWriteRequest;
 import org.apache.plc4x.java.api.value.PlcValue;
 import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
 import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
+import org.apache.plc4x.java.spi.values.PlcStruct;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoConnection;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoNode;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoSubscription;
@@ -45,14 +44,21 @@ public class DefaultConnection implements CoConnection {
   protected final DecoratorConnection connection;
   private final Map<Integer, DefaultNode> nodes = new ConcurrentHashMap<>();
   private final Map<Integer, List<CoSubscription>> subscriptions = new ConcurrentHashMap<>();
+  private final int clientId;
 
-  public DefaultConnection(PlcConnection connection, CompositeDecorator decorator) {
+  public DefaultConnection(int clientId, PlcConnection connection, CompositeDecorator decorator) {
+    this.clientId = clientId;
     this.connection = new DecoratorConnection(connection, decorator, decorator, decorator, decorator);
   }
 
   @Override
   public CoNode getNode(int nodeId) {
     return nodes.computeIfAbsent(nodeId, (id) -> new DefaultNode(this, id));
+  }
+
+  @Override
+  public CoNode getLocalNode() {
+    return getNode(clientId);
   }
 
   public CompletableFuture<CoSubscription> subscribe(int nodeId, CANOpenService service, Consumer<byte[]> consumer) {
@@ -63,7 +69,24 @@ public class DefaultConnection implements CoConnection {
       if (!subscriptions.containsKey(nodeId)) {
         subscriptions.put(nodeId, new ArrayList<>());
       }
-      DefaultSubscription subscribe = new DefaultSubscription(connection, sub.getSubscriptionHandle("subscribe"), consumer);
+      DefaultSubscription<byte[]> subscribe = new DefaultSubscription<>(connection, sub.getSubscriptionHandle("subscribe"), consumer,
+        new CoRecordReader("subscribe"));
+      subscriptions.get(nodeId).add(subscribe);
+      return subscribe;
+    });
+  }
+
+  @Override
+  public CompletableFuture<CoSubscription> heartbeat(int nodeId, Consumer<PlcStruct> consumer) {
+    PlcSubscriptionRequest request = connection.subscriptionRequestBuilder()
+      .addEventField("subscribe", CANOpenService.HEARTBEAT + ":" + nodeId).build();
+
+    return request.execute().thenApply(sub -> {
+      if (!subscriptions.containsKey(nodeId)) {
+        subscriptions.put(nodeId, new ArrayList<>());
+      }
+      DefaultSubscription<PlcStruct> subscribe = new DefaultSubscription<>(connection, sub.getSubscriptionHandle("subscribe"), consumer,
+        new CoStructReader("subscribe"));
       subscriptions.get(nodeId).add(subscribe);
       return subscribe;
     });
@@ -72,7 +95,7 @@ public class DefaultConnection implements CoConnection {
   @Override
   public void send(int nodeId, CANOpenService service, PlcValue value) {
     connection.writeRequestBuilder().addItem("pdo", service.name() + ":" + nodeId + ":" + CANOpenDataType.RECORD, value)
-      .build().execute().whenComplete(new PDOWriteCallback(nodeId, service, value));
+      .build().execute().whenComplete(new PdoWriteCallback(nodeId, service, value));
   }
 
   @Override

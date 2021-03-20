@@ -53,7 +53,7 @@ public class ThingTypeDef {
   public String getLabel() {
     String label = thingTypeUID.getId().replace(TACANopenBindingConstants.TA_ANALOG_PREFIX + "-", "")
       .replace(TACANopenBindingConstants.TA_DIGITAL, "")
-      .replace("-", " ").toLowerCase(Locale.ROOT);
+      .replace("-", " ").toLowerCase();
     return "Technische Alternative Object " + label.substring(0, 1).toUpperCase() + label.substring(1);
   }
 

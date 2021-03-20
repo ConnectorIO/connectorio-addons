@@ -21,19 +21,29 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoConnection;
-import org.connectorio.addons.binding.plc4x.canopen.config.CANopenNodeConfig;
-import org.connectorio.addons.binding.plc4x.canopen.discovery.CANopenDiscoveryParticipant;
+import org.connectorio.addons.binding.plc4x.canopen.config.CoNodeConfig;
+import org.connectorio.addons.binding.plc4x.canopen.discovery.CoDiscoveryParticipant;
 import org.connectorio.addons.binding.plc4x.handler.Plc4xBridgeHandler;
 import org.connectorio.plc4x.decorator.Decorator;
 
-public interface CANopenBridgeHandler<C extends CANopenNodeConfig> extends Plc4xBridgeHandler<PlcConnection, C> {
+public interface CoBridgeHandler<C extends CoNodeConfig> extends Plc4xBridgeHandler<PlcConnection, C> {
 
   String getName();
 
   int getNodeId();
 
-  List<CANopenDiscoveryParticipant> getParticipants();
+  List<CoDiscoveryParticipant> getParticipants();
 
-  CompletableFuture<CoConnection> getCANopenConnection(Decorator... decorators);
+  /**
+   * Returns CANopen connection which is aware of some semantics coming from CANopen itself. This is distinct from an
+   * PlcConnection available through {@link #getConnection()}.
+   *
+   * The {@link #getConnection()} method gives direct access to the bus and allows to submit lower level operations.
+   * This method is intended to bring semantics which are a bit closer to CANopen and possibly object dictionary.
+   *
+   * @param decorators Additional decorator objects to apply on the connection.
+   * @return CANopen connection once actual transport connection is established.
+   */
+  CompletableFuture<CoConnection> getCoConnection(Decorator... decorators);
 
 }

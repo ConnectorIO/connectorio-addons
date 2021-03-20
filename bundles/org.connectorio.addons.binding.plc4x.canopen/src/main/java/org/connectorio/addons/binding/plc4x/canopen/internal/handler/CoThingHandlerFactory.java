@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.connectorio.addons.binding.handler.factory.BaseThingHandlerFactory;
 import org.connectorio.addons.binding.plc4x.canopen.internal.CANopenBindingConstants;
-import org.connectorio.addons.binding.plc4x.canopen.discovery.CANopenDiscoveryParticipant;
+import org.connectorio.addons.binding.plc4x.canopen.discovery.CoDiscoveryParticipant;
 import org.connectorio.addons.binding.plc4x.osgi.PlcDriverManager;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
@@ -34,15 +34,14 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component(service = ThingHandlerFactory.class)
-public class CANopenThingHandlerFactory extends BaseThingHandlerFactory implements ThingHandlerFactory {
+public class CoThingHandlerFactory extends BaseThingHandlerFactory implements ThingHandlerFactory {
 
-  private final List<CANopenDiscoveryParticipant> participants = new CopyOnWriteArrayList<>();
+  private final List<CoDiscoveryParticipant> participants = new CopyOnWriteArrayList<>();
   private final PlcDriverManager driverManager;
 
   @Activate
-  public CANopenThingHandlerFactory(@Reference PlcDriverManager driverManager) {
-    super(
-      CANopenBindingConstants.SOCKETCAN_BRIDGE_THING_TYPE, CANopenBindingConstants.GENERIC_BRIDGE_THING_TYPE, CANopenBindingConstants.SDO_THING_TYPE);
+  public CoThingHandlerFactory(@Reference PlcDriverManager driverManager) {
+    super(CANopenBindingConstants.SUPPORTED_THINGS);
     this.driverManager = driverManager;
   }
 
@@ -50,26 +49,29 @@ public class CANopenThingHandlerFactory extends BaseThingHandlerFactory implemen
   protected ThingHandler createHandler(Thing thing) {
     if (thing instanceof Bridge) {
       if (CANopenBindingConstants.SOCKETCAN_BRIDGE_THING_TYPE.equals(thing.getThingTypeUID())) {
-        return new CANopenSocketCANBridgeHandler((Bridge) thing, driverManager, participants);
+        return new CoSocketCANBridgeHandler((Bridge) thing, driverManager, participants);
       }
-      if (CANopenBindingConstants.GENERIC_BRIDGE_THING_TYPE.equals(thing.getThingTypeUID())) {
-        return new CANopenGenericBridgeHandler((Bridge) thing);
+      if (CANopenBindingConstants.NODE_BRIDGE_TYPE.equals(thing.getThingTypeUID())) {
+        return new CoNodeBridgeHandler((Bridge) thing);
       }
     }
 
-    if (CANopenBindingConstants.SDO_THING_TYPE.equals(thing.getThingTypeUID())) {
-      return new SDOThingHandler(thing);
+    if (CANopenBindingConstants.RECEIVE_PDO_THING_TYPE.equals(thing.getThingTypeUID())) {
+      return new CoPdoReceiveHandler(thing);
+    }
+    if (CANopenBindingConstants.TRANSMIT_PDO_THING_TYPE.equals(thing.getThingTypeUID())) {
+      return new CoPdoTransmitHandler(thing);
     }
 
     return null;
   }
 
   @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
-  public void addDiscoveryParticipant(CANopenDiscoveryParticipant participant) {
+  public void addDiscoveryParticipant(CoDiscoveryParticipant participant) {
     participants.add(participant);
   }
 
-  public void removeDiscoveryParticipant(CANopenDiscoveryParticipant participant) {
+  public void removeDiscoveryParticipant(CoDiscoveryParticipant participant) {
     participants.remove(participant);
   }
 
