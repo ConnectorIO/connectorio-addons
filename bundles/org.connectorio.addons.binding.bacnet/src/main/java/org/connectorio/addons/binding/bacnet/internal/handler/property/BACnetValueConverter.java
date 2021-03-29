@@ -24,6 +24,7 @@ package org.connectorio.addons.binding.bacnet.internal.handler.property;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.enumerated.BinaryPV;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
+import com.serotonin.bacnet4j.type.enumerated.Polarity;
 import com.serotonin.bacnet4j.type.primitive.Boolean;
 import com.serotonin.bacnet4j.type.primitive.Double;
 import com.serotonin.bacnet4j.type.primitive.Null;
@@ -53,6 +54,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BACnetValueConverter {
 
+  /*
   private static Logger logger = LoggerFactory.getLogger(BACnetValueConverter.class);
 
   public static State bacNetValueToOpenHabState(Class<? extends Item> type, Encodable value) {
@@ -80,7 +82,9 @@ public class BACnetValueConverter {
 
   private static boolean decodeBoolean(Encodable value) {
     if (value instanceof BinaryPV) {
-      return (value.equals(BinaryPV.active));
+      return value.equals(BinaryPV.active);
+    } else if (value instanceof Polarity) {
+      return value.equals(Polarity.reverse);
     } else if (value instanceof Boolean) {
       return ((Boolean) value).booleanValue();
     }
@@ -112,6 +116,7 @@ public class BACnetValueConverter {
     }
     throw new IllegalArgumentException("Cannot convert BacNet value " + value + " " + value.getClass() + " to int");
   }
+  */
 
   public static Encodable openHabTypeToBacNetValue(ObjectType type, Type value) {
     if (UnDefType.NULL == value) {
@@ -133,7 +138,10 @@ public class BACnetValueConverter {
 
   private static Encodable encodeBoolean(Type type) {
     if (type instanceof OnOffType) {
-      return (((OnOffType) type).equals(OnOffType.ON) ? BinaryPV.active : BinaryPV.inactive);
+      return type.equals(OnOffType.ON) ? BinaryPV.active : BinaryPV.inactive;
+    }
+    if (type instanceof OpenClosedType) {
+      return type.equals(OpenClosedType.OPEN) ? BinaryPV.active : BinaryPV.inactive;
     }
     throw new IllegalArgumentException("Cannot convert openHAB type " + type + " " + type.getClass() + " to boolean");
   }

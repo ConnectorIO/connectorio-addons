@@ -21,9 +21,9 @@
  */
 package org.connectorio.addons.binding.bacnet.internal.handler.property;
 
-import com.serotonin.bacnet4j.exception.BACnetTimeoutException;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.enumerated.BinaryPV;
+import com.serotonin.bacnet4j.type.enumerated.Polarity;
 import com.serotonin.bacnet4j.type.primitive.Boolean;
 import com.serotonin.bacnet4j.type.primitive.Date;
 import com.serotonin.bacnet4j.type.primitive.Null;
@@ -91,7 +91,9 @@ public class ReadPropertyTask implements Runnable, BacNetToJavaConverter<State> 
     } else if (encodable instanceof Real) {
       return new DecimalType(((Real) encodable).floatValue());
     } else if (encodable instanceof BinaryPV) {
-      return encodable == BinaryPV.active ? OnOffType.ON : OnOffType.OFF;
+      return BinaryPV.active.equals(encodable) ? OnOffType.ON : OnOffType.OFF;
+    } else if (encodable instanceof Polarity) {
+      return Polarity.normal.equals(encodable) ? OnOffType.ON : OnOffType.OFF;
     } else if (encodable instanceof UnsignedInteger) {
       return new DecimalType(((UnsignedInteger) encodable).intValue());
     } else if (encodable instanceof SignedInteger) {
