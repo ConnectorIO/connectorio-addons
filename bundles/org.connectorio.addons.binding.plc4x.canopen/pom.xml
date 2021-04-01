@@ -65,6 +65,12 @@
       <artifactId>org.connectorio.plc4x.decorator.phase</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>tec.uom</groupId>
+      <artifactId>uom-se</artifactId>
+      <version>1.0.10</version>
+      <scope>compile</scope>
+    </dependency>
     <!--
     <dependency>
       <groupId>org.apache.karaf.features</groupId>
@@ -78,6 +84,19 @@
       <artifactId>org.connectorio.addons.feature.plc4x</artifactId>
       <classifier>features</classifier>
       <type>xml</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
     </dependency>
   </dependencies>
 

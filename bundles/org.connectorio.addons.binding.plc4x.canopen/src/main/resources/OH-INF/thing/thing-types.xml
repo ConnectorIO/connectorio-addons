@@ -25,6 +25,33 @@
     <label>SocketCAN interface for CANopen</label>
     <description>Defines CANopen interface which uses SocketCAN under the hood.</description>
 
+    <channels>
+      <channel id="rx_bytes" typeId="socketcan-data-amount-statistic">
+        <label>Received bytes</label>
+        <description>A 'rx_bytes' metric provided by operating system.</description>
+      </channel>
+      <channel id="rx_bytes_bandwidth" typeId="socketcan-data-transfer-rate-statistic">
+        <label>Received bytes bandwidth</label>
+        <description>An calculated bandwidth from 'rx_bytes' metric.</description>
+      </channel>
+      <channel id="rx_packets" typeId="socketcan-statistic">
+        <label>Receive packets</label>
+        <description>A 'rx_packets' metric provided by operating system.</description>
+      </channel>
+      <channel id="tx_bytes" typeId="socketcan-data-amount-statistic">
+        <label>Transmit bytes</label>
+        <description>A 'tx_bytes' metric provided by operating system.</description>
+      </channel>
+      <channel id="tx_bytes_bandwidth" typeId="socketcan-data-transfer-rate-statistic">
+        <label>Transmitted bytes bandwidth</label>
+        <description>An calculated bandwidth from 'tx_bytes' metric.</description>
+      </channel>
+      <channel id="tx_packets" typeId="socketcan-statistic">
+        <label>Transmit packets</label>
+        <description>A 'tx_packets' metric provided by operating system.</description>
+      </channel>
+    </channels>
+
     <config-description>
       <parameter name="nodeId" type="integer" required="true">
         <label>CANopen Node ID</label>

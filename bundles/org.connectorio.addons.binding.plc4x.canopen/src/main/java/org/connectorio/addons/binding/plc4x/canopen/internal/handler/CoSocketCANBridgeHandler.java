@@ -21,21 +21,29 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import javax.measure.Quantity;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.apache.plc4x.java.spi.connection.AbstractPlcConnection;
+import org.connectorio.addons.binding.can.statistic.CANStatisticCollector;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoConnection;
-import org.connectorio.addons.binding.plc4x.canopen.handler.CoBridgeHandler;
-import org.connectorio.addons.binding.plc4x.canopen.internal.discovery.CoNetworkDiscoveryService;
 import org.connectorio.addons.binding.plc4x.canopen.discovery.CoDiscoveryParticipant;
+import org.connectorio.addons.binding.plc4x.canopen.handler.CoBridgeHandler;
 import org.connectorio.addons.binding.plc4x.canopen.internal.config.DiscoveryMode;
 import org.connectorio.addons.binding.plc4x.canopen.internal.config.SocketCANConfiguration;
+import org.connectorio.addons.binding.plc4x.canopen.internal.discovery.CoNetworkDiscoveryService;
 import org.connectorio.addons.binding.plc4x.canopen.internal.plc4x.DefaultConnection;
+import org.connectorio.addons.binding.plc4x.canopen.internal.statistics.SocketCANStatisticCollectors;
 import org.connectorio.addons.binding.plc4x.handler.base.PollingPlc4xBridgeHandler;
 import org.connectorio.addons.binding.plc4x.osgi.PlcDriverManager;
 import org.connectorio.plc4x.decorator.CompositeDecorator;
 import org.connectorio.plc4x.decorator.Decorator;
+import org.openhab.core.library.types.DecimalType;
+import org.openhab.core.library.types.QuantityType;
+import org.openhab.core.library.unit.Units;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.ThingStatus;
@@ -50,8 +58,11 @@ public class CoSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<PlcConne
 
   private final Logger logger = LoggerFactory.getLogger(CoSocketCANBridgeHandler.class);
   private final PlcDriverManager driverManager;
+  private List<CANStatisticCollector> collectors;
   private CompletableFuture<PlcConnection> initializer = new CompletableFuture<>();
   private List<CoDiscoveryParticipant> participants;
+  private SocketCANConfiguration config;
+  private ScheduledFuture<?> statisticPoller;
 
   public CoSocketCANBridgeHandler(Bridge thing, PlcDriverManager driverManager, List<CoDiscoveryParticipant> participants) {
     super(thing);
@@ -67,7 +78,7 @@ public class CoSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<PlcConne
       @Override
       public void run() {
         try {
-          SocketCANConfiguration config = getBridgeConfig().get();
+          config = getBridgeConfig().get();
           String nodeId = "nodeId=" + config.nodeId;
           String heartbeat = "&heartbeat=" + config.heartbeat;
           AbstractPlcConnection connection = (AbstractPlcConnection) driverManager
@@ -76,6 +87,13 @@ public class CoSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<PlcConne
           if (connection.isConnected()) {
             updateStatus(ThingStatus.ONLINE);
             initializer.complete(connection);
+            collectors = SocketCANStatisticCollectors.create(config.name);
+            statisticPoller = scheduler.scheduleAtFixedRate(new Runnable() {
+              @Override
+              public void run() {
+                fetchStatistics();
+              }
+            }, 0, 1, TimeUnit.MINUTES);
           } else {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Connection failed");
             initializer.complete(null);
@@ -92,6 +110,28 @@ public class CoSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<PlcConne
       }
     };
     scheduler.submit(connectionTask);
+  }
+
+  private void fetchStatistics() {
+    if (collectors == null || collectors.isEmpty() || getCallback() == null) {
+      return;
+    }
+
+    for (CANStatisticCollector collector : collectors) {
+      Quantity<?> statistic = collector.getStatistic();
+      if (statistic.getUnit().equals(Units.ONE)) {
+        getCallback().stateUpdated(new ChannelUID(getThing().getUID(), collector.getName()), new DecimalType(statistic.getValue().doubleValue()));
+      } else {
+        getCallback().stateUpdated(new ChannelUID(getThing().getUID(), collector.getName()), new QuantityType<>(statistic.getValue().doubleValue(), statistic.getUnit()));
+      }
+    }
+  }
+
+  @Override
+  public void dispose() {
+    if (statisticPoller != null) {
+      statisticPoller.cancel(true);
+    }
   }
 
   @Override
