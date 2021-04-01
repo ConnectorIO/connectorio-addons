@@ -19,97 +19,137 @@ package org.connectorio.plc4x.decorator.phase;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import org.apache.plc4x.java.api.messages.PlcRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Phase {
 
-  private final static Timer completionTimer = new Timer("phase-completer");
-  private final static AtomicReference<Phase> PHASE = new AtomicReference<>();
-  private final static Semaphore LOCK = new Semaphore(1);
-  private final Logger logger = LoggerFactory.getLogger(Phase.class);
+  private final Timer timer;
 
-  private final AtomicInteger counter = new AtomicInteger();
-  private final List<Runnable> callbacks = new ArrayList<>();
+  private final Logger logger = LoggerFactory.getLogger(Phase.class);
+  private final List<Runnable> start = new ArrayList<>();
+  private final List<Runnable> completions = new ArrayList<>();
+  private final AtomicLong active = new AtomicLong();
+  private final AtomicLong completed = new AtomicLong();
+
   private final String label;
   private final long closeTime;
+  private final AtomicBoolean done = new AtomicBoolean();
 
-  Phase(String label, long closeTime) {
+  public Phase(String label) {
+    this(label, 5_000);
+  }
+
+  public Phase(String label, long closeTime) {
     this.label = label;
     this.closeTime = closeTime;
-    logger.debug("Created new phase {}. Close time: {}", label, closeTime);
+    this.timer = new Timer("phase-completer-" + label);
+    logger.debug("Created new phase '{}'. Close time: {}", label, closeTime);
   }
 
-  public static Phase create(String label) {
-    return create(label, 5_000);
+  public void start() {
+    logger.debug("Phase {} become active, starting completion timer.", label);
+    start.forEach(Runnable::run);
+    timer.schedule(new CompletionTimer(timer, this), closeTime);
   }
 
-  public static Phase create(String label, int closeTime) {
-    LOCK.acquireUninterruptibly();
-    Phase phase = new Phase(label, closeTime);
-    PHASE.set(phase);
-    return phase;
+  public void onStart(Runnable runnable) {
+    start.add(runnable);
   }
 
-  static Optional<Phase> get() {
-    return Optional.ofNullable(PHASE.get());
+  public void onCompletion(Runnable runnable) {
+    completions.add(runnable);
+    logger.debug("Phase '{}', registered completion callback '{}'", label, runnable);
   }
 
-  public void addCallback(Runnable runnable) {
-    callbacks.add(runnable);
-    logger.debug("Phase {}, registered completion callback {}", label, runnable);
+  void register(PlcRequest request) {
+    active.incrementAndGet();
   }
 
-  int register() {
-    int counter = this.counter.incrementAndGet();
-    logger.debug("Registered a new task in phase {}. Current balance: {}", label, counter);
-    return counter;
-  }
-
-  void arrive() {
-    logger.debug("Arrival of task in phase {}. Current balance: {}. Scheduling close of phase.", label, counter.get());
-    completionTimer.schedule(new CompletionTimer(this), closeTime);
+  void arrive(PlcRequest request) {
+    active.decrementAndGet();
+    completed.incrementAndGet();
   }
 
   void complete() {
-    callbacks.forEach(Runnable::run);
+    done.set(true);
+    completions.forEach(Runnable::run);
+  }
+
+  boolean isDone() {
+    return done.get();
   }
 
   public String toString() {
-    return "Phase [" + label + "] tasks: " + counter;
+    return "Phase [" + label + ":" + active + "/" + completed + "]";
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Phase)) {
+      return false;
+    }
+    Phase phase = (Phase) o;
+    return Objects.equals(label, phase.label);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(label);
   }
 
   static class CompletionTimer extends TimerTask {
 
     private final Logger logger = LoggerFactory.getLogger(CompletionTimer.class);
+    private final Timer timer;
     private final Phase phase;
+    private final boolean complete;
 
-    public CompletionTimer(Phase phase) {
+    public CompletionTimer(Timer timer, Phase phase) {
+      this(timer, phase, false);
+    }
+
+    public CompletionTimer(Timer timer, Phase phase, boolean complete) {
+      this.timer = timer;
       this.phase = phase;
+      this.complete = complete;
     }
 
     @Override
     public void run() {
-      if (phase.counter.decrementAndGet() == 0) {
-        logger.debug("All phase {} tasks completed. Calling completion.", phase.label);
-        try {
-          phase.complete();
-          logger.debug("Phase {} closed successfully.", phase.label);
-        } catch (Exception e) {
-          logger.error("Phase {} completion or one of its callback reported an error", phase.label, e);
-        } finally {
-          PHASE.set(null);
-          LOCK.release();
-        }
+      long taskCount = phase.active.get();
+
+      if (taskCount != 0) {
+        logger.debug("Phase '{}' has {} tasks awaiting completion.", phase.label, phase.active.get());
+        timer.schedule(new CompletionTimer(timer, phase), phase.closeTime);
         return;
       }
-      logger.debug("Phase {} not completed yet. Current balance: {}.", phase.label, phase.counter.get());
+
+      if (!complete) {
+        logger.debug("Phase '{}' tasks completed, awaiting {} to close phase.", phase.label, phase.closeTime);
+        timer.schedule(new CompletionTimer(timer, phase, true), phase.closeTime);
+        return;
+      }
+
+      logger.debug("Phase '{}' completed. Executing completion tasks.", phase.label);
+      try {
+        timer.cancel();
+        phase.complete();
+        logger.debug("Phase '{}' closed successfully.", phase.label);
+      } catch (Exception e) {
+        logger.error("Phase '{}' completion or one of its callback reported an error", phase.label, e);
+      } finally {
+        PhaseLock.release(phase);
+      }
     }
   }
 

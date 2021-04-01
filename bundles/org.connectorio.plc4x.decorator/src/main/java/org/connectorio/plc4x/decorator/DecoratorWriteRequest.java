@@ -17,8 +17,10 @@
  */
 package org.connectorio.plc4x.decorator;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import org.apache.plc4x.java.api.messages.PlcWriteRequest;
 import org.apache.plc4x.java.api.messages.PlcWriteResponse;
@@ -69,4 +71,15 @@ public class DecoratorWriteRequest implements PlcWriteRequest {
   public List<PlcField> getFields() {
     return delegate.getFields();
   }
+
+  public String toString() {
+    Map<String, String> fields = new HashMap<>();
+    for (String name : getFieldNames()) {
+      if (fields.put(name, getField(name) + ":" + getPlcValue(name)) != null) {
+        throw new IllegalStateException("Duplicate key");
+      }
+    }
+    return "DecoratorWriteRequest [" + delegate + ": " + fields + "]";
+  }
+
 }

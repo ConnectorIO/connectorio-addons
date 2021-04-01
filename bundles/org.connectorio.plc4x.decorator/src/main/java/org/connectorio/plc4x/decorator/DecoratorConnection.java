@@ -11,12 +11,13 @@ import org.apache.plc4x.java.api.messages.PlcUnsubscriptionRequest;
 import org.apache.plc4x.java.api.messages.PlcWriteRequest;
 import org.apache.plc4x.java.api.metadata.PlcConnectionMetadata;
 import org.apache.plc4x.java.api.model.PlcField;
+import org.connectorio.plc4x.DelegatingConnection;
 import org.connectorio.plc4x.decorator.noop.NoopReadDecorator;
 import org.connectorio.plc4x.decorator.noop.NoopSubscribeDecorator;
 import org.connectorio.plc4x.decorator.noop.NoopUnsubscribeDecorator;
 import org.connectorio.plc4x.decorator.noop.NoopWriteDecorator;
 
-public class DecoratorConnection implements PlcConnection {
+public class DecoratorConnection implements DelegatingConnection {
 
   private final PlcConnection delegate;
 
@@ -90,4 +91,21 @@ public class DecoratorConnection implements PlcConnection {
     return delegate.browseRequestBuilder();
   }
 
+  @Override
+  public PlcConnection getDelegate() {
+    return delegate;
+  }
+
+  @Override
+  public <T extends PlcConnection> T cast(Class<T> type) {
+    if (type.isInstance(delegate)) {
+      return type.cast(delegate);
+    }
+
+    if (delegate instanceof DelegatingConnection) {
+      return ((DelegatingConnection) delegate).cast(type);
+    }
+
+    return null;
+  }
 }

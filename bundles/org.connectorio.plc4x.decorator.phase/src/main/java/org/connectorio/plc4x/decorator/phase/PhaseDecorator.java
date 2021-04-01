@@ -17,12 +17,12 @@
  */
 package org.connectorio.plc4x.decorator.phase;
 
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.api.messages.PlcReadRequest.Builder;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
+import org.apache.plc4x.java.api.messages.PlcRequest;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionResponse;
 import org.apache.plc4x.java.api.messages.PlcUnsubscriptionRequest;
@@ -32,9 +32,6 @@ import org.apache.plc4x.java.api.messages.PlcWriteResponse;
 import org.connectorio.plc4x.decorator.DecoratorReadBuilder;
 import org.connectorio.plc4x.decorator.DecoratorReadRequest;
 import org.connectorio.plc4x.decorator.DecoratorSubscriptionRequest;
-import org.connectorio.plc4x.decorator.DecoratorSubscriptionRequestBuilder;
-import org.connectorio.plc4x.decorator.DecoratorUnsubscriptionRequest;
-import org.connectorio.plc4x.decorator.DecoratorUnsubscriptionRequestBuilder;
 import org.connectorio.plc4x.decorator.DecoratorWriteBuilder;
 import org.connectorio.plc4x.decorator.DecoratorWriteRequest;
 import org.connectorio.plc4x.decorator.ReadDecorator;
@@ -47,6 +44,15 @@ import org.slf4j.LoggerFactory;
 public class PhaseDecorator implements ReadDecorator, WriteDecorator, SubscribeDecorator, UnsubscribeDecorator {
 
   private final Logger logger = LoggerFactory.getLogger(PhaseDecorator.class);
+  private final Phase phase;
+
+  public PhaseDecorator() {
+    this(null);
+  }
+
+  public PhaseDecorator(Phase phase) {
+    this.phase = phase;
+  }
 
   @Override
   public Builder decorateRead(Builder delegate) {
@@ -55,19 +61,18 @@ public class PhaseDecorator implements ReadDecorator, WriteDecorator, SubscribeD
 
   @Override
   public PlcReadRequest decorateReadRequest(PlcReadRequest delegate) {
-    Optional<Phase> phase = Phase.get();
-    if (!phase.isPresent()) {
+    if (phase.isDone()) {
       return delegate;
     }
-
     return new DecoratorReadRequest(delegate, this) {
       @Override
       public CompletableFuture<? extends PlcReadResponse> execute() {
-        int id = phase.map(Phase::register).orElse(0);
-        logger.trace("Registered task in phase {}", phase);
+        PhaseLock.set(phase);
+        phase.register(this);
+        logger.trace("Registered read in phase {}", phase);
         CompletableFuture<PlcReadResponse> answer = new CompletableFuture<>();
         CompletableFuture<? extends PlcReadResponse> delegate = super.execute();
-        delegate.whenComplete(new PhaseCallback<>(phase.orElse(null), id, answer));
+        delegate.whenComplete(new PhaseCallback<>(phase, this, answer));
         return answer;
       }
     };
@@ -85,17 +90,17 @@ public class PhaseDecorator implements ReadDecorator, WriteDecorator, SubscribeD
 
   @Override
   public PlcWriteRequest decorateWriteRequest(PlcWriteRequest delegate) {
-    Optional<Phase> phase = Phase.get();
-    if (!phase.isPresent()) {
+    if (phase.isDone()) {
       return delegate;
     }
-
     return new DecoratorWriteRequest(delegate, this) {
       @Override
       public CompletableFuture<? extends PlcWriteResponse> execute() {
-        int id = phase.map(Phase::register).orElse(0);
+        PhaseLock.set(phase);
+        phase.register(this);
+        logger.trace("Registered write in phase {}", phase);
         CompletableFuture<PlcWriteResponse> answer = new CompletableFuture<>();
-        super.execute().whenComplete(new PhaseCallback<>(phase.orElse(null), id, answer));
+        super.execute().whenComplete(new PhaseCallback<>(phase, this, answer));
         return answer;
       }
     };
@@ -171,20 +176,20 @@ public class PhaseDecorator implements ReadDecorator, WriteDecorator, SubscribeD
 
     private final Logger logger = LoggerFactory.getLogger(PhaseCallback.class);
     private final Phase phase;
-    private final int id;
+    private final PlcRequest request;
     private final CompletableFuture<T> answer;
 
-    public PhaseCallback(Phase phase, int id, CompletableFuture<T> answer) {
+    public PhaseCallback(Phase phase, PlcRequest request, CompletableFuture<T> answer) {
       this.phase = phase;
-      this.id = id;
+      this.request = request;
       this.answer = answer;
     }
 
     @Override
     public void accept(T response, Throwable error) {
       if (phase != null) {
-        logger.trace("Recorded completion of task {} in phase {}", phase, id);
-        phase.arrive();
+        logger.trace("Recorded completion of request {} in phase {}", request, phase, error);
+        phase.arrive(request);
       }
 
       if (error != null) {

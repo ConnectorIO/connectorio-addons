@@ -53,9 +53,9 @@ class PhaseDecoratorTest {
       public void run() {
         try {
           start.await();
-          Phase phase = Phase.create(phaseName, 150);
-          phase.addCallback(latch::countDown);
-          phase.addCallback(() -> System.out.println("Phase " + phaseName + " closed"));
+          Phase phase = new Phase(phaseName, 1500);
+          phase.onCompletion(latch::countDown);
+          phase.onCompletion(() -> System.out.println("Phase " + phaseName + " closed"));
           execute(delegate, phase);
         } catch (Exception e) {
           e.printStackTrace();
@@ -65,7 +65,7 @@ class PhaseDecoratorTest {
   }
 
   private void execute(SimulatedConnection connection, Phase phase) throws ExecutionException, InterruptedException, PlcConnectionException {
-    PhaseDecorator decorator = new PhaseDecorator();
+    PhaseDecorator decorator = new PhaseDecorator(phase);
     DecoratorConnection delegate = new DecoratorConnection(connection, decorator, decorator, null, null);
     connection.setProtocol(new SimulatedProtocolLogic<>(connection));
     delegate.connect();

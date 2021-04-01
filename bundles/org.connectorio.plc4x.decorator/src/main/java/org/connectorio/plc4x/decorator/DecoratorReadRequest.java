@@ -1,8 +1,12 @@
 package org.connectorio.plc4x.decorator;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.model.PlcField;
@@ -41,4 +45,15 @@ public class DecoratorReadRequest implements PlcReadRequest {
   public List<PlcField> getFields() {
     return delegate.getFields();
   }
+
+  public String toString() {
+    Map<String, PlcField> fields = new HashMap<>();
+    for (String name : getFieldNames()) {
+      if (fields.put(name, getField(name)) != null) {
+        throw new IllegalStateException("Duplicate key");
+      }
+    }
+    return "DecoratorReadRequest [" + delegate + ": " + fields + "]";
+  }
+
 }
