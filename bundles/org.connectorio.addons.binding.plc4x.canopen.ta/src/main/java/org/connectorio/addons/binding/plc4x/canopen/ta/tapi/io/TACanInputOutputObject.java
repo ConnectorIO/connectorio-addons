@@ -47,10 +47,10 @@ public abstract class TACanInputOutputObject<T extends Value> {
     this.unit = unit;
 
     if (reload) {
-      this.name = new TACanString(device.getNode(), (short) (baseIndex + 0x0F), (short) index);
-      this.sourceType = new TACanStringPointer(device.getNode(), baseIndex + 0x2000 + 0x50, index);
-      this.sourceObject = new TACanStringPointer(device.getNode(), baseIndex + 0x2000 + 0x51, index);
-      this.sourceVariable = new TACanStringPointer(device.getNode(), baseIndex + 0x2000 + 0x52, index);
+      this.name = new TACanString(device.getNode(), (short) (baseIndex + 0x0F), (short) (index - 1));
+      this.sourceType = new TACanStringPointer(device.getNode(), baseIndex + 0x2000 + 0x50, index - 1);
+      this.sourceObject = new TACanStringPointer(device.getNode(), baseIndex + 0x2000 + 0x51, index - 1);
+      this.sourceVariable = new TACanStringPointer(device.getNode(), baseIndex + 0x2000 + 0x52, index - 1);
     }
   }
 

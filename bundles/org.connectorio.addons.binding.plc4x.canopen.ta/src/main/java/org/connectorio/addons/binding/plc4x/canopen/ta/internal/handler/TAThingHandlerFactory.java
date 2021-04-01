@@ -49,16 +49,6 @@ public class TAThingHandlerFactory extends BaseThingHandlerFactory {
       return new TAUVR16x2ThingHandler(thing, semaphore);
     }
 
-    if (TACANopenBindingConstants.DISCOVERABLE_CAN_THINGS.contains(thing.getThingTypeUID())) {
-      if (TA_ANALOG_RAS_THING_TYPE.equals(thing.getThingTypeUID())) {
-        return new TARASValueThingHandler(thing);
-      }
-      if (thing.getThingTypeUID().getId().startsWith(TA_ANALOG_PREFIX)) {
-        return new TAAnalogThingHandler(thing);
-      }
-      return new TADigitalThingHandler(thing);
-    }
-
     return null;
   }
 }

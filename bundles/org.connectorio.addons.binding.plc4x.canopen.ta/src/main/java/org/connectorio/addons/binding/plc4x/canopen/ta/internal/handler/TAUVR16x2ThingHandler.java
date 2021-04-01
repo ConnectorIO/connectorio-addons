@@ -92,15 +92,12 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
       semaphore.acquireUninterruptibly();
 
       logger.debug("Retrieving UVR {} configuration", nodeId);
-      CompositeDecorator decorator = new CompositeDecorator();
-      decorator.add(new RetryDecorator(2));
-      decorator.add(new PhaseDecorator());
-      operations = new TAOperations(new DecoratorConnection(connection, decorator, decorator, decorator, decorator));
+      operations = new TAOperations(connection);
 
       ValueListener valueListener = new ThingChannelValueListener(getCallback(), getThing(), this::createState);
 
-      Phase phase = Phase.create("Initialize " + thing.getUID() + " " + thing.getLabel());
-      phase.addCallback(new Runnable() {
+      Phase phase = new Phase("Initialize " + thing.getUID() + " " + thing.getLabel());
+      phase.onCompletion(new Runnable() {
         @Override
         public void run() {
           operations.logout(nodeId, clientId);

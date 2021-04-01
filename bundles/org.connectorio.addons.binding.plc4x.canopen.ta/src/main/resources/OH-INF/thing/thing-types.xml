@@ -21,7 +21,7 @@
   xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-  <bridge-type id="ta-device">
+  <bridge-type id="ta-device" extensible="ta-analog-temperature,ta-analog-length,ta-analog-volume,ta-analog-intensity,ta-analog-time,ta-analog-power,ta-analog-energy,ta-analog-electric-potential,ta-analog-electric-current,ta-analog-electric-resistance,ta-analog-speed,ta-analog-volumetric-flow-rate,ta-analog-pressure,ta-analog-frequency,ta-analog-angle,ta-analog-pulse,ta-analog-generic,ta-digital-switch,ta-analog-ras-temperature,ta-analog-ras-mode">
     <supported-bridge-type-refs>
       <bridge-type-ref id="socketcan"/>
     </supported-bridge-type-refs>
@@ -49,8 +49,16 @@
         <options>
           <option value="UVR16x2">UVR 16x2</option>
           <option value="RSM610">RSM 610</option>
+          <option value="EZ3">EZ3</option>
+          <option value="UVR610">UVR 610</option>
+          <option value="SIMULATOR">Simulator</option>
         </options>
         <default>UVR16x2</default>
+      </parameter>
+      <parameter name="reload" type="boolean" required="true">
+        <label>Reload configuration</label>
+        <description>Force retrieval of channels from controller.</description>
+        <default>true</default>
       </parameter>
     </config-description>
   </bridge-type>

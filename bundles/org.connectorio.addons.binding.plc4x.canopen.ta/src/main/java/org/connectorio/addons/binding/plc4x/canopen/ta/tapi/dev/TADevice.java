@@ -79,7 +79,7 @@ public abstract class TADevice {
   private final List<InOutCallback> inOutCallbacks = new CopyOnWriteArrayList<>();
   private ScheduledExecutorService broadcaster;
 
-  private final TACanString name;
+  private /*final*/ TACanString name;
   private /*final*/ TACanString function;
   private /*final*/ TACanString version;
   private /*final*/ TACanString serial;
@@ -95,25 +95,24 @@ public abstract class TADevice {
     this.physicalInput = physicalInputLimit;
     this.physicalOutput = physicalOutputLimit;
 
-    name = new TACanString(node, (short) 0x2512, (short) 0x00);
-    function = new TACanString(node, (short) 0x57E0, (short) 0x07);
-    version = new TACanString(node, (short) 0x57E0, (short) 0x00);
-    serial = new TACanString(node, (short) 0x57E0, (short) 0x01);
-    productionDate = new TACanString(node, (short) 0x57E0, (short) 0x02);
-    bootsector = new TACanString(node, (short) 0x57E0, (short) 0x03);
-    hardwareCover = new TACanString(node, (short) 0x57E0, (short) 0x04);
-    hardwareMains = new TACanString(node, (short) 0x57E0, (short) 0x05);
-
-    subscribe(node.getNodeId(), CANOpenService.RECEIVE_PDO_3, new StatusCallback(clientId, new Consumer<Boolean>() {
+    subscribe(node.getNodeId(), CANOpenService.RECEIVE_PDO_3, new StatusCallback(clientId, node.getNodeId(), new Consumer<Boolean>() {
       @Override
       public void accept(Boolean loggedIn) {
+        if (loggedIn) {
+          name = new TACanString(node, (short) 0x2512, (short) 0x00);
+          version = new TACanString(node, (short) 0x57E0, (short) 0x00);
+          serial = new TACanString(node, (short) 0x57E0, (short) 0x01);
+          productionDate = new TACanString(node, (short) 0x57E0, (short) 0x02);
+          bootsector = new TACanString(node, (short) 0x57E0, (short) 0x03);
+          hardwareCover = new TACanString(node, (short) 0x57E0, (short) 0x04);
+          hardwareMains = new TACanString(node, (short) 0x57E0, (short) 0x05);
+          function = new TACanString(node, (short) 0x57E0, (short) 0x07);
+        }
         statusCallbacks.forEach(callback -> callback.accept(loggedIn));
       }
     }));
 
-    if (identifyOnly) {
-      return;
-    }
+    subscribe(node.getNodeId(), CANOpenService.TRANSMIT_PDO_4, new ConfigurationCallback(this, objectFactory));
 
     subscribe(node.getNodeId(), CANOpenService.RECEIVE_PDO_1, new AnalogOutputCallback(this, 0));
     subscribe(node.getNodeId(), CANOpenService.TRANSMIT_PDO_2, new AnalogOutputCallback(this, 4));
@@ -126,7 +125,6 @@ public abstract class TADevice {
     subscribe(node.getNodeId() + 0x40, CANOpenService.RECEIVE_PDO_2, new AnalogOutputCallback(this, 24));
     subscribe(node.getNodeId() + 0x40, CANOpenService.TRANSMIT_PDO_3, new AnalogOutputCallback(this, 28));
 
-    subscribe(node.getNodeId(), CANOpenService.TRANSMIT_PDO_4, new ConfigurationCallback(this, objectFactory));
 
     //timer.schedule(new InputWriterTask(this), 60_000);
     broadcaster = Executors.newScheduledThreadPool(1, new NamedThreadFactory("ta-device-input-writer-" + node.getNodeId()) {
@@ -154,14 +152,15 @@ public abstract class TADevice {
       }
     }, 60, 60, TimeUnit.SECONDS);
     broadcaster.scheduleAtFixedRate(this::sendDigital, 60, 60, TimeUnit.SECONDS);
-    //* test of automated I/O discovery
+    /* test of automated I/O discovery
     broadcaster.schedule(new Runnable() {
       @Override
       public void run() {
-        discoverAnalogOutput(new TAAnalogOutput(TADevice.this, 12, AnalogUnit.CELSIUS.getIndex(), (short) 0));
-        discoverAnalogOutput(new TAAnalogOutput(TADevice.this, 13, AnalogUnit.TEMPERATURE_REGULATOR.getIndex(), (short) 0x46ea));
+        discoverAnalogOutput(new TAAnalogOutput(TADevice.this, 1, AnalogUnit.CELSIUS.getIndex(), (short) 0));
+        discoverAnalogOutput(new TAAnalogOutput(TADevice.this, 2, AnalogUnit.CELSIUS.getIndex(), (short) 0));
+        discoverAnalogOutput(new TAAnalogOutput(TADevice.this, 3, AnalogUnit.TEMPERATURE_REGULATOR.getIndex(), (short) 0x46ea));
       }
-    }, 30000, TimeUnit.MILLISECONDS);
+    }, 300, TimeUnit.MILLISECONDS);
     // */
   }
 
@@ -294,8 +293,11 @@ public abstract class TADevice {
   }
 
   public void reload() {
+    scanFunctions();
+    scanFixedValues();
+    scanInputs();
+
     reloadOutputs();
-    //scanFunctions();
   }
 
   public void login() {
@@ -446,12 +448,13 @@ public abstract class TADevice {
   protected void subscribe(int nodeId, CANOpenService service, Consumer<byte[]> consumer) {
     node.getConnection().subscribe(nodeId, service, consumer).whenComplete((sub, err) -> {
       if (err == null) {
-        logger.info("Successfully subscribed to notifications from COB {} (node {})", Integer.toHexString(service.getMin() + nodeId), nodeId);
+        logger.info("Successfully subscribed {} to notifications from COB {} (node {}).", consumer, Integer.toHexString(service.getMin() + nodeId), nodeId);
       }
     });
   }
 
   private void reloadOutputs() {
+    logger.info("Reload {} outputs.", node.getNodeId());
     node.getConnection().send(0, CANOpenService.TRANSMIT_PDO_4, PlcValues.of(
       new PlcUSINT(0x80 + node.getNodeId()),
       new PlcUSINT(0x01),
@@ -466,13 +469,53 @@ public abstract class TADevice {
 
   private void scanFunctions() {
     for (short index = 0; index <= maxFunctions; index++) {
-      int functionIndex = index;
-      node.read((short) 0x4800, index).whenComplete((response, error) -> {
-        byte type = response[1];
-        if (type == 0x00) {
-          functions.remove(functionIndex);
+      int objectIndex = index;
+      new TACanString(node, (short) 0x280F, index).toFuture().whenComplete((label, error) -> {
+        if (error == null) {
+          if (!label.trim().isEmpty()) {
+            logger.info("Detected function {} {}", objectIndex, label);
+            node.read((short) 0x2800, (short) objectIndex).whenComplete((value, fail) -> {
+              logger.info("Function type {}", Hex.encodeHexString(value), fail);
+            });
+          }
         } else {
-          functions.put(functionIndex, new BasicFunction(this, functionIndex + 1));
+          logger.info("Function {} does not exist. {}", objectIndex, error.getMessage());
+        }
+      });
+    }
+  }
+
+  private void scanFixedValues() {
+    for (short index = 0; index <= 10; index++) {
+      int objectIndex = index;
+      new TACanString(node, (short) 0x240f, (short) objectIndex).toFuture().whenComplete((label, error) -> {
+        if (error == null) {
+          if (!label.trim().isEmpty()) {
+            logger.info("Detected fixed value {} {}", objectIndex, label);
+            node.read((short) 0x2414, (short) objectIndex).whenComplete((value, fail) -> {
+              logger.info("Present value {}", Hex.encodeHexString(value), fail);
+            });
+          }
+        } else {
+          logger.info("Fixed value {} does not exist. {}", objectIndex, error.getMessage());
+        }
+      });
+    }
+  }
+
+  private void scanInputs() {
+    for (short index = 0; index <= 10; index++) {
+      int objectIndex = index;
+      new TACanString(node, (short) 0x220f, (short) objectIndex).toFuture().whenComplete((label, error) -> {
+        if (error == null) {
+          if (!label.trim().isEmpty()) {
+            logger.info("Detected CAN input {} {}", objectIndex, label);
+            node.read((short) 0x2250, (short) objectIndex).whenComplete((value, fail) -> {
+              logger.info("Present value {}", Hex.encodeHexString(value), fail);
+            });
+          }
+        } else {
+          logger.info("CAN Input {} does not exist. {}", objectIndex, error.getMessage());
         }
       });
     }

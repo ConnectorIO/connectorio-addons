@@ -19,7 +19,32 @@ package org.connectorio.addons.binding.plc4x.canopen.ta.internal.config;
 
 public enum DeviceType {
 
-  UVR16x2,
-  RSM610;
+  UVR16x2 (0x87),
+  RSM610 (0x88),
+  EZ3 (0x8F),
+  UVR610(0x91),
+  SIMULATOR (0x8A),
+
+  UNKNOWN (0x00);
+
+  private final int code;
+
+  DeviceType(int code) {
+    this.code = code;
+  }
+
+  public int code() {
+    return code;
+  }
+
+  public static DeviceType fromCode(int code) {
+    for (DeviceType type : values()) {
+      if (type.code == code) {
+        return type;
+      }
+    }
+
+    return UNKNOWN;
+  }
 
 }

@@ -17,45 +17,67 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
+import org.apache.logging.log4j.core.util.ExecutorServices;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoConnection;
 import org.connectorio.addons.binding.plc4x.canopen.handler.CoBridgeHandler;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DeviceConfig;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.discovery.DiscoveryThingHandlerService;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.channel.ChannelHandler;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.channel.ChannelHandlerFactory;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.channel.DefaultChannelFactory;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.channel.DefaultChannelHandlerFactory;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.TADeviceFactory;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.InOutCallback;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.TADevice;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TACanInputOutputObject;
 import org.connectorio.addons.binding.plc4x.handler.Plc4xBridgeHandler;
 import org.connectorio.addons.binding.plc4x.handler.base.PollingPlc4xBridgeHandler;
 import org.connectorio.plc4x.decorator.phase.Phase;
 import org.connectorio.plc4x.decorator.phase.PhaseDecorator;
 import org.connectorio.plc4x.decorator.retry.RetryDecorator;
+import org.openhab.core.common.NamedThreadFactory;
+import org.openhab.core.config.core.Configuration;
 import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
-import org.openhab.core.thing.binding.ThingHandlerService;
+import org.openhab.core.thing.binding.builder.ThingBuilder;
 import org.openhab.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnection, DeviceConfig>
-  implements Plc4xBridgeHandler<PlcConnection, DeviceConfig>, Consumer<Boolean>, Runnable {
+  implements Plc4xBridgeHandler<PlcConnection, DeviceConfig>, Consumer<Boolean>, Runnable, InOutCallback {
 
+  // no safe caller since initialization might wait much longer than default 5000 ms
+  private final static ExecutorService initializer = Executors.newSingleThreadExecutor(new NamedThreadFactory("initializer"));
   private final Logger logger = LoggerFactory.getLogger(TADeviceThingHandler.class);
-  private int nodeId;
+
+  private final ChannelHandlerFactory channelHandlerFactory = new DefaultChannelHandlerFactory();
+  private DeviceConfig config;
+
   private int clientId;
 
   private CoConnection network;
-  private CompletableFuture<TADevice> device = new CompletableFuture<>();
+  private CompletableFuture<TADevice> device;
+  private Map<ChannelUID, ChannelHandler<?, ?, ?>> channelHandlers = new ConcurrentHashMap<>();
   private TADevice taDevice;
+  private ThingBuilder builder;
 
   public TADeviceThingHandler(Bridge bridge) {
     super(bridge);
@@ -63,61 +85,64 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
 
   @Override
   public void initialize() {
-    DeviceConfig config = getConfigAs(DeviceConfig.class);
-    nodeId = config.nodeId;
+    this.config = getConfigAs(DeviceConfig.class);
     clientId = getBridgeHandler().map(CoBridgeHandler::getNodeId).orElse(-1);
-    scheduler.execute(this);
+    device = new CompletableFuture<>();
+
+    initializer.execute(this);
   }
 
   public void run() {
     getPlcConnection().thenAccept(connection -> {
-      logger.debug("Activation of handler for CANopen node {}", nodeId);
+      logger.debug("Activation of handler for CANopen node {}", config.nodeId);
 
-      CompletableFuture<CoConnection> network = getBridgeHandler().get().getCoConnection(new PhaseDecorator(), new RetryDecorator(2));
+      final Phase phase = new Phase("Device " + config.nodeId + " initialization", 5_000);
+      CompletableFuture<CoConnection> network = getBridgeHandler().get().getCoConnection(new PhaseDecorator(phase), new RetryDecorator(2));
 
-      network.thenCompose((networkConnection) -> {
+      network.thenAccept((networkConnection) -> {
         this.network = networkConnection;
-        Phase phase = Phase.create("Device " + nodeId + " initialization");
-        CompletableFuture<TADevice> device = new TADeviceFactory().create(networkConnection.getNode(nodeId), clientId);
-        phase.addCallback(new Runnable() {
+        this.taDevice = new TADeviceFactory().get(config.deviceType, networkConnection.getNode(config.nodeId), clientId);
+        this.taDevice.login();
+        this.taDevice.addStatusCallback(this);
+        this.taDevice.addInOutCallback(this);
+
+        logger.info("Loaded device " + taDevice);
+        phase.onCompletion(new Runnable() {
           @Override
           public void run() {
-            if (taDevice != null) {
-              logger.info("Completed initialization of node {}, created device {}.", nodeId, taDevice);
-            } else {
-              logger.warn("Failed to initialize device node {}.", nodeId);
+            if (builder != null) {
+              Map<String, Object> configuration = new HashMap<>(getThing().getConfiguration().getProperties());
+              configuration.put("reload", false);
+              builder.withConfiguration(new Configuration(configuration));
+              updateThing(builder.build());
+              logger.info("Refreshed definition of thing representing {} {}.", config.nodeId, taDevice);
+              builder = null;
             }
+
+            if (taDevice != null) {
+              logger.info("Completed initialization of node {}, created device {}.", config.nodeId, taDevice);
+              updateStatus(ThingStatus.ONLINE);
+              device.complete(taDevice);
+            } else {
+              logger.warn("Failed to initialize device node {}.", config.nodeId);
+              updateStatus(ThingStatus.OFFLINE);
+              device.completeExceptionally(new TimeoutException());
+            }
+
+            logger.info("Creating individual handlers for configured channels");
+            for (Channel channel : getThing().getChannels()) {
+              ChannelHandler<?, ?, ?> handler = channelHandlerFactory.create(getCallback(), taDevice, channel);
+              handler.initialize();
+              channelHandlers.put(channel.getUID(), handler);
+            }
+
+            taDevice.logout();
           }
         });
-        return device;
-      }).whenComplete((device, error) -> {
-        if (error != null) {
-          updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, error.getMessage());
-          logger.warn("Could not initialize TA device {}", nodeId, error);
-          return;
-        }
-
-        device.addStatusCallback(this);
-        this.taDevice = device;
-        this.taDevice.login();
-        this.device.complete(device);
-
-        Map<String, String> properties = new LinkedHashMap<>(getThing().getProperties());
-        device.getName().thenApply(value -> properties.put("Name", value));
-        device.getFunction().thenApply(value -> properties.put("Function", value));
-        device.getVersion().thenApply(value -> properties.put("Version", value));
-        device.getSerial().thenApply(value -> properties.put(Thing.PROPERTY_SERIAL_NUMBER, value));
-        device.getProductionDate().thenApply(value -> properties.put("ProductionDate", value));
-        device.getBootsector().thenApply(value -> properties.put("Bootsector", value));
-        device.getHardwareCover().thenApply(value -> properties.put("HardwareCover", value));
-        device.getHardwareMains().thenApply(value -> properties.put("HardwareMains", value));
-        editThing().withProperties(properties).build();
-
-        updateStatus(ThingStatus.ONLINE);
-        logger.info("Loaded device " + device);
       });
     });
   }
+
 
   @SuppressWarnings("unchecked")
   private Optional<CoBridgeHandler<?>> getBridgeHandler() {
@@ -138,32 +163,64 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
 
   @Override
   public void dispose() {
+    for (ChannelHandler<?, ?, ?> handler : channelHandlers.values()) {
+      handler.dispose();
+    }
+
     if (taDevice != null) {
       taDevice.logout();
       taDevice.removeStatusCallback(this);
+      taDevice.removeInOutCallback(this);
       taDevice.close();
+      taDevice = null;
     }
-    if (!device.isDone()) {
-      device.cancel(true);
+    if (device != null) {
+      if (!device.isDone()) {
+        device.cancel(true);
+      }
+      device = null;
     }
     if (network != null) {
       network.close();
+      network = null;
     }
   }
 
-  @Override
-  public Collection<Class<? extends ThingHandlerService>> getServices() {
-    return Collections.singleton(DiscoveryThingHandlerService.class);
-  }
+//  @Override
+//  public Collection<Class<? extends ThingHandlerService>> getServices() {
+//    return Collections.singleton(DiscoveryThingHandlerService.class);
+//  }
 
   @Override
-  protected void updateStatus(ThingStatus status) {
-    super.updateStatus(status);
+  public void accept(TACanInputOutputObject<?> object) {
+    logger.info("Discovered new device level I/O object {}", object);
+
+    if (builder != null && config.reload) {
+      DefaultChannelFactory channelFactory = new DefaultChannelFactory();
+      channelFactory.create(getThing().getUID(), object).whenComplete((channels, error) -> {
+        if (error != null) {
+          logger.warn("Could not initialize channel for object {}", object, error);
+          return;
+        }
+
+        for (Channel channel : channels) {
+          logger.info("Creating channel {} for object {}", channel, object);
+          builder.withoutChannel(channel.getUID()).withChannel(channel);
+        }
+      });
+    } else {
+      logger.info("Ignore discovered object {}", object);
+    }
   }
 
   @Override
   public void handleCommand(ChannelUID channelUID, Command command) {
-
+    if (channelHandlers.containsKey(channelUID)) {
+      ChannelHandler<?, ?, ?> handler = channelHandlers.get(channelUID);
+      if (handler != null) {
+        handler.handleCommand(command);
+      }
+    }
   }
 
   @Override
@@ -173,9 +230,33 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
 
   @Override
   public void accept(Boolean status) {
+    logger.debug("Login/logout response {}, reload: {}, builder: {}", status, config.reload, builder);
+    if (getThing().getStatus() == ThingStatus.ONLINE) {
+      // if we become online there is no way to get offline..
+      return;
+    }
+
     if (status) {
-      updateStatus(ThingStatus.ONLINE);
-      taDevice.reload();
+      // status should be amended by phase completion callback
+      //updateStatus(ThingStatus.ONLINE);
+      if (config.reload) {
+        builder = editThing();
+
+        Map<String, String> properties = new LinkedHashMap<>(getThing().getProperties());
+        taDevice.getName().thenApply(value -> properties.put("Name", value));
+        taDevice.getFunction().thenApply(value -> properties.put("Function", value));
+        taDevice.getVersion().thenApply(value -> properties.put("Version", value));
+        taDevice.getSerial().thenApply(value -> properties.put(Thing.PROPERTY_SERIAL_NUMBER, value));
+        taDevice.getProductionDate().thenApply(value -> properties.put("ProductionDate", value));
+        taDevice.getBootsector().thenApply(value -> properties.put("Bootsector", value));
+        taDevice.getHardwareCover().thenApply(value -> properties.put("HardwareCover", value));
+        taDevice.getHardwareMains().thenApply(value -> properties.put("HardwareMains", value));
+
+        // an empty .withChannels call force clean up of all existing thing channels
+        builder.withChannels().withProperties(properties).build();
+        taDevice.reload();
+        updateStatus(ThingStatus.ONLINE);
+      }
     } else {
       updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, "Device refused login attempt");
     }

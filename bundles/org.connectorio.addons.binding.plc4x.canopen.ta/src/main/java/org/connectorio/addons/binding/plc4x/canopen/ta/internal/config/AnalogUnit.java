@@ -30,6 +30,7 @@ import org.openhab.core.library.unit.MetricPrefix;
 import org.openhab.core.library.unit.SIUnits;
 import org.openhab.core.library.unit.Units;
 import tec.uom.se.AbstractUnit;
+import tec.uom.se.spi.Range;
 
 public enum AnalogUnit implements TAUnit {
 
@@ -56,6 +57,7 @@ public enum AnalogUnit implements TAUnit {
     /* 21 analog  */ HERTZ  (21, Units.HERTZ, 1),
     /* 22 analog  */ LITRE_PER_MINUTE  (22, Units.LITRE_PER_MINUTE, 1),
     /* 23 analog  */ BAR  (23, Units.BAR, 0.01),
+    /* 24 analog  */ POWER_FACTOR(24, AbstractUnit.ONE, 0.01),
     /* 25 analog  */ KILO_METRE (25, MetricPrefix.KILO(tec.uom.se.unit.Units.METRE), 1),
     /* 26 analog  */ METRE (26, tec.uom.se.unit.Units.METRE, 1),
     /* 27 analog  */ MILLIMETER  (27, MetricPrefix.MILLI(tec.uom.se.unit.Units.METRE), 1),
@@ -85,11 +87,15 @@ public enum AnalogUnit implements TAUnit {
             return new RASValue(raw, this);
         }
     }, // complex unit
+
+    /* 54 analog  */ PHASE_SHIFT_DEGREE(54, Units.DEGREE_ANGLE, 0.1),
 //    /* 55 digital */ new RollerShutterUnit()); // Jalousie Position für Höhe und Neigung bei Lamelle
 //    /* 59 digital */ new ScaledUnit(59, "Prozent", "Jalousie Position", "%", 1, false)); // "Prozent ohne Komma für Jalousie Pos);
 //    /* 60 time?   */ new TimeUnit()
 
-    /* 65 analog  */ MEGABAR  (65, MetricPrefix.MEGA(Units.BAR), 0.1),
+    /* 63 analog  */ AMPERE   (63, Units.AMPERE, 0.1),
+    /* 65 analog  */ MILLIBAR (65, Units.MILLIBAR, 0.1),
+    /* 69 analog  */ WATT     (69, Units.WATT, 1),
     ;
 
     private final static Map<Integer, AnalogUnit> UNIT_MAP = Arrays.stream(values()).collect(Collectors.toMap(

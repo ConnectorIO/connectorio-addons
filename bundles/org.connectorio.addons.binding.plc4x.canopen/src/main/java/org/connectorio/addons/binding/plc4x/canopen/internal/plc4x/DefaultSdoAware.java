@@ -31,15 +31,15 @@ public class DefaultSdoAware extends DefaultNodeAware implements CoSdoAware {
   @Override
   public CompletableFuture<byte[]> read(short index, short subindex) {
     CANOpenSDOField fieldQuery = new CANOpenSDOField(nodeId, index, subindex, CANOpenDataType.RECORD);
-    return connection.connection.readRequestBuilder().addItem("data", fieldQuery).build()
-      .execute().thenApply(new CoRecordReader("data"));
+    return connection.connection.readRequestBuilder().addItem("record-data", fieldQuery).build()
+      .execute().thenApply(new CoRecordReader("record-data"));
   }
 
   @Override
   public <T> CompletableFuture<T> read(short index, short subIndex, CANOpenDataType type) {
     CANOpenSDOField fieldQuery = new CANOpenSDOField(nodeId, index, subIndex, type);
-    return connection.connection.readRequestBuilder().addItem("data", fieldQuery).build()
-      .execute().thenApply(new CoTypeReader<>("data", type));
+    return connection.connection.readRequestBuilder().addItem("typed-data", fieldQuery).build()
+      .execute().thenApply(new CoTypeReader<>("typed-data", type));
   }
 
 }

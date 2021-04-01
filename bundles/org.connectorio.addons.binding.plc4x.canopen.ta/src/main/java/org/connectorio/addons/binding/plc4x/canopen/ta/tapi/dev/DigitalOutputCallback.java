@@ -31,6 +31,7 @@ class DigitalOutputCallback extends AbstractCallback {
 
   @Override
   protected void accept(ReadBuffer buffer) throws ParseException {
+    logger.debug("Received state of {} digital outputs. Payload {}", device, buffer);
     for (int index = 1; index < 33; index++) {
       boolean status = buffer.readBit();
       device.updateDigital(index, status);

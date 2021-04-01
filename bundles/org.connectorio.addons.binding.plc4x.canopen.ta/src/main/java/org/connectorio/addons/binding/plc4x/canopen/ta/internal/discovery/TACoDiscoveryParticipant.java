@@ -30,15 +30,13 @@ import org.connectorio.plc4x.decorator.phase.Phase;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
 import org.openhab.core.config.discovery.DiscoveryResultBuilder;
-import org.openhab.core.config.discovery.DiscoveryService;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingUID;
-import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // FIXME Discovery participant running next to thing handler might interfere.
-@Component(service = {CoDiscoveryParticipant.class, DiscoveryService.class})
+//@Component(service = {CoDiscoveryParticipant.class, DiscoveryService.class})
 public class TACoDiscoveryParticipant extends AbstractDiscoveryService implements CoDiscoveryParticipant {
 
   private final Logger logger = LoggerFactory.getLogger(TACoDiscoveryParticipant.class);
@@ -49,7 +47,7 @@ public class TACoDiscoveryParticipant extends AbstractDiscoveryService implement
 
   @Override
   public DiscoveryResult nodeDiscovered(ThingUID bridgeUID, CoNode node) {
-    Phase phase = Phase.create("discover-ta-device-" + node.getNodeId());
+    Phase phase = new Phase("discover-ta-device-" + node.getNodeId());
     try {
       logger.info("Trying to identify node {} as Technische Alternative device.", node);
       ThingUID thingUID = new ThingUID(TACANopenBindingConstants.TA_DEVICE_THING_TYPE, bridgeUID, String.valueOf(node.getNodeId()));
@@ -79,7 +77,7 @@ public class TACoDiscoveryParticipant extends AbstractDiscoveryService implement
     DiscoveryFunction(Phase phase, ThingUID thingUID) {
       this.phase = phase;
       this.thingUID = thingUID;
-      phase.addCallback(this);
+      phase.onCompletion(this);
     }
 
     @Override

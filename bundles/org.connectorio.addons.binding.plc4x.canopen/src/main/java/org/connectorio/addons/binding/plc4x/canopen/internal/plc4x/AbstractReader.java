@@ -19,7 +19,10 @@ package org.connectorio.addons.binding.plc4x.canopen.internal.plc4x;
 
 import java.util.function.Function;
 import org.apache.plc4x.java.api.messages.PlcFieldResponse;
+import org.apache.plc4x.java.api.model.PlcField;
 import org.apache.plc4x.java.api.types.PlcResponseCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A very basic handler of field responses. Bound to single field and its response code.
@@ -28,6 +31,7 @@ import org.apache.plc4x.java.api.types.PlcResponseCode;
  */
 public abstract class AbstractReader<T extends PlcFieldResponse, R> implements Function<T, R> {
 
+  private final Logger logger = LoggerFactory.getLogger(getClass());
   private final String field;
 
   public AbstractReader(String field) {
@@ -40,7 +44,9 @@ public abstract class AbstractReader<T extends PlcFieldResponse, R> implements F
       return extract(response, field);
     }
 
-    throw new IllegalStateException("Filed " + field + " retrieval failed. Reported code: " + response.getResponseCode(field));
+    PlcField fieldObject = response.getRequest().getField(this.field);
+    logger.debug("Failed request {}. Field {} response code is {}", response.getRequest(), this.field, response.getResponseCode(this.field));
+    throw new IllegalStateException("Field " + this.field + " (" +  fieldObject + ") retrieval failed. Reported code: " + response.getResponseCode(this.field));
   }
 
   protected abstract R extract(T response, String field);

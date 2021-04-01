@@ -24,10 +24,12 @@ import org.apache.plc4x.java.spi.generation.ReadBuffer;
 class StatusCallback extends AbstractCallback {
 
   private final int clientId;
+  private final int nodeId;
   private final Consumer<Boolean> connected;
 
-  StatusCallback(int clientId, Consumer<Boolean> connected) {
+  StatusCallback(int clientId, int nodeId, Consumer<Boolean> connected) {
     this.clientId = clientId;
+    this.nodeId = nodeId;
     this.connected = connected;
   }
 
@@ -44,13 +46,13 @@ class StatusCallback extends AbstractCallback {
     // 89 80 12 01 49 06 00 00
     if (answerClientId == clientId) {
       if (status == 0x00) {
-        logger.debug("Client {} successfully logged into node {}", clientId, mpdoId);
+        logger.debug("Client {} successfully logged into node {}.", clientId, nodeId);
         connected.accept(true);
       } else if (status == 0x80) {
-        logger.debug("Client {} failed to login into {}", clientId, mpdoId);
+        logger.debug("Client {} logged out from {}.", clientId, nodeId);
         connected.accept(false);
       } else {
-        logger.warn("Failed to handle login answer, unknown status {}", Integer.toHexString(status));
+        logger.warn("Failed to handle login answer from {}, unknown status {}", answerClientId, Integer.toHexString(status));
         connected.accept(false);
       }
     } else {

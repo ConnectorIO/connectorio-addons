@@ -67,7 +67,7 @@ public class ChannelTypeHelper {
     put(CUBICMETRE_PER_HOUR, new ChannelTypeEntry("volumetric-flow-rate", "Number:VolumetricFlowRate"));
     put(CUBICMETRE_PER_DAY, new ChannelTypeEntry("volumetric-flow-rate", "Number:VolumetricFlowRate"));
     put(BAR, new ChannelTypeEntry("pressure", "Number:Pressure"));
-    put(MEGABAR, new ChannelTypeEntry("pressure", "Number:Pressure"));
+    put(MILLIBAR, new ChannelTypeEntry("pressure", "Number:Pressure"));
     put(HERTZ, new ChannelTypeEntry("frequency", "Number:Frequency"));
     put(RAS_TEMPERATURE, new ChannelTypeEntry("temperature", "Number:Temperature"));
   }};

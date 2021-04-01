@@ -28,8 +28,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import org.openhab.core.config.core.ConfigDescription;
 import org.openhab.core.config.core.ConfigDescriptionBuilder;
 import org.openhab.core.config.core.ConfigDescriptionParameter;
@@ -58,25 +56,26 @@ import static org.connectorio.addons.binding.plc4x.canopen.ta.internal.TACANopen
 public class TAThingTypeProvider implements ThingTypeProvider, ConfigDescriptionProvider {
 
   private final static List<ThingTypeDef> entries = new ArrayList<>(Arrays.asList(
-    new ThingTypeDef(TA_ANALOG_TEMPERATURE_THING_TYPE),
-    new ThingTypeDef(TA_ANALOG_LENGTH_THING_TYPE),
-    new ThingTypeDef(TA_ANALOG_VOLUME_THING_TYPE),
-    new ThingTypeDef(TA_ANALOG_INTENSITY_THING_TYPE),
-    new ThingTypeDef(TA_ANALOG_TIME_THING_TYPE),
-    new ThingTypeDef(TA_ANALOG_POWER_THING_TYPE),
-    new ThingTypeDef(TA_ANALOG_ENERGY_THING_TYPE),
-    new ThingTypeDef(TA_ANALOG_ELECTRIC_POTENTIAL_THING_TYPE),
-    new ThingTypeDef(TA_ANALOG_ELECTRIC_CURRENT_THING_TYPE),
-    new ThingTypeDef(TA_ANALOG_ELECTRIC_RESISTANCE_THING_TYPE),
-    new ThingTypeDef(TA_ANALOG_SPEED_THING_TYPE),
-    new ThingTypeDef(TA_ANALOG_VOLUMETRIC_FLOW_RATE_THING_TYPE),
-    new ThingTypeDef(TA_ANALOG_PRESSURE_THING_TYPE),
-    new ThingTypeDef(TA_ANALOG_FREQUENCY_THING_TYPE),
-    new ThingTypeDef(TA_ANALOG_RAS_THING_TYPE, Arrays.asList(
-      new ChannelTypeUID(BINDING_ID, TA_ANALOG_RAS), // mode
-      new ChannelTypeUID(BINDING_ID, TA_ANALOG_TEMPERATURE)
-    )),
-    new ThingTypeDef(TA_DIGITAL_SWITCH_THING_TYPE)
+//    new ThingTypeDef(TA_ANALOG_TEMPERATURE_THING_TYPE),
+//    new ThingTypeDef(TA_ANALOG_LENGTH_THING_TYPE),
+//    new ThingTypeDef(TA_ANALOG_VOLUME_THING_TYPE),
+//    new ThingTypeDef(TA_ANALOG_INTENSITY_THING_TYPE),
+//    new ThingTypeDef(TA_ANALOG_TIME_THING_TYPE),
+//    new ThingTypeDef(TA_ANALOG_POWER_THING_TYPE),
+//    new ThingTypeDef(TA_ANALOG_ENERGY_THING_TYPE),
+//    new ThingTypeDef(TA_ANALOG_ELECTRIC_POTENTIAL_THING_TYPE),
+//    new ThingTypeDef(TA_ANALOG_ELECTRIC_CURRENT_THING_TYPE),
+//    new ThingTypeDef(TA_ANALOG_ELECTRIC_RESISTANCE_THING_TYPE),
+//    new ThingTypeDef(TA_ANALOG_SPEED_THING_TYPE),
+//    new ThingTypeDef(TA_ANALOG_VOLUMETRIC_FLOW_RATE_THING_TYPE),
+//    new ThingTypeDef(TA_ANALOG_PRESSURE_THING_TYPE),
+//    new ThingTypeDef(TA_ANALOG_FREQUENCY_THING_TYPE),
+//    new ThingTypeDef(TA_ANALOG_ANGLE_THING_TYPE),
+//    new ThingTypeDef(TA_ANALOG_RAS_THING_TYPE, Arrays.asList(
+//      new ChannelTypeUID(BINDING_ID, TA_ANALOG_RAS_MODE), // mode
+//      new ChannelTypeUID(BINDING_ID, TA_ANALOG_TEMPERATURE)
+//    )),
+//    new ThingTypeDef(TA_DIGITAL_SWITCH_CHANNEL_TYPE)
   ));
 
   private final Logger logger = LoggerFactory.getLogger(TAThingTypeProvider.class);
@@ -89,7 +88,7 @@ public class TAThingTypeProvider implements ThingTypeProvider, ConfigDescription
   public TAThingTypeProvider(@Reference(target = "(ta=true)") ChannelTypeProvider channelTypeProvider) {
     this.channelTypeProvider = channelTypeProvider;
     for (ThingTypeDef entry : entries) {
-      TAChannelTypeProvider.ConfigUID configUID = new TAChannelTypeProvider.ConfigUID(entry.getDimension());
+      TAChannelTypeProvider.ConfigUID configUID = new TAChannelTypeProvider.ConfigUID(entry.getChannels().get(0));
       ConfigDescription configDescriptor = createChannelConfigDescriptor(configUID);
       configDescriptions.put(configDescriptor.getUID(), configDescriptor);
 
@@ -155,7 +154,7 @@ public class TAThingTypeProvider implements ThingTypeProvider, ConfigDescription
   static class ConfigUID extends UID {
 
     public ConfigUID(String dimension) {
-      super(TA_CONFIG_URI, "ta-thing-" + dimension);
+      super(BINDING_ID, "ta-thing-" + dimension);
     }
 
     @Override

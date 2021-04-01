@@ -40,6 +40,7 @@ class ConfigurationCallback extends AbstractCallback {
       logger.warn("Received configuration notification from wrong node: {}. Configured node id {}", sender, nodeId);
       return;
     }
+    logger.info("Received configuration of device {} outputs. Payload {}", device, buffer);
 
     IndexAddress address = IndexAddressIO.staticParse(buffer);
     final int subIndex = address.getSubindex();
@@ -48,7 +49,7 @@ class ConfigurationCallback extends AbstractCallback {
     int unit = buffer.readUnsignedShort(8);
 
     if (logger.isDebugEnabled()) {
-      logger.debug("Received IO configuration from node: {}. Sub index: {}, raw {}, unit {}.", sender,
+      logger.debug("IO configuration from node: {}. Sub index: {}, raw {}, unit {}.", sender,
         subIndex, Integer.toHexString(rawValue), unit);
     }
 

@@ -17,25 +17,12 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev;
 
-import org.apache.plc4x.java.spi.generation.ParseException;
-import org.apache.plc4x.java.spi.generation.ReadBuffer;
+import org.connectorio.addons.binding.plc4x.canopen.api.CoNode;
 
-class AnalogOutputCallback extends AbstractCallback {
+public class TAEnergyMeter3Device extends TADevice {
 
-  private final TADevice device;
-  private final int offset;
-
-  public AnalogOutputCallback(TADevice device, int offset) {
-    this.device = device;
-    this.offset = offset;
+  public TAEnergyMeter3Device(CoNode node, int clientId, boolean identifyOnly) {
+    super(node, clientId, identifyOnly, 0x80, 4, 0);
   }
 
-  @Override
-  public void accept(ReadBuffer buffer) throws ParseException {
-    logger.debug("Received state of device {} analog {} {}. Payload {}", device, offset, offset + 4, buffer);
-    for (int index = 1; index < 5; index++) {
-      short val = buffer.readShort(16);
-      device.updateAnalog(offset + index, val);
-    }
-  }
 }

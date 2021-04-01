@@ -22,6 +22,7 @@ import org.connectorio.addons.binding.plc4x.canopen.config.CoNodeConfig;
 public class DeviceConfig extends CoNodeConfig {
 
   public boolean ignoreLoginFailure;
+  public boolean reload = true;
   public DeviceType deviceType;
 
 

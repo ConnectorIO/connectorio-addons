@@ -37,7 +37,7 @@ class StatusCallbackTest extends AbstractCallbackTest {
 
   @BeforeEach
   void setUp() {
-    callback = new StatusCallback(9, consumer);
+    callback = new StatusCallback(9, 4, consumer);
   }
 
   @Test

@@ -30,27 +30,20 @@ import org.openhab.core.types.StateDescriptionFragmentBuilder;
 
 public class ChannelTypeDef {
 
-  private final ThingTypeUID thingType;
   private final ChannelTypeUID channelType;
   private final String itemType;
   private final String label;
   private final List<TAUnit> units;
 
-  ChannelTypeDef(ThingTypeUID thingType, String itemType, TAUnit ... units) {
-    this(thingType, new ChannelTypeUID(TACANopenBindingConstants.BINDING_ID, thingType.getId()),
-      itemType, label(thingType.getId()), units);
+  ChannelTypeDef(ChannelTypeUID channelType, String itemType, TAUnit ... units) {
+    this(channelType, itemType, label(channelType.getId()), units);
   }
 
-  ChannelTypeDef(ThingTypeUID thingType, ChannelTypeUID channelType, String itemType, String label, TAUnit ... units) {
-    this.thingType = thingType;
+  ChannelTypeDef(ChannelTypeUID channelType, String itemType, String label, TAUnit ... units) {
     this.channelType = channelType;
     this.itemType = itemType;
     this.label = label;
     this.units = Arrays.asList(units);
-  }
-
-  public ThingTypeUID getThingType() {
-    return thingType;
   }
 
   public ChannelTypeUID getChannelType() {
