@@ -48,7 +48,7 @@ public class BACnetPropertyDiscoveryService extends AbstractDiscoveryService imp
   private BACnetDeviceBridgeHandler<?, ?> handler;
 
   public BACnetPropertyDiscoveryService() throws IllegalArgumentException {
-    super(Collections.singleton(IP_DEVICE_THING_TYPE), 300);
+    super(null, 300);
   }
 
   @Override

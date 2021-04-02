@@ -202,6 +202,19 @@
         <unitLabel>ms</unitLabel>
         <default>0</default>
       </parameter>
+
+      <parameter name="timeout" type="integer" required="true" groupName="Timeouts">
+        <description>Communication timeout in milliseconds under which devices should answer.</description>
+        <label>Timeout</label>
+        <default>60000</default>
+        <unitLabel>ms</unitLabel>
+      </parameter>
+      <parameter name="segTimeout" type="integer" required="true" groupName="Timeouts">
+        <description>Maximum time between next segments of segmented communication frame.</description>
+        <label>Segmentation timeout</label>
+        <default>5000</default>
+        <unitLabel>ms</unitLabel>
+      </parameter>
     </config-description>
   </bridge-type>
 

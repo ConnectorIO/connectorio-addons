@@ -26,5 +26,7 @@ import org.connectorio.addons.binding.config.PollingConfiguration;
 public class BACnetConfig extends PollingConfiguration {
 
   public int localNetworkNumber;
+  public int timeout = 60_000;
+  public int segTimeout = 5_000;
 
 }

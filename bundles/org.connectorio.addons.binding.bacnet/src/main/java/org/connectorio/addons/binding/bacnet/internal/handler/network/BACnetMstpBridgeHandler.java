@@ -48,6 +48,7 @@ public class BACnetMstpBridgeHandler extends BasePollingBridgeHandler<MstpConfig
   private final SerialPortManager serialPortManager;
 
   private CompletableFuture<BacNetClient> clientFuture = new CompletableFuture<>();
+  private MstpConfig config;
   private BacNetClient client;
 
   /**
@@ -72,7 +73,13 @@ public class BACnetMstpBridgeHandler extends BasePollingBridgeHandler<MstpConfig
         .withDataBits((short) parity.getDataBits())
         .withParity((short) parity.getParity())
         .withStopBits((short) parity.getStopBits());
-    }).orElse(new JsscMstpNetworkBuilder());
+    }).orElse(null);
+
+    if (builder == null) {
+      updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "Missing serial port settings.");
+      return;
+    }
+    this.config = getBridgeConfig().get();
 
     clientFuture.handleAsync((c, e) -> {
       if (e != null) {
@@ -86,7 +93,7 @@ public class BACnetMstpBridgeHandler extends BasePollingBridgeHandler<MstpConfig
 
     scheduler.submit(() -> {
       try {
-        BacNetMstpClient cli = new BacNetMstpClient(builder.build(), getLocalDeviceId().orElse(1339));
+        BacNetMstpClient cli = new BacNetMstpClient(builder.build(), getLocalDeviceId().orElse(1339), config.timeout, config.segTimeout);
         cli.start();
         clientFuture.complete(cli);
       } catch (Exception e) {
