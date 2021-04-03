@@ -24,4 +24,8 @@ public class PersistenceServiceCalculationConfig extends VolatileCalculationConf
   public String serviceId;
   public Period queryRange = Period.DAY;
 
+  public String toString() {
+    return super.toString() + ", serviceId=" + serviceId + ", queryRange=" + queryRange;
+  }
+
 }

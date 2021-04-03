@@ -28,4 +28,8 @@ class CalculationResult {
     this.previousReading = previousReading;
     this.presentUsage = presentUsage;
   }
+
+  public String toString() {
+    return "previousReading=" + previousReading + ", presentUsage=" + presentUsage;
+  }
 }

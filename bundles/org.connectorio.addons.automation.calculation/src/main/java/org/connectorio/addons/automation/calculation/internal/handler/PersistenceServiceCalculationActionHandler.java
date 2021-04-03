@@ -92,17 +92,20 @@ public class PersistenceServiceCalculationActionHandler extends BaseActionModule
       from = createFilterCriteria(config.input, (ZonedDateTime) context.get("1." + CalculationConstants.PREVIOUS_TRIGGER_TIME), true);
       to = createFilterCriteria(config.input, (ZonedDateTime) context.get("1." + CalculationConstants.TRIGGER_TIME), false);
     }
+    logger.debug("Persistence calculation with config {} and context {}. From {} to {}", config, context, from, to);
 
     if (from == null || to == null) {
       return null;
     }
 
     HistoricItem firstState = get(from);
+    logger.debug("First state retrieved for time {}: {}", from, firstState != null ? firstState.getState() : null);
     if (firstState == null || firstState.getState() == null) {
       return Collections.singletonMap(CalculationConstants.RESULT, UnDefType.NULL);
     }
 
     HistoricItem secondState = get(to);
+    logger.debug("Second state retrieved for time {}: {}", to, secondState != null ? secondState.getState() : null);
     if (secondState == null || secondState.getState() == null) {
       return Collections.singletonMap(CalculationConstants.RESULT, UnDefType.NULL);
     }
@@ -111,10 +114,12 @@ public class PersistenceServiceCalculationActionHandler extends BaseActionModule
     State current = secondState.getState();
 
     CalculationResult outputValue = calculate(previous, current);
+    logger.debug("Result of calculation: {}", outputValue);
     if (outputValue == null) {
       return Collections.singletonMap(CalculationConstants.RESULT, UnDefType.NULL);
     }
 
+    logger.debug("Updating state of item {} to {}", config.output, outputValue.presentUsage);
     final ItemEvent itemCommandEvent = ItemEventFactory.createStateEvent(config.output, outputValue.presentUsage);
     eventPublisher.post(itemCommandEvent);
 
@@ -155,7 +160,12 @@ public class PersistenceServiceCalculationActionHandler extends BaseActionModule
     if (timestamp == null) {
       return null;
     }
-    FilterCriteria filter = new FilterCriteria();
+    FilterCriteria filter = new FilterCriteria() {
+      @Override
+      public String toString() {
+        return "FilterCriteria [begin=" + getBeginDate() + ", end=" + getEndDate() + ", operator=" + getOperator() + ", ordering=" + getOrdering() + "]";
+      }
+    };
     if (start) {
       filter.setBeginDate(timestamp).setOrdering(Ordering.ASCENDING).setOperator(Operator.GTE);
     } else {

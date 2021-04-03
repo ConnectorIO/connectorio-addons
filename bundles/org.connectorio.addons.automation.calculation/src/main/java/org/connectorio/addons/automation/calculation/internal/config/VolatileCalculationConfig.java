@@ -17,11 +17,13 @@
  */
 package org.connectorio.addons.automation.calculation.internal.config;
 
-import org.connectorio.chrono.Period;
-
 public class VolatileCalculationConfig {
 
   public String input;
   public String output;
+
+  public String toString() {
+    return "input=" + input + ", output=" + output;
+  }
 
 }

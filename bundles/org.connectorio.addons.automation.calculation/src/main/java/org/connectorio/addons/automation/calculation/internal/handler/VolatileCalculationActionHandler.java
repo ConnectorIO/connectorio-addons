@@ -66,14 +66,17 @@ public class VolatileCalculationActionHandler extends BaseActionModuleHandler {
   @Override
   public Map<String, Object> execute(Map<String, Object> context) {
     try {
+      logger.debug("Calculating result for config {} and context {}", config, context);
       Item item = itemRegistry.getItem(config.input);
       State state = item.getState();
       CalculationResult outputValue = calculate(state);
+      logger.debug("Result of calculation between {} and {} is {}", previous, state, outputValue);
       if (outputValue == null) {
         return Collections.singletonMap(CalculationConstants.RESULT, UnDefType.NULL);
       }
       previous = outputValue.previousReading; // retain previous value
 
+      logger.debug("Updating state of item {} to {}", config.output, previous);
       final ItemEvent itemCommandEvent = ItemEventFactory.createStateEvent(config.output, outputValue.presentUsage);
       eventPublisher.post(itemCommandEvent);
 
