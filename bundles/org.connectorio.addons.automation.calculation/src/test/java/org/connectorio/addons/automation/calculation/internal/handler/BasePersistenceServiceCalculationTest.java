@@ -22,6 +22,7 @@ import org.openhab.core.persistence.FilterCriteria;
 import org.openhab.core.persistence.HistoricItem;
 import org.openhab.core.persistence.PersistenceServiceRegistry;
 import org.openhab.core.persistence.QueryablePersistenceService;
+import org.slf4j.impl.SimpleLogger;
 
 public class BasePersistenceServiceCalculationTest {
 
@@ -35,6 +36,10 @@ public class BasePersistenceServiceCalculationTest {
   protected EventPublisher eventPublisher;
   @Mock
   protected QueryablePersistenceService persistenceService;
+
+  static {
+    System.setProperty("org.slf4j.simpleLogger.defaultLogLevel","TRACE");
+  }
 
   protected static ZonedDateTime createInstant(int year, int month, int day, int hour, int minute, int second) {
     return ZonedDateTime.of(LocalDate.of(year, month, day), LocalTime.of(hour, minute, second, 0), ZoneOffset.UTC);

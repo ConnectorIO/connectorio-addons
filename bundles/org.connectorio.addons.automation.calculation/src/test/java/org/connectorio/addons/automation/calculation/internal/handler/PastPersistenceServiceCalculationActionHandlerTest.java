@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,7 +58,7 @@ class PastPersistenceServiceCalculationActionHandlerTest extends BasePersistence
     Configuration cfg = new Configuration(config);
     this.handler = new PersistenceServiceCalculationActionHandler(
       new ActionImpl("test", "test", cfg, null, null, null),
-      eventPublisher, persistenceServiceRegistry
+      Clock.systemUTC(), eventPublisher, persistenceServiceRegistry
     );
   }
 
@@ -116,6 +117,29 @@ class PastPersistenceServiceCalculationActionHandlerTest extends BasePersistence
     context.put("1." + CalculationConstants.TRIGGER_TIME, lastTrigger);
     context.put("1." + CalculationConstants.PREVIOUS_TRIGGER_TIME, secondTriggerTime);
     result = handler.execute(context);
+
+    assertThat(result).isNotNull()
+      .containsEntry(CalculationConstants.RESULT, new QuantityType<>(101.01, Units.KILOWATT_HOUR));
+  }
+
+  @Test
+  void testMonthlyExecution() throws Exception {
+    ZonedDateTime beginningOfSeptember = createInstant(2020, 9, 1, 0, 0, 0);
+    ZonedDateTime beginningOfOctober = createInstant(2020, 10, 1, 0, 0, 0);
+
+    ZonedDateTime triggerTime = createInstant(2020, 10, 1, 13, 10, 51);
+
+    Map<ZonedDateTime, HistoricItem> readings = new HashMap<>();
+    createMockItem(100036, beginningOfSeptember, readings);
+    createMockItem(100137.01, beginningOfOctober, readings);
+
+    when(persistenceService.query(any())).thenAnswer(new ReadingAnswer(readings));
+
+    Map<String, Object> context = new HashMap<>();
+    context.put("1." + CalculationConstants.TRIGGER_TIME, triggerTime);
+
+    handler.getConfiguration().offset = 1;
+    Map<String, Object> result = handler.execute(context);
 
     assertThat(result).isNotNull()
       .containsEntry(CalculationConstants.RESULT, new QuantityType<>(101.01, Units.KILOWATT_HOUR));

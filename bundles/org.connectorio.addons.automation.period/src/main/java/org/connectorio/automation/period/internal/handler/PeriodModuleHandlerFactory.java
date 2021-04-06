@@ -26,6 +26,7 @@ import org.openhab.core.automation.Trigger;
 import org.openhab.core.automation.handler.BaseModuleHandlerFactory;
 import org.openhab.core.automation.handler.ModuleHandler;
 import org.openhab.core.automation.handler.ModuleHandlerFactory;
+import org.openhab.core.i18n.TimeZoneProvider;
 import org.openhab.core.scheduler.Scheduler;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -36,10 +37,12 @@ public class PeriodModuleHandlerFactory extends BaseModuleHandlerFactory {
 
   private static final Collection<String> TYPES = Collections.singletonList(PeriodTriggerConstants.MODULE_TYPE_ID);
   private final Scheduler scheduler;
+  private final Clock clock;
 
   @Activate
-  public PeriodModuleHandlerFactory(@Reference Scheduler scheduler) {
+  public PeriodModuleHandlerFactory(@Reference Scheduler scheduler, @Reference TimeZoneProvider timeZoneProvider) {
     this.scheduler = scheduler;
+    this.clock = Clock.system(timeZoneProvider.getTimeZone());
   }
 
   @Override
@@ -49,7 +52,7 @@ public class PeriodModuleHandlerFactory extends BaseModuleHandlerFactory {
 
   @Override
   protected ModuleHandler internalCreate(Module module, String ruleUID) {
-    return new PeriodTriggerHandler((Trigger) module, Clock.systemDefaultZone(), scheduler);
+    return new PeriodTriggerHandler((Trigger) module, clock, scheduler);
   }
 
 }

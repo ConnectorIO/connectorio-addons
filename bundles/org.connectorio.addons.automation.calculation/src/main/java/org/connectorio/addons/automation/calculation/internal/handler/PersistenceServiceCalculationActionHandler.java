@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.Map;
 import org.connectorio.addons.automation.calculation.CalculationConstants;
 import org.connectorio.addons.automation.calculation.internal.config.PersistenceServiceCalculationConfig;
+import org.connectorio.chrono.PeriodCalculator;
+import org.connectorio.chrono.shared.FuturePeriodCalculator;
 import org.connectorio.chrono.shared.PastPeriodCalculator;
 import org.openhab.core.automation.Action;
 import org.openhab.core.automation.handler.BaseActionModuleHandler;
@@ -49,11 +51,13 @@ public class PersistenceServiceCalculationActionHandler extends BaseActionModule
 
   private final Logger logger = LoggerFactory.getLogger(PersistenceServiceCalculationActionHandler.class);
   private final PersistenceServiceCalculationConfig config;
+  private final Clock clock;
   private final EventPublisher eventPublisher;
   private final QueryablePersistenceService persistenceService;
 
-  public PersistenceServiceCalculationActionHandler(Action module, EventPublisher eventPublisher, PersistenceServiceRegistry registry) {
+  public PersistenceServiceCalculationActionHandler(Action module, Clock clock, EventPublisher eventPublisher, PersistenceServiceRegistry registry) {
     super(module);
+    this.clock = clock;
     this.eventPublisher = eventPublisher;
 
     config = getConfigAs(PersistenceServiceCalculationConfig.class);
@@ -85,9 +89,20 @@ public class PersistenceServiceCalculationActionHandler extends BaseActionModule
 
     if (config.queryRange != null) {
       ZonedDateTime triggerTime = (ZonedDateTime) context.get("1." + CalculationConstants.TRIGGER_TIME);
-      PastPeriodCalculator pastPeriodCalculator = new PastPeriodCalculator(Clock.fixed(triggerTime.toInstant(), triggerTime.getZone()), config.queryRange);
-      from = createFilterCriteria(config.input, pastPeriodCalculator.calculate(), true);
-      to = createFilterCriteria(config.input, triggerTime, false);
+      if (triggerTime == null) {
+        triggerTime = ZonedDateTime.now(clock);
+      }
+
+      PeriodCalculator pastPeriodCalculator = new PastPeriodCalculator(Clock.fixed(triggerTime.toInstant(), clock.getZone()), config.offset, config.queryRange);
+      if (config.offset != 0) {
+        ZonedDateTime fromTime = pastPeriodCalculator.calculate();
+        PeriodCalculator triggerPeriodCalculator = new FuturePeriodCalculator(Clock.fixed(fromTime.toInstant(), clock.getZone()), config.queryRange);
+        from = createFilterCriteria(config.input, fromTime, true);
+        to = createFilterCriteria(config.input, triggerPeriodCalculator.calculate(), false);
+      } else {
+        from = createFilterCriteria(config.input, pastPeriodCalculator.calculate(), true);
+        to = createFilterCriteria(config.input, triggerTime, false);
+      }
     } else {
       from = createFilterCriteria(config.input, (ZonedDateTime) context.get("1." + CalculationConstants.PREVIOUS_TRIGGER_TIME), true);
       to = createFilterCriteria(config.input, (ZonedDateTime) context.get("1." + CalculationConstants.TRIGGER_TIME), false);
@@ -174,6 +189,10 @@ public class PersistenceServiceCalculationActionHandler extends BaseActionModule
     filter.setItemName(item);
     filter.setPageSize(1);
     return filter;
+  }
+
+  PersistenceServiceCalculationConfig getConfiguration() {
+    return config;
   }
 
 }

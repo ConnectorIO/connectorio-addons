@@ -45,7 +45,6 @@ public class PeriodTriggerHandler extends BaseTriggerModuleHandler implements Ca
 
   private ScheduledCompletableFuture<?> schedule;
 
-
   public PeriodTriggerHandler(Trigger module, Clock clock, Scheduler scheduler) {
     super(module);
     this.scheduler = scheduler;

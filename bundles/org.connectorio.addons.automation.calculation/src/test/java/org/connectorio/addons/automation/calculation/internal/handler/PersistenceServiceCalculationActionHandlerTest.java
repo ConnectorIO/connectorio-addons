@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ class PersistenceServiceCalculationActionHandlerTest extends BasePersistenceServ
     Configuration cfg = new Configuration(config);
     this.handler = new PersistenceServiceCalculationActionHandler(
       new ActionImpl("test", "test", cfg, null, null, null),
-      eventPublisher, persistenceServiceRegistry
+      Clock.systemUTC(), eventPublisher, persistenceServiceRegistry
     );
   }
 

@@ -19,6 +19,7 @@ package org.connectorio.addons.automation.calculation.internal.type;
 
 import static org.connectorio.addons.automation.calculation.CalculationConstants.*;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -81,6 +82,12 @@ public class PersistenceServiceCalculationActionType extends VolatileCalculation
       .withOptions(queryRange)
       .build();
 
+    final ConfigDescriptionParameter offset = ConfigDescriptionParameterBuilder.create("offset", Type.INTEGER)
+      .withMinimum(BigDecimal.ZERO)
+      .withRequired(false).withMultiple(false).withLabel("Query offset")
+      .withDescription("An number of years/days to be shifted when running calculation, for previous day/year combined with period trigger set value to 1")
+      .build();
+
     final ConfigDescriptionParameter triggerTime = ConfigDescriptionParameterBuilder.create(TRIGGER_TIME, Type.TEXT)
       .withRequired(false).withMultiple(false).withLabel("Trigger time")
       .withDescription("Period for query - if different than trigger range")
@@ -90,7 +97,7 @@ public class PersistenceServiceCalculationActionType extends VolatileCalculation
       .withDescription("Period for query - if different than trigger range")
       .build();
 
-    return Arrays.asList(inputItem, outputItem, serviceId, queryPeriod, triggerTime, previousTriggerTime);
+    return Arrays.asList(inputItem, outputItem, serviceId, queryPeriod, offset, triggerTime, previousTriggerTime);
   }
 
   private static List<Input> createInputs() {

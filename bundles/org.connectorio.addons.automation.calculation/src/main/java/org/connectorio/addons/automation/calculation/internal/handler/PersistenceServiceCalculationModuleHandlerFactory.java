@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.automation.calculation.internal.handler;
 
+import java.time.Clock;
 import java.util.Arrays;
 import java.util.Collection;
 import org.openhab.core.automation.Action;
@@ -25,6 +26,7 @@ import org.openhab.core.automation.handler.BaseModuleHandlerFactory;
 import org.openhab.core.automation.handler.ModuleHandler;
 import org.openhab.core.automation.handler.ModuleHandlerFactory;
 import org.openhab.core.events.EventPublisher;
+import org.openhab.core.i18n.TimeZoneProvider;
 import org.openhab.core.persistence.PersistenceServiceRegistry;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -37,9 +39,11 @@ public class PersistenceServiceCalculationModuleHandlerFactory extends BaseModul
 
   private final EventPublisher eventPublisher;
   private final PersistenceServiceRegistry persistenceServiceRegistry;
+  private final Clock clock;
 
   @Activate
-  public PersistenceServiceCalculationModuleHandlerFactory(@Reference PersistenceServiceRegistry persistenceServiceRegistry, @Reference EventPublisher eventPublisher) {
+  public PersistenceServiceCalculationModuleHandlerFactory(@Reference TimeZoneProvider timeZoneProvider, @Reference PersistenceServiceRegistry persistenceServiceRegistry, @Reference EventPublisher eventPublisher) {
+    this.clock = Clock.system(timeZoneProvider.getTimeZone());
     this.persistenceServiceRegistry = persistenceServiceRegistry;
     this.eventPublisher = eventPublisher;
   }
@@ -51,7 +55,7 @@ public class PersistenceServiceCalculationModuleHandlerFactory extends BaseModul
 
   @Override
   protected ModuleHandler internalCreate(Module module, String ruleUID) {
-    return new PersistenceServiceCalculationActionHandler((Action) module, eventPublisher, persistenceServiceRegistry);
+    return new PersistenceServiceCalculationActionHandler((Action) module, clock, eventPublisher, persistenceServiceRegistry);
   }
 
 }
