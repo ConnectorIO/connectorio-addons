@@ -41,6 +41,8 @@ import org.connectorio.addons.binding.plc4x.handler.base.PollingPlc4xBridgeHandl
 import org.connectorio.addons.binding.plc4x.osgi.PlcDriverManager;
 import org.connectorio.plc4x.decorator.CompositeDecorator;
 import org.connectorio.plc4x.decorator.Decorator;
+import org.connectorio.plc4x.decorator.retry.RetryDecorator;
+import org.connectorio.plc4x.decorator.throttle.ThrottleDecorator;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.unit.Units;
@@ -179,11 +181,27 @@ public class CoSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<PlcConne
 
   @Override
   public CompletableFuture<CoConnection> getCoConnection(Decorator... decorators) {
-    final CompositeDecorator composition = new CompositeDecorator();
+    return getPlcConnection().thenApply(connection -> {
+      final CompositeDecorator composition = composeDecorators(decorators);
+      return new DefaultConnection(getNodeId(), connection, composition);
+    });
+  }
+
+  private CompositeDecorator composeDecorators(Decorator[] decorators) {
+    CompositeDecorator composition = new CompositeDecorator();
     for (Decorator extension : decorators) {
       composition.add(extension);
     }
-    return getPlcConnection().thenApply(connection -> new DefaultConnection(getNodeId(), connection, composition));
+    if (config.retryCount > 0) {
+      composition.add(new RetryDecorator(config.retryCount));
+    }
+    if (config.throttleReading > 0 || config.throttleWriting > 0) {
+      composition.add(new ThrottleDecorator(
+        config.throttleReading > 0 ? config.throttleReading : Integer.MAX_VALUE,
+        config.throttleWriting > 0 ? config.throttleWriting : Integer.MAX_VALUE
+      ));
+    }
+    return composition;
   }
 
 }

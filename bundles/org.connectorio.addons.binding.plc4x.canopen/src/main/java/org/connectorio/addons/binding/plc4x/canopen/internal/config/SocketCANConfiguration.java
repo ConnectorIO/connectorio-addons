@@ -27,4 +27,9 @@ public class SocketCANConfiguration extends CoNodeConfig {
 
   public DiscoveryMode discoveryMode = DiscoveryMode.NMT_LISTEN;
 
+  public int retryCount = 3;
+
+  public double throttleReading;
+  public double throttleWriting;
+
 }

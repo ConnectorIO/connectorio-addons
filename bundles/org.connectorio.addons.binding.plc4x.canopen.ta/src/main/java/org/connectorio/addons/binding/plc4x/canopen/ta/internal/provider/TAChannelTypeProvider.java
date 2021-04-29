@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.provider;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,8 +28,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TACanInputOutputObject;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TACanOutputObject;
 import org.openhab.core.config.core.ConfigDescription;
 import org.openhab.core.config.core.ConfigDescriptionBuilder;
 import org.openhab.core.config.core.ConfigDescriptionParameter;
@@ -39,7 +42,6 @@ import org.openhab.core.config.core.Configuration;
 import org.openhab.core.config.core.ParameterOption;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
-import org.openhab.core.thing.ThingTypeUID;
 import org.openhab.core.thing.ThingUID;
 import org.openhab.core.thing.UID;
 import org.openhab.core.thing.binding.builder.ChannelBuilder;
@@ -80,7 +82,13 @@ public class TAChannelTypeProvider implements ChannelTypeProvider, ConfigDescrip
     new ChannelTypeDef(TA_ANALOG_ANGLE_CHANNEL_TYPE, "Number:Angle", PHASE_SHIFT_DEGREE),
     new ChannelTypeDef(TA_ANALOG_PULSE_CHANNEL_TYPE, "Number:Dimensionless", LITRE_PER_IMPULSE, IMPULSE, KILOWATT_PER_IMPULSE, CUBICMETRE_PER_IMPULSE, MILLIMETRE_PER_IMPULSE, LITER_PER_IMPULSE),
     new ChannelTypeDef(TA_ANALOG_GENERIC_CHANNEL_TYPE, "Number:Dimensionless", DIMENSIONLESS, HUMIDITY, POWER_FACTOR),
-    new ChannelTypeDef(TA_DIGITAL_SWITCH_CHANNEL_TYPE, "Switch", OPEN_CLOSED, ON_OFF) {
+    new ChannelTypeDef(TA_DIGITAL_SWITCH_CHANNEL_TYPE, "Switch", OFF_ON) {
+      @Override
+      public StateDescriptionFragment getStateDescriptionFragment() {
+        return StateDescriptionFragmentBuilder.create().withPattern("%s").build();
+      }
+    },
+    new ChannelTypeDef(TA_DIGITAL_CONTACT_CHANNEL_TYPE, "Contact", CLOSE_OPEN) {
       @Override
       public StateDescriptionFragment getStateDescriptionFragment() {
         return StateDescriptionFragmentBuilder.create().withPattern("%s").build();
@@ -91,10 +99,13 @@ public class TAChannelTypeProvider implements ChannelTypeProvider, ConfigDescrip
       @Override
       public StateDescriptionFragment getStateDescriptionFragment() {
         return StateDescriptionFragmentBuilder.create()
+          .withPattern("%s")
           .withOption(new StateOption("0", "AUTO"))
-          .withOption(new StateOption("1", "Mode #1"))
-          .withOption(new StateOption("2", "Mode #2"))
-          .withOption(new StateOption("3", "FROST"))
+          .withOption(new StateOption("1", "NORMAL"))
+          .withOption(new StateOption("2", "LOWERED"))
+          .withOption(new StateOption("3", "STANDBY"))
+          .withMinimum(BigDecimal.ZERO).withMaximum(BigDecimal.valueOf(3))
+          .withStep(BigDecimal.ONE)
           .build();
       }
     }
@@ -166,33 +177,41 @@ public class TAChannelTypeProvider implements ChannelTypeProvider, ConfigDescrip
     return builder.build();
   }
 
-  public static ThingTypeUID forUnit(TAUnit unit) {
-    return null;
-  }
-
-  public static List<Channel> forObject(ThingUID thing, TACanInputOutputObject<?> object, TAUnit unit, String name) {
+  public static List<Channel> forObject(ThingUID thing, TACanInputOutputObject<?> object, TAUnit unit, String name, Integer inputKey) {
     if (TEMPERATURE_REGULATOR.equals(unit)) {
       return Arrays.asList(
-        create(thing, object, unit, name + " Mode", TA_ANALOG_RAS_MODE_CHANNEL_TYPE, "Number"),
-        create(thing, object, unit, name + " Temperature", TA_ANALOG_RAS_TEMPERATURE_CHANNEL_TYPE, "Number:Temperature")
+        create(thing, object, unit, name + " Mode", TA_ANALOG_RAS_MODE_CHANNEL_TYPE, "Number", inputKey),
+        create(thing, object, unit, name + " Temperature", TA_ANALOG_RAS_TEMPERATURE_CHANNEL_TYPE, "Number:Temperature", inputKey)
       );
     }
 
     for (ChannelTypeDef def : entries) {
       if (def.getUnits().contains(unit)) {
-        return Collections.singletonList(create(thing, object, unit, name, def.getChannelType(), def.getItemType()));
+        return Collections.singletonList(create(thing, object, unit, name, def.getChannelType(), def.getItemType(), inputKey));
       }
     }
 
     return Collections.emptyList();
   }
 
-  private static Channel create(ThingUID thing, TACanInputOutputObject<?> object, TAUnit unit, String name, ChannelTypeUID channelType, String itemType) {
+  private static Channel create(ThingUID thing, TACanInputOutputObject<?> object, TAUnit unit, String name, ChannelTypeUID channelType,
+    String itemType, Integer inputKey) {
     Map<String, Object> configuration = new HashMap<>();
-    configuration.put("readObjectIndex", object.getIndex());
     configuration.put("unit", unit.name());
 
-    ChannelUID uid = new ChannelUID(thing, channelType.getId() + "#" + object.getIndex());
+    String prefix = unit instanceof AnalogUnit ? "analog" : "digital";
+    if (object instanceof TACanOutputObject) {
+      prefix += "-output";
+      configuration.put("readObjectIndex", object.getIndex());
+      if (inputKey != -1) {
+        configuration.put("writeObjectIndex", inputKey);
+      }
+    } else {
+      prefix += "-input";
+      configuration.put("writeObjectIndex", object.getIndex());
+    }
+
+    ChannelUID uid = new ChannelUID(thing, channelType.getId() + "#" + prefix + "_" + object.getIndex());
     ChannelBuilder channelBuilder = ChannelBuilder.create(uid, itemType)
       .withLabel(name)
       .withType(channelType)

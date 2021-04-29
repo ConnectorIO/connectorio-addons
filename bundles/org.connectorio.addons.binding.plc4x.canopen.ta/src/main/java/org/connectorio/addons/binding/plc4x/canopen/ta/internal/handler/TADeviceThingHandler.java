@@ -17,37 +17,39 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import org.apache.logging.log4j.core.util.ExecutorServices;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoConnection;
 import org.connectorio.addons.binding.plc4x.canopen.handler.CoBridgeHandler;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DeviceConfig;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.builder.DeviceChannelBuilder;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.builder.StandardDeviceChannelBuilder;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.builder.linking.InputObjectLinkStrategy;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.builder.linking.NameLinkStrategy;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.channel.ChannelHandler;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.channel.ChannelHandlerFactory;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.channel.DefaultChannelFactory;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.channel.DefaultChannelHandlerFactory;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.TADeviceFactory;
-import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.InOutCallback;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.TADevice;
-import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TACanInputOutputObject;
 import org.connectorio.addons.binding.plc4x.handler.Plc4xBridgeHandler;
 import org.connectorio.addons.binding.plc4x.handler.base.PollingPlc4xBridgeHandler;
 import org.connectorio.plc4x.decorator.phase.Phase;
 import org.connectorio.plc4x.decorator.phase.PhaseDecorator;
 import org.connectorio.plc4x.decorator.retry.RetryDecorator;
+import org.connectorio.plc4x.decorator.throttle.ThrottleDecorator;
 import org.openhab.core.common.NamedThreadFactory;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.thing.Bridge;
@@ -56,13 +58,12 @@ import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
-import org.openhab.core.thing.binding.builder.ThingBuilder;
 import org.openhab.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnection, DeviceConfig>
-  implements Plc4xBridgeHandler<PlcConnection, DeviceConfig>, Consumer<Boolean>, Runnable, InOutCallback {
+  implements Plc4xBridgeHandler<PlcConnection, DeviceConfig>, Consumer<Boolean>, Runnable {
 
   // no safe caller since initialization might wait much longer than default 5000 ms
   private final static ExecutorService initializer = Executors.newSingleThreadExecutor(new NamedThreadFactory("initializer"));
@@ -77,7 +78,7 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
   private CompletableFuture<TADevice> device;
   private Map<ChannelUID, ChannelHandler<?, ?, ?>> channelHandlers = new ConcurrentHashMap<>();
   private TADevice taDevice;
-  private ThingBuilder builder;
+  private DeviceChannelBuilder builder;
 
   public TADeviceThingHandler(Bridge bridge) {
     super(bridge);
@@ -97,14 +98,13 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
       logger.debug("Activation of handler for CANopen node {}", config.nodeId);
 
       final Phase phase = new Phase("Device " + config.nodeId + " initialization", 5_000);
-      CompletableFuture<CoConnection> network = getBridgeHandler().get().getCoConnection(new PhaseDecorator(phase), new RetryDecorator(2));
+      CompletableFuture<CoConnection> network = getBridgeHandler().get().getCoConnection(new PhaseDecorator(phase));
 
       network.thenAccept((networkConnection) -> {
         this.network = networkConnection;
         this.taDevice = new TADeviceFactory().get(config.deviceType, networkConnection.getNode(config.nodeId), clientId);
         this.taDevice.login();
         this.taDevice.addStatusCallback(this);
-        this.taDevice.addInOutCallback(this);
 
         logger.info("Loaded device " + taDevice);
         phase.onCompletion(new Runnable() {
@@ -114,7 +114,14 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
               Map<String, Object> configuration = new HashMap<>(getThing().getConfiguration().getProperties());
               configuration.put("reload", false);
               builder.withConfiguration(new Configuration(configuration));
-              updateThing(builder.build());
+              builder.build().whenComplete((result, error) -> {
+                if (error != null) {
+                  logger.warn("Failed to refresh input/output mapping", error);
+                  return;
+                }
+                logger.debug("Updating input/output mapping to {}", result);
+                updateThing(result);
+              });
               logger.info("Refreshed definition of thing representing {} {}.", config.nodeId, taDevice);
               builder = null;
             }
@@ -143,7 +150,6 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
     });
   }
 
-
   @SuppressWarnings("unchecked")
   private Optional<CoBridgeHandler<?>> getBridgeHandler() {
     return Optional.ofNullable(getBridge())
@@ -168,18 +174,18 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
     }
 
     if (taDevice != null) {
-      taDevice.logout();
+      logger.info("Shutting down handler for device {}", taDevice);
       taDevice.removeStatusCallback(this);
-      taDevice.removeInOutCallback(this);
-      taDevice.close();
       taDevice = null;
     }
+
     if (device != null) {
       if (!device.isDone()) {
         device.cancel(true);
       }
       device = null;
     }
+
     if (network != null) {
       network.close();
       network = null;
@@ -190,28 +196,6 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
 //  public Collection<Class<? extends ThingHandlerService>> getServices() {
 //    return Collections.singleton(DiscoveryThingHandlerService.class);
 //  }
-
-  @Override
-  public void accept(TACanInputOutputObject<?> object) {
-    logger.info("Discovered new device level I/O object {}", object);
-
-    if (builder != null && config.reload) {
-      DefaultChannelFactory channelFactory = new DefaultChannelFactory();
-      channelFactory.create(getThing().getUID(), object).whenComplete((channels, error) -> {
-        if (error != null) {
-          logger.warn("Could not initialize channel for object {}", object, error);
-          return;
-        }
-
-        for (Channel channel : channels) {
-          logger.info("Creating channel {} for object {}", channel, object);
-          builder.withoutChannel(channel.getUID()).withChannel(channel);
-        }
-      });
-    } else {
-      logger.info("Ignore discovered object {}", object);
-    }
-  }
 
   @Override
   public void handleCommand(ChannelUID channelUID, Command command) {
@@ -230,17 +214,18 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
 
   @Override
   public void accept(Boolean status) {
-    logger.debug("Login/logout response {}, reload: {}, builder: {}", status, config.reload, builder);
+    logger.debug("Login/logout response {}, always reload {}, reload: {}", status, config.alwaysReload, config.reload);
     if (getThing().getStatus() == ThingStatus.ONLINE) {
-      // if we become online there is no way to get offline..
+      // if we become online there is no way to get offline.. only bus access errors can put us offline
       return;
     }
 
     if (status) {
       // status should be amended by phase completion callback
       //updateStatus(ThingStatus.ONLINE);
-      if (config.reload) {
-        builder = editThing();
+      if (config.reload()) {
+        InputObjectLinkStrategy linkStrategy = config.inputOutputLinkMode == null ? new NameLinkStrategy() : config.inputOutputLinkMode.getStrategy();
+        builder = new StandardDeviceChannelBuilder(getThing().getUID(), editThing().withChannels(), config, linkStrategy);
 
         Map<String, String> properties = new LinkedHashMap<>(getThing().getProperties());
         taDevice.getName().thenApply(value -> properties.put("Name", value));
@@ -253,8 +238,10 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
         taDevice.getHardwareMains().thenApply(value -> properties.put("HardwareMains", value));
 
         // an empty .withChannels call force clean up of all existing thing channels
-        builder.withChannels().withProperties(properties).build();
+        builder.withProperties(properties).build();
+        taDevice.addInOutCallback(builder);
         taDevice.reload();
+      } else {
         updateStatus(ThingStatus.ONLINE);
       }
     } else {
@@ -266,4 +253,15 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
     return device;
   }
 
+  @Override
+  protected void updateStatus(ThingStatus status, ThingStatusDetail statusDetail, String description) {
+    if (status == ThingStatus.ONLINE) {
+      if (device != null) {
+        // force publishing of units right after we got online so our updates make sense to recipients
+        taDevice.sendUnits();
+      }
+    }
+
+    super.updateStatus(status, statusDetail, description);
+  }
 }

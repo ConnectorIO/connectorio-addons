@@ -21,20 +21,15 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.logging.log4j.core.util.ExecutorServices;
 import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.WriteBuffer;
@@ -45,13 +40,18 @@ import org.connectorio.addons.binding.plc4x.canopen.api.CoNode;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.TACanString;
-import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.func.BasicFunction;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.i18n.EnglishLanguage;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.i18n.I18n;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.i18n.Language;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.func.TAFunction;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.AnalogGroup;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TAAnalogInput;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TAAnalogOutput;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TACanInputObject;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TACanInputOutputObject;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TADigitalInput;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TADigitalOutput;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TAFixedValueObject;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.AnalogValue;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.DigitalValue;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.Value;
@@ -87,6 +87,7 @@ public abstract class TADevice {
   private /*final*/ TACanString bootsector;
   private /*final*/ TACanString hardwareCover;
   private /*final*/ TACanString hardwareMains;
+  private CompletableFuture<Language> language;
 
   public TADevice(CoNode node, int clientId, boolean identifyOnly, int functions, int physicalInputLimit, int physicalOutputLimit) {
     this.node = node;
@@ -107,6 +108,7 @@ public abstract class TADevice {
           hardwareCover = new TACanString(node, (short) 0x57E0, (short) 0x04);
           hardwareMains = new TACanString(node, (short) 0x57E0, (short) 0x05);
           function = new TACanString(node, (short) 0x57E0, (short) 0x07);
+          language = I18n.get(node);
         }
         statusCallbacks.forEach(callback -> callback.accept(loggedIn));
       }
@@ -144,14 +146,16 @@ public abstract class TADevice {
     broadcaster.scheduleAtFixedRate(new Runnable() {
       @Override
       public void run() {
-        for (int index = 1; index < analogInput.size(); index += 4) {
+        logger.debug("Publishing state of {} analog inputs.", analogInput.size());
+        for (int index = 1; index <= analogInput.size(); index += 4) {
           AnalogGroup group = new AnalogGroup(clientId, index);
           logger.debug("Sending automated update of analog group {}", group);
           sendAnalog(group);
         }
       }
-    }, 60, 60, TimeUnit.SECONDS);
-    broadcaster.scheduleAtFixedRate(this::sendDigital, 60, 60, TimeUnit.SECONDS);
+    }, 1, 1, TimeUnit.MINUTES);
+    broadcaster.scheduleAtFixedRate(this::sendDigital, 1, 1, TimeUnit.MINUTES);
+    broadcaster.scheduleAtFixedRate(this::sendUnits, 1, 5, TimeUnit.MINUTES);
     /* test of automated I/O discovery
     broadcaster.schedule(new Runnable() {
       @Override
@@ -214,6 +218,7 @@ public abstract class TADevice {
   }
 
   public void write(int index, Value<?> value) {
+    logger.debug("Received update of input {} with new value {}", index, value);
     if (value instanceof AnalogValue) {
       analogInput.get(index).update((AnalogValue) value);
       sendAnalog(new AnalogGroup(clientId, index));
@@ -283,6 +288,55 @@ public abstract class TADevice {
     }
   }
 
+  public void sendUnits() {
+    logger.debug("Publishing information about units used in own outputs (inputs for other nodes).");
+    try {
+      for (int index = 1; index <= analogInput.size(); index += 6) {
+        WriteBuffer buffer = new WriteBuffer(8, true);
+        buffer.writeUnsignedShort(8, (short) 1);  // first byte is static value
+        buffer.writeUnsignedShort(8, (short) (index - 1)); // call count - 0x00..0x05 analog
+
+        for (int offset = 0; offset < 6; offset++) {
+          int objectIndex = index + offset;
+          if (analogInput.containsKey(objectIndex)) {
+            TAAnalogInput input = analogInput.get(objectIndex);
+            logger.trace("Writing unit for CAN Input #{}, {} mapped unit {}", objectIndex, input, AnalogUnit.valueOf(input.getUnit()));
+            buffer.writeUnsignedShort(8, (short) input.getUnit());
+          } else {
+            // unknown input/unit
+            logger.trace("Uninitialized CAN Input #{}, analog assuming 0 as configured unit.", objectIndex);
+            buffer.writeUnsignedShort(8, (short) 0);
+          }
+        }
+        send(clientId + 0x40, CANOpenService.TRANSMIT_PDO_1, buffer);
+      }
+
+      for (int index = 1; index <= digitalInput.size(); index += 6) {
+        WriteBuffer buffer = new WriteBuffer(8, true);
+        buffer.writeUnsignedShort(8, (short) 1);
+        buffer.writeUnsignedShort(8, (short) (6 + index - 1));  // call count - 0x06..0x0B digital
+
+        for (int offset = 0; offset < 6; offset++) {
+          int objectIndex = index + offset;
+          if (digitalInput.containsKey(objectIndex)) {
+            TADigitalInput input = digitalInput.get(objectIndex);
+            logger.trace("Writing unit for CAN Input {}, {} mapped unit {}", objectIndex, input, DigitalUnit.valueOf(input.getUnit()));
+            buffer.writeUnsignedShort(8, (short) input.getUnit());
+          } else {
+            // unknown input/unit
+            logger.trace("Uninitialized CAN Input #{}, digital assuming 0 as configured unit.", objectIndex);
+            buffer.writeUnsignedShort(8, (short) 0);
+          }
+        }
+        send(clientId + 0x40, CANOpenService.TRANSMIT_PDO_1, buffer);
+      }
+    } catch (ParseException e) {
+      logger.error("Failed to publish configured input units", e);
+    } catch (Exception e) {
+      logger.error("An unexpected error while publishing unit information", e);
+    }
+  }
+
   private void send(int nodeId, CANOpenService service, WriteBuffer buffer) {
     byte[] data = buffer.getData();
     logger.trace("Send to node {} {} (cob {}) data: {}", nodeId, service, Integer.toHexString(service.getMin() + nodeId), Hex.encodeHexString(data));
@@ -292,10 +346,19 @@ public abstract class TADevice {
     ));
   }
 
+  public Language getLanguage() {
+    if (language.isDone()) {
+      return language.getNow(new EnglishLanguage());
+    }
+    logger.warn("Requesting access to device language settings before it is retrieved. Assuming default to be English.");
+    return new EnglishLanguage();
+  }
+
   public void reload() {
-    scanFunctions();
-    scanFixedValues();
-    scanInputs();
+    //scanFunctions();
+    //scanFixedValues();
+    scanAnalogInputs();
+    scanDigitalInputs();
 
     reloadOutputs();
   }
@@ -408,7 +471,7 @@ public abstract class TADevice {
   public void addDigitalOutput(int index, TADigitalOutput output) {
     if (digitalOutputs.containsKey(index)) {
       TADigitalOutput base = digitalOutputs.get(index);
-      if (base.getUnit() != output.getIndex() && base.getUnit() == DigitalUnit.OPEN_CLOSED.getIndex()) {
+      if (base.getUnit() != output.getIndex() && base.getUnit() == DigitalUnit.CLOSE_OPEN.getIndex()) {
         digitalOutputs.put(index, output);
         logger.debug("Update of digital output {} unit from {} to {}", index, base.getUnit(), output.getIndex());
       } else {
@@ -422,7 +485,7 @@ public abstract class TADevice {
   public void addDigitalInput(int index, TADigitalInput input) {
     if (digitalInput.containsKey(index)) {
       TADigitalInput base = digitalInput.get(index);
-      if (base.getUnit() != input.getUnit() && base.getUnit() == DigitalUnit.OPEN_CLOSED.getIndex()) {
+      if (base.getUnit() != input.getUnit() && base.getUnit() == DigitalUnit.CLOSE_OPEN.getIndex()) {
         digitalInput.put(index, input);
         logger.debug("Update of digital input {} unit from {} to {}", index, base.getUnit(), input.getIndex());
       } else {
@@ -443,6 +506,18 @@ public abstract class TADevice {
     analogOutputs.put(output.getIndex(), output);
     logger.info("Discovered new analog output {}", output);
     inOutCallbacks.forEach(callback -> callback.accept(output));
+  }
+
+  void discoverAnalogInput(TAAnalogInput input) {
+    analogInput.put(input.getIndex(), input);
+    logger.info("Discovered new analog input {}", input);
+    inOutCallbacks.forEach(callback -> callback.accept(input));
+  }
+
+  void discoverDigitalInput(TADigitalInput input) {
+    digitalInput.put(input.getIndex(), input);
+    logger.info("Discovered new digital input {}", input);
+    inOutCallbacks.forEach(callback -> callback.accept(input));
   }
 
   protected void subscribe(int nodeId, CANOpenService service, Consumer<byte[]> consumer) {
@@ -486,6 +561,13 @@ public abstract class TADevice {
   }
 
   private void scanFixedValues() {
+    logger.debug("Scan fixed values");
+
+    scanObjects(64, (index) -> new TAFixedValueObject<Value<?>>(this, index, 0),
+      (fixed) -> logger.info("Discovered fixed value {}", fixed.getName())
+    );
+
+    /*
     for (short index = 0; index <= 10; index++) {
       int objectIndex = index;
       new TACanString(node, (short) 0x240f, (short) objectIndex).toFuture().whenComplete((label, error) -> {
@@ -501,29 +583,79 @@ public abstract class TADevice {
         }
       });
     }
+     */
   }
 
-  private void scanInputs() {
-    for (short index = 0; index <= 10; index++) {
+  private void scanAnalogInputs() {
+    logger.debug("Scanning of CAN analog inputs");
+
+    scanObjects(64, (index) -> new TAAnalogInput(this, index, 0),
+      // force remapping of input so its index is reflected properly
+      new InputValidator<>(clientId, (input) -> discoverAnalogInput(input)));
+  }
+
+  private void scanDigitalInputs() {
+    logger.debug("Scanning of CAN digital inputs");
+
+    scanObjects(64, (index) -> new TADigitalInput(this, index, 0),
+      // force remapping of input so its index is reflected properly
+      new InputValidator<>(clientId, (input) -> discoverDigitalInput(input)));
+  }
+
+  private <X extends TACanInputOutputObject<?>> void scanObjects(int limit, Function<Integer, X> constructor, Consumer<X> callback) {
+    for (short index = 1; index <= limit; index++) {
+      logger.trace("Checking if CAN object #{} is active", (int) index);
       int objectIndex = index;
-      new TACanString(node, (short) 0x220f, (short) objectIndex).toFuture().whenComplete((label, error) -> {
-        if (error == null) {
-          if (!label.trim().isEmpty()) {
-            logger.info("Detected CAN input {} {}", objectIndex, label);
-            node.read((short) 0x2250, (short) objectIndex).whenComplete((value, fail) -> {
-              logger.info("Present value {}", Hex.encodeHexString(value), fail);
-            });
-          }
-        } else {
-          logger.info("CAN Input {} does not exist. {}", objectIndex, error.getMessage());
+
+      X object = constructor.apply(objectIndex);
+      object.getName().whenComplete((config, error) -> {
+        if (error != null) {
+          logger.warn("Failed to load CAN object #{}", objectIndex, error);
+          return;
         }
+
+        callback.accept(object);
       });
     }
   }
 
   @Override
   public String toString() {
-    return "TADevice [" + node + ", " + name + "]";
+    return "TADevice [" + node + ", " + (name == null ? "name not retrieved" : name) + "]";
+  }
+
+  static class InputValidator<X extends TACanInputObject<?>> implements Consumer<X> {
+
+    private final Logger logger = LoggerFactory.getLogger(InputValidator.class);
+    private final int clientId;
+    private final Consumer<X> delegate;
+
+    InputValidator(int clientId, Consumer<X> delegate) {
+      this.clientId = clientId;
+      this.delegate = delegate;
+    }
+
+    @Override
+    public void accept(X input) {
+      input.getConfiguration().whenComplete((config, error) -> {
+        String inputType = input instanceof TAAnalogInput ? "analog" : "digital";
+        if (error != null) {
+          logger.warn("Failed to load CAN Input #{} ({})", input.getIndex(), inputType, error);
+          return;
+        }
+        if (config.getNode() != clientId) {
+          logger.debug("Ignore CAN Input #{} ({}) since it is indented for node {}.", input.getIndex(), inputType, config.getNode());
+          return;
+        }
+        if (config.getIndex() == -1) {
+          logger.debug("Ignore CAN Input #{} ({}) since its index is not defined.", input.getIndex(), inputType);
+          return;
+        }
+
+        logger.trace("CAN Input #{} ({}) passed validation.", input.getIndex(), inputType);
+        delegate.accept(input);
+      });
+    }
   }
 
 }

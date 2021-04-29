@@ -44,12 +44,13 @@ public class ReadRetry implements BiConsumer<PlcReadResponse, Throwable> {
   @Override
   public void accept(PlcReadResponse response, Throwable error) {
     if (error != null) {
-      logger.trace("Detected failure response {}, re-attempting: {}", response, retries.get() < limit, error);
+      logger.trace("Detected failure response {}, counter {}, limit {}, re-attempting: {}", response, retries, limit, error);
       if (retries.getAndIncrement() < limit) {
         request.execute().whenComplete(this);
         return;
       }
 
+      logger.trace("All attempts failed, reporting error for execution", error);
       answer.completeExceptionally(error);
       return;
     }

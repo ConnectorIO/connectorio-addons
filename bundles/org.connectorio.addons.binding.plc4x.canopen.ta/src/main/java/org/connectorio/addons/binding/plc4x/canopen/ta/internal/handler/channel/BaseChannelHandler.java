@@ -107,4 +107,8 @@ public abstract class BaseChannelHandler<T extends Value<?>, U extends TAUnit, C
   protected abstract Value<?> createValue(Command command);
   protected abstract State createState(T value);
 
+  public String toString() {
+    return getClass().getName() + "[" + device + " " + channel + " " + channel.getConfiguration() + " " + valueType + "]";
+  }
+
 }

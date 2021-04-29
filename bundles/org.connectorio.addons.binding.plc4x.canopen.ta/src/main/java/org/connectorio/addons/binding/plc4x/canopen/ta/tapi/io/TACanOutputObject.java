@@ -17,13 +17,24 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io;
 
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.TACanStringPointer;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.TADevice;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.Value;
 
 public abstract class TACanOutputObject<T extends Value> extends TACanInputOutputObject<T> {
 
+  private TACanStringPointer sourceType;
+  private TACanStringPointer sourceObject;
+  private TACanStringPointer sourceVariable;
+
   public TACanOutputObject(TADevice device, boolean reload, int baseIndex, int index, int unit, short value) {
     super(device, reload, baseIndex, index, unit);
   }
 
+  @Override
+  protected void reload() {
+    this.sourceType = new TACanStringPointer(device.getNode(), baseIndex + 0x2000 + 0x50, index - 1);
+    this.sourceObject = new TACanStringPointer(device.getNode(), baseIndex + 0x2000 + 0x51, index - 1);
+    this.sourceVariable = new TACanStringPointer(device.getNode(), baseIndex + 0x2000 + 0x52, index - 1);
+  }
 }

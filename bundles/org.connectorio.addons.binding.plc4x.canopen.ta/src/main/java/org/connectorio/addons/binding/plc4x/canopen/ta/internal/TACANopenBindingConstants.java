@@ -60,6 +60,7 @@ public interface TACANopenBindingConstants extends CANopenBindingConstants {
   String TA_ANALOG_PULSE = TA_ANALOG_PREFIX + "-pulse";
   String TA_ANALOG_GENERIC = TA_ANALOG_PREFIX + "-generic";
   String TA_DIGITAL_SWITCH = TA_DIGITAL_PREFIX + "-switch";
+  String TA_DIGITAL_CONTACT = TA_DIGITAL_PREFIX + "-contact";
 
   ThingTypeUID TA_UVR_16x2_THING_TYPE = new ThingTypeUID(BINDING_ID, TA_UVR_16x2);
 
@@ -87,6 +88,7 @@ public interface TACANopenBindingConstants extends CANopenBindingConstants {
   ChannelTypeUID TA_ANALOG_GENERIC_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, TA_ANALOG_GENERIC);
 
   ChannelTypeUID TA_DIGITAL_SWITCH_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, TA_DIGITAL_SWITCH);
+  ChannelTypeUID TA_DIGITAL_CONTACT_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, TA_DIGITAL_CONTACT);
 
   ThingTypeUID TA_FUNCTION_THING_TYPE = new ThingTypeUID(BINDING_ID, TA_FUNCTION);
 

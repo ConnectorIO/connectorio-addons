@@ -18,12 +18,35 @@
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.config;
 
 import org.connectorio.addons.binding.plc4x.canopen.config.CoNodeConfig;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.builder.linking.InputObjectLinkStrategy;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.builder.linking.NameLinkStrategy;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.builder.linking.NullLinkStrategy;
 
 public class DeviceConfig extends CoNodeConfig {
 
-  public boolean ignoreLoginFailure;
+  public boolean alwaysReload = false;
   public boolean reload = true;
   public DeviceType deviceType;
+  public InputOutputLinkMode inputOutputLinkMode = InputOutputLinkMode.NAME;
 
+  public boolean reload() {
+    return reload || alwaysReload;
+  }
+
+  public enum InputOutputLinkMode {
+    NONE (new NullLinkStrategy()),
+    NAME (new NameLinkStrategy());
+
+    private final InputObjectLinkStrategy strategy;
+
+    InputOutputLinkMode(InputObjectLinkStrategy strategy) {
+      this.strategy = strategy;
+    }
+
+    public InputObjectLinkStrategy getStrategy() {
+      return strategy;
+    }
+
+  }
 
 }

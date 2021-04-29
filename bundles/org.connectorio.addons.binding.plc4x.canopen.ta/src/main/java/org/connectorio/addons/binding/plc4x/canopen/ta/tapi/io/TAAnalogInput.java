@@ -18,22 +18,37 @@
 package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io;
 
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.TADevice;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.i18n.Key;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.i18n.UnitTranslation;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.AnalogValue;
 
-public class TAAnalogInput extends TACanInputOutputObject<AnalogValue> {
+public class TAAnalogInput extends TACanInputObject<AnalogValue> {
 
   private AnalogValue value;
 
   public TAAnalogInput(TADevice device, int index, int unit) {
-    this(device, 0x0000, index, unit);
+    this(device, 0x2200, index, unit);
   }
 
-  public TAAnalogInput(TADevice device, int baseIndex, int index, int unit) {
+  TAAnalogInput(TADevice device, int baseIndex, int index, int unit) {
     this(device, true, baseIndex, index, unit);
   }
 
-  public TAAnalogInput(TADevice device, boolean reload, int baseIndex, int index, int unit) {
+  TAAnalogInput(TADevice device, boolean reload, int baseIndex, int index, int unit) {
     super(device, reload, baseIndex, index, unit);
+  }
+
+  @Override
+  protected int parseUnitLabel(String unitLabel) {
+    // lookup key which matches given label
+    Key unitLanguageKey = device.getLanguage().getUnits().lookup(unitLabel);
+    if (UnitTranslation.ANALOG_UNIT_MAP.containsKey(unitLanguageKey)) {
+      // check if label is mapped to any unit
+      return UnitTranslation.ANALOG_UNIT_MAP.get(unitLanguageKey).getIndex();
+    }
+
+    // not known
+    return InputConfig.UNIT_USER_DEFINED;
   }
 
   @Override

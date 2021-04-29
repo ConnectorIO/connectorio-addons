@@ -17,23 +17,24 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io;
 
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.TADevice;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.i18n.UnitTranslation;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.DigitalValue;
-import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.Value;
 
-public class TADigitalInput extends TACanInputOutputObject<DigitalValue> {
+public class TADigitalInput extends TACanInputObject<DigitalValue> {
 
   private DigitalValue value;
 
   public TADigitalInput(TADevice device, int index, int unit) {
-    this(device, 0x0000, index, unit);
+    this(device, 0x2300, index, unit);
   }
 
-  public TADigitalInput(TADevice device, int baseIndex, int index, int unit) {
-    super(device, true, baseIndex, index, unit);
+  TADigitalInput(TADevice device, int baseIndex, int index, int unit) {
+    this(device, true, baseIndex, index, unit);
   }
 
-  public TADigitalInput(TADevice device, boolean reload, int baseIndex, int index, int unit) {
+  TADigitalInput(TADevice device, boolean reload, int baseIndex, int index, int unit) {
     super(device, reload, baseIndex, index, unit);
   }
 
@@ -46,4 +47,11 @@ public class TADigitalInput extends TACanInputOutputObject<DigitalValue> {
     this.value = value;
   }
 
+  @Override
+  protected int parseUnitLabel(String unitLabel) {
+    if (device.getLanguage().getUnits().matches(UnitTranslation.OFF_ON, unitLabel)) {
+      return DigitalUnit.OFF_ON.getIndex();
+    }
+    return DigitalUnit.CLOSE_OPEN.getIndex();
+  }
 }

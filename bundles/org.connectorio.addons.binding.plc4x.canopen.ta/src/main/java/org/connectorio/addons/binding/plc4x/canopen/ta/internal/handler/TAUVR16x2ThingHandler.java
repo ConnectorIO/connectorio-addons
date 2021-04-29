@@ -42,11 +42,7 @@ import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAValue;
 import org.connectorio.addons.binding.plc4x.handler.Plc4xThingHandler;
 import org.connectorio.addons.binding.plc4x.handler.base.PollingPlc4xThingHandler;
-import org.connectorio.plc4x.decorator.CompositeDecorator;
-import org.connectorio.plc4x.decorator.DecoratorConnection;
 import org.connectorio.plc4x.decorator.phase.Phase;
-import org.connectorio.plc4x.decorator.phase.PhaseDecorator;
-import org.connectorio.plc4x.decorator.retry.RetryDecorator;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.thing.ChannelUID;
@@ -63,6 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tec.uom.se.AbstractUnit;
 
+@Deprecated
 public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnection, CoBridgeHandler<?>, CoNodeConfig>
   implements Plc4xThingHandler<PlcConnection, CoBridgeHandler<?>, CoNodeConfig>, Consumer<TAObject> {
 
@@ -198,7 +195,7 @@ public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnectio
         properties.put("unit", unit.name());
       } else {
         logger.warn("Received output with unsupported digital unit {} ({}), falling back to basic ON/OFF unit", output.getUnit(), Integer.toHexString(output.getUnit()));
-        properties.put("unit", DigitalUnit.ON_OFF.name());
+        properties.put("unit", DigitalUnit.OFF_ON.name());
       }
     }
     Configuration configuration = new Configuration(properties);

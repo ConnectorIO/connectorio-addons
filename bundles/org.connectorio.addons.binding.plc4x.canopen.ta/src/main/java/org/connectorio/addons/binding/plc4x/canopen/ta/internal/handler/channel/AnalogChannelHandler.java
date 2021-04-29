@@ -19,10 +19,8 @@ package org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.channel
 
 import javax.measure.Quantity;
 import javax.measure.UnitConverter;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogChannelConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogObjectConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.TABaseObjectThingHandler;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.TADevice;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TAAnalogInput;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TAAnalogOutput;
@@ -30,7 +28,6 @@ import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.AnalogValue;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.Value;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.thing.Channel;
-import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;

@@ -27,8 +27,8 @@ import org.openhab.core.types.State;
 
 public enum DigitalUnit implements TAUnit {
 
-  /* 43 digital */ OPEN_CLOSED (43, OpenClosedType.CLOSED, OpenClosedType.OPEN),
-  /* 44 digital */ ON_OFF (44, OnOffType.OFF, OnOffType.ON),
+  /* 43 digital */ CLOSE_OPEN(43, OpenClosedType.CLOSED, OpenClosedType.OPEN),
+  /* 44 digital */ OFF_ON(44, OnOffType.OFF, OnOffType.ON),
   /* 47 digital */ UP_DOWN (47, OnOffType.OFF /* STOP ? */, OnOffType.ON, OnOffType.OFF);
 
   private final static Map<Integer, DigitalUnit> UNIT_MAP = Arrays.stream(values()).collect(Collectors.toMap(

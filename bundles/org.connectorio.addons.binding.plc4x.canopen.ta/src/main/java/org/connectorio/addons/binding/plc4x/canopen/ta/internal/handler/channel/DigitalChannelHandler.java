@@ -19,7 +19,6 @@ package org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.channel
 
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalObjectConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
-import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.TABaseObjectThingHandler;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.TADevice;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TADigitalInput;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TADigitalOutput;
@@ -27,7 +26,6 @@ import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.DigitalValue;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.OpenClosedType;
 import org.openhab.core.thing.Channel;
-import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
@@ -40,17 +38,17 @@ public class DigitalChannelHandler extends BaseChannelHandler<DigitalValue, Digi
 
   @Override
   protected DigitalUnit determineUnit(DigitalObjectConfig thing) {
-    return DigitalUnit.OPEN_CLOSED;
+    return DigitalUnit.CLOSE_OPEN;
   }
 
   @Override
   protected void registerInput(int writeObjectIndex, TADevice device) {
-    device.addDigitalInput(writeObjectIndex, new TADigitalInput(device, writeObjectIndex, DigitalUnit.OPEN_CLOSED.getIndex()));
+    device.addDigitalInput(writeObjectIndex, new TADigitalInput(device, writeObjectIndex, DigitalUnit.CLOSE_OPEN.getIndex()));
   }
 
   @Override
   protected void registerOutput(int readObjectIndex, TADevice device) {
-    device.addDigitalOutput(readObjectIndex, new TADigitalOutput(device, readObjectIndex, DigitalUnit.OPEN_CLOSED.getIndex(), false));
+    device.addDigitalOutput(readObjectIndex, new TADigitalOutput(device, readObjectIndex, DigitalUnit.CLOSE_OPEN.getIndex(), false));
   }
 
   protected DigitalValue createValue(Command command) {

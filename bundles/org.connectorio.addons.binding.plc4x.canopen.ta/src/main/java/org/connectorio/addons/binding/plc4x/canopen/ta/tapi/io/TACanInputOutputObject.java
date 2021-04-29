@@ -17,24 +17,22 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io;
 
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.TACanString;
-import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.TACanStringPointer;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.TADevice;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class TACanInputOutputObject<T extends Value> {
 
-  private final TADevice device;
-  private final int baseIndex;
-  private final int index;
-  private final int unit;
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  protected final TADevice device;
+  protected final int baseIndex;
+  protected final int index;
+  protected int unit;
 
   private TACanString name;
-  private TACanStringPointer sourceType;
-  private TACanStringPointer sourceObject;
-  private TACanStringPointer sourceVariable;
 
   public TACanInputOutputObject(TADevice device, boolean reload, int index, int unit) {
     this(device, reload, 0x0000, index, unit);
@@ -48,11 +46,11 @@ public abstract class TACanInputOutputObject<T extends Value> {
 
     if (reload) {
       this.name = new TACanString(device.getNode(), (short) (baseIndex + 0x0F), (short) (index - 1));
-      this.sourceType = new TACanStringPointer(device.getNode(), baseIndex + 0x2000 + 0x50, index - 1);
-      this.sourceObject = new TACanStringPointer(device.getNode(), baseIndex + 0x2000 + 0x51, index - 1);
-      this.sourceVariable = new TACanStringPointer(device.getNode(), baseIndex + 0x2000 + 0x52, index - 1);
+      reload();
     }
   }
+
+  protected abstract void reload();
 
   public CompletableFuture<String> getName() {
     return name.toFuture();
@@ -66,8 +64,12 @@ public abstract class TACanInputOutputObject<T extends Value> {
     return unit;
   }
 
+  public void setUnit(int unit) {
+    this.unit = unit;
+  }
+
   public String toString() {
-    return getClass().getSimpleName() + "[" + index + "] unit=" + unit + ", name=" + name;
+    return getClass().getSimpleName() + "[" + index + "] unit=" + getUnit() + ", name=" + name;
   }
 
   public abstract T getValue();
