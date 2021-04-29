@@ -36,6 +36,7 @@
 
   <modules>
     <module>org.connectorio.addons.automation.calculation</module>
+    <module>org.connectorio.addons.automation.calculation.shell</module>
     <module>org.connectorio.addons.automation.period</module>
     <module>org.connectorio.addons.binding</module>
     <module>org.connectorio.addons.binding.bacnet</module>
