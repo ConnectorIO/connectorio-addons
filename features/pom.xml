@@ -35,6 +35,7 @@
 
   <modules>
     <module>org.connectorio.addons.feature</module>
+    <module>org.connectorio.addons.feature.io</module>
     <module>org.connectorio.addons.feature.automation</module>
     <module>org.connectorio.addons.feature.bacnet</module>
     <module>org.connectorio.addons.feature.beckhoff</module>
