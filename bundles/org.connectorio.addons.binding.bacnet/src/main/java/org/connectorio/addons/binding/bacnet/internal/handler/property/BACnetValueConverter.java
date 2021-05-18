@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2019-2021 ConnectorIO Sp. z o.o.
  *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
