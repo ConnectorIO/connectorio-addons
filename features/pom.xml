@@ -35,15 +35,15 @@
 
   <modules>
     <module>org.connectorio.addons.feature</module>
-    <module>org.connectorio.addons.feature.io</module>
+    <module>org.connectorio.addons.feature.amsads</module>
     <module>org.connectorio.addons.feature.automation</module>
     <module>org.connectorio.addons.feature.bacnet</module>
-    <module>org.connectorio.addons.feature.beckhoff</module>
     <module>org.connectorio.addons.feature.canopen</module>
+    <module>org.connectorio.addons.feature.io</module>
     <module>org.connectorio.addons.feature.openhab</module>
     <module>org.connectorio.addons.feature.plc4x</module>
-    <module>org.connectorio.addons.feature.siemens</module>
     <module>org.connectorio.addons.feature.relayweblog</module>
+    <module>org.connectorio.addons.feature.s7</module>
   </modules>
 
 </project>

@@ -40,12 +40,12 @@
     <module>org.connectorio.addons.automation.period</module>
     <module>org.connectorio.addons.binding</module>
     <module>org.connectorio.addons.binding.bacnet</module>
-    <module>org.connectorio.addons.binding.plc4x.beckhoff</module>
     <module>org.connectorio.addons.binding.can</module>
+    <module>org.connectorio.addons.binding.plc4x</module>
+    <module>org.connectorio.addons.binding.plc4x.amsads</module>
     <module>org.connectorio.addons.binding.plc4x.canopen</module>
     <module>org.connectorio.addons.binding.plc4x.canopen.ta</module>
-    <module>org.connectorio.addons.binding.plc4x</module>
-    <module>org.connectorio.addons.binding.plc4x.siemens</module>
+    <module>org.connectorio.addons.binding.plc4x.s7</module>
     <module>org.connectorio.addons.binding.relayweblog</module>
     <module>org.connectorio.addons.binding.test</module>
     <module>org.connectorio.addons.compute.consumption</module>

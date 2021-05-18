@@ -77,7 +77,7 @@
     </dependency>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.binding.plc4x.beckhoff</artifactId>
+      <artifactId>org.connectorio.addons.binding.plc4x.amsads</artifactId>
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
@@ -95,7 +95,7 @@
     </dependency>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.binding.plc4x.siemens</artifactId>
+      <artifactId>org.connectorio.addons.binding.plc4x.s7</artifactId>
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>

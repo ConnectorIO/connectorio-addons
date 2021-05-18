@@ -111,8 +111,8 @@
     <bundle>mvn:org.apache.plc4x/plc4j-transport-socketcan/0.8.0-SNAPSHOT</bundle>
   </feature>
 
-  <feature name="plc4x-ads-driver" description="Apache PLC4X - Beckhoff ADS driver" version="${plc4x.version}">
-    <details>Implementation of protocol for Beckhoff twincat devices.</details>
+  <feature name="plc4x-ads-driver" description="Apache PLC4X - ADS driver" version="${plc4x.version}">
+    <details>Implementation of protocol for AMS/ADS/TwinCAT 2.x/3.x devices.</details>
     <feature prerequisite="true">wrap</feature>
     <feature>scr</feature>
     <feature>plc4x-api</feature>
@@ -153,8 +153,8 @@
     <bundle>mvn:org.apache.plc4x/plc4j-driver-modbus/${plc4x.version}</bundle>
   </feature>
 
-  <feature name="plc4x-s7-driver" description="Apache PLC4X - Siemens S7 driver" version="${plc4x.version}">
-    <details>Implementation of Siemens S7 protocol.</details>
+  <feature name="plc4x-s7-driver" description="Apache PLC4X - S7 driver" version="${plc4x.version}">
+    <details>Implementation of S7/Step7 protocol.</details>
     <feature>scr</feature>
     <feature>plc4x-api</feature>
     <feature>plc4x-transport-tcp</feature>
