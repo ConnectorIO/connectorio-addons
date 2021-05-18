@@ -23,7 +23,6 @@ import javax.servlet.ServletException;
 import org.connectorio.addons.io.proxy.http.RewriteCustomizer;
 import org.connectorio.addons.io.proxy.http.internal.customizer.NamedReferenceRewriteCustomizer;
 import org.connectorio.addons.io.proxy.http.internal.customizer.NoopRewriteCustomizer;
-import org.connectorio.addons.io.proxy.http.internal.customizer.WeblogRewriteCustomizer;
 import org.connectorio.addons.io.proxy.http.internal.servlet.SimpleHttpProxyServlet;
 import org.eclipse.jetty.proxy.AbstractProxyServlet;
 import org.osgi.framework.BundleContext;
@@ -77,13 +76,6 @@ public class Proxy {
 
     AbstractProxyServlet proxyServlet = new SimpleHttpProxyServlet(host, port, rewrite, customizer);
     httpService.registerServlet(path, proxyServlet, properties, httpService.createDefaultHttpContext());
-  }
-
-  private RewriteCustomizer customizer(String value) {
-    if (value.equalsIgnoreCase("weblog")) {
-      return new WeblogRewriteCustomizer();
-    }
-    return null;
   }
 
   public void unregister() {
