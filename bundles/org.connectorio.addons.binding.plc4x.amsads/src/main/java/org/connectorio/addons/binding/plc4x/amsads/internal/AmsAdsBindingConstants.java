@@ -28,7 +28,7 @@ import org.openhab.core.thing.ThingTypeUID;
  */
 public interface AmsAdsBindingConstants extends Plc4xBindingConstants {
 
-  String BINDING_ID = Plc4xBindingConstants.protocol("ads");
+  String BINDING_ID = Plc4xBindingConstants.protocol("amsads");
 
   ThingTypeUID THING_TYPE_AMS = new ThingTypeUID(BINDING_ID, "ams");
 

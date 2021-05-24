@@ -36,7 +36,7 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-@Component(immediate = true, service = DiscoveryService.class)
+@Component(immediate = true, service = {DiscoveryService.class, NetworkAddressChangeListener.class})
 public class AmsAdsInterfaceDiscoveryService extends AbstractDiscoveryService implements DiscoveryService, NetworkAddressChangeListener {
 
   private final NetworkAddressService networkAddressService;
@@ -45,6 +45,11 @@ public class AmsAdsInterfaceDiscoveryService extends AbstractDiscoveryService im
   public AmsAdsInterfaceDiscoveryService(@Reference NetworkAddressService networkAddressService) {
     super(Collections.singleton(AmsAdsBindingConstants.THING_TYPE_NETWORK), 60);
     this.networkAddressService = networkAddressService;
+  }
+
+  @Override
+  public boolean isBackgroundDiscoveryEnabled() {
+    return true;
   }
 
   @Override
