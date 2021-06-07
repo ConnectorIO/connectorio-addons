@@ -28,7 +28,7 @@
     <config-description>
       <parameter-group name="basic">
         <label>Required configuration</label>
-        <description>Below fields are required in order to read/write data from BACnet object.</description>
+        <description>Below fields are required in order to read/write data from Weblog.</description>
       </parameter-group>
 
       <parameter name="address" type="text" required="true">
@@ -65,11 +65,44 @@
     <config-description>
       <parameter-group name="basic">
         <label>Required configuration</label>
-        <description>Below fields are required in order to read/write data from BACnet object.</description>
+        <description>Below fields are required in order to read/write data from Weblog meter.</description>
       </parameter-group>
 
       <parameter name="id" type="text" required="true">
         <label>Meter identifier</label>
+        <description>Identifier assigned by weblog to device. Be aware - it is not a hardware identifier!</description>
+      </parameter>
+      <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+        <label>Refresh interval</label>
+        <description>
+          Time between next poll cycles. If no value is given polling is based on value set on weblog element.
+        </description>
+        <unitLabel>ms</unitLabel>
+        <default>0</default>
+      </parameter>
+    </config-description>
+  </thing-type>
+
+  <thing-type id="sub-meter">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="weblog"/>
+    </supported-bridge-type-refs>
+
+    <label>Sub Meter</label>
+    <description>M-Bus or Wireless M-Bus sub-meter data accessible through weblog interface (reported as sub-meter).</description>
+
+    <config-description>
+      <parameter-group name="basic">
+        <label>Required configuration</label>
+        <description>Below fields are required in order to read/write data from sub-meter recognized by Weblog.</description>
+      </parameter-group>
+
+      <parameter name="id" type="text" required="true">
+        <label>Meter identifier</label>
+        <description>Identifier assigned by primary meter to device this. This is a hardware identifier.</description>
+      </parameter>
+      <parameter name="parentId" type="text" required="true">
+        <label>Parent meter identifier</label>
         <description>Identifier assigned by weblog to device. Be aware - it is not a hardware identifier!</description>
       </parameter>
       <parameter name="refreshInterval" type="integer" groupName="basic" required="false">

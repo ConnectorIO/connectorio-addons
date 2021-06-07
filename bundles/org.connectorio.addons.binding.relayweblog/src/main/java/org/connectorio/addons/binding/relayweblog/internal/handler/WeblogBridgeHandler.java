@@ -17,15 +17,20 @@
  */
 package org.connectorio.addons.binding.relayweblog.internal.handler;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 import javax.ws.rs.client.ClientBuilder;
 import org.connectorio.addons.binding.handler.polling.common.BasePollingBridgeHandler;
 import org.connectorio.addons.binding.relayweblog.RelayWeblogBindingConstants;
+import org.connectorio.addons.binding.relayweblog.WeblogHandler;
+import org.connectorio.addons.binding.relayweblog.client.CachingWeblogClient;
+import org.connectorio.addons.binding.relayweblog.client.DirectWeblogClient;
+import org.connectorio.addons.binding.relayweblog.client.SubMeterWeblogClient;
 import org.connectorio.addons.binding.relayweblog.client.WeblogClient;
 import org.connectorio.addons.binding.relayweblog.internal.config.WeblogConfig;
 import org.connectorio.addons.binding.relayweblog.internal.discovery.WeblogMeterDiscoveryService;
+import org.connectorio.addons.binding.relayweblog.internal.discovery.WeblogSubMeterDiscoveryService;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.ThingStatus;
@@ -35,7 +40,7 @@ import org.openhab.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WeblogBridgeHandler extends BasePollingBridgeHandler<WeblogConfig> {
+public class WeblogBridgeHandler extends BasePollingBridgeHandler<WeblogConfig> implements WeblogHandler {
 
   private final ClientBuilder clientBuilder;
   private Logger logger = LoggerFactory.getLogger(WeblogBridgeHandler.class);
@@ -65,7 +70,7 @@ public class WeblogBridgeHandler extends BasePollingBridgeHandler<WeblogConfig> 
     }
 
     try {
-      client = new WeblogClient(clientBuilder, cfg.address, cfg.password);
+      client = new CachingWeblogClient(new SubMeterWeblogClient(new DirectWeblogClient(clientBuilder, cfg.address, cfg.password)));
       updateStatus(ThingStatus.ONLINE);
     } catch (Exception e) {
       updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
@@ -89,7 +94,7 @@ public class WeblogBridgeHandler extends BasePollingBridgeHandler<WeblogConfig> 
 
   @Override
   public Collection<Class<? extends ThingHandlerService>> getServices() {
-    return Collections.singleton(WeblogMeterDiscoveryService.class);
+    return Arrays.asList(WeblogMeterDiscoveryService.class, WeblogSubMeterDiscoveryService.class);
   }
 
 }

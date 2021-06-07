@@ -19,6 +19,7 @@ package org.connectorio.addons.binding.relayweblog.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Objects;
 
 public class MeterReading {
 
@@ -49,4 +50,21 @@ public class MeterReading {
     return "Meter Reading [" + name + "=" + value + (unit.isEmpty() ? "" : " (" + unit + ")") + "]";
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof MeterReading)) {
+      return false;
+    }
+    MeterReading reading = (MeterReading) o;
+    return Objects.equals(getName(), reading.getName()) && Objects.equals(getValue(), reading.getValue())
+      && Objects.equals(getUnit(), reading.getUnit());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getName(), getValue(), getUnit());
+  }
 }

@@ -35,7 +35,7 @@ public class RelayWeblogThingHandlerFactory extends BaseThingHandlerFactory impl
 
   @Activate
   public RelayWeblogThingHandlerFactory(@Reference ClientBuilder clientBuilder) {
-    super(RelayWeblogBindingConstants.WEBLOG_THING_TYPE, RelayWeblogBindingConstants.METER_THING_TYPE);
+    super(RelayWeblogBindingConstants.WEBLOG_THING_TYPE, RelayWeblogBindingConstants.METER_THING_TYPE, RelayWeblogBindingConstants.SUB_METER_THING_TYPE);
     this.clientBuilder = clientBuilder;
   }
 
@@ -49,6 +49,9 @@ public class RelayWeblogThingHandlerFactory extends BaseThingHandlerFactory impl
 
     if (RelayWeblogBindingConstants.METER_THING_TYPE.equals(thing.getThingTypeUID())) {
       return new MeterThingHandler(thing);
+    }
+    if (RelayWeblogBindingConstants.SUB_METER_THING_TYPE.equals(thing.getThingTypeUID())) {
+      return new SubMeterThingHandler(thing);
     }
 
     return null;

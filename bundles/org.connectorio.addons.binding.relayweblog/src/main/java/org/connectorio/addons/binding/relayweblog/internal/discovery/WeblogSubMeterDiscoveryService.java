@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Optional;
 import org.connectorio.addons.binding.relayweblog.RelayWeblogBindingConstants;
 import org.connectorio.addons.binding.relayweblog.client.dto.MeterInfo;
+import org.connectorio.addons.binding.relayweblog.client.dto.MeterReading;
+import org.connectorio.addons.binding.relayweblog.client.dto.SubMeterReading;
 import org.connectorio.addons.binding.relayweblog.internal.handler.WeblogBridgeHandler;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
@@ -34,12 +36,12 @@ import org.openhab.core.thing.ThingUID;
 import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.binding.ThingHandlerService;
 
-public class WeblogMeterDiscoveryService extends AbstractDiscoveryService implements ThingHandlerService {
+public class WeblogSubMeterDiscoveryService extends AbstractDiscoveryService implements ThingHandlerService {
 
   private WeblogBridgeHandler handler;
 
-  public WeblogMeterDiscoveryService() {
-    super(Collections.singleton(RelayWeblogBindingConstants.METER_THING_TYPE), 30);
+  public WeblogSubMeterDiscoveryService() {
+    super(Collections.singleton(RelayWeblogBindingConstants.SUB_METER_THING_TYPE), 30);
   }
 
   @Override
@@ -48,28 +50,47 @@ public class WeblogMeterDiscoveryService extends AbstractDiscoveryService implem
       .ifPresent(client -> {
         List<MeterInfo> meters = client.getMeters();
         for (MeterInfo meter : meters) {
-          ThingUID id = new ThingUID(RelayWeblogBindingConstants.METER_THING_TYPE, handler.getThing().getUID(), meter.getIdentifier());
-          DiscoveryResult result = DiscoveryResultBuilder.create(id)
-            .withBridge(handler.getThing().getUID())
-            .withRepresentationProperty(RelayWeblogBindingConstants.PROPERTY_METER_ID)
-            .withProperty("INT_NAME", meter.getIntName())
-            .withProperty("GROUP", meter.getGroup())
-            .withProperty("TXT1", meter.getText1())
-            .withProperty("TXT2", meter.getText1())
-            .withProperty(Thing.PROPERTY_VENDOR, meter.getManufacturer())
-            .withProperty(Thing.PROPERTY_HARDWARE_VERSION, meter.getVersion())
-            .withProperty(RelayWeblogBindingConstants.PROPERTY_METER_ID, meter.getId())
-            .withProperty(RelayWeblogBindingConstants.PROPERTY_METER_IDENTIFIER, meter.getIdentifier())
-            .withProperty(RelayWeblogBindingConstants.PROPERTY_METER_MEDIUM, meter.getMedium())
-            .withLabel(createLabel(meter))
-            .build();
-          thingDiscovered(result);
+          List<MeterReading> readings = client.getReadings(meter.getId());
+          int subMeterIndex = 0;
+          String subMeterId = null;
+          String parentSerialNumber = null;
+          for (MeterReading reading : readings) {
+            if (RelayWeblogBindingConstants.FABRICATION_IDENTIFIER_FIELD.equals(reading.getName())) {
+              parentSerialNumber = reading.getValue();
+            }
+            if (reading instanceof SubMeterReading) {
+              SubMeterReading subMeterReading = (SubMeterReading) reading;
+              if (subMeterId == null || !subMeterId.equals(subMeterReading.getSubMeterId())) {
+                subMeterIndex++;
+              }
+              subMeterId = subMeterReading.getSubMeterId();
+              ThingUID id = new ThingUID(RelayWeblogBindingConstants.SUB_METER_THING_TYPE, handler.getThing().getUID(), subMeterId);
+              DiscoveryResult result = DiscoveryResultBuilder.create(id)
+                .withBridge(handler.getThing().getUID())
+                .withRepresentationProperty(RelayWeblogBindingConstants.PROPERTY_METER_ID)
+                .withProperty("INT_NAME", meter.getIntName())
+                .withProperty("GROUP", meter.getGroup())
+                .withProperty("TXT1", meter.getText1())
+                .withProperty("TXT2", meter.getText1())
+                .withProperty(Thing.PROPERTY_VENDOR, meter.getManufacturer())
+                .withProperty(Thing.PROPERTY_HARDWARE_VERSION, meter.getVersion())
+                .withProperty(RelayWeblogBindingConstants.PROPERTY_METER_ID, subMeterId)
+                .withProperty(RelayWeblogBindingConstants.PROPERTY_PARENT_ID, meter.getId())
+                .withProperty(RelayWeblogBindingConstants.PROPERTY_PARENT_IDENTIFIER, meter.getIdentifier())
+                .withProperty(RelayWeblogBindingConstants.PROPERTY_PARENT_SERIAL_NUMBER, parentSerialNumber)
+                .withProperty(RelayWeblogBindingConstants.PROPERTY_METER_IDENTIFIER, subMeterId)
+                .withProperty(RelayWeblogBindingConstants.PROPERTY_METER_INDEX, subMeterIndex)
+                .withLabel(createLabel(subMeterId, meter))
+                .build();
+              thingDiscovered(result);
+            }
+          }
         }
       });
   }
 
-  private String createLabel(MeterInfo meter) {
-    String label = meter.getMedium() + " " + meter.getManufacturer() + "@" + meter.getIdentifier();
+  private String createLabel(String subMeterId, MeterInfo meter) {
+    String label = "Sub meter " + subMeterId + " under " + meter.getManufacturer() + "@" + meter.getIdentifier();
     boolean suffix = false;
     if (meter.getText1() != null && !meter.getText1().isEmpty()) {
       label += " " + meter.getText1();

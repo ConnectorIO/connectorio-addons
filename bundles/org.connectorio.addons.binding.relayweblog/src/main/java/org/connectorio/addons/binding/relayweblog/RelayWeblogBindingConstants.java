@@ -28,9 +28,11 @@ public interface RelayWeblogBindingConstants extends BaseBindingConstants {
 
   String WEBLOG_THING = "weblog";
   String METER_THING = "meter";
+  String SUB_METER_THING = "sub-meter";
 
   ThingTypeUID WEBLOG_THING_TYPE = new ThingTypeUID(BINDING_ID, WEBLOG_THING);
   ThingTypeUID METER_THING_TYPE = new ThingTypeUID(BINDING_ID, METER_THING);
+  ThingTypeUID SUB_METER_THING_TYPE = new ThingTypeUID(BINDING_ID, SUB_METER_THING);
 
   // five minutes
   Long DEFAULT_POLLING_INTERVAL = 300_000L;
@@ -43,4 +45,21 @@ public interface RelayWeblogBindingConstants extends BaseBindingConstants {
   static ChannelTypeUID channelType(Class<? extends Quantity<?>> type) {
     return new ChannelTypeUID(BINDING_ID, type.getSimpleName().toLowerCase());
   }
+
+  String ENHANCED_IDENTIFICATION_FIELD = "(Enhanced) identification";
+  String FABRICATION_IDENTIFIER_FIELD = "Fabrication number";
+  String DATE_AND_TIME_FIELD = "Date and time";
+  String ERROR_FLAGS_FIELD = "Error flags";
+
+
+  // custom thing properties
+  String PROPERTY_METER_ID = "id";
+  String PROPERTY_METER_IDENTIFIER = "meter.identifier";
+  String PROPERTY_METER_MEDIUM = "meter.medium";
+  String PROPERTY_METER_INDEX = "meter.index";
+
+  String PROPERTY_PARENT_ID = "parentId";
+  String PROPERTY_PARENT_IDENTIFIER = "parentIdentifier";
+  String PROPERTY_PARENT_SERIAL_NUMBER = "parentSerialNumber";
+
 }

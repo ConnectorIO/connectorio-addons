@@ -23,19 +23,21 @@ import java.util.Map;
 import org.connectorio.addons.binding.relayweblog.RelayWeblogBindingConstants;
 import org.connectorio.addons.binding.relayweblog.client.WeblogClient;
 import org.connectorio.addons.binding.relayweblog.client.dto.MeterReading;
-import org.connectorio.addons.binding.relayweblog.client.dto.PrimaryMeterReading;
-import org.connectorio.addons.binding.relayweblog.internal.config.MeterConfig;
+import org.connectorio.addons.binding.relayweblog.client.dto.SubMeterReading;
+import org.connectorio.addons.binding.relayweblog.internal.config.SubMeterConfig;
 import org.openhab.core.thing.Thing;
 
-public class MeterThingHandler extends AbstractMeterThingHandler<WeblogBridgeHandler, MeterConfig> {
+public class SubMeterThingHandler extends AbstractMeterThingHandler<WeblogBridgeHandler, SubMeterConfig> {
 
-  public MeterThingHandler(Thing thing) {
+  public SubMeterThingHandler(Thing thing) {
     super(thing);
   }
 
+  @Override
   protected Map<String, String> properties(Thing thing, List<MeterReading> readings) {
     Map<String, String> props = new LinkedHashMap<>(thing.getProperties());
-    find(readings, RelayWeblogBindingConstants.FABRICATION_IDENTIFIER_FIELD).ifPresent(val -> props.put(Thing.PROPERTY_SERIAL_NUMBER, val.getValue().trim()));
+    find(readings, RelayWeblogBindingConstants.ENHANCED_IDENTIFICATION_FIELD).ifPresent(val -> props.put(Thing.PROPERTY_SERIAL_NUMBER, val.getValue().trim()));
+    find(readings, RelayWeblogBindingConstants.FABRICATION_IDENTIFIER_FIELD).ifPresent(val -> props.put(RelayWeblogBindingConstants.PROPERTY_PARENT_SERIAL_NUMBER, val.getValue().trim()));
     find(readings, "Model/Version").ifPresent(val -> props.put(Thing.PROPERTY_MODEL_ID, val.getValue().trim()));
     find(readings, "Hardware version number").ifPresent(val -> props.put(Thing.PROPERTY_HARDWARE_VERSION, val.getValue().trim()));
     find(readings, "Other software version number").ifPresent(val -> props.put(Thing.PROPERTY_FIRMWARE_VERSION, val.getValue().trim()));
@@ -43,13 +45,13 @@ public class MeterThingHandler extends AbstractMeterThingHandler<WeblogBridgeHan
   }
 
   @Override
-  protected List<MeterReading> readOut(WeblogClient client, MeterConfig config) {
-    return client.getReadings(config.id);
+  protected List<MeterReading> readOut(WeblogClient client, SubMeterConfig config) {
+    return client.getReadings(config.parentId);
   }
 
   @Override
   protected boolean acceptable(MeterReading reading) {
-    return reading instanceof PrimaryMeterReading;
+    return reading instanceof SubMeterReading && (config != null && ((SubMeterReading) reading).getSubMeterId().equals(config.id));
   }
 
 }
