@@ -26,7 +26,7 @@ import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUni
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import tec.uom.se.quantity.Quantities;
 
-public class RASValue extends AnalogValue {
+public class RASValue extends ShortAnalogValue {
 
   private final int mode;
 
@@ -40,7 +40,7 @@ public class RASValue extends AnalogValue {
   }
 
   @Override
-  public short encode() {
+  public Short encode() {
     double value = getValue().getValue().doubleValue();
 
     int val = (int) (Math.abs(value) / 0.1);

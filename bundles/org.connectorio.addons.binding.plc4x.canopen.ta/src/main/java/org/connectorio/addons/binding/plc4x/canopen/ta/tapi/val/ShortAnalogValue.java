@@ -17,32 +17,24 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import javax.measure.Quantity;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
-import org.junit.jupiter.api.Test;
-import tec.uom.se.ComparableQuantity;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import tec.uom.se.quantity.Quantities;
 
-class AnalogValueTest {
+public class ShortAnalogValue extends BaseAnalogValue<Short> {
 
-  @Test
-  void testLinearRepresentation() {
-    ShortAnalogValue value = new ShortAnalogValue((short) 0x1FF, AnalogUnit.CELSIUS);
-    short encode = value.encode();
-
-    ShortAnalogValue value2 = new ShortAnalogValue(encode, AnalogUnit.CELSIUS);
-    assertThat(value2).isEqualTo(value);
+  public ShortAnalogValue(short value, TAUnit unit) {
+    super(parse(value, unit), unit);
   }
 
-  @Test
-  void testLinearQuantityRepresentation() {
-    ComparableQuantity<?> quantity = Quantities.getQuantity(5, AnalogUnit.CELSIUS.getUnit());
-    AnalogValue value = new AnalogValue(quantity, AnalogUnit.CELSIUS);
-    short encode = value.encode();
+  public ShortAnalogValue(Quantity<?> value, TAUnit unit) {
+    super(value, unit);
+  }
 
-    AnalogValue value2 = new AnalogValue(encode, AnalogUnit.CELSIUS);
-    assertThat(value2).isEqualTo(value);
+  @Override
+  protected Short cast(double value) {
+    return (short) value;
   }
 
 }
