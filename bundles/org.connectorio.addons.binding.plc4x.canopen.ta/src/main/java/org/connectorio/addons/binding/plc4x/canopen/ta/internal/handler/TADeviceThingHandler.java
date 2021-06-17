@@ -176,6 +176,7 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
     if (taDevice != null) {
       logger.info("Shutting down handler for device {}", taDevice);
       taDevice.removeStatusCallback(this);
+      taDevice.close();
       taDevice = null;
     }
 
