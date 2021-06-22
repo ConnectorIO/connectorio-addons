@@ -47,20 +47,20 @@ public class ReadWriteBufferTest {
   @Test
   void testReadCelsius33() throws Exception {
     byte[] data = {74, 1};
-    AnalogValue value = new AnalogValue((short) 330, AnalogUnit.CELSIUS);
+    AnalogValue value = new ShortAnalogValue((short) 330, AnalogUnit.CELSIUS);
     ReadBuffer readBuffer = new ReadBuffer(data, true);
     short raw = readBuffer.readShort(16);
-    AnalogValue read = new AnalogValue(raw, AnalogUnit.CELSIUS);
+    AnalogValue read = new ShortAnalogValue(raw, AnalogUnit.CELSIUS);
     assertThat(read).isEqualTo(value);
   }
 
   @Test
   void testReadCelsius100() throws Exception {
     byte[] data = {-24, 3};
-    AnalogValue value = new AnalogValue((short) 1000, AnalogUnit.CELSIUS);
+    AnalogValue value = new ShortAnalogValue((short) 1000, AnalogUnit.CELSIUS);
     ReadBuffer readBuffer = new ReadBuffer(data, true);
     short raw = readBuffer.readShort(16);
-    AnalogValue read = new AnalogValue(raw, AnalogUnit.CELSIUS);
+    AnalogValue read = new ShortAnalogValue(raw, AnalogUnit.CELSIUS);
     assertThat(read).isEqualTo(value);
   }
 

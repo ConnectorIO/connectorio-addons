@@ -47,7 +47,7 @@ class PhaseDecoratorTest {
     latch.await();
   }
 
-  private void write(SimulatedConnection delegate, String phaseName, CountDownLatch start, CountDownLatch latch) throws InterruptedException, java.util.concurrent.ExecutionException {
+  private void write(SimulatedConnection delegate, String phaseName, CountDownLatch start, CountDownLatch latch) throws InterruptedException, ExecutionException {
     new Thread(new Runnable() {
       @Override
       public void run() {

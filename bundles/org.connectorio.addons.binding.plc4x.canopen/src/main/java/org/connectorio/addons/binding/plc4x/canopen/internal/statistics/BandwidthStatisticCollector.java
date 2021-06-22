@@ -61,7 +61,11 @@ class BandwidthStatisticCollector extends SysfsReader<DataAmount> implements CAN
       Quantity<DataAmount> difference = count.subtract(value).to(Units.BIT);
 
       // twist bytes into bits and then divide by seconds between samples
-      return (Quantity<DataTransferRate>) difference.divide(Quantities.getQuantity(TimeUnit.MILLISECONDS.toSeconds(period), Units.SECOND));
+      long timeSpan = TimeUnit.MILLISECONDS.toSeconds(period);
+      if (timeSpan > 0) {
+        return (Quantity<DataTransferRate>) difference.divide(Quantities.getQuantity(timeSpan, Units.SECOND));
+      }
+      return Quantities.getQuantity(0.0, Units.BIT_PER_SECOND);
     } finally {
       mark(count, time);
     }

@@ -23,8 +23,10 @@ import org.apache.plc4x.java.spi.generation.ReadBuffer;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.TADevice;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.BaseAnalogValue;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.ShortAnalogValue;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.Value;
 
-public class TAAnalogOutput extends TACanOutputObject<BaseAnalogValue<?>> {
+public class TAAnalogOutput extends TACanOutputObject<Value<?>> {
 
   private BaseAnalogValue<? extends Number> value;
   // force initial type to be Int to retrieve actual type used by controller via SDO request,
@@ -45,6 +47,10 @@ public class TAAnalogOutput extends TACanOutputObject<BaseAnalogValue<?>> {
     update(value);
   }
 
+  public void update(Value<?> value) {
+    this.value = (BaseAnalogValue<? extends Number>) value;
+  }
+
   public void update(short raw) {
     if (type != 0x50) { // value kept by controller is not encoded as Int
       this.value = AnalogUnit.valueOf(getUnit()).parse(raw);
@@ -59,28 +65,46 @@ public class TAAnalogOutput extends TACanOutputObject<BaseAnalogValue<?>> {
 
   void update(byte[] data) {
     try {
+      logger.trace("Encoded value for CAN Output {} is {}", this, Hex.encodeHexString(data));
       ReadBuffer buffer = new ReadBuffer(data, true);
-      byte type = buffer.readByte(8); // type
-      TAAnalogOutput.this.unit = buffer.readByte(8); // unit
-      int numericValue = parseNumber(type, data, buffer);
+      this.type = buffer.readByte(8); // type
+      this.unit = buffer.readByte(8); // unit
+      int numericValue = parseNumber(buffer, data.length);
 
-      this.type = type;
-      this.value = AnalogUnit.valueOf(getUnit()).parse(numericValue);
-      logger.debug("Encoded value for CAN Output {} is {}, decoded as {}", TAAnalogOutput.this, Hex.encodeHexString(data), numericValue);
+      if (numericValue > Short.MIN_VALUE && numericValue < Short.MAX_VALUE) {
+        if (AnalogUnit.KILOWATT_HOUR.getIndex() != unit) {
+          // force handling value as a short
+          this.type = 0x30;
+        }
+      }
+
+      AnalogUnit analogUnit = AnalogUnit.valueOf(getUnit());
+      if (analogUnit != null) {
+        this.value = analogUnit.parse(numericValue);
+        logger.debug("Encoded value of CAN Output {}, decoded as {}, parsed to {}", this, numericValue, value);
+        return;
+      }
+
+      // most likely a digital unit which is written using analog channel
+      this.value = new ShortAnalogValue(Integer.valueOf(numericValue).shortValue(), AnalogUnit.DIMENSIONLESS);
     } catch (Exception e) {
       logger.error("Failed to parse answer", e);
     }
   }
 
-  private int parseNumber(byte type, byte[] data, ReadBuffer buffer) throws ParseException {
-    if (type == 0x50) {
+  private int parseNumber(ReadBuffer buffer, int length) throws ParseException {
+    if (length == 2) {
+      return 0;
+    }
+    if (type == 0x50 && length >= 6) {
       return buffer.readInt(32);
     }
-    if (data.length == 4) { // type + unit + short
+    if (length >= 4) { // type + unit + short + ???
       return buffer.readShort(16);
     }
 
-    return buffer.readInt(32);
+    logger.warn("Unsupported length {} of number block, assuming long type but truncating it to int", length - 2);
+    return (int) buffer.readLong(8 * (length - 2));
   }
 
   @Override

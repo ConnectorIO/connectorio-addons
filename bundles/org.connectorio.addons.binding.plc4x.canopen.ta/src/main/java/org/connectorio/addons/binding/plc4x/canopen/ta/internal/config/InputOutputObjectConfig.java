@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.config;
 
+import java.math.BigDecimal;
 import org.connectorio.addons.binding.config.Configuration;
 
 public class InputOutputObjectConfig implements Configuration {

@@ -25,6 +25,7 @@ import org.apache.plc4x.java.spi.generation.ReadBuffer;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoNode;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.AnalogValue;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.ShortAnalogValue;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +65,7 @@ public class TACanShort extends TACanValue<Value<?>> {
     if (array[0] == (byte) 0x30 || array[0] == (byte) 0xb0) {
       short unit = array[1];
       short value = array[2];
-      return new AnalogValue(value, AnalogUnit.valueOf(unit));
+      return new ShortAnalogValue(value, AnalogUnit.valueOf(unit));
     } else {
       logger.info("Failed to read short value from ta, received value {}", Hex.encodeHexString(array));
       throw new IllegalArgumentException("Unsupported value type " + Hex.encodeHexString(array));

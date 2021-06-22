@@ -25,6 +25,7 @@ import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.TADevice;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TAAnalogInput;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TAAnalogOutput;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.AnalogValue;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.IntAnalogValue;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.Value;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.thing.Channel;
@@ -45,28 +46,42 @@ public class AnalogChannelHandler extends BaseChannelHandler<AnalogValue, Analog
   }
 
   @Override
-  protected void registerInput(int writeObjectIndex, TADevice device) {
-    device.addAnalogInput(writeObjectIndex, new TAAnalogInput(device, writeObjectIndex, unit.getIndex()));
+  protected void registerInput(AnalogObjectConfig config, TADevice device) {
+    TAAnalogInput input = new TAAnalogInput(device, config.writeObjectIndex, unit.getIndex());
+    input.update(new IntAnalogValue(config.fallback, unit));
+    device.addAnalogInput(config.writeObjectIndex, input);
   }
 
   @Override
-  protected void registerOutput(int readObjectIndex, TADevice device) {
-    device.addAnalogOutput(readObjectIndex, new TAAnalogOutput(device, readObjectIndex, unit.getIndex(), (short) 0));
+  protected void registerOutput(AnalogObjectConfig config, TADevice device) {
+    AnalogValue value = new IntAnalogValue(config.fallback, config.unit);
+    TAAnalogOutput output = new TAAnalogOutput(device, config.readObjectIndex, unit.getIndex(), value.encode());
+    device.addAnalogOutput(config.readObjectIndex, output);
   }
 
   protected Value<?> createValue(Command command) {
+    logger.debug("Received command of type {} evaluated to {}", command.getClass(), command);
     if (command instanceof QuantityType) {
       QuantityType quantity = (QuantityType<?>) command;
 
-      UnitConverter converter = quantity.getUnit().getConverterTo(unit.getUnit());
-      if (converter != null) {
-        double convert = converter.convert(quantity.doubleValue());
-        return new AnalogValue(Quantities.getQuantity(convert, unit.getUnit()), unit);
+      if (quantity.getUnit().isCompatible(unit.getUnit())) {
+        logger.debug("Casting quantity to controller target unit {}", unit.getUnit());
+        UnitConverter converter = quantity.getUnit().getConverterTo(unit.getUnit());
+        if (converter != null) {
+          double convert = converter.convert(quantity.doubleValue());
+          logger.debug("Value converted to {}", convert);
+          return new IntAnalogValue(Quantities.getQuantity(convert, unit.getUnit()), unit);
+        }
+      } else {
+        double convert = quantity.doubleValue();
+        logger.debug("Incompatible units detected, converting value to decimal {}", convert);
+        return new IntAnalogValue(Quantities.getQuantity(convert, unit.getUnit()), unit);
       }
     }
 
     if (command instanceof Number) {
-      return new AnalogValue(Quantities.getQuantity((Number) command, unit.getUnit()), unit);
+      logger.debug("Received command is not quantity, but still a number {}", command);
+      return new IntAnalogValue(Quantities.getQuantity((Number) command, unit.getUnit()), unit);
     }
 
     logger.warn("Unsupported value type {}", command.getClass());

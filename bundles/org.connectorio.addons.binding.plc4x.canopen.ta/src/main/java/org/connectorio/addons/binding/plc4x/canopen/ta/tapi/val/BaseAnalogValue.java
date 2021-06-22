@@ -23,7 +23,7 @@ import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUni
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import tec.uom.se.quantity.Quantities;
 
-public abstract class BaseAnalogValue<T extends Number> implements Value<Quantity<?>> {
+public abstract class BaseAnalogValue<T extends Number> implements AnalogValue {
 
   private final Quantity<?> value;
   private final TAUnit unit;
@@ -42,16 +42,15 @@ public abstract class BaseAnalogValue<T extends Number> implements Value<Quantit
     return unit;
   }
 
-  public T encode() {
+  public short encode() {
     if (unit instanceof AnalogUnit) {
       AnalogUnit taUnit = (AnalogUnit) unit;
-      return cast((value.getValue().doubleValue() / taUnit.getScale()));
+      double scaledValue = value.getValue().doubleValue() / taUnit.getScale();
+      return Double.valueOf(scaledValue).shortValue();
     }
 
-    return null;
+    return 0;
   }
-
-  protected abstract T cast(double value);
 
   public String toString() {
     return getClass().getSimpleName() + " [" + value + ", unit=" + unit + "]";

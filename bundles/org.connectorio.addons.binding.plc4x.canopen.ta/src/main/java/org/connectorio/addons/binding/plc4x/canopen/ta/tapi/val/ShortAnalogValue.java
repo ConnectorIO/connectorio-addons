@@ -25,16 +25,11 @@ import tec.uom.se.quantity.Quantities;
 public class ShortAnalogValue extends BaseAnalogValue<Short> {
 
   public ShortAnalogValue(short value, TAUnit unit) {
-    super(parse(value, unit), unit);
+    this(parse(value, unit), unit);
   }
 
   public ShortAnalogValue(Quantity<?> value, TAUnit unit) {
     super(value, unit);
-  }
-
-  @Override
-  protected Short cast(double value) {
-    return (short) value;
   }
 
 }

@@ -17,8 +17,12 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.config;
 
+import java.math.BigDecimal;
+
 public class AnalogObjectConfig extends InputOutputObjectConfig {
 
   public AnalogUnit unit;
+
+  public BigDecimal fallback = BigDecimal.ZERO;
 
 }

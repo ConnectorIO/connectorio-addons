@@ -19,11 +19,13 @@ package org.connectorio.addons.binding.plc4x.canopen.ta.internal.provider;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import org.connectorio.addons.binding.plc4x.canopen.CANopenBindingConstants;
+import java.util.Optional;
+import org.apache.plc4x.java.spi.configuration.annotations.ConfigurationParameter;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.TACANopenBindingConstants;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
-import org.openhab.core.thing.ThingTypeUID;
+import org.openhab.core.config.core.ConfigDescriptionParameter;
+import org.openhab.core.config.core.ConfigDescriptionParameter.Type;
+import org.openhab.core.config.core.ConfigDescriptionParameterBuilder;
 import org.openhab.core.thing.type.ChannelTypeUID;
 import org.openhab.core.types.StateDescriptionFragment;
 import org.openhab.core.types.StateDescriptionFragmentBuilder;
@@ -68,6 +70,16 @@ public class ChannelTypeDef {
 
   public StateDescriptionFragment getStateDescriptionFragment() {
     return StateDescriptionFragmentBuilder.create().withPattern("%.1f %unit%").build();
+  }
+
+  public Optional<ConfigDescriptionParameter> getFallback() {
+    return Optional.of(createFallback(Type.DECIMAL).build());
+  }
+
+  protected ConfigDescriptionParameterBuilder createFallback(Type type) {
+    return ConfigDescriptionParameterBuilder.create("fallback", type)
+      .withLabel("Fallback value")
+      .withDescription("Value used to set initially on channel when communication is gone or system is restarted.");
   }
 
   private static String label(String dimension) {

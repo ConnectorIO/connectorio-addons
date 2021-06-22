@@ -19,4 +19,6 @@ package org.connectorio.addons.binding.plc4x.canopen.ta.internal.config;
 
 public class DigitalObjectConfig extends InputOutputObjectConfig {
 
+  public boolean fallback = false;
+
 }

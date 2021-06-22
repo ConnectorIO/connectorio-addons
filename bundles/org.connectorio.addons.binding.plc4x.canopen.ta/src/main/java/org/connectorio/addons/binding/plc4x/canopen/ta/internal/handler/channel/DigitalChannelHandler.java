@@ -42,13 +42,15 @@ public class DigitalChannelHandler extends BaseChannelHandler<DigitalValue, Digi
   }
 
   @Override
-  protected void registerInput(int writeObjectIndex, TADevice device) {
-    device.addDigitalInput(writeObjectIndex, new TADigitalInput(device, writeObjectIndex, DigitalUnit.CLOSE_OPEN.getIndex()));
+  protected void registerInput(DigitalObjectConfig config, TADevice device) {
+    TADigitalInput input = new TADigitalInput(device, config.writeObjectIndex, DigitalUnit.CLOSE_OPEN.getIndex());
+    input.update(new DigitalValue(config.fallback, DigitalUnit.CLOSE_OPEN));
+    device.addDigitalInput(config.writeObjectIndex, input);
   }
 
   @Override
-  protected void registerOutput(int readObjectIndex, TADevice device) {
-    device.addDigitalOutput(readObjectIndex, new TADigitalOutput(device, readObjectIndex, DigitalUnit.CLOSE_OPEN.getIndex(), false));
+  protected void registerOutput(DigitalObjectConfig config, TADevice device) {
+    device.addDigitalOutput(config.readObjectIndex, new TADigitalOutput(device, config.readObjectIndex, DigitalUnit.CLOSE_OPEN.getIndex(), config.fallback));
   }
 
   protected DigitalValue createValue(Command command) {

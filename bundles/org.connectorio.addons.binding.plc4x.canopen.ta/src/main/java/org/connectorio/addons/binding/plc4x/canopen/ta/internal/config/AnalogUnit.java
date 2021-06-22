@@ -46,7 +46,7 @@ public enum AnalogUnit implements TAUnit {
   /* 7  analog  */ KELVIN  (7, Units.KELVIN, 1),
   /* 8  analog  */ HUMIDITY  (8, Units.PERCENT, 0.1),
   /* 10 analog  */ KILOWATT (10, Units.WATT.multiply(1000), 0.1),
-  /* 11 analog  */ KILOWATT_HOUR (11, Units.KILOWATT_HOUR, 1),
+  /* 11 analog  */ KILOWATT_HOUR (11, Units.KILOWATT_HOUR, 0.1),
   /* 12 analog  */ MEGAWATT_HOUR (12, Units.MEGAWATT_HOUR, 1),
   /* 13 analog  */ VOLT  (13, Units.VOLT, 0.01),
   /* 14 analog  */ MILLI_AMPERE (14, Units.AMPERE.divide(1000), 0.1),
@@ -78,6 +78,7 @@ public enum AnalogUnit implements TAUnit {
   /* 40 analog  */ MILLIMETER_PER_MINUTE  (40, TAUnits.MILIMETRE.divide(Units.MINUTE), 1),
   /* 41 analog  */ MILLIMETER_PER_HOUR  (41, Units.MILLIMETRE_PER_HOUR, 1),
   /* 42 analog  */ MILLIMETER_PER_DAY  (42, TAUnits.MILIMETRE.divide(Units.DAY), 1),
+  /* 45 analog  */ RAS_MODE  (45, AbstractUnit.ONE, 1),
 
 //  /* 43 digital */ new DigitalUnit("Aus/Ein", "", "Aus", "Ein"));
 //  /* 44 digital */ new DigitalUnit(44, "Nein/Ja", "", "Nein", "Ja"));

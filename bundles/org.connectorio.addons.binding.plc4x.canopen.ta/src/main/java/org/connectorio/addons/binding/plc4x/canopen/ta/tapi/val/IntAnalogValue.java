@@ -17,17 +17,34 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val;
 
+import java.math.BigDecimal;
+import javax.measure.Quantity;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 
 public class IntAnalogValue extends BaseAnalogValue<Integer> {
 
-  public IntAnalogValue(int value, TAUnit unit) {
-    super(parse(value, unit), unit);
+  public IntAnalogValue(BigDecimal value, TAUnit unit) {
+    this(value.doubleValue(), unit);
   }
 
-  @Override
-  protected Integer cast(double value) {
-    return (int) value;
+  public IntAnalogValue(Double value, TAUnit unit) {
+    this(parse(value, unit), unit);
+  }
+
+  public IntAnalogValue(int value, TAUnit unit) {
+    this(parse(value, unit), unit);
+  }
+
+  public IntAnalogValue(Quantity<?> value, TAUnit unit) {
+    super(value, unit);
+  }
+
+  public static int parse(Double value, TAUnit unit) {
+    if (unit instanceof AnalogUnit) {
+      return (int) (value / ((AnalogUnit) unit).getScale());
+    }
+    return value.intValue();
   }
 
 }

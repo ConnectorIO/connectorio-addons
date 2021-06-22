@@ -58,12 +58,14 @@ public abstract class BaseChannelHandler<T extends Value<?>, U extends TAUnit, C
 
     unit = determineUnit(this.config);
     if (config.readObjectIndex != 0) {
-      registerOutput(config.readObjectIndex, device);
+      logger.debug("Registering a CAN output {} for {}", config.readObjectIndex, device);
+      registerOutput(config, device);
       valueCallback = new FilterValueCallback<>(this, config.readObjectIndex, valueType);
       device.addValueCallback(valueCallback);
     }
     if (config.writeObjectIndex != 0) {
-      registerInput(config.writeObjectIndex, device);
+      logger.debug("Registering a CAN input {} for {}", config.writeObjectIndex, device);
+      registerInput(config, device);
     }
   }
 
@@ -85,7 +87,13 @@ public abstract class BaseChannelHandler<T extends Value<?>, U extends TAUnit, C
     }
 
     // push update to controller
-    device.write(config.writeObjectIndex, createValue(command));
+    device.write(config.writeObjectIndex, createValue(command)).whenComplete((result, error) -> {
+      if (error == null) {
+        if (command instanceof State) {
+          callback.stateUpdated(channel.getUID(), (State) command);
+        }
+      }
+    });
   }
 
   @Override
@@ -101,8 +109,8 @@ public abstract class BaseChannelHandler<T extends Value<?>, U extends TAUnit, C
 
   protected abstract U determineUnit(C config);
 
-  protected abstract void registerInput(int writeObjectIndex, TADevice device);
-  protected abstract void registerOutput(int readObjectIndex, TADevice device);
+  protected abstract void registerInput(C config, TADevice device);
+  protected abstract void registerOutput(C config, TADevice device);
 
   protected abstract Value<?> createValue(Command command);
   protected abstract State createState(T value);

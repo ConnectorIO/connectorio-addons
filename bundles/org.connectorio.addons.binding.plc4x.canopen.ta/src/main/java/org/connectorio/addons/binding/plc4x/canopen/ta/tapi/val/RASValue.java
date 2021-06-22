@@ -40,7 +40,7 @@ public class RASValue extends ShortAnalogValue {
   }
 
   @Override
-  public Short encode() {
+  public short encode() {
     double value = getValue().getValue().doubleValue();
 
     int val = (int) (Math.abs(value) / 0.1);

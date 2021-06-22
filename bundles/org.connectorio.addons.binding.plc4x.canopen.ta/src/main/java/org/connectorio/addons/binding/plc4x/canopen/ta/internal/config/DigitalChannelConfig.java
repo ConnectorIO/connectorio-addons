@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.config;
 
+@Deprecated
 public class DigitalChannelConfig {
 
   public DigitalUnit unit;

@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
@@ -87,15 +88,23 @@ public class TAChannelTypeProvider implements ChannelTypeProvider, ConfigDescrip
       public StateDescriptionFragment getStateDescriptionFragment() {
         return StateDescriptionFragmentBuilder.create().withPattern("%s").build();
       }
+      @Override
+      public Optional<ConfigDescriptionParameter> getFallback() {
+        return Optional.of(createFallback(Type.BOOLEAN).build());
+      }
     },
     new ChannelTypeDef(TA_DIGITAL_CONTACT_CHANNEL_TYPE, "Contact", CLOSE_OPEN) {
       @Override
       public StateDescriptionFragment getStateDescriptionFragment() {
         return StateDescriptionFragmentBuilder.create().withPattern("%s").build();
       }
+      @Override
+      public Optional<ConfigDescriptionParameter> getFallback() {
+        return Optional.of(createFallback(Type.BOOLEAN).build());
+      }
     },
     new ChannelTypeDef(TA_ANALOG_RAS_TEMPERATURE_CHANNEL_TYPE, "Number:Temperature", TEMPERATURE_REGULATOR),
-    new ChannelTypeDef(TA_ANALOG_RAS_MODE_CHANNEL_TYPE, "Number", "Mode", TEMPERATURE_REGULATOR) {
+    new ChannelTypeDef(TA_ANALOG_RAS_MODE_CHANNEL_TYPE, "Number", "Regulator Mode", TEMPERATURE_REGULATOR) {
       @Override
       public StateDescriptionFragment getStateDescriptionFragment() {
         return StateDescriptionFragmentBuilder.create()
@@ -107,6 +116,42 @@ public class TAChannelTypeProvider implements ChannelTypeProvider, ConfigDescrip
           .withMinimum(BigDecimal.ZERO).withMaximum(BigDecimal.valueOf(3))
           .withStep(BigDecimal.ONE)
           .build();
+      }
+
+      @Override
+      public Optional<ConfigDescriptionParameter> getFallback() {
+        ConfigDescriptionParameter fallback = createFallback(Type.INTEGER).withOptions(Arrays.asList(
+          new ParameterOption("0", "AUTO"),
+          new ParameterOption("1", "NORMAL"),
+          new ParameterOption("2", "LOWERED"),
+          new ParameterOption("3", "STANDBY")
+        )).build();
+        return Optional.of(fallback);
+      }
+    },
+    new ChannelTypeDef(TA_ANALOG_RAS_MODE_CHANNEL_TYPE, "Number", "Regulator Mode", RAS_MODE) {
+      @Override
+      public StateDescriptionFragment getStateDescriptionFragment() {
+        return StateDescriptionFragmentBuilder.create()
+          .withPattern("%s")
+          .withOption(new StateOption("0", "AUTO"))
+          .withOption(new StateOption("1", "NORMAL"))
+          .withOption(new StateOption("2", "LOWERED"))
+          .withOption(new StateOption("3", "STANDBY"))
+          .withMinimum(BigDecimal.ZERO).withMaximum(BigDecimal.valueOf(3))
+          .withStep(BigDecimal.ONE)
+          .build();
+      }
+
+      @Override
+      public Optional<ConfigDescriptionParameter> getFallback() {
+        ConfigDescriptionParameter fallback = createFallback(Type.INTEGER).withOptions(Arrays.asList(
+          new ParameterOption("0", "AUTO"),
+          new ParameterOption("1", "NORMAL"),
+          new ParameterOption("2", "LOWERED"),
+          new ParameterOption("3", "STANDBY")
+        )).build();
+        return Optional.of(fallback);
       }
     }
   ));
@@ -173,6 +218,7 @@ public class TAChannelTypeProvider implements ChannelTypeProvider, ConfigDescrip
       .build();
     builder.withParameter(readObjectIndex);
     builder.withParameter(writeObjectIndex);
+    def.getFallback().ifPresent(builder::withParameter);
 
     return builder.build();
   }

@@ -25,6 +25,7 @@ import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUni
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.TADevice;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TAAnalogInput;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TAAnalogOutput;
+import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.IntAnalogValue;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.RASValue;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.QuantityType;
@@ -52,13 +53,19 @@ public class RASChannelHandler extends BaseChannelHandler<RASValue, AnalogUnit, 
   }
 
   @Override
-  protected void registerInput(int writeObjectIndex, TADevice device) {
-    device.addAnalogInput(writeObjectIndex, new TAAnalogInput(device, (short) writeObjectIndex, (short) AnalogUnit.TEMPERATURE_REGULATOR.getIndex()));
+  protected void registerInput(AnalogObjectConfig config, TADevice device) {
+    RASValue ras = createFallback(config);
+    TAAnalogInput input = new TAAnalogInput(device, (short) config.writeObjectIndex, (short) AnalogUnit.TEMPERATURE_REGULATOR.getIndex());
+    input.update(ras);
+    device.addAnalogInput(config.writeObjectIndex, input);
   }
 
   @Override
-  protected void registerOutput(int readObjectIndex, TADevice device) {
-    device.addAnalogOutput(readObjectIndex, new TAAnalogOutput(device, readObjectIndex, AnalogUnit.TEMPERATURE_REGULATOR.getIndex(), (short) 0));
+  protected void registerOutput(AnalogObjectConfig config, TADevice device) {
+    RASValue ras = createFallback(config);
+    TAAnalogOutput output = new TAAnalogOutput(device, config.readObjectIndex, AnalogUnit.TEMPERATURE_REGULATOR.getIndex(), ras.encode());
+    output.update(ras);
+    device.addAnalogOutput(config.readObjectIndex, output);
   }
 
   @Override
@@ -96,14 +103,21 @@ public class RASChannelHandler extends BaseChannelHandler<RASValue, AnalogUnit, 
 
   @Override
   public void accept(int index, RASValue value) {
+    logger.debug("Received update of matching object {} with value {}", index, value);
+
     rasValue.set(value);
 
     if (callback != null) {
-      ChannelUID mode = new ChannelUID(channel.getUID().getThingUID(), TACANopenBindingConstants.TA_ANALOG_RAS_MODE + "#" + index);
-      ChannelUID temperature = new ChannelUID(channel.getUID().getThingUID(), TACANopenBindingConstants.TA_ANALOG_RAS_TEMPERATURE + "#" + index);
+      ChannelUID mode = new ChannelUID(channel.getUID().getThingUID(), TACANopenBindingConstants.TA_ANALOG_RAS_MODE + "#analog-output_" + index);
+      ChannelUID temperature = new ChannelUID(channel.getUID().getThingUID(), TACANopenBindingConstants.TA_ANALOG_RAS_TEMPERATURE + "#analog-output_" + index);
 
-      callback.stateUpdated(mode, createState(value));
-      callback.stateUpdated(temperature, createTemperatureState(value));
+      State modeState = createState(value);
+      State temperatureState = createTemperatureState(value);
+      callback.stateUpdated(mode, modeState);
+      callback.stateUpdated(temperature, temperatureState);
+
+      logger.debug("Updating mode channel {} to {} from RAS {} and temperature channel {} to {} from RAS {}.",
+        mode, modeState, value.getMode(), temperature, temperatureState, value.getValue());
     } else {
       logger.warn("Ignoring state update {} for {}, handler not ready", value, config.readObjectIndex);
     }
@@ -116,6 +130,11 @@ public class RASChannelHandler extends BaseChannelHandler<RASValue, AnalogUnit, 
   private State createTemperatureState(RASValue value) {
     Quantity<?> quantity = value.getValue();
     return QuantityType.valueOf(quantity.getValue().doubleValue(), quantity.getUnit());
+  }
+
+  private RASValue createFallback(AnalogObjectConfig config) {
+    IntAnalogValue value = new IntAnalogValue(config.fallback, AnalogUnit.CELSIUS);
+    return new RASValue(value.getValue(), 0, AnalogUnit.TEMPERATURE_REGULATOR);
   }
 
 }

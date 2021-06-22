@@ -126,14 +126,16 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
               builder = null;
             }
 
-            if (taDevice != null) {
+            if (taDevice != null && device != null) {
               logger.info("Completed initialization of node {}, created device {}.", config.nodeId, taDevice);
               updateStatus(ThingStatus.ONLINE);
               device.complete(taDevice);
             } else {
               logger.warn("Failed to initialize device node {}.", config.nodeId);
               updateStatus(ThingStatus.OFFLINE);
-              device.completeExceptionally(new TimeoutException());
+              if (device != null) {
+                device.completeExceptionally(new TimeoutException());
+              }
             }
 
             logger.info("Creating individual handlers for configured channels");
@@ -176,7 +178,7 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
     if (taDevice != null) {
       logger.info("Shutting down handler for device {}", taDevice);
       taDevice.removeStatusCallback(this);
-      taDevice.close();
+      //taDevice.close();
       taDevice = null;
     }
 
