@@ -97,7 +97,7 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
     getPlcConnection().thenAccept(connection -> {
       logger.debug("Activation of handler for CANopen node {}", config.nodeId);
 
-      final Phase phase = new Phase("Device " + config.nodeId + " initialization", 5_000);
+      final Phase phase = new Phase("Device " + config.nodeId + " initialization", 2_500);
       CompletableFuture<CoConnection> network = getBridgeHandler().get().getCoConnection(new PhaseDecorator(phase));
 
       network.thenAccept((networkConnection) -> {
@@ -107,6 +107,13 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
         this.taDevice.addStatusCallback(this);
 
         logger.info("Loaded device " + taDevice);
+        phase.onError(new Runnable() {
+          @Override
+          public void run() {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Could not retrieve device configuration.");
+            taDevice.logout();
+          }
+        });
         phase.onCompletion(new Runnable() {
           @Override
           public void run() {
@@ -178,7 +185,7 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
     if (taDevice != null) {
       logger.info("Shutting down handler for device {}", taDevice);
       taDevice.removeStatusCallback(this);
-      //taDevice.close();
+      taDevice.close();
       taDevice = null;
     }
 
@@ -217,7 +224,7 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
 
   @Override
   public void accept(Boolean status) {
-    logger.debug("Login/logout response {}, always reload {}, reload: {}", status, config.alwaysReload, config.reload);
+    logger.debug("Login/logout response {} for {}, always reload {}, reload: {}", status, taDevice, config.alwaysReload, config.reload);
     if (getThing().getStatus() == ThingStatus.ONLINE) {
       // if we become online there is no way to get offline.. only bus access errors can put us offline
       return;
