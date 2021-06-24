@@ -42,10 +42,12 @@ public class AnalogInputRunnable extends PublishingRunnable {
   @Override
   public void run() {
     logger.debug("Publishing state of {} analog inputs.", analogInput.size());
-    for (int index = 1; index <= analogInput.size(); index += 4) {
-      AnalogGroup group = new AnalogGroup(clientId, index);
-      logger.debug("Sending automated update of analog group {}", group);
-      sendAnalog(group);
+    for (int index = 1; index <= 32; index += 4) {
+      if (hasKeyInRange(analogInput, index, 4)) {
+        AnalogGroup group = new AnalogGroup(clientId, index);
+        logger.debug("Sending automated update of analog group {}", group);
+        sendAnalog(group);
+      }
     }
   }
 

@@ -47,7 +47,11 @@ public class InputUnitsRunnable extends PublishingRunnable {
   public void run() {
     logger.debug("Publishing information about units used in own outputs (inputs for other nodes).");
     try {
-      for (int index = 1; index <= analogInput.size(); index += 6) {
+      for (int index = 1; index <= 32; index += 6) {
+        if (!hasKeyInRange(analogInput, index, 6)) {
+          continue;
+        }
+
         WriteBuffer buffer = new WriteBuffer(8, true);
         buffer.writeUnsignedShort(8, (short) 1);  // first byte is static value
         buffer.writeUnsignedShort(8, (short) (index - 1)); // call count - 0x00..0x05 analog
@@ -67,7 +71,11 @@ public class InputUnitsRunnable extends PublishingRunnable {
         send(clientId + 0x40, CANOpenService.TRANSMIT_PDO_1, buffer);
       }
 
-      for (int index = 1; index <= digitalInput.size(); index += 6) {
+      for (int index = 1; index <= 32; index += 6) {
+        if (!hasKeyInRange(digitalInput, index, 6)) {
+          continue;
+        }
+
         WriteBuffer buffer = new WriteBuffer(8, true);
         buffer.writeUnsignedShort(8, (short) 1);
         buffer.writeUnsignedShort(8, (short) (6 + index - 1));  // call count - 0x06..0x0B digital

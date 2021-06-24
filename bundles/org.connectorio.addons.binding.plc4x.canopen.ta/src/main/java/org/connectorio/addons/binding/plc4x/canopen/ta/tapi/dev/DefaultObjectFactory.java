@@ -16,7 +16,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev;
-;
+
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TAAnalogOutput;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.io.TADigitalOutput;
 
