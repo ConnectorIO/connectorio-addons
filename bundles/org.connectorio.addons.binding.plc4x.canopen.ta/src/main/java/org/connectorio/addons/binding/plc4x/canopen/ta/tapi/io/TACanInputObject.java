@@ -79,6 +79,11 @@ public abstract class TACanInputObject<T extends Value> extends TACanInputOutput
     return super.getUnit();
   }
 
+  @Override
+  public int getUnit() {
+    return getConfiguredUnit();
+  }
+
   public CompletableFuture<InputConfig> getConfiguration() {
     return config;
   }

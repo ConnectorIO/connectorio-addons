@@ -129,7 +129,7 @@ public class TAChannelTypeProvider implements ChannelTypeProvider, ConfigDescrip
         return Optional.of(fallback);
       }
     },
-    new ChannelTypeDef(TA_ANALOG_RAS_MODE_CHANNEL_TYPE, "Number", "Regulator Mode", RAS_MODE) {
+    new ChannelTypeDef(TA_ANALOG_RAS_MODEL_SINGLE_CHANNEL_TYPE, "Number", "Regulator Mode", RAS_MODE) {
       @Override
       public StateDescriptionFragment getStateDescriptionFragment() {
         return StateDescriptionFragmentBuilder.create()

@@ -42,6 +42,8 @@ public interface TACANopenBindingConstants extends CANopenBindingConstants {
 
   String TA_ANALOG_RAS_MODE = TA_ANALOG_PREFIX + "-ras-mode";
   String TA_ANALOG_RAS_TEMPERATURE = TA_ANALOG_PREFIX + "-ras-temperature";
+  // ras switch without temperature
+  String TA_ANALOG_RAS_MODE_SINGLE = TA_ANALOG_PREFIX + "-ras-mode-single";
   String TA_ANALOG_TEMPERATURE = TA_ANALOG_PREFIX + "-temperature";
   String TA_ANALOG_LENGTH = TA_ANALOG_PREFIX + "-length";
   String TA_ANALOG_VOLUME = TA_ANALOG_PREFIX + "-volume";
@@ -68,6 +70,7 @@ public interface TACANopenBindingConstants extends CANopenBindingConstants {
 
   ChannelTypeUID TA_ANALOG_RAS_MODE_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, TA_ANALOG_RAS_MODE);
   ChannelTypeUID TA_ANALOG_RAS_TEMPERATURE_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, TA_ANALOG_RAS_TEMPERATURE);
+  ChannelTypeUID TA_ANALOG_RAS_MODEL_SINGLE_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, TA_ANALOG_RAS_MODE_SINGLE);
 
   ChannelTypeUID TA_ANALOG_TEMPERATURE_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, TA_ANALOG_TEMPERATURE);
   ChannelTypeUID TA_ANALOG_LENGTH_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, TA_ANALOG_LENGTH);
