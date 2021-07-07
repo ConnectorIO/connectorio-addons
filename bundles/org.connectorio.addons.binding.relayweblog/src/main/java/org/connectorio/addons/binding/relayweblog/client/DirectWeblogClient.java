@@ -69,7 +69,9 @@ public class DirectWeblogClient implements WeblogClient {
       .buildPost(Entity.json(new Login(passwordHash, "oQQlYwJ4rRfs6P6Z")));
     Session session = invocation.invoke(Session.class);
 
-    signingContext.setSession(session.getToken());
+    if (signingContext.getSession() == null) {
+      signingContext.setSession(session.getToken());
+    }
   }
 
   @Override
