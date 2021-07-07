@@ -15,15 +15,15 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.automation.calculation.internal.config;
+package org.connectorio.addons.binding.plc4x.canopen.ta.internal.config;
 
-public class VolatileCalculationConfig {
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogObjectConfig;
 
-  public String input;
-  public String output;
+public class AnalogOutputConfig extends AnalogObjectConfig {
 
-  public String toString() {
-    return "input=" + input + ", output=" + output;
-  }
+  /**
+   * Dispatch a read out request (SDO) when update notification (PDO) is emitted for this object.
+   */
+  public boolean fetchOnUpdate;
 
 }

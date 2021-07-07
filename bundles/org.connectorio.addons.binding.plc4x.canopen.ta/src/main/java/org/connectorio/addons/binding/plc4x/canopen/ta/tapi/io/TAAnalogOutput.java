@@ -52,10 +52,12 @@ public class TAAnalogOutput extends TACanOutputObject<Value<?>> {
   }
 
   public void update(short raw) {
-    if (type != 0x50) { // value kept by controller is not encoded as Int
-      this.value = AnalogUnit.valueOf(getUnit()).parse(raw);
-    } else {
-      fetch();
+    if (device.isInitialized()) {
+      if (type != 0x50) { // value kept by controller is not encoded as Int
+        this.value = AnalogUnit.valueOf(getUnit()).parse(raw);
+      } else {
+        fetch();
+      }
     }
   }
 

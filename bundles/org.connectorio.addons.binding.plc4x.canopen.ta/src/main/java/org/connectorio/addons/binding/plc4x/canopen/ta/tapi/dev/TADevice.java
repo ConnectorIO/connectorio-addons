@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.apache.commons.codec.binary.Hex;
@@ -38,6 +39,7 @@ import org.apache.plc4x.java.spi.values.PlcValues;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoNode;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DigitalUnit;
+import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.builder.linking.InputObjectLinkStrategy;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.TACanString;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.i18n.EnglishLanguage;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.i18n.I18n;
@@ -79,6 +81,7 @@ public abstract class TADevice {
   private final List<Consumer<Boolean>> statusCallbacks = new CopyOnWriteArrayList<>();
   private final List<ValueCallback> valueCallbacks = new CopyOnWriteArrayList<>();
   private final List<InOutCallback> inOutCallbacks = new CopyOnWriteArrayList<>();
+  private final AtomicBoolean initialized = new AtomicBoolean();
   private ScheduledExecutorService broadcaster;
 
   private /*final*/ TACanString name;
@@ -298,6 +301,14 @@ public abstract class TADevice {
 
   public CoNode getNode() {
     return node;
+  }
+
+  public boolean isInitialized() {
+    return initialized.get();
+  }
+
+  public void setInitialized(boolean initialized) {
+    this.initialized.set(initialized);
   }
 
   void updateAnalog(int index, short value) {

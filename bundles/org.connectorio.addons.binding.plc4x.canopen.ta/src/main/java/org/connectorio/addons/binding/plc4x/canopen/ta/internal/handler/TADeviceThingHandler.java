@@ -97,7 +97,7 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
     getPlcConnection().thenAccept(connection -> {
       logger.debug("Activation of handler for CANopen node {}", config.nodeId);
 
-      final Phase phase = new Phase("Device " + config.nodeId + " initialization", 2_500);
+      final Phase phase = new Phase("Device " + config.nodeId + " initialization", 5_000);
       CompletableFuture<CoConnection> network = getBridgeHandler().get().getCoConnection(new PhaseDecorator(phase));
 
       network.thenAccept((networkConnection) -> {
@@ -152,6 +152,7 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
               channelHandlers.put(channel.getUID(), handler);
             }
 
+            taDevice.setInitialized(true);
             taDevice.logout();
           }
         });

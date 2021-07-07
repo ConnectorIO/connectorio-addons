@@ -24,7 +24,6 @@ import javax.measure.Dimension;
 import javax.measure.Unit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.TAUnits;
-import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.AnalogValue;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.IntAnalogValue;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.RASValue;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.val.ShortAnalogValue;
@@ -32,7 +31,6 @@ import org.openhab.core.library.unit.MetricPrefix;
 import org.openhab.core.library.unit.SIUnits;
 import org.openhab.core.library.unit.Units;
 import tec.uom.se.AbstractUnit;
-import tec.uom.se.spi.Range;
 
 public enum AnalogUnit implements TAUnit {
 
@@ -68,16 +66,16 @@ public enum AnalogUnit implements TAUnit {
   /* 30 analog  */ HERTZ_M_SECOND  (30, Units.HERTZ.divide(tec.uom.se.unit.Units.METRE.divide(Units.SECOND)), 1),
   /* 31 analog  */ KILOWATT_PER_IMPULSE  (31, Units.KILOWATT_HOUR.divide(TAUnits.IMPULSE), 1),
   /* 32 analog  */ CUBICMETRE_PER_IMPULSE  (32, tec.uom.se.unit.Units.CUBIC_METRE.divide(TAUnits.IMPULSE), 1),
-  /* 33 analog  */ MILLIMETRE_PER_IMPULSE(33, TAUnits.MILIMETRE.divide(TAUnits.IMPULSE), 1),
+  /* 33 analog  */ MILLIMETRE_PER_IMPULSE(33, TAUnits.MILLIMETRE.divide(TAUnits.IMPULSE), 1),
   /* 34 analog  */ LITER_PER_IMPULSE  (34, Units.LITRE.divide(TAUnits.IMPULSE), 1),
   /* 35 analog  */ LITER_PER_DAY  (35, Units.LITRE.divide(Units.DAY), 1),
   /* 36 analog  */ METRE_PER_SECOND  (36, Units.METRE_PER_SECOND, 1),
   /* 37 analog  */ CUBICMETRE_PER_MINUTE  (37, Units.CUBICMETRE_PER_MINUTE, 1),
   /* 38 analog  */ CUBICMETRE_PER_HOUR  (38, Units.CUBICMETRE_PER_HOUR, 1),
   /* 39 analog  */ CUBICMETRE_PER_DAY  (39, Units.CUBICMETRE_PER_DAY, 1),
-  /* 40 analog  */ MILLIMETER_PER_MINUTE  (40, TAUnits.MILIMETRE.divide(Units.MINUTE), 1),
+  /* 40 analog  */ MILLIMETER_PER_MINUTE  (40, TAUnits.MILLIMETRE.divide(Units.MINUTE), 1),
   /* 41 analog  */ MILLIMETER_PER_HOUR  (41, Units.MILLIMETRE_PER_HOUR, 1),
-  /* 42 analog  */ MILLIMETER_PER_DAY  (42, TAUnits.MILIMETRE.divide(Units.DAY), 1),
+  /* 42 analog  */ MILLIMETER_PER_DAY  (42, TAUnits.MILLIMETRE.divide(Units.DAY), 1),
   /* 45 analog  */ RAS_MODE  (45, AbstractUnit.ONE, 1),
 
 //  /* 43 digital */ new DigitalUnit("Aus/Ein", "", "Aus", "Ein"));

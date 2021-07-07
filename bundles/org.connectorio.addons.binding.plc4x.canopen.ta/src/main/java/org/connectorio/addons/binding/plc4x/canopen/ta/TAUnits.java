@@ -30,7 +30,7 @@ import tec.uom.se.unit.TransformedUnit;
 public class TAUnits {
 
   public static final Unit<Dimensionless> IMPULSE = new TransformedUnit<>(AbstractUnit.ONE, AbstractConverter.IDENTITY);
-  public static final Unit<Length> MILIMETRE = MetricPrefix.MILLI(SIUnits.METRE);
+  public static final Unit<Length> MILLIMETRE = MetricPrefix.MILLI(SIUnits.METRE);
 
   static {
     SimpleUnitFormat.getInstance().label(IMPULSE, "Impl");
