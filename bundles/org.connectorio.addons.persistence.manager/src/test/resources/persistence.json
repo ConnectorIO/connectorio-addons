@@ -1,0 +1,33 @@
+{
+  "org.openhab.core.persistence.PersistenceServiceConfiguration":{
+    "config":[{
+      "@alias": "",
+        "items":[{
+          "all": ""
+        }], "strategies":[{
+          "strategy":[{ "@name": "restoreOnStartup" },{ "@name": "everyUpdate"}]}
+        ]
+    },{
+      "@alias": "itemCfg",
+        "items":[{
+          "item":{ "@name": "Sample_Item"}
+        }], "strategies":[{
+          "strategy":[{ "@name": "restoreOnStartup" },{ "@name": "everyUpdate"}]}
+        ]
+    },{
+      "@alias": "groupCfg",
+        "items":[{
+          "group":{ "@name": "Sample_Group"}} ],
+        "strategies":[{
+          "strategy":[{ "@name": "restoreOnStartup" },{ "@name": "everyUpdate"}]}
+        ]
+    }],
+    "defaults":[{
+      "strategy": { "@name": "everyChange" },
+      "cron":{ "@name": "everyHour", "$": "0 ? ? ?"}
+    }],
+    "strategies":[{
+      "strategy":{ "@name": "everyChange"}}
+    ]
+  }
+}

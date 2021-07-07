@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<service>
+  <config alias="">
+    <items>
+      <all/>
+    </items>
+    <strategies>
+      <strategy name="restoreOnStartup"/>
+      <strategy name="everyUpdate"/>
+    </strategies>
+  </config>
+  <config alias="itemCfg">
+    <items>
+      <item name="Sample_Item"/>
+    </items>
+    <strategies>
+      <strategy name="restoreOnStartup"/>
+      <strategy name="everyUpdate"/>
+    </strategies>
+  </config>
+  <config alias="groupCfg">
+    <items>
+      <group name="Sample_Group"/>
+    </items>
+    <strategies>
+      <strategy name="restoreOnStartup"/>
+      <strategy name="everyUpdate"/>
+    </strategies>
+  </config>
+  <defaults>
+    <strategy name="everyChange"/>
+    <strategy name="everyHour">0 ? ? ?</strategy>
+  </defaults>
+  <strategies>
+    <strategy name="everyChange"/>
+  </strategies>
+</service>
