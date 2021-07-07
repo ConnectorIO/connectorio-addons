@@ -35,9 +35,6 @@
   <description>Third party addons for openHAB.</description>
 
   <modules>
-    <module>org.connectorio.addons.automation.calculation</module>
-    <module>org.connectorio.addons.automation.calculation.shell</module>
-    <module>org.connectorio.addons.automation.period</module>
     <module>org.connectorio.addons.binding</module>
     <module>org.connectorio.addons.binding.bacnet</module>
     <module>org.connectorio.addons.binding.can</module>
@@ -48,9 +45,6 @@
     <module>org.connectorio.addons.binding.plc4x.s7</module>
     <module>org.connectorio.addons.binding.relayweblog</module>
     <module>org.connectorio.addons.binding.test</module>
-    <module>org.connectorio.addons.compute.consumption</module>
-    <module>org.connectorio.addons.compute.cycle</module>
-    <module>org.connectorio.addons.compute.efficiency</module>
     <module>org.connectorio.addons.io.proxy.http</module>
     <module>org.connectorio.addons.transformation.inverse</module>
     <module>org.connectorio.chrono</module>

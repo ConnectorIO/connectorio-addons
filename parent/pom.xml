@@ -84,30 +84,6 @@
         <artifactId>org.connectorio.plc4x.decorator.throttle</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.automation.calculation</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.automation.calculation</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.automation.period</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.automation.period</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
@@ -242,15 +218,15 @@
         <type>xml</type>
         <scope>provided</scope>
       </dependency>
+
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.feature.automation</artifactId>
+        <artifactId>org.connectorio.addons.feature</artifactId>
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
         <scope>provided</scope>
       </dependency>
-
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
@@ -260,28 +236,6 @@
         <type>xml</type>
         <scope>provided</scope>
       </dependency>
-
-      <dependency>
-        <groupId>org.connectorio.telemetry</groupId>
-        <artifactId>model</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.telemetry</groupId>
-        <artifactId>api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.telemetry.probe</groupId>
-        <artifactId>binding</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.telemetry</groupId>
-        <artifactId>spi</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
 
       <dependency>
         <groupId>org.slf4j</groupId>

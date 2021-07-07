@@ -36,7 +36,6 @@
   <modules>
     <module>org.connectorio.addons.feature</module>
     <module>org.connectorio.addons.feature.amsads</module>
-    <module>org.connectorio.addons.feature.automation</module>
     <module>org.connectorio.addons.feature.bacnet</module>
     <module>org.connectorio.addons.feature.canopen</module>
     <module>org.connectorio.addons.feature.io</module>

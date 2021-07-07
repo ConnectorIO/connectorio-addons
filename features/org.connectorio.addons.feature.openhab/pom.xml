@@ -47,13 +47,6 @@
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
-    <dependency>
-      <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.feature.automation</artifactId>
-      <scope>compile</scope>
-      <classifier>features</classifier>
-      <type>xml</type>
-    </dependency>
 
     <dependency>
       <groupId>org.connectorio.addons</groupId>
