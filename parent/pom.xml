@@ -221,15 +221,6 @@
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.feature</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-        <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.feature.plc4x</artifactId>
         <version>${project.version}</version>
         <classifier>features</classifier>
@@ -809,6 +800,10 @@
         <includes>
           <include>feature.xml</include>
         </includes>
+      </testResource>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
       </testResource>
     </testResources>
     <pluginManagement>
