@@ -8,6 +8,13 @@
       <strategy name="restoreOnStartup"/>
       <strategy name="everyUpdate"/>
     </strategies>
+    <filters>
+      <!--
+      these are exclusion filters which cause items matching below criteria to be excluded from above config.
+      -->
+      <hasTag name="Computed" />
+      <hasName pattern=".*?_([^Current]*)$" />
+    </filters>
   </config>
   <config alias="itemCfg">
     <items>

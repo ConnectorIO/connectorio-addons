@@ -19,25 +19,27 @@ package org.connectorio.addons.persistence.manager.internal.xml;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.SingleValueConverter;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import org.openhab.core.persistence.config.PersistenceAllConfig;
-import org.openhab.core.persistence.config.PersistenceItemConfig;
+import org.connectorio.addons.persistence.manager.HasNamePatternPersistenceFilter;
 
-class PersistenceAllConfigConverter implements Converter {
+public class HasNamePatternPersistenceFilterConverter implements Converter {
 
   @Override
   public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
+    writer.addAttribute("pattern", ((HasNamePatternPersistenceFilter) source).getPattern());
   }
 
   @Override
   public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-    return new PersistenceAllConfig();
+    return new HasNamePatternPersistenceFilter(reader.getAttribute("pattern"));
   }
 
   @Override
   public boolean canConvert(Class type) {
-    return PersistenceAllConfig.class.isAssignableFrom(type);
+    return HasNamePatternPersistenceFilter.class.isAssignableFrom(type);
   }
+
 }

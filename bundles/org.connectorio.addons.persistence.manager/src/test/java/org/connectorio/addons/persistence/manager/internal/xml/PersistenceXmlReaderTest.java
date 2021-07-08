@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import org.assertj.core.api.RecursiveComparisonAssert;
+import org.connectorio.addons.persistence.manager.HasNamePatternPersistenceFilter;
+import org.connectorio.addons.persistence.manager.HasTagPersistenceFilter;
 import org.junit.jupiter.api.Test;
 import org.openhab.core.persistence.PersistenceItemConfiguration;
 import org.openhab.core.persistence.PersistenceServiceConfiguration;
@@ -33,7 +35,7 @@ class PersistenceXmlReaderTest {
     itemStrategies.add(Globals.RESTORE);
     itemStrategies.add(Globals.UPDATE);
     List<PersistenceItemConfiguration> configs = new ArrayList<>();
-    configs.add(new PersistenceItemConfiguration(items, alias, itemStrategies, null));
+    configs.add(new PersistenceItemConfiguration(items, alias, itemStrategies, Arrays.asList(new HasTagPersistenceFilter("Computed"), new HasNamePatternPersistenceFilter(".*?_([^Current]*)$"))));
     configs.add(new PersistenceItemConfiguration(Arrays.asList(new PersistenceItemConfig("Sample_Item")), "itemCfg", itemStrategies, null));
     configs.add(new PersistenceItemConfiguration(Arrays.asList(new PersistenceGroupConfig("Sample_Group")), "groupCfg", itemStrategies, null));
     List<PersistenceStrategy> defaults = Arrays.asList(Globals.CHANGE, new PersistenceCronStrategy("everyHour", "0 ? ? ?"));
@@ -55,6 +57,9 @@ class PersistenceXmlReaderTest {
       // persistence configuration elements do not define equals/hash code!
       assertThat(itemConfiguration.getItems().toString()).isEqualTo(source.getItems().toString());
       assertThat(itemConfiguration.getStrategies()).isEqualTo(source.getStrategies());
+      if (source.getFilters() != null) {
+        assertThat(itemConfiguration.getFilters()).isEqualTo(source.getFilters());
+      }
     }
   }
 

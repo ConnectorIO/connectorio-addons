@@ -1,9 +1,28 @@
+/*
+ * Copyright (C) 2019-2021 ConnectorIO Sp. z o.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package org.connectorio.addons.persistence.manager.internal.xml;
 
 import com.thoughtworks.xstream.XStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.connectorio.addons.persistence.manager.HasNamePatternPersistenceFilter;
+import org.connectorio.addons.persistence.manager.HasTagPersistenceFilter;
 import org.openhab.core.config.xml.util.XmlDocumentReader;
 import org.openhab.core.persistence.PersistenceFilter;
 import org.openhab.core.persistence.PersistenceItemConfiguration;
@@ -16,6 +35,8 @@ import org.openhab.core.persistence.strategy.PersistenceCronStrategy;
 import org.openhab.core.persistence.strategy.PersistenceStrategy;
 
 public class PersistenceXmlReader extends XmlDocumentReader<PersistenceServiceConfiguration> {
+
+  private XStream xstream;
 
   public PersistenceXmlReader() {
     ClassLoader classLoader = PersistenceXmlReader.class.getClassLoader();
@@ -30,6 +51,7 @@ public class PersistenceXmlReader extends XmlDocumentReader<PersistenceServiceCo
     xstream.registerConverter(new PersistenceGroupConfigConverter());
     //xstream.registerConverter(new PersistenceAllConfigConverter());
     xstream.registerConverter(new PersistenceStrategyConverter());
+    xstream.registerConverter(new HasNamePatternPersistenceFilterConverter());
 
     xstream.addDefaultImplementation(MutablePersistenceServiceConfiguration.class, PersistenceServiceConfiguration.class);
   }
@@ -39,6 +61,10 @@ public class PersistenceXmlReader extends XmlDocumentReader<PersistenceServiceCo
     xstream.alias("all", PersistenceAllConfig.class);
     xstream.alias("group", PersistenceGroupConfig.class);
     xstream.alias("item", PersistenceItemConfig.class);
+    xstream.alias("hasTag", HasTagPersistenceFilter.class);
+    xstream.useAttributeFor(HasTagPersistenceFilter.class, "name");
+    xstream.alias("hasName", HasNamePatternPersistenceFilter.class);
+    xstream.useAttributeFor(HasNamePatternPersistenceFilter.class, "pattern");
 
     xstream.alias("service", MutablePersistenceServiceConfiguration.class);
     xstream.addImplicitCollection(MutablePersistenceServiceConfiguration.class, "configs");
@@ -54,6 +80,7 @@ public class PersistenceXmlReader extends XmlDocumentReader<PersistenceServiceCo
     xstream.allowTypes(new Class[] { MutablePersistenceServiceConfiguration.class,
       PersistenceItemConfiguration.class, PersistenceStrategy.class, PersistenceCronStrategy.class,
     });
+    this.xstream = xstream;
   }
 
   // OSH!

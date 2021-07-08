@@ -32,6 +32,7 @@ import org.openhab.core.io.console.extensions.AbstractConsoleCommandExtension;
 import org.openhab.core.io.console.extensions.ConsoleCommandExtension;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemRegistry;
+import org.openhab.core.persistence.PersistenceFilter;
 import org.openhab.core.persistence.PersistenceItemConfiguration;
 import org.openhab.core.persistence.PersistenceManager;
 import org.openhab.core.persistence.PersistenceService;
@@ -73,17 +74,26 @@ public class PersistenceStrategyCommand extends AbstractConsoleCommandExtension 
       console.println("service  '" + config.getKey() + "'");
       for (PersistenceItemConfiguration itemConfig : config.getValue().getConfigs()) {
         console.println("  alias '" + itemConfig.getAlias() + "'");
+        console.println("  - includes:");
         for (PersistenceConfig itemCfg : itemConfig.getItems()) {
           print(console, "    ", itemCfg);
         }
         List<PersistenceStrategy> strategies = itemConfig.getStrategies() == null ? new ArrayList<>() : itemConfig.getStrategies();
+        console.println("  - strategies:");
         for (PersistenceStrategy strategy : strategies) {
           print(console, "    ", strategy);
         }
+        console.println("  - excludes:");
+        List<PersistenceFilter> filters = itemConfig.getFilters() == null ? new ArrayList<>() : itemConfig.getFilters();
+        for (PersistenceFilter filter : filters) {
+          console.println("    " + filter);
+        }
       }
+      console.println("  - defaults:");
       for (PersistenceStrategy strategy : config.getValue().getDefaults()) {
         console.println("  " + strategy);
       }
+      console.println("  - strategies:");
       for (PersistenceStrategy strategy : config.getValue().getStrategies()) {
         print(console, "  ", strategy);
       }
@@ -96,11 +106,11 @@ public class PersistenceStrategyCommand extends AbstractConsoleCommandExtension 
 
   void print(Console console, String prefix, PersistenceConfig config) {
     if (config instanceof PersistenceAllConfig) {
-      console.println(prefix + "*");
+      console.println(prefix + "* (all items)");
     } else if (config instanceof PersistenceGroupConfig) {
-      console.println(prefix + ((PersistenceGroupConfig) config).getGroup() + "*");
+      console.println(prefix + ((PersistenceGroupConfig) config).getGroup() + "* (group members)");
     } else if (config instanceof PersistenceItemConfig) {
-      console.println(prefix + ((PersistenceItemConfig) config).getItem());
+      console.println(prefix + ((PersistenceItemConfig) config).getItem() + " (item)");
     } else {
       console.println(prefix + config + "(unknown)");
     }
