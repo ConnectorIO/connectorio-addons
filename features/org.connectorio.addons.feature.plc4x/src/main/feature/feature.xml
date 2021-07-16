@@ -94,21 +94,21 @@
 
   <feature name="plc4x-transport-tcp">
     <feature>plc4x-spi</feature>
-    <bundle>mvn:org.apache.plc4x/plc4j-transport-tcp/0.8.0-SNAPSHOT</bundle>
+    <bundle>mvn:org.apache.plc4x/plc4j-transport-tcp/${plc4x.version}</bundle>
   </feature>
 
   <feature name="plc4x-transport-serial">
     <feature>plc4x-netty-serial</feature>
     <feature>plc4x-spi</feature>
     <bundle>mvn:com.fazecast/jSerialComm/2.6.2</bundle>
-    <bundle>mvn:org.apache.plc4x/plc4j-transport-serial/0.8.0-SNAPSHOT</bundle>
+    <bundle>mvn:org.apache.plc4x/plc4j-transport-serial/${plc4x.version}</bundle>
   </feature>
 
   <feature name="plc4x-transport-socketcan">
     <feature prerequisite="true">wrap</feature>
     <feature>plc4x-spi</feature>
     <bundle>wrap:mvn:tel.schich/javacan/2.3.0</bundle>
-    <bundle>mvn:org.apache.plc4x/plc4j-transport-socketcan/0.8.0-SNAPSHOT</bundle>
+    <bundle>mvn:org.apache.plc4x/plc4j-transport-socketcan/${plc4x.version}</bundle>
   </feature>
 
   <feature name="plc4x-ads-driver" description="Apache PLC4X - ADS driver" version="${plc4x.version}">
