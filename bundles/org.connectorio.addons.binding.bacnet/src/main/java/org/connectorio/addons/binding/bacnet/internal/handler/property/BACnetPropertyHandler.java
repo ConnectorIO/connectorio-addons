@@ -95,8 +95,12 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
   public void handleCommand(ChannelUID channelUID, Command command) {
     logger.debug("Handle command {} for channel {} and property {}", channelUID, command, property);
 
-    final CompletableFuture<BacNetClient> client = getBridgeHandler().flatMap(bridge -> bridge.getClient())
-      .orElseThrow(() -> new IllegalArgumentException("BACnet client is not ready"));
+    if (!getBridgeHandler().isPresent()) {
+      logger.error("Handler is not attached to an bridge or bridge initialization failed!");
+      return;
+    }
+
+    final CompletableFuture<BacNetClient> client = getBridgeHandler().get().getClient();
 
     if (command == RefreshType.REFRESH) {
       scheduler.execute(new ReadPropertyTask(() -> client, getCallback(), property, channelUID));
@@ -119,10 +123,13 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
 
   private void poll(ChannelUID channelUID) {
     logger.info("BACnet channel linked {}", channelUID);
-    Supplier<CompletableFuture<BacNetClient>> client = () -> getBridgeHandler().flatMap(bridge -> bridge.getClient()).orElse(
-      // return failed future if client is not yet ready
-      CompletableFuture.completedFuture(null)
-    );
+
+    if (!getBridgeHandler().isPresent()) {
+      logger.error("Handler is not attached to an bridge or bridge initialization failed!");
+      return;
+    }
+
+    Supplier<CompletableFuture<BacNetClient>> client = () -> getBridgeHandler().get().getClient();
 
     long refreshInterval = Optional.ofNullable(getThing().getChannel(channelUID).getConfiguration())
       .map(cfg -> cfg.as(ChannelConfig.class))

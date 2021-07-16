@@ -39,11 +39,16 @@ import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.thing.binding.ThingHandlerService;
 import org.openhab.core.types.Command;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnetObjectHandler<DeviceObject, BACnetNetworkBridgeHandler<?>, C>
   implements BACnetDeviceBridgeHandler<BACnetNetworkBridgeHandler<?>, C> {
 
+  private final Logger logger = LoggerFactory.getLogger(getClass());
+
   private Device device;
+  private CompletableFuture<BacNetClient> clientFuture = new CompletableFuture<>();
 
   /**
    * Creates a new instance of this class for the {@link Thing}.
@@ -73,7 +78,14 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
       }).orElse(null);
 
     if (device != null) {
-      updateStatus(ThingStatus.ONLINE);
+      getBridgeHandler().get().getClient().whenComplete((client, error) -> {
+        if (error != null) {
+          logger.warn("Initialization of BACnet device handler failed, could not establish client connection", error);
+          return;
+        }
+        updateStatus(ThingStatus.ONLINE);
+        clientFuture.complete(client);
+      });
     } else {
       updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Missing device configuration");
     }
@@ -92,8 +104,8 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
   }
 
   @Override
-  public Optional<CompletableFuture<BacNetClient>> getClient() {
-    return getBridgeHandler().map(BACnetNetworkBridgeHandler::getClient);
+  public CompletableFuture<BacNetClient> getClient() {
+    return clientFuture;
   }
 
   @Override

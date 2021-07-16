@@ -25,6 +25,7 @@ import static org.connectorio.addons.binding.bacnet.internal.BACnetBindingConsta
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -58,21 +59,17 @@ public class BACnetPropertyDiscoveryService extends AbstractDiscoveryService imp
 
   @Override
   protected void startScan() {
-    handler.getClient().map(client -> {
-      BacNetClient bacNetClient;
-      try {
-        bacNetClient = client.get();
-      } catch (InterruptedException | ExecutionException e) {
-        e.printStackTrace();
-        return null;
+    handler.getClient().thenAccept(bacNetClient -> {
+      List<Property> properties = bacNetClient.getDeviceProperties(handler.getDevice());
+      for (Property property : properties) {
+        DiscoveryResult result = toDiscoveryResult(handler, property);
+        if (result == null) {
+          logger.info("Discovery process found a BACnet property {} which is not yet supported by this binding", property);
+          continue;
+        }
+        thingDiscovered(result);
       }
-
-      return bacNetClient.getDeviceProperties(handler.getDevice());
-    })
-    .ifPresent(properties -> properties.stream()
-      .map(property -> toDiscoveryResult(handler, property))
-      .filter(Objects::nonNull)
-      .forEach(this::thingDiscovered));
+    });
   }
 
   private DiscoveryResult toDiscoveryResult(BACnetDeviceBridgeHandler<?, ?> bridge, Property property) {

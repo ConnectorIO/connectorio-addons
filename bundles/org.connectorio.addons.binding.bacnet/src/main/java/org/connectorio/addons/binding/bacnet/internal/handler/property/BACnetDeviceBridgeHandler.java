@@ -32,7 +32,7 @@ import org.connectorio.addons.binding.handler.polling.PollingBridgeHandler;
 public interface BACnetDeviceBridgeHandler<B extends BACnetNetworkBridgeHandler<?>, C extends DeviceConfig> extends
   PollingBridgeHandler<C> {
 
-  Optional<CompletableFuture<BacNetClient>> getClient();
+  CompletableFuture<BacNetClient> getClient();
 
   Optional<B> getBridgeHandler();
 
