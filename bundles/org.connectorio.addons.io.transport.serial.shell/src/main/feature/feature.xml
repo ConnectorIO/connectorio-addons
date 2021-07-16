@@ -20,18 +20,18 @@
  -
  - SPDX-License-Identifier: GPL-3.0-or-later OR commercial
 -->
-<features name="co7io-transport-serial2-shell-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.6.0">
+<features name="co7io-transport-serial-shell-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.6.0">
 
   <repository>mvn:org.openhab.core.features.karaf/org.openhab.core.features.karaf.openhab-core/${openhab.version}/xml/features</repository>
 
-  <feature name="openhab-transport-serial2-shell" description="Serial port shell companion." version="${project.version}">
-    <feature>co7io-transport-serial2-shell</feature>
+  <feature name="openhab-transport-serial-shell" description="Serial port shell companion." version="${project.version}">
+    <feature>co7io-transport-serial-shell</feature>
   </feature>
 
-  <feature name="co7io-transport-serial2-shell" description="Serial port shell companion." version="${project.version}">
+  <feature name="co7io-transport-serial-shell" description="Serial port shell companion." version="${project.version}">
     <feature>openhab-runtime-base</feature>
     <feature>openhab-transport-serial</feature>
-    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.io.transport.serial2.shell/${project.version}</bundle>
+    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.io.transport.serial.shell/${project.version}</bundle>
   </feature>
 
 </features>

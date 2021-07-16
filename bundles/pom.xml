@@ -46,7 +46,6 @@
     <module>org.connectorio.addons.binding.relayweblog</module>
     <module>org.connectorio.addons.binding.test</module>
     <module>org.connectorio.addons.io.proxy.http</module>
-    <module>org.connectorio.addons.io.transport.serial.purejavacomm</module>
     <module>org.connectorio.addons.io.transport.serial.persistent</module>
     <module>org.connectorio.addons.io.transport.serial.purejavacomm</module>
     <module>org.connectorio.addons.io.transport.serial.shell</module>
