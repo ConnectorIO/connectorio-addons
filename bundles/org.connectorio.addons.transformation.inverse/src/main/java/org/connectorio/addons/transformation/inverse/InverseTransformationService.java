@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas.Eichstaedt-Engelen
  */
-@Component(immediate = true, property = {"smarthome.transform=INVERSE"})
+@Component(immediate = true, property = {"openhab.transform=INVERSE"})
 public class InverseTransformationService implements TransformationService {
 
   private static final Pattern SUBSTR_PATTERN = Pattern.compile("([^:]+):([^:]+)");
