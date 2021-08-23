@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import org.connectorio.addons.persistence.shell.internal.item.StubItem;
+import org.connectorio.addons.persistence.shell.internal.item.StubNumberItem;
 import org.openhab.core.i18n.TimeZoneProvider;
 import org.openhab.core.io.console.Console;
 import org.openhab.core.io.console.extensions.AbstractConsoleCommandExtension;
@@ -33,12 +35,14 @@ import org.openhab.core.io.console.extensions.ConsoleCommandExtension;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.items.ItemRegistry;
+import org.openhab.core.library.items.NumberItem;
 import org.openhab.core.persistence.FilterCriteria;
 import org.openhab.core.persistence.FilterCriteria.Ordering;
 import org.openhab.core.persistence.HistoricItem;
 import org.openhab.core.persistence.ModifiablePersistenceService;
 import org.openhab.core.persistence.PersistenceService;
 import org.openhab.core.persistence.PersistenceServiceRegistry;
+import org.openhab.core.types.State;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -110,7 +114,7 @@ public class PersistenceCopyItemCommand extends AbstractConsoleCommandExtension 
         HistoricItem historicItem = result.get(result.size() - 1);
         latest = historicItem.getTimestamp();
         for (HistoricItem item : result) {
-          persistence.store(to, Date.from(item.getTimestamp().toInstant()), item.getState());
+          persistence.store(createStub(to, item.getState()), Date.from(item.getTimestamp().toInstant()), item.getState());
         }
         sum += result.size();
       } while (result.size() == pageSize);
@@ -120,6 +124,18 @@ public class PersistenceCopyItemCommand extends AbstractConsoleCommandExtension 
       }
       console.println("Copied " + sum + " entries to " + to.getName());
     }
+  }
+
+  private Item createStub(Item item, State state) {
+    if (item instanceof NumberItem) {
+      return new StubNumberItem((NumberItem) item, state) {
+        @Override
+        public String getType() {
+          return item.getType();
+        }
+      };
+    }
+    return new StubItem(item, state);
   }
 
   private List<HistoricItem> query(Item from, ModifiablePersistenceService persistence, ZonedDateTime latest, int page,

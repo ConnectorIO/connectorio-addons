@@ -49,6 +49,7 @@
     <module>org.connectorio.addons.io.transport.serial.persistent</module>
     <module>org.connectorio.addons.io.transport.serial.purejavacomm</module>
     <module>org.connectorio.addons.io.transport.serial.shell</module>
+    <module>org.connectorio.addons.norule</module>
     <module>org.connectorio.addons.persistence.manager</module>
     <module>org.connectorio.addons.persistence.shell</module>
     <module>org.connectorio.addons.startlevel.shell</module>
