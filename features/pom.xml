@@ -40,6 +40,7 @@
     <module>org.connectorio.addons.feature.canopen</module>
     <module>org.connectorio.addons.feature.io</module>
     <module>org.connectorio.addons.feature.io.transport.serial</module>
+    <module>org.connectorio.addons.feature.managed</module>
     <module>org.connectorio.addons.feature.openhab</module>
     <module>org.connectorio.addons.feature.plc4x</module>
     <module>org.connectorio.addons.feature.relayweblog</module>
