@@ -18,12 +18,65 @@
 package org.connectorio.addons.managed.thing.model;
 
 import java.util.Map;
+import java.util.Objects;
 import org.openhab.core.thing.type.ChannelTypeUID;
 
 public class ChannelEntry {
 
-  public String id;
-  public String type;
-  public String label;
-  public Map<String, Object> config;
+  private String id;
+  private String type;
+  private String label;
+  private Map<String, Object> config;
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public String getLabel() {
+    return label;
+  }
+
+  public void setLabel(String label) {
+    this.label = label;
+  }
+
+  public Map<String, Object> getConfig() {
+    return config;
+  }
+
+  public void setConfig(Map<String, Object> config) {
+    this.config = config;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof ChannelEntry)) {
+      return false;
+    }
+    ChannelEntry that = (ChannelEntry) o;
+    return Objects.equals(id, that.id) &&
+      Objects.equals(type, that.type) &&
+      Objects.equals(label, that.label) &&
+      Objects.equals(config, that.config);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, type, label, config);
+  }
 }

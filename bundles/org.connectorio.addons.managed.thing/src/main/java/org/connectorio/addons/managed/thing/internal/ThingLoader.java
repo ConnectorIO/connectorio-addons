@@ -107,9 +107,9 @@ public class ThingLoader {
       for (ThingEntry entry : parsedItems.getThings()) {
         ThingBuilder builder;
         if (entry instanceof BridgeEntry) {
-          builder = BridgeBuilder.create(new ThingTypeUID(entry.type), new ThingUID(entry.id));
+          builder = BridgeBuilder.create(new ThingTypeUID(entry.getType()), new ThingUID(entry.getId()));
         } else {
-           builder = ThingBuilder.create(new ThingTypeUID(entry.type), new ThingUID(entry.id));
+           builder = ThingBuilder.create(new ThingTypeUID(entry.getType()), new ThingUID(entry.getId()));
         }
         things.add(create(builder, entry));
       }
@@ -127,25 +127,19 @@ public class ThingLoader {
 
 
   private Thing create(ThingBuilder thingBuilder, ThingEntry entry) {
-    thingBuilder.withLabel(entry.label);
-    if (entry.bridge != null) {
-      thingBuilder.withBridge(new ThingUID(entry.bridge));
+    thingBuilder.withLabel(entry.getLabel());
+    if (entry.getBridge() != null) {
+      thingBuilder.withBridge(new ThingUID(entry.getBridge()));
     }
-    thingBuilder.withConfiguration(new Configuration(entry.config));
+    thingBuilder.withConfiguration(new Configuration(entry.getConfig()));
 
     List<Channel> channels = new ArrayList<>();
-    ThingType definition = thingTypeRegistry.getThingType(new ThingTypeUID(entry.type));
+    ThingType definition = thingTypeRegistry.getThingType(new ThingTypeUID(entry.getType()));
     if (definition != null) {
       for (ChannelDefinition ch : definition.getChannelDefinitions()) {
-//        val channelType = it.channelTypeUID.channelType
-//        if (channelType !== null) {
-//          channels +=
-//            ChannelBuilder.create(new ChannelUID(thingUID, id), channelType.itemType).withType(
-//              it.channelTypeUID).withAutoUpdatePolicy(channelType.autoUpdatePolicy).build
-//        }
         ChannelType channelType = channelTypeRegistry.getChannelType(ch.getChannelTypeUID());
         if (channelType != null) {
-          ChannelBuilder builder = ChannelBuilder.create(new ChannelUID(new ThingUID(entry.id), ch.getId()), channelType.getItemType());
+          ChannelBuilder builder = ChannelBuilder.create(new ChannelUID(new ThingUID(entry.getId()), ch.getId()), channelType.getItemType());
           builder.withKind(channelType.getKind());
           builder.withType(ch.getChannelTypeUID());
           builder.withAutoUpdatePolicy(ch.getAutoUpdatePolicy());
@@ -168,12 +162,12 @@ public class ThingLoader {
       }
     }
 
-    if (entry.channels != null && !entry.channels.isEmpty()) {
-      for (ChannelEntry channel : entry.channels) {
-        ChannelBuilder builder = ChannelBuilder.create(new ChannelUID(channel.id));
-        builder.withType(new ChannelTypeUID(channel.type));
-        builder.withLabel(channel.label);
-        builder.withConfiguration(new Configuration(channel.config));
+    if (entry.getChannels() != null && !entry.getChannels().isEmpty()) {
+      for (ChannelEntry channel : entry.getChannels()) {
+        ChannelBuilder builder = ChannelBuilder.create(new ChannelUID(channel.getId()));
+        builder.withType(new ChannelTypeUID(channel.getType()));
+        builder.withLabel(channel.getLabel());
+        builder.withConfiguration(new Configuration(channel.getConfig()));
         channels.add(builder.build());
       }
     }

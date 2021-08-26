@@ -60,6 +60,7 @@ import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.awt.image.ImageWatched.Link;
 
 @Component(service = HttpServlet.class)
 public class ExportServlet extends HttpServlet {
@@ -95,13 +96,13 @@ public class ExportServlet extends HttpServlet {
       ThingEntry entry = thing instanceof Bridge ? new BridgeEntry() : new ThingEntry();
       items.add(entry);
 
-      entry.id = thing.getUID().getAsString();
-      entry.type = thing.getThingTypeUID().getAsString();
-      entry.label = thing.getLabel();
+      entry.setId(thing.getUID().getAsString());
+      entry.setType(thing.getThingTypeUID().getAsString());
+      entry.setLabel(thing.getLabel());
       if (thing.getBridgeUID() != null) {
-        entry.bridge = thing.getBridgeUID().getAsString();
+        entry.setBridge(thing.getBridgeUID().getAsString());
       }
-      entry.config = thing.getConfiguration().getProperties();
+      entry.setConfig(thing.getConfiguration().getProperties());
 
       List<Channel> channels = thing.getChannels();
       List<String> extensibleChannelTypes = new ArrayList<>();
@@ -111,20 +112,21 @@ public class ExportServlet extends HttpServlet {
       }
 
       if (!channels.isEmpty()) {
-        entry.channels = new ArrayList<>();
+        List<ChannelEntry> links = new ArrayList<>();
+        entry.setChannels(links);
         for (Channel channel : channels) {
           // make sure we only attach extensible channels which are defined by user, not by
           if (extensibleChannelTypes.contains(channel.getChannelTypeUID().getId())) {
             ChannelEntry che = new ChannelEntry();
-            entry.channels.add(che);
-            che.id = channel.getUID().getAsString();
+            che.setId(channel.getUID().getAsString());
             if (channel.getChannelTypeUID() != null) {
-              che.type = channel.getChannelTypeUID().getAsString();
+              che.setType(channel.getChannelTypeUID().getAsString());
             }
 //            che.kind = typeRegistry.getChannelType(channel).getKind() == ChannelKind.STATE ? null : ChannelKind.TRIGGER;
 //            che. = typeRegistry.getChannelType(channel).getKind() == ChannelKind.STATE ? null : ChannelKind.TRIGGER;
-            che.label = channel.getLabel();
-            che.config = channel.getConfiguration().getProperties();
+            che.setLabel(channel.getLabel());
+            che.setConfig(channel.getConfiguration().getProperties());
+            links.add(che);
           }
         }
       }
@@ -136,25 +138,6 @@ public class ExportServlet extends HttpServlet {
   }
 
   private Collection<Thing> sorted() {
-//    List<Thing> sorted = new ArrayList<>(thingRegistry.getAll());
-//    Collections.sort(sorted, new Comparator<Thing>() {
-//      @Override
-//      public int compare(Thing o1, Thing o2) {
-//        ThingUID bridge1uid = o1.getBridgeUID();
-//        ThingUID bridge2uid = o2.getBridgeUID();
-//        String o2uid = o2.getUID().getAsString();
-//        String o1uid = o1.getUID().getAsString();
-//        if (bridge1uid != null && bridge1uid.getAsString().contains(o2uid)) {
-//          return -1;
-//        }
-//        if (bridge2uid != null && bridge2uid.getAsString().contains(o1uid)) {
-//          return 1;
-//        }
-//
-//        return o1uid.compareTo(o2uid);
-//      }
-//    });
-
     Set<Thing> sorted = new TreeSet<>(Comparator.comparing(thing -> thing.getUID().getAsString()));
     sorted.addAll(thingRegistry.getAll());
     return sorted;

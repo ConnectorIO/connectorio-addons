@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<items>
+  <item name="Foo" label="Custom item" category="Test">
+    <type>Number:Energy</type>
+    <tag>Measurement</tag>
+    <tag>Energy</tag>
+    <metadata>
+      <state-description>
+        <pattern>%d</pattern>
+      </state-description>
+      <co7io-test value="yes">
+        <name>x</name>
+      </co7io-test>
+      <co7io-abc>
+        <label>y</label>
+      </co7io-abc>
+    </metadata>
+    <group>A</group>
+    <group>B</group>
+    <link>
+      <channel>foo:bar:baz</channel>
+      <config>
+        <offset>1</offset>
+        <profile>system:offset</profile>
+      </config>
+    </link>
+  </item>
+  <group name="y">
+    <member>Foo</member>
+  </group>
+</items>

@@ -18,18 +18,43 @@
 package org.connectorio.addons.managed.item.model;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Items {
 
-  private final List<ItemEntry> items = new CopyOnWriteArrayList<>();
+  private List<ItemEntry> items;
+
+  public Items() {
+  }
 
   public Items(List<ItemEntry> items) {
-    this.items.addAll(items);
+    this.items = items;
   }
 
   public List<ItemEntry> getItems() {
     return items;
+  }
+
+  public void setItems(List<ItemEntry> items) {
+    this.items = items;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Items)) {
+      return false;
+    }
+    Items items1 = (Items) o;
+    return Objects.equals(items, items1.items);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(items);
   }
 
 }

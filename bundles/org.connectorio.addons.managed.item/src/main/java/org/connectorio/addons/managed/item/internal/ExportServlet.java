@@ -111,30 +111,32 @@ public class ExportServlet extends HttpServlet {
     for (Item item : simplySorted()) {
       ItemEntry entry = "group".equalsIgnoreCase(item.getType()) ? new GroupEntry() : new ItemEntry();
       items.add(entry);
-      entry.category = item.getCategory();
-      entry.tags = item.getTags();
-      entry.groups = item.getGroupNames();
-      entry.type = item.getType();
-      entry.name = item.getName();
-      entry.label = item.getLabel();
+      entry.setCategory(item.getCategory());
+      entry.setTags(item.getTags());
+      entry.setGroups(item.getGroupNames());
+      entry.setType(item.getType());
+      entry.setName(item.getName());
+      entry.setLabel(item.getLabel());
       if (metadataMap.containsKey(item.getName())) {
-        entry.metadata = new LinkedHashMap<>();
+        Map<String, MetadataEntry> metadata = new LinkedHashMap<>();
+        entry.setMetadata(metadata);
         for (Entry<MetadataKey, Metadata> meta : metadataMap.get(item.getName()).entrySet()) {
           MetadataEntry metadataEntry = new MetadataEntry(meta.getValue().getValue(), meta.getValue().getConfiguration());
-          entry.metadata.put(meta.getKey().getNamespace(), metadataEntry);
+          metadata.put(meta.getKey().getNamespace(), metadataEntry);
         }
       }
       if (linkMap.containsKey(item.getName())) {
         Set<ItemChannelLink> boundChannels = linkMap.get(item.getName());
         if (!boundChannels.isEmpty()) {
-          entry.channels = new LinkedHashSet<>();
+          Set<LinkEntry> channels = new LinkedHashSet<>();
+          entry.setChannels(channels);
           for (ItemChannelLink channel : boundChannels) {
             LinkEntry link = new LinkEntry();
-            entry.channels.add(link);
-            link.channel = channel.getLinkedUID().getAsString();
+            channels.add(link);
+            link.setChannel(channel.getLinkedUID().getAsString());
             Map<String, Object> properties = channel.getConfiguration().getProperties();
             if (!properties.isEmpty()) {
-              link.config = properties;
+              link.setConfig(properties);
             }
           }
         }

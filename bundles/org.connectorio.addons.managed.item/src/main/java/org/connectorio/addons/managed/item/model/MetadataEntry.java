@@ -18,15 +18,52 @@
 package org.connectorio.addons.managed.item.model;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class MetadataEntry {
 
-  public Map<String, Object> config;
+  private String value;
+  private Map<String, Object> config;
 
-  public String value;
+  public MetadataEntry() {
+  }
 
   public MetadataEntry(String value, Map<String, Object> config) {
     this.value = value;
     this.config = config;
+  }
+
+  public String getValue() {
+    return value;
+  }
+
+  public void setValue(String value) {
+    this.value = value;
+  }
+
+  public Map<String, Object> getConfig() {
+    return config;
+  }
+
+  public void setConfig(Map<String, Object> config) {
+    this.config = config;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof MetadataEntry)) {
+      return false;
+    }
+    MetadataEntry that = (MetadataEntry) o;
+    return Objects.equals(value, that.value) &&
+      Objects.equals(config, that.config);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(value, config);
   }
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<things>
+  <thing id="foo" label="Custom thing" type="a:b:c">
+    <config>
+      <foo>bar</foo>
+      <baz>foo</baz>
+    </config>
+    <channel id="asf" type="foo:bar">
+      <label>Test</label>
+      <config>
+        <a>d</a>
+        <b>e</b>
+      </config>
+    </channel>
+  </thing>
+  <bridge id="bar" label="Custom thing" type="a:b:d">
+  </bridge>
+</things>

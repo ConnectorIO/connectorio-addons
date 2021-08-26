@@ -18,10 +18,14 @@
 package org.connectorio.addons.managed.thing.model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Things {
 
-  private final List<ThingEntry> things;
+  private List<ThingEntry> things;
+
+  public Things() {
+  }
 
   public Things(List<ThingEntry> things) {
     this.things = things;
@@ -31,4 +35,20 @@ public class Things {
     return things;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Things)) {
+      return false;
+    }
+    Things things1 = (Things) o;
+    return Objects.equals(getThings(), things1.getThings());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getThings());
+  }
 }

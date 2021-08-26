@@ -51,10 +51,10 @@ public class XStreamItemReader extends XmlDocumentReader<Items> {
       @Override
       public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
         MetadataEntry metadata = (MetadataEntry) source;
-        if (metadata.value != null) {
-          writer.addAttribute("value", metadata.value);
+        if (metadata.getValue() != null) {
+          writer.addAttribute("value", metadata.getValue());
         }
-        delegate.marshal(metadata.config, writer, context);
+        delegate.marshal(metadata.getConfig(), writer, context);
       }
 
       @Override

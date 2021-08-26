@@ -18,10 +18,43 @@
 package org.connectorio.addons.managed.item.model;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class LinkEntry {
 
-  public String channel;
-  public Map<String, Object> config;
+  private String channel;
+  private Map<String, Object> config;
 
+  public String getChannel() {
+    return channel;
+  }
+
+  public void setChannel(String channel) {
+    this.channel = channel;
+  }
+
+  public Map<String, Object> getConfig() {
+    return config;
+  }
+
+  public void setConfig(Map<String, Object> config) {
+    this.config = config;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof LinkEntry)) {
+      return false;
+    }
+    LinkEntry linkEntry = (LinkEntry) o;
+    return Objects.equals(channel, linkEntry.channel) && Objects.equals(config, linkEntry.config);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(channel, config);
+  }
 }

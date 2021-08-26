@@ -74,15 +74,15 @@ public class ItemLoader {
         XStreamItemReader reader = new XStreamItemReader();
         Items parsedItems = reader.readFromXML(file.toURI().toURL());
         for (ItemEntry entry : parsedItems.getItems()) {
-          items.add(create(itemFactory.newItemBuilder(entry.type, entry.name), entry));
-          if (entry.metadata != null && !entry.metadata.isEmpty()) {
-            for (Entry<String, MetadataEntry> meta : entry.metadata.entrySet()) {
-              metadata.add(createMetadata(entry.name, meta));
+          items.add(create(itemFactory.newItemBuilder(entry.getType(), entry.getName()), entry));
+          if (entry.getMetadata() != null && !entry.getMetadata().isEmpty()) {
+            for (Entry<String, MetadataEntry> meta : entry.getMetadata().entrySet()) {
+              metadata.add(createMetadata(entry.getName(), meta));
             }
           }
-          if (entry.channels != null && !entry.channels.isEmpty()) {
-            for (LinkEntry channel : entry.channels) {
-              links.add(createLink(entry.name, channel));
+          if (entry.getChannels() != null && !entry.getChannels().isEmpty()) {
+            for (LinkEntry channel : entry.getChannels()) {
+              links.add(createLink(entry.getName(), channel));
             }
           }
         }
@@ -97,11 +97,11 @@ public class ItemLoader {
   }
 
   private ItemChannelLink createLink(String name, LinkEntry channel) {
-    return new ItemChannelLink(name, new ChannelUID(channel.channel), new Configuration(channel.config));
+    return new ItemChannelLink(name, new ChannelUID(channel.getChannel()), new Configuration(channel.getConfig()));
   }
 
   private Metadata createMetadata(String name, Entry<String, MetadataEntry> meta) {
-    return new Metadata(new MetadataKey(meta.getKey(), name), meta.getValue().value, meta.getValue().config);
+    return new Metadata(new MetadataKey(meta.getKey(), name), meta.getValue().getValue(), meta.getValue().getConfig());
   }
 
   @Deactivate
@@ -112,10 +112,10 @@ public class ItemLoader {
   }
 
   private Item create(ItemBuilder builder, ItemEntry item) {
-    builder.withLabel(item.label);
-    builder.withCategory(item.category);
-    builder.withTags(item.tags);
-    builder.withGroups(item.groups);
+    builder.withLabel(item.getLabel());
+    builder.withCategory(item.getCategory());
+    builder.withTags(item.getTags());
+    builder.withGroups(item.getGroups());
 
     if (item instanceof GroupEntry) {
       // TODO properly handle groups!

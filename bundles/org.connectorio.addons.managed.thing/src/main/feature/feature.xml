@@ -21,7 +21,7 @@
   <repository>mvn:org.openhab.core.features.karaf/org.openhab.core.features.karaf.openhab-core/${openhab.version}/xml/features</repository>
 
   <feature name="openhab-misc-managed-thing" description="Managed thing handling." version="${project.version}" hidden="true">
-    <feature>co7io-transport-serial-shell</feature>
+    <feature>co7io-managed-thing</feature>
   </feature>
 
   <feature name="co7io-managed-thing" description="Managed thing handling." version="${project.version}">
