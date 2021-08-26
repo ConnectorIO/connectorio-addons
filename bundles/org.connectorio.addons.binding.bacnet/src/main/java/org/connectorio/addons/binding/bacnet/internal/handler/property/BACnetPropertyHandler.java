@@ -31,6 +31,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.api.Device;
+import org.code_house.bacnet4j.wrapper.api.JavaToBacNetConverter;
 import org.code_house.bacnet4j.wrapper.api.Property;
 import org.code_house.bacnet4j.wrapper.api.Type;
 import org.connectorio.addons.binding.bacnet.internal.BACnetBindingConstants;
@@ -52,6 +53,7 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
   private final Logger logger = LoggerFactory.getLogger(getClass());
   private final Type type;
   private Property property;
+  private Integer writePriority;
   private Future<?> reader;
 
   public BACnetPropertyHandler(Thing thing, Type type) {
@@ -63,9 +65,17 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
   public void initialize() {
     Device device = getBridgeHandler().map(b -> b.getDevice()).orElse(null);
     int instance = getThingConfig().map(c -> c.instance).orElseThrow(() -> new IllegalStateException("Undefined instance number"));
+    writePriority = getThingConfig().map(c -> c.writePriority).orElse(null);
+    if (writePriority != null && (writePriority < 1 || writePriority > 16)) {
+      throw new IllegalStateException("Invalid write priority value");
+    }
 
     if (device != null) {
       this.property = new Property(device, instance, type);
+
+      if (writePriority != null) {
+        logger.info("Using custom write priority {} for property {}", writePriority, property);
+      }
 
       getThing().getChannels().stream()
         .peek(channel -> poll(channel.getUID()))
@@ -91,19 +101,19 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
     if (command == RefreshType.REFRESH) {
       scheduler.execute(new ReadPropertyTask(() -> client, getCallback(), property, channelUID));
     } else {
-      logger.debug("Submitting write {} from channel {} to {}", channelUID, command, property);
-//      scheduler.execute(new Runnable() {
-//        @Override
-//        public void run() {
-//          logger.debug("Dispatching command {} to property {}", command, property);
-          client.join().setPropertyValue(property, command, (value) -> {
-            Encodable encodable = BACnetValueConverter.openHabTypeToBacNetValue(type.getBacNetType(), value);
-            logger.trace("Command {} have been converter to BACnet value {} of type {}", command, encodable, encodable.getClass());
-            return encodable;
-          });
-          logger.debug("Command {} for property {} executed successfully", command, property);
-//        }
-//      });
+      JavaToBacNetConverter<Command> converter = (value) -> {
+        Encodable encodable = BACnetValueConverter.openHabTypeToBacNetValue(type.getBacNetType(), value);
+        logger.trace("Command {} have been converter to BACnet value {} of type {}", command, encodable, encodable.getClass());
+        return encodable;
+      };
+      if (writePriority == null) {
+        logger.debug("Submitting write {} from channel {} to {}", channelUID, command, property);
+        client.join().setPropertyValue(property, command, converter);
+      } else {
+        logger.debug("Submitting write {} from channel {} to {} with priority {}", channelUID, command, property, writePriority);
+        client.join().setPropertyValue(property, command, converter, writePriority);
+      }
+      logger.debug("Command {} for property {} executed successfully", command, property);
     }
   }
 

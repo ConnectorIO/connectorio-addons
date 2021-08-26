@@ -44,5 +44,12 @@
       <unitLabel>ms</unitLabel>
       <default>0</default>
     </parameter>
+    <parameter name="writePriority" type="integer" groupName="basic" required="false">
+      <label>Write priority</label>
+      <description>
+        Write priority to be set when value must be set on controller.
+      </description>
+      <unitLabel>ms</unitLabel>
+    </parameter>
   </config-description>
 </config-description:config-descriptions>
