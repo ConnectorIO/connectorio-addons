@@ -91,18 +91,19 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
     if (command == RefreshType.REFRESH) {
       scheduler.execute(new ReadPropertyTask(() -> client, getCallback(), property, channelUID));
     } else {
-      scheduler.execute(new Runnable() {
-        @Override
-        public void run() {
-          logger.debug("Dispatching command {} to property {}", command, property);
+      logger.debug("Submitting write {} from channel {} to {}", channelUID, command, property);
+//      scheduler.execute(new Runnable() {
+//        @Override
+//        public void run() {
+//          logger.debug("Dispatching command {} to property {}", command, property);
           client.join().setPropertyValue(property, command, (value) -> {
             Encodable encodable = BACnetValueConverter.openHabTypeToBacNetValue(type.getBacNetType(), value);
             logger.trace("Command {} have been converter to BACnet value {} of type {}", command, encodable, encodable.getClass());
             return encodable;
           });
           logger.debug("Command {} for property {} executed successfully", command, property);
-        }
-      });
+//        }
+//      });
     }
   }
 
