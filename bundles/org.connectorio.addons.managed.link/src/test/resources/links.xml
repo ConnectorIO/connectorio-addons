@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<links>
+  <link>
+    <channel>modbus:data:heatpump:flow_temperature:number</channel>
+    <config>
+      <offset>0.05</offset>
+      <profile>system:offset</profile>
+    </config>
+  </link>
+  <link>
+    <channel>modbus:data:heatpump:return_temperature:number</channel>
+    <config>
+      <offset>0.1</offset>
+      <profile>system:offset</profile>
+    </config>
+  </link>
+</links>
