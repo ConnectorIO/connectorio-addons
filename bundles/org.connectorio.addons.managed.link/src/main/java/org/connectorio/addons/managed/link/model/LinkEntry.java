@@ -17,28 +17,14 @@
  */
 package org.connectorio.addons.managed.link.model;
 
-import java.util.Map;
 import java.util.Objects;
 
-public class LinkEntry {
+public class LinkEntry extends BaseLinkEntry {
 
-  private String channel;
-  private Map<String, Object> config;
+  private String item;
 
-  public String getChannel() {
-    return channel;
-  }
-
-  public void setChannel(String channel) {
-    this.channel = channel;
-  }
-
-  public Map<String, Object> getConfig() {
-    return config;
-  }
-
-  public void setConfig(Map<String, Object> config) {
-    this.config = config;
+  public String getItem() {
+    return item;
   }
 
   @Override
@@ -49,13 +35,16 @@ public class LinkEntry {
     if (!(o instanceof LinkEntry)) {
       return false;
     }
+    if (!super.equals(o)) {
+      return false;
+    }
     LinkEntry linkEntry = (LinkEntry) o;
-    return Objects.equals(channel, linkEntry.channel) &&
-      Objects.equals(config, linkEntry.config);
+    return Objects.equals(getItem(), linkEntry.getItem());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(channel, config);
+    return Objects.hash(super.hashCode(), getItem());
   }
+
 }

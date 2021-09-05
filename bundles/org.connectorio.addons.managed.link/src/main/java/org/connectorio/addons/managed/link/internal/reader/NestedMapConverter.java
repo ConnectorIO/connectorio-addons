@@ -59,21 +59,14 @@ public class NestedMapConverter implements Converter {
   }
 
   private Map<String, Object> xmlToMap(HierarchicalStreamReader reader, Map<String, Object> map) {
-    while(reader.hasMoreChildren()) {
+    while (reader.hasMoreChildren()) {
       reader.moveDown();
       if( reader.hasMoreChildren() ) {
         map.put(reader.getNodeName(), xmlToMap(reader, new HashMap<>()));
       } else {
         String value = reader.getValue();
-        BigDecimal val;
         if (value != null) {
-          if ("true".equals(value) || "false".equals(value)) {
-            map.put(reader.getNodeName(), Boolean.parseBoolean(value));
-          } else if ((val = decimal(value)) != null) {
-            map.put(reader.getNodeName(), val);
-          } else {
-            map.put(reader.getNodeName(), value);
-          }
+          map.put(reader.getNodeName(), value);
         }
       }
       reader.moveUp();

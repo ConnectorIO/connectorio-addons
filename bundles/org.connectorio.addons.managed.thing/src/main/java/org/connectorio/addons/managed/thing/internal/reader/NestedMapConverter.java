@@ -67,13 +67,7 @@ public class NestedMapConverter implements Converter {
         String value = reader.getValue();
         BigDecimal val;
         if (value != null) {
-          if ("true".equals(value) || "false".equals(value)) {
-            map.put(reader.getNodeName(), Boolean.parseBoolean(value));
-          } else if ((val = decimal(value)) != null) {
-            map.put(reader.getNodeName(), val);
-          } else {
-            map.put(reader.getNodeName(), value);
-          }
+          map.put(reader.getNodeName(), value);
         }
       }
       reader.moveUp();

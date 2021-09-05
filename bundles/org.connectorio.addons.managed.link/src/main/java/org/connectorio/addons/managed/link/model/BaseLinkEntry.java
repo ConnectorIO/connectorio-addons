@@ -15,12 +15,12 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.managed.item.model;
+package org.connectorio.addons.managed.link.model;
 
 import java.util.Map;
 import java.util.Objects;
 
-public class LinkEntry {
+public class BaseLinkEntry {
 
   private String channel;
   private Map<String, Object> config;
@@ -46,15 +46,17 @@ public class LinkEntry {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof LinkEntry)) {
+    if (!(o instanceof BaseLinkEntry)) {
       return false;
     }
-    LinkEntry linkEntry = (LinkEntry) o;
-    return Objects.equals(channel, linkEntry.channel) && Objects.equals(config, linkEntry.config);
+    BaseLinkEntry linkEntry = (BaseLinkEntry) o;
+    return Objects.equals(channel, linkEntry.channel) &&
+      Objects.equals(config, linkEntry.config);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(channel, config);
   }
+
 }

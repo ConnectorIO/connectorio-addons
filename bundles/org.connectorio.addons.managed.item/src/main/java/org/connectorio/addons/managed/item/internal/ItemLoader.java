@@ -29,8 +29,8 @@ import org.connectorio.addons.managed.item.internal.reader.XStreamItemReader;
 import org.connectorio.addons.managed.item.model.GroupEntry;
 import org.connectorio.addons.managed.item.model.ItemEntry;
 import org.connectorio.addons.managed.item.model.Items;
-import org.connectorio.addons.managed.item.model.LinkEntry;
 import org.connectorio.addons.managed.item.model.MetadataEntry;
+import org.connectorio.addons.managed.link.model.BaseLinkEntry;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemBuilder;
@@ -48,9 +48,13 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class ItemLoader {
+
+  private final Logger logger = LoggerFactory.getLogger(ItemLoader.class);
 
   List<ServiceRegistration<?>> registrations = new ArrayList<>();
 
@@ -73,6 +77,7 @@ public class ItemLoader {
       try {
         XStreamItemReader reader = new XStreamItemReader();
         Items parsedItems = reader.readFromXML(file.toURI().toURL());
+        logger.info("Successfully read {} items from {}", parsedItems == null ? 0 : parsedItems.getItems().size(), file);
         for (ItemEntry entry : parsedItems.getItems()) {
           items.add(create(itemFactory.newItemBuilder(entry.getType(), entry.getName()), entry));
           if (entry.getMetadata() != null && !entry.getMetadata().isEmpty()) {
@@ -81,7 +86,7 @@ public class ItemLoader {
             }
           }
           if (entry.getChannels() != null && !entry.getChannels().isEmpty()) {
-            for (LinkEntry channel : entry.getChannels()) {
+            for (BaseLinkEntry channel : entry.getChannels()) {
               links.add(createLink(entry.getName(), channel));
             }
           }
@@ -96,7 +101,7 @@ public class ItemLoader {
     registrations.add(context.registerService(ItemChannelLinkProvider.class, new XStreamLinkProvider(links), new Hashtable<>()));
   }
 
-  private ItemChannelLink createLink(String name, LinkEntry channel) {
+  private ItemChannelLink createLink(String name, BaseLinkEntry channel) {
     return new ItemChannelLink(name, new ChannelUID(channel.getChannel()), new Configuration(channel.getConfig()));
   }
 

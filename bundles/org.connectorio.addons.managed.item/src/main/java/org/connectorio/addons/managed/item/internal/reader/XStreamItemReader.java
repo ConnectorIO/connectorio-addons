@@ -29,8 +29,8 @@ import java.util.Map.Entry;
 import org.connectorio.addons.managed.item.model.GroupEntry;
 import org.connectorio.addons.managed.item.model.ItemEntry;
 import org.connectorio.addons.managed.item.model.Items;
-import org.connectorio.addons.managed.item.model.LinkEntry;
 import org.connectorio.addons.managed.item.model.MetadataEntry;
+import org.connectorio.addons.managed.link.model.BaseLinkEntry;
 import org.openhab.core.config.xml.util.XmlDocumentReader;
 
 public class XStreamItemReader extends XmlDocumentReader<Items> {
@@ -96,7 +96,7 @@ public class XStreamItemReader extends XmlDocumentReader<Items> {
         return Map.class.isAssignableFrom(type);
       }
     });
-    xstream.registerLocalConverter(LinkEntry.class, "config", new NestedMapConverter());
+    xstream.registerLocalConverter(BaseLinkEntry.class, "config", new NestedMapConverter());
   }
 
   @Override
@@ -105,14 +105,14 @@ public class XStreamItemReader extends XmlDocumentReader<Items> {
     xstream.addImplicitCollection(Items.class, "items");
     xstream.alias("item", ItemEntry.class);
     xstream.alias("group", GroupEntry.class);
-    xstream.alias("link", LinkEntry.class);
+    xstream.alias("link", BaseLinkEntry.class);
     xstream.useAttributeFor(ItemEntry.class, "name");
     xstream.useAttributeFor(ItemEntry.class, "label");
     xstream.useAttributeFor(ItemEntry.class, "category");
     xstream.addImplicitCollection(ItemEntry.class, "tags", "tag", String.class);
     //xstream.addImplicitMap(ItemEntry.class, "metadata", MetadataEntry.class);
     xstream.addImplicitCollection(ItemEntry.class, "groups", "group", String.class);
-    xstream.addImplicitCollection(ItemEntry.class, "channels", "link", LinkEntry.class);
+    xstream.addImplicitCollection(ItemEntry.class, "channels", "link", BaseLinkEntry.class);
 
     xstream.addImplicitCollection(GroupEntry.class, "members", "member", String.class);
 
@@ -123,7 +123,7 @@ public class XStreamItemReader extends XmlDocumentReader<Items> {
   public void configureSecurity(XStream xstream) {
     this.xstream = xstream;
     xstream.allowTypes(new Class[] {
-      Items.class, ItemEntry.class, GroupEntry.class, LinkEntry.class, MetadataEntry.class
+      Items.class, ItemEntry.class, GroupEntry.class, BaseLinkEntry.class, MetadataEntry.class
     });
   }
 

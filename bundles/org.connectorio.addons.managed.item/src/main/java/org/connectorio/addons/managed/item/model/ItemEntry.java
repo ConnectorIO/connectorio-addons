@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import org.connectorio.addons.managed.link.model.BaseLinkEntry;
 
 public class ItemEntry {
 
@@ -33,7 +34,7 @@ public class ItemEntry {
   private String category;
 
   private Map<String, MetadataEntry> metadata;
-  private Set<LinkEntry> channels;
+  private Set<BaseLinkEntry> channels;
 
   public String getName() {
     return name;
@@ -91,11 +92,11 @@ public class ItemEntry {
     this.metadata = metadata;
   }
 
-  public Set<LinkEntry> getChannels() {
+  public Set<BaseLinkEntry> getChannels() {
     return channels;
   }
 
-  public void setChannels(Set<LinkEntry> channels) {
+  public void setChannels(Set<BaseLinkEntry> channels) {
     this.channels = channels;
   }
 

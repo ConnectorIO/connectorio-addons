@@ -6,8 +6,8 @@ import java.util.Map.Entry;
 import org.connectorio.addons.managed.item.model.GroupEntry;
 import org.connectorio.addons.managed.item.model.ItemEntry;
 import org.connectorio.addons.managed.item.model.Items;
-import org.connectorio.addons.managed.item.model.LinkEntry;
 import org.connectorio.addons.managed.item.model.MetadataEntry;
+import org.connectorio.addons.managed.link.model.BaseLinkEntry;
 
 class ItemReader {
 
@@ -45,7 +45,7 @@ class ItemReader {
 
       if (item.getChannels() != null && !item.getChannels().isEmpty()) {
         System.out.println(" Channels:");
-        for (LinkEntry entry : item.getChannels()) {
+        for (BaseLinkEntry entry : item.getChannels()) {
           System.out.println("  - " + entry.getChannel() + (entry.getConfig() != null ? " " + entry.getConfig() : ""));
         }
       }

@@ -18,6 +18,7 @@
 package org.connectorio.addons.managed.link.internal.reader;
 
 import com.thoughtworks.xstream.XStream;
+import org.connectorio.addons.managed.link.model.BaseLinkEntry;
 import org.connectorio.addons.managed.link.model.LinkEntry;
 import org.connectorio.addons.managed.link.model.Links;
 import org.openhab.core.config.xml.util.XmlDocumentReader;
@@ -35,12 +36,13 @@ public class XStreamLinkReader extends XmlDocumentReader<Links> {
 
   @Override
   protected void registerConverters(XStream xstream) {
-    xstream.registerLocalConverter(LinkEntry.class, "config", new NestedMapConverter());
+    xstream.registerLocalConverter(BaseLinkEntry.class, "config", new NestedMapConverter());
   }
 
   @Override
   protected void registerAliases(XStream xstream) {
     xstream.alias("links", Links.class);
+    xstream.useAttributeFor(LinkEntry.class, "item");
     xstream.addImplicitCollection(Links.class, "links", "link", LinkEntry.class);
     xstream.alias("link", LinkEntry.class);
   }

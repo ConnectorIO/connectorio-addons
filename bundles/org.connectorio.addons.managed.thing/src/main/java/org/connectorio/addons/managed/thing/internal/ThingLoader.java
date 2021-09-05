@@ -93,12 +93,12 @@ public class ThingLoader {
 
     Set<Thing> things = new LinkedHashSet<>();
     for (File file : files) {
-      logger.info("Processing thing definitions from {}", file);
       XStreamThingReader reader = new XStreamThingReader();
       XStream stream = reader.getXStream();
       Things parsedItems;
       try {
         parsedItems = reader.readFromXML(file.toURI().toURL());
+        logger.info("Successfully read {} things from {}", parsedItems == null ? 0 : parsedItems.getThings().size(), file);
       } catch (Exception e) {
         logger.error("Failed to parse document {}", file, e);
         continue;

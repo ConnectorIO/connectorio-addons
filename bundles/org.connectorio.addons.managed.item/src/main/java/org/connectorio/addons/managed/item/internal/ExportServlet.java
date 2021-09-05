@@ -40,8 +40,8 @@ import org.connectorio.addons.managed.item.internal.reader.XStreamItemReader;
 import org.connectorio.addons.managed.item.model.GroupEntry;
 import org.connectorio.addons.managed.item.model.ItemEntry;
 import org.connectorio.addons.managed.item.model.Items;
-import org.connectorio.addons.managed.item.model.LinkEntry;
 import org.connectorio.addons.managed.item.model.MetadataEntry;
+import org.connectorio.addons.managed.link.model.BaseLinkEntry;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.items.Metadata;
@@ -128,10 +128,10 @@ public class ExportServlet extends HttpServlet {
       if (linkMap.containsKey(item.getName())) {
         Set<ItemChannelLink> boundChannels = linkMap.get(item.getName());
         if (!boundChannels.isEmpty()) {
-          Set<LinkEntry> channels = new LinkedHashSet<>();
+          Set<BaseLinkEntry> channels = new LinkedHashSet<>();
           entry.setChannels(channels);
           for (ItemChannelLink channel : boundChannels) {
-            LinkEntry link = new LinkEntry();
+            BaseLinkEntry link = new BaseLinkEntry();
             channels.add(link);
             link.setChannel(channel.getLinkedUID().getAsString());
             Map<String, Object> properties = channel.getConfiguration().getProperties();
