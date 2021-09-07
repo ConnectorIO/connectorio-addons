@@ -169,13 +169,6 @@
         <classifier>features</classifier>
         <type>xml</type>
       </dependency>
-      <!-- maybe some day ?
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>ethernetip</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      -->
       <dependency>
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.binding.plc4x.s7</artifactId>
@@ -249,6 +242,41 @@
       <dependency>
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.feature.io.transport.serial</artifactId>
+        <version>${project.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.persistence.manager</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.persistence.manager</artifactId>
+        <version>${project.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.persistence.shell</artifactId>
+        <version>${project.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.persistence.shell</artifactId>
+        <version>${project.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.feature.persistence</artifactId>
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>

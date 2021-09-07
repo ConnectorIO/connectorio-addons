@@ -47,6 +47,20 @@
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.feature.io.transport.serial</artifactId>
+      <scope>compile</scope>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.feature.persistence</artifactId>
+      <scope>compile</scope>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
 
     <dependency>
       <groupId>org.connectorio.addons</groupId>
