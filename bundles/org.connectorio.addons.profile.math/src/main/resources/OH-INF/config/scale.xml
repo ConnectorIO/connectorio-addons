@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config-descriptions
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
+
+  <config-description uri="profile:connectorio:math-scale">
+    <parameter name="scale" type="integer" required="true">
+      <label>Scale</label>
+      <description>
+        Value used to multiply values sent from system and divide values received from integration.
+      </description>
+    </parameter>
+  </config-description>
+
+</config-descriptions>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config-descriptions
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
+
+  <config-description uri="profile:connectorio:profiles">
+    <parameter name="profiles" type="text" required="true" multiple="true">
+      <label>Profiles</label>
+      <description>
+        List of profiles which should be chained within each update of item or handler.
+      </description>
+      <limitToOptions>true</limitToOptions>
+    </parameter>
+  </config-description>
+
+</config-descriptions>

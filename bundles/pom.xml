@@ -55,7 +55,10 @@
     <module>org.connectorio.addons.norule</module>
     <module>org.connectorio.addons.persistence.manager</module>
     <module>org.connectorio.addons.persistence.shell</module>
+    <module>org.connectorio.addons.profile</module>
     <module>org.connectorio.addons.profile.isg</module>
+    <module>org.connectorio.addons.profile.math</module>
+    <module>org.connectorio.addons.profile.quantity</module>
     <module>org.connectorio.addons.startlevel.shell</module>
     <module>org.connectorio.addons.transformation.inverse</module>
     <module>org.connectorio.chrono</module>

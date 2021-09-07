@@ -44,6 +44,7 @@
     <module>org.connectorio.addons.feature.openhab</module>
     <module>org.connectorio.addons.feature.persistence</module>
     <module>org.connectorio.addons.feature.plc4x</module>
+    <module>org.connectorio.addons.feature.profile</module>
     <module>org.connectorio.addons.feature.relayweblog</module>
     <module>org.connectorio.addons.feature.s7</module>
   </modules>
