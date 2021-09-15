@@ -1,0 +1,26 @@
+=== Quantity Profiles
+
+Handy conversions between numbers and quantities.
+
+==== Quantity profile
+
+This profile is symmetric and works on both sent and received values.
+Most often it is useful in situations when a channel works with numeric value with an explicit unit which is not added by binding.
+This is very common situation for Modbus and MQTT bindings which use read and write transformations.
+
+This profile does not assume which side of communication uses quantity and which one is number based.
+It will always twist value from quantity to number.
+For this reason environment in which this profile is deployed must be consistent.
+
+[cols="10,20,~",options="header"]
+|===
+|Parameter|Type|Description
+
+|unit
+|text
+|Measurement unit (such as kWh, MWh) which shall be used for numeric values.
+All quantities will be turned into this unit.
+For example setting unit to kWH will convert 1 MWh to a number 1000.
+Number 1000 will be then converted to 1000 kWh.
+
+|===

@@ -1,0 +1,47 @@
+=== Timer Profiles
+
+This module contains timer related profiles which impact how often communication between a handler and item is being made.
+
+==== Debounce profile
+
+This profile allows user to define a time window after which a given command or state should be received or sent.
+It can be used either to limit amount of updates coming from device or sent to the device to 1 operation in given time window.
+Another use is delayed execution of updates.
+Profile is symmetric meaning that its configuration is applied both to receiving as well sending operations.
+
+[cols="10,20,~",options="header"]
+|===
+|Parameter|Type|Description
+
+|first
+|bool
+|Define behavior of debounce operation.
+If set to true only first sent or received value will be used.
+Otherwise, most recent value will be used.
+
+|unit
+a|text (option)
+
+- NANOSECONDS
+- MICROSECONDS
+- MILLISECONDS
+- SECONDS
+- MINUTES
+- HOURS
+- DAYS
+|Time window unit.
+Any value within given constants is accepted.
+Please note that delays are not persisted.
+Usage of day or hour unit (or its equivalent in other units) will result in action which will only take place if system is up.
+
+Any restarts of the system will reset profile state.
+The delayed action will not be executed.
+
+The very narrow time units such as nano, micro or millis can result in intermediate (or almost intermediate) execution of an action.
+
+|delay
+|integer
+|Length of time window.
+This is the number of time units to wait.
+
+|===

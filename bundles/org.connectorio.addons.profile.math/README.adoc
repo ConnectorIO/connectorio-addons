@@ -1,0 +1,23 @@
+=== Math Profiles
+
+Basic mathematical operations.
+
+==== Scale profile
+
+This profile is intended to increase or decrease value by given order of magnitude.
+It works with both number and quantity types.
+
+[cols="10,20,~",options="header"]
+|===
+|Parameter|Type|Description
+
+|scale
+|integer
+|Scale multiplier or divider for values.
+Updates sent to device are multiplied by scale.
+Values received from device are divided by scale.
+
+|===
+
+For example, with scale 10 if device (binding) sends value 100 item will receive value 10.
+If item state will be set to 11 this profile will forward to device (binding) value 110.
