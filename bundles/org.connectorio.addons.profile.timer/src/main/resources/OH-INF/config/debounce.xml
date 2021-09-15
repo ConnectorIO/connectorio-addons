@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config-descriptions
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
+
+  <config-description uri="profile:connectorio:debounce">
+    <parameter name="first" type="boolean" required="true">
+      <label>Use first value</label>
+      <description>
+        Determines if first or last sent within time window defined below should be used for this profile.
+      </description>
+    </parameter>
+    <parameter name="delay" type="integer" min="0" required="true">
+      <label>Delay</label>
+      <description>Delay which need to pass for communication to happen.</description>
+    </parameter>
+    <parameter name="unit" type="text" required="true">
+      <label>Time unit</label>
+      <description>Specifies unit of the delay parameter.</description>
+      <options>
+        <option value="NANOSECONDS">Nanoseconds</option>
+        <option value="MICROSECONDS">Microseconds</option>
+        <option value="MILLISECONDS">Milliseconds</option>
+        <option value="SECONDS">Seconds</option>
+        <option value="MINUTES">Minutes</option>
+        <option value="HOURS">Hours</option>
+        <option value="DAYS">Days</option>
+      </options>
+    </parameter>
+  </config-description>
+
+</config-descriptions>
