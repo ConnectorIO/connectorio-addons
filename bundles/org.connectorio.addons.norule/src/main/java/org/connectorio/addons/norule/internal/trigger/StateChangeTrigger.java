@@ -31,4 +31,8 @@ public class StateChangeTrigger implements Trigger {
     return item;
   }
 
+  public String toString() {
+    return item + "(state change)";
+  }
+
 }

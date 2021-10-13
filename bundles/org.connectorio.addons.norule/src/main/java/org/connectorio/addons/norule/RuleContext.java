@@ -19,6 +19,8 @@ package org.connectorio.addons.norule;
 
 public interface RuleContext {
 
+  Trigger getTrigger();
+
   ItemContext item(String itemName);
 
 }

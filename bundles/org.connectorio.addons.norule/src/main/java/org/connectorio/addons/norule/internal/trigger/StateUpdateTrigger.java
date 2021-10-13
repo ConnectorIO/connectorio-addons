@@ -30,4 +30,9 @@ public class StateUpdateTrigger implements Trigger {
   public String getItemName() {
     return itemName;
   }
+
+  public String toString() {
+    return itemName + "(state update)";
+  }
+
 }

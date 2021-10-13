@@ -34,6 +34,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.chrono</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.openhab.core.bundles</groupId>
       <artifactId>org.openhab.core</artifactId>
     </dependency>
@@ -53,6 +58,10 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>osgi.core</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.service.component.annotations</artifactId>

@@ -15,30 +15,23 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.norule;
+package org.connectorio.addons.norule.internal.context;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import org.connectorio.chrono.Period;
+import org.connectorio.addons.norule.Trigger;
+import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.service.ReadyMarker;
 
-public interface TriggerBuilder {
+public class ReadyMarkerRuleContext extends BaseRuleContext {
 
-  TriggerBuilder groupStateChange(String item);
+  private final ReadyMarker marker;
 
-  TriggerBuilder itemStateChange(String item);
+  public ReadyMarkerRuleContext(ItemRegistry itemRegistry, Trigger trigger, ReadyMarker marker) {
+    super(itemRegistry, trigger);
+    this.marker = marker;
+  }
 
-  TriggerBuilder itemStateUpdate(String item);
-
-  TriggerBuilder startLevel(int level);
-
-  TriggerBuilder markerAdded(ReadyMarker marker);
-  TriggerBuilder markerRemoved(ReadyMarker marker);
-
-  TriggerBuilder schedule(long delay, TimeUnit unit);
-
-  TriggerBuilder period(long delay, Period period);
-
-  Set<Trigger> build();
+  public ReadyMarker getMarker() {
+    return marker;
+  }
 
 }

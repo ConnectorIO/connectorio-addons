@@ -15,16 +15,20 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.norule;
+package org.connectorio.addons.norule.internal;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Constructor;
-import javax.measure.quantity.Energy;
-import org.connectorio.addons.norule.internal.DefaultTriggerBuilderFactory;
-import org.connectorio.addons.norule.internal.RuleLauncher;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import org.connectorio.addons.norule.ActualCopRule;
+import org.connectorio.addons.norule.Rule;
+import org.connectorio.addons.norule.RuleContext;
+import org.connectorio.addons.norule.RuleUID;
+import org.connectorio.addons.norule.Trigger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -36,7 +40,6 @@ import org.openhab.core.items.events.ItemStateChangedEvent;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.unit.Units;
 import org.openhab.core.types.State;
-import tec.uom.se.quantity.Quantities;
 
 @ExtendWith(MockitoExtension.class)
 public class TestBasicRule {
@@ -52,13 +55,15 @@ public class TestBasicRule {
   private GenericItem efficiency;
 
   @Test
-  void checkBasicRule() {
+  void checkBasicRule() throws InterruptedException {
     DefaultTriggerBuilderFactory triggerBuilderFactory = new DefaultTriggerBuilderFactory();
 
-    ActualCopRule rule = new ActualCopRule(triggerBuilderFactory);
+    BlockingRule rule = new BlockingRule(new ActualCopRule(triggerBuilderFactory));
 
-    RuleLauncher launcher = new RuleLauncher(itemRegistry);
-    launcher.addRule(rule);
+    RuntimeRuleProvider provider = new RuntimeRuleProvider();
+    provider.addRule(rule);
+    NoRuleRegistry launcher = new NoRuleRegistry(itemRegistry);
+    launcher.addProvider(provider);
 
     when(itemRegistry.get("EnergyConsumed")).thenReturn(energyConsumed);
     when(energyConsumed.getStateAs(eq(QuantityType.class))).thenReturn(new QuantityType<>(10, Units.KILOWATT_HOUR));
@@ -72,6 +77,7 @@ public class TestBasicRule {
       "", "", "HeatProduced", QuantityType.valueOf("10 kWh"), QuantityType.valueOf("9 kWh")
     );
     launcher.receive(event);
+    rule.getLatch().await();
     verify(efficiency).setState(new QuantityType<>(5, Units.ONE));
   }
 

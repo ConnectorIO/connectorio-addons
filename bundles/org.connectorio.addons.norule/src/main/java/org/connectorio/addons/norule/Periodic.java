@@ -17,28 +17,11 @@
  */
 package org.connectorio.addons.norule;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import org.connectorio.chrono.Period;
-import org.openhab.core.service.ReadyMarker;
 
-public interface TriggerBuilder {
+public interface Periodic extends Trigger {
 
-  TriggerBuilder groupStateChange(String item);
-
-  TriggerBuilder itemStateChange(String item);
-
-  TriggerBuilder itemStateUpdate(String item);
-
-  TriggerBuilder startLevel(int level);
-
-  TriggerBuilder markerAdded(ReadyMarker marker);
-  TriggerBuilder markerRemoved(ReadyMarker marker);
-
-  TriggerBuilder schedule(long delay, TimeUnit unit);
-
-  TriggerBuilder period(long delay, Period period);
-
-  Set<Trigger> build();
+  long getDelay();
+  Period getPeriod();
 
 }

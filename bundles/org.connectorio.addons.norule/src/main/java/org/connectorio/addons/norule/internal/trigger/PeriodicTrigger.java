@@ -15,30 +15,35 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.norule;
+package org.connectorio.addons.norule.internal.trigger;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import org.connectorio.addons.norule.Periodic;
+import org.connectorio.addons.norule.Scheduled;
+import org.connectorio.addons.norule.Trigger;
 import org.connectorio.chrono.Period;
-import org.openhab.core.service.ReadyMarker;
 
-public interface TriggerBuilder {
+public class PeriodicTrigger implements Trigger, Periodic {
 
-  TriggerBuilder groupStateChange(String item);
+  private final long delay;
+  private final Period period;
 
-  TriggerBuilder itemStateChange(String item);
+  public PeriodicTrigger(long delay, Period period) {
+    this.delay = delay;
+    this.period = period;
+  }
 
-  TriggerBuilder itemStateUpdate(String item);
+  @Override
+  public long getDelay() {
+    return delay;
+  }
 
-  TriggerBuilder startLevel(int level);
+  @Override
+  public Period getPeriod() {
+    return period;
+  }
 
-  TriggerBuilder markerAdded(ReadyMarker marker);
-  TriggerBuilder markerRemoved(ReadyMarker marker);
-
-  TriggerBuilder schedule(long delay, TimeUnit unit);
-
-  TriggerBuilder period(long delay, Period period);
-
-  Set<Trigger> build();
+  public String toString() {
+    return "every " + delay + " " + period + " (periodic)";
+  }
 
 }

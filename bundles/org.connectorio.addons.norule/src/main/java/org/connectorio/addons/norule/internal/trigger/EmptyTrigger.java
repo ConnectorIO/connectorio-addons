@@ -15,30 +15,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.norule;
+package org.connectorio.addons.norule.internal.trigger;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import org.connectorio.chrono.Period;
-import org.openhab.core.service.ReadyMarker;
+import org.connectorio.addons.norule.Trigger;
 
-public interface TriggerBuilder {
-
-  TriggerBuilder groupStateChange(String item);
-
-  TriggerBuilder itemStateChange(String item);
-
-  TriggerBuilder itemStateUpdate(String item);
-
-  TriggerBuilder startLevel(int level);
-
-  TriggerBuilder markerAdded(ReadyMarker marker);
-  TriggerBuilder markerRemoved(ReadyMarker marker);
-
-  TriggerBuilder schedule(long delay, TimeUnit unit);
-
-  TriggerBuilder period(long delay, Period period);
-
-  Set<Trigger> build();
+public class EmptyTrigger implements Trigger {
 
 }

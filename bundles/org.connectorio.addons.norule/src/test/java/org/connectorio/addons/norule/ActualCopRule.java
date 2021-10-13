@@ -59,4 +59,9 @@ public class ActualCopRule implements Rule {
       heat.divide(energy)
     );
   }
+
+  @Override
+  public RuleUID getUID() {
+    return new RuleUID("norule", "cop");
+  }
 }

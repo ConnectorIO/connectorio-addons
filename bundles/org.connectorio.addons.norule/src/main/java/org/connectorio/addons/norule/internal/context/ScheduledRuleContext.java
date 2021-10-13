@@ -17,32 +17,38 @@
  */
 package org.connectorio.addons.norule.internal.context;
 
-import java.util.Optional;
-import org.connectorio.addons.norule.ItemContext;
-import org.connectorio.addons.norule.RuleContext;
 import org.connectorio.addons.norule.Trigger;
 import org.openhab.core.items.ItemRegistry;
 
-public abstract class BaseRuleContext implements RuleContext {
+public class ScheduledRuleContext extends BaseRuleContext {
 
-  private final ItemRegistry itemRegistry;
-  private final Trigger trigger;
+  private final long registration;
+  private final long currentRun;
+  private final long firstRun;
+  private final Long previousRun;
 
-  public BaseRuleContext(ItemRegistry itemRegistry, Trigger trigger) {
-    this.itemRegistry = itemRegistry;
-    this.trigger = trigger;
+  public ScheduledRuleContext(ItemRegistry itemRegistry, Trigger trigger, long registration, long currentRun, long firstRun, Long previousRun) {
+    super(itemRegistry, trigger);
+    this.registration = registration;
+    this.currentRun = currentRun;
+    this.firstRun = firstRun;
+    this.previousRun = previousRun;
   }
 
-  @Override
-  public Trigger getTrigger() {
-    return trigger;
+  public long getRegistration() {
+    return registration;
   }
 
-  @Override
-  public ItemContext item(String itemName) {
-    return Optional.ofNullable(itemRegistry.get(itemName))
-      .<ItemContext>map(DefaultItemContext::new)
-      .orElseGet(EmptyItemContext::new);
+  public long getCurrentRun() {
+    return currentRun;
+  }
+
+  public long getFirstRun() {
+    return firstRun;
+  }
+
+  public Long getPreviousRun() {
+    return previousRun;
   }
 
 }

@@ -31,4 +31,7 @@ public class GroupStateChangeTrigger implements Trigger {
     return groupName;
   }
 
+  public String toString() {
+    return groupName + "(group state change)";
+  }
 }

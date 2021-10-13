@@ -19,11 +19,20 @@ package org.connectorio.addons.norule.internal;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import org.connectorio.addons.norule.Trigger;
 import org.connectorio.addons.norule.TriggerBuilder;
 import org.connectorio.addons.norule.internal.trigger.GroupStateChangeTrigger;
+import org.connectorio.addons.norule.internal.trigger.PeriodicTrigger;
+import org.connectorio.addons.norule.internal.trigger.ReadyMarkerAddedTrigger;
+import org.connectorio.addons.norule.internal.trigger.ReadyMarkerRemovedTrigger;
+import org.connectorio.addons.norule.internal.trigger.ReadyMarkerTrigger;
+import org.connectorio.addons.norule.internal.trigger.ScheduledTrigger;
+import org.connectorio.addons.norule.internal.trigger.StartLevelTrigger;
 import org.connectorio.addons.norule.internal.trigger.StateChangeTrigger;
 import org.connectorio.addons.norule.internal.trigger.StateUpdateTrigger;
+import org.connectorio.chrono.Period;
+import org.openhab.core.service.ReadyMarker;
 
 public class DefaultTriggerBuilder implements TriggerBuilder {
 
@@ -44,6 +53,30 @@ public class DefaultTriggerBuilder implements TriggerBuilder {
   @Override
   public TriggerBuilder itemStateUpdate(String item) {
     triggers.add(new StateUpdateTrigger(item));
+    return this;
+  }
+
+  @Override
+  public TriggerBuilder schedule(long delay, TimeUnit unit) {
+    triggers.add(new ScheduledTrigger(delay, unit));
+    return this;
+  }
+
+  @Override
+  public TriggerBuilder period(long delay, Period period) {
+    triggers.add(new PeriodicTrigger(delay, period));
+    return this;
+  }
+
+  @Override
+  public TriggerBuilder startLevel(int level) {
+    triggers.add(new StartLevelTrigger(level));
+    return this;
+  }
+
+  @Override
+  public TriggerBuilder markerAdded(ReadyMarker marker) {
+    triggers.add(new ReadyMarkerRemovedTrigger(marker));
     return this;
   }
 

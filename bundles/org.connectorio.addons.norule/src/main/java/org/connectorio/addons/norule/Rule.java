@@ -18,8 +18,9 @@
 package org.connectorio.addons.norule;
 
 import java.util.Set;
+import org.openhab.core.common.registry.Identifiable;
 
-public interface Rule {
+public interface Rule extends Identifiable<RuleUID> {
 
   Set<Trigger> getTriggers();
 
