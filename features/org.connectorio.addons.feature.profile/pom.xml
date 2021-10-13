@@ -59,7 +59,19 @@
     </dependency>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.profile.sma</artifactId>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.profile.timer</artifactId>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.chrono</artifactId>
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>

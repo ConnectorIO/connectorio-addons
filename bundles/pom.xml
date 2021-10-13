@@ -60,6 +60,7 @@
     <module>org.connectorio.addons.profile.isg</module>
     <module>org.connectorio.addons.profile.math</module>
     <module>org.connectorio.addons.profile.quantity</module>
+    <module>org.connectorio.addons.profile.sma</module>
     <module>org.connectorio.addons.profile.timer</module>
     <module>org.connectorio.addons.startlevel.shell</module>
     <module>org.connectorio.addons.transformation.inverse</module>
