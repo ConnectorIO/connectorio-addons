@@ -53,6 +53,7 @@
     <module>org.connectorio.addons.managed.link</module>
     <module>org.connectorio.addons.managed.thing</module>
     <module>org.connectorio.addons.norule</module>
+    <module>org.connectorio.addons.norule.shell</module>
     <module>org.connectorio.addons.persistence.manager</module>
     <module>org.connectorio.addons.persistence.shell</module>
     <module>org.connectorio.addons.profile</module>

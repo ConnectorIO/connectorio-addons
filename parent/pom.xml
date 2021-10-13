@@ -398,6 +398,12 @@
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.norule</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.feature</artifactId>
         <version>${project.version}</version>
         <classifier>features</classifier>
