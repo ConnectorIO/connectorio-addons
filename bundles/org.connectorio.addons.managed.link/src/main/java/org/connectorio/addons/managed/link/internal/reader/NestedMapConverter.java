@@ -62,7 +62,7 @@ public class NestedMapConverter implements Converter {
     while (reader.hasMoreChildren()) {
       reader.moveDown();
       if( reader.hasMoreChildren() ) {
-        map.put(reader.getNodeName(), xmlToMap(reader, new HashMap<>()));
+        map.put(reader.getNodeName(), xmlToMap(reader, new LinkedHashMap<>()));
       } else {
         String value = reader.getValue();
         if (value != null) {

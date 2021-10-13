@@ -17,24 +17,18 @@
  */
 package org.connectorio.addons.managed.item.internal;
 
-import java.util.Collection;
-import java.util.Set;
-import org.openhab.core.common.registry.AbstractProvider;
+import java.util.List;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemProvider;
 
-public class XStreamItemProvider extends AbstractProvider<Item> implements ItemProvider {
+public class XStreamItemProvider extends SimpleProvider<Item> implements ItemProvider {
 
-  private final Set<Item> items;
-
-  public XStreamItemProvider(Set<Item> items) {
-    this.items = items;
+  public XStreamItemProvider(List<Item> items) {
+    super(items);
   }
 
-
-  @Override
-  public Collection<Item> getAll() {
-    return items;
+  public void add(Item item) {
+    super.add(item);
   }
 
 }

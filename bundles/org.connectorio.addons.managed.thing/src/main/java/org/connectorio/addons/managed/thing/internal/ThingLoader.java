@@ -36,6 +36,8 @@ import org.openhab.core.config.core.ConfigDescription;
 import org.openhab.core.config.core.ConfigDescriptionParameter;
 import org.openhab.core.config.core.ConfigDescriptionRegistry;
 import org.openhab.core.config.core.Configuration;
+import org.openhab.core.service.ReadyMarker;
+import org.openhab.core.service.ReadyService;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
@@ -73,7 +75,7 @@ public class ThingLoader {
 
   @Activate
   public ThingLoader(BundleContext context, @Reference ThingTypeRegistry thingTypeRegistry, @Reference ChannelTypeRegistry channelTypeRegistry,
-    @Reference ConfigDescriptionRegistry configDescriptionRegistry) {
+    @Reference ConfigDescriptionRegistry configDescriptionRegistry, @Reference ReadyService service) {
     this.context = context;
     this.thingTypeRegistry = thingTypeRegistry;
     this.channelTypeRegistry = channelTypeRegistry;

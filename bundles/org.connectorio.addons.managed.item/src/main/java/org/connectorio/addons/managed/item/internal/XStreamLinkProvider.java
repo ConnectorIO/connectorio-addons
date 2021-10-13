@@ -17,32 +17,18 @@
  */
 package org.connectorio.addons.managed.item.internal;
 
-import java.util.Collection;
-import java.util.Set;
-import org.openhab.core.common.registry.ProviderChangeListener;
+import java.util.List;
 import org.openhab.core.thing.link.ItemChannelLink;
 import org.openhab.core.thing.link.ItemChannelLinkProvider;
 
-public class XStreamLinkProvider implements ItemChannelLinkProvider {
+public class XStreamLinkProvider extends SimpleProvider<ItemChannelLink> implements ItemChannelLinkProvider {
 
-  private final Set<ItemChannelLink> links;
-
-  public XStreamLinkProvider(Set<ItemChannelLink> links) {
-    this.links = links;
+  public XStreamLinkProvider(List<ItemChannelLink> links) {
+    super(links);
   }
 
-  @Override
-  public void addProviderChangeListener(ProviderChangeListener<ItemChannelLink> listener) {
-
+  public void add(ItemChannelLink link) {
+    super.add(link);
   }
 
-  @Override
-  public Collection<ItemChannelLink> getAll() {
-    return links;
-  }
-
-  @Override
-  public void removeProviderChangeListener(ProviderChangeListener<ItemChannelLink> listener) {
-
-  }
 }

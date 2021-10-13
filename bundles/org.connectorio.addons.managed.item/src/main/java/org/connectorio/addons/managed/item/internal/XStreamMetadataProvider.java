@@ -17,33 +17,18 @@
  */
 package org.connectorio.addons.managed.item.internal;
 
-import java.util.Collection;
-import java.util.Set;
-import org.openhab.core.common.registry.ProviderChangeListener;
-import org.openhab.core.items.Item;
+import java.util.List;
 import org.openhab.core.items.Metadata;
 import org.openhab.core.items.MetadataProvider;
 
-public class XStreamMetadataProvider implements MetadataProvider {
+public class XStreamMetadataProvider extends SimpleProvider<Metadata> implements MetadataProvider {
 
-  private final Set<Metadata> metadata;
-
-  public XStreamMetadataProvider(Set<Metadata> metadata) {
-    this.metadata = metadata;
+  public XStreamMetadataProvider(List<Metadata> metadata) {
+    super(metadata);
   }
 
-  @Override
-  public void addProviderChangeListener(ProviderChangeListener<Metadata> listener) {
-
+  public void add(Metadata metadata) {
+    super.add(metadata);
   }
 
-  @Override
-  public Collection<Metadata> getAll() {
-    return metadata;
-  }
-
-  @Override
-  public void removeProviderChangeListener(ProviderChangeListener<Metadata> listener) {
-
-  }
 }

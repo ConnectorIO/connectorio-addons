@@ -31,6 +31,7 @@ import org.connectorio.addons.managed.item.model.ItemEntry;
 import org.connectorio.addons.managed.item.model.Items;
 import org.connectorio.addons.managed.item.model.MetadataEntry;
 import org.connectorio.addons.managed.link.model.BaseLinkEntry;
+import org.openhab.core.config.xml.util.NodeListConverter;
 import org.openhab.core.config.xml.util.XmlDocumentReader;
 
 public class XStreamItemReader extends XmlDocumentReader<Items> {
@@ -115,6 +116,7 @@ public class XStreamItemReader extends XmlDocumentReader<Items> {
     xstream.addImplicitCollection(ItemEntry.class, "channels", "link", BaseLinkEntry.class);
 
     xstream.addImplicitCollection(GroupEntry.class, "members", "member", String.class);
+    xstream.addImplicitCollection(GroupEntry.class, "parameters", "parameter", String.class);
 
     xstream.useAttributeFor(MetadataEntry.class, "value");
   }

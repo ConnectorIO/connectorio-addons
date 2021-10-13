@@ -60,7 +60,6 @@ import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.awt.image.ImageWatched.Link;
 
 @Component(service = HttpServlet.class)
 public class ExportServlet extends HttpServlet {

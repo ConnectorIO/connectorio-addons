@@ -19,6 +19,7 @@ package org.connectorio.addons.managed.item.internal;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -42,6 +43,7 @@ import org.connectorio.addons.managed.item.model.ItemEntry;
 import org.connectorio.addons.managed.item.model.Items;
 import org.connectorio.addons.managed.item.model.MetadataEntry;
 import org.connectorio.addons.managed.link.model.BaseLinkEntry;
+import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.items.Metadata;
@@ -49,6 +51,7 @@ import org.openhab.core.items.MetadataKey;
 import org.openhab.core.items.MetadataRegistry;
 import org.openhab.core.thing.link.ItemChannelLink;
 import org.openhab.core.thing.link.ItemChannelLinkProvider;
+import org.openhab.core.types.State;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -109,7 +112,23 @@ public class ExportServlet extends HttpServlet {
 
     List<ItemEntry> items = new ArrayList<>();
     for (Item item : simplySorted()) {
-      ItemEntry entry = "group".equalsIgnoreCase(item.getType()) ? new GroupEntry() : new ItemEntry();
+      ItemEntry entry = new ItemEntry();
+      if ("group".equalsIgnoreCase(item.getType())) {
+        GroupEntry group = new GroupEntry();
+        GroupItem groupItem = (GroupItem) item;
+        if (groupItem.getFunction() != null) {
+          group.setFunction(groupItem.getFunction().toString());
+          List<String> params = new ArrayList<>();
+          for (State state : groupItem.getFunction().getParameters()) {
+            params.add(state.toString());
+          }
+          group.setParameters(params);
+        }
+        if (groupItem.getBaseItem() != null) {
+          group.setBaseItemType(groupItem.getBaseItem().getType());
+        }
+        entry = group;
+      }
       items.add(entry);
       entry.setCategory(item.getCategory());
       entry.setTags(item.getTags());
