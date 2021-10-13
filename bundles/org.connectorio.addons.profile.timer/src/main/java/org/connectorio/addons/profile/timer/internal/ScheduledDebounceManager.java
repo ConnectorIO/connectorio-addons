@@ -36,6 +36,11 @@ public class ScheduledDebounceManager implements DebounceManager {
     return executor.schedule(action, delay, unit);
   }
 
+  @Override
+  public ScheduledFuture<?> scheduleFixed(Runnable action, long initialDelay, long period, TimeUnit unit) {
+    return executor.scheduleAtFixedRate(action, initialDelay, period, unit);
+  }
+
   @Deactivate
   void deactivate() {
     executor.shutdown();

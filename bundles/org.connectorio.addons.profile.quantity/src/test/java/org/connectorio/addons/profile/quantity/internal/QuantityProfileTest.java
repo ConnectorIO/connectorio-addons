@@ -56,6 +56,9 @@ class QuantityProfileTest {
     profile.onStateUpdateFromHandler(new DecimalType(10.0));
     Mockito.verify(callback).sendUpdate(new QuantityType<>(10.0, Units.BYTE));
 
+    profile.onStateUpdateFromHandler(new QuantityType<>(8, Units.BIT));
+    Mockito.verify(callback).sendUpdate(new QuantityType<>(1.0, Units.BYTE));
+
     profile.onCommandFromItem(new QuantityType<>(8, Units.BIT));
     Mockito.verify(callback).handleCommand(new DecimalType(1.0));
   }

@@ -47,17 +47,20 @@ public class TimerProfileFactory implements ProfileFactory, ProfileTypeProvider 
     if (TimerProfiles.DEBOUNCE.equals(profileTypeUID)) {
       return new DebounceProfile(callback, profileContext, debounceManager);
     }
+    if (TimerProfiles.PERIODIC.equals(profileTypeUID)) {
+      return new PeriodicProfile(callback, profileContext, debounceManager);
+    }
     return null;
   }
 
   @Override
   public Collection<ProfileTypeUID> getSupportedProfileTypeUIDs() {
-    return Arrays.asList(TimerProfiles.DEBOUNCE);
+    return Arrays.asList(TimerProfiles.DEBOUNCE, TimerProfiles.PERIODIC);
   }
 
   @Override
   public Collection<ProfileType> getProfileTypes(Locale locale) {
-    return Arrays.asList(TimerProfiles.DEBOUNCE_PROFILE_TYPE);
+    return Arrays.asList(TimerProfiles.DEBOUNCE_PROFILE_TYPE, TimerProfiles.PERIODIC_PROFILE_TYPE);
   }
 
 }

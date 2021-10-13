@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public interface DebounceManager {
 
   /**
-   * Schedules an delayed action.
+   * Schedules a delayed action.
    *
    * @param action Action to be executed.
    * @param delay Delay being taken.
@@ -37,4 +37,5 @@ public interface DebounceManager {
    */
   <T> ScheduledFuture<T> schedule(Callable<T> action, long delay, TimeUnit unit);
 
+  ScheduledFuture<?> scheduleFixed(Runnable action, long initialDelay, long period, TimeUnit unit);
 }

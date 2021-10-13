@@ -7,7 +7,7 @@
     <parameter name="profiles" type="text" required="true" multiple="true">
       <label>Profiles</label>
       <description>
-        List of profiles which should be chained within each update of item or handler.
+        Please note that this profile requires complex configuration which can't be provided through user interface!
       </description>
       <limitToOptions>true</limitToOptions>
     </parameter>

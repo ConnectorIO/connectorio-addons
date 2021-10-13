@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config-descriptions
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
+
+  <config-description uri="profile:connectorio:periodic">
+    <parameter name="amount" type="integer" min="1" required="true">
+      <label>Amount</label>
+      <description>Number of given amounts to pass. It might be 1 + SECOND or 60 + SECOND as well as 1 + MINUTE.</description>
+    </parameter>
+    <parameter name="unit" type="text" required="true">
+      <label>Time unit</label>
+      <description>Specifies unit of the delay parameter.</description>
+      <options>
+        <option value="DAY">"Every day</option>
+        <option value="HOUR">"Every hour</option>
+        <option value="HALF_HOUR">"Every half hour</option>
+        <option value="QUARTER_HOUR">Every quarter of an hour</option>
+        <option value="MINUTE">"Every minute</option>
+        <option value="SECOND">"Every second</option>
+      </options>
+    </parameter>
+    <parameter name="refresh" type="boolean" required="true">
+      <label>Refresh</label>
+      <description>Send refresh command once period passed.</description>
+      <default>false</default>
+    </parameter>
+  </config-description>
+
+</config-descriptions>

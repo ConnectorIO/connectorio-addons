@@ -17,6 +17,8 @@
  */
 package org.connectorio.addons.profile.quantity.internal;
 
+import java.math.BigDecimal;
+import java.util.function.Consumer;
 import javax.measure.IncommensurableException;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
@@ -72,29 +74,36 @@ class QuantityProfile implements StateProfile {
     handleReading(state, true);
   }
 
-  private void handleReading(Type reading, boolean incoming) {
-    if (incoming && reading instanceof DecimalType) {
-      DecimalType decimalReading = (DecimalType) reading;
+  private void handleReading(Type value, boolean incoming) {
+    if (incoming && value instanceof DecimalType) {
+      DecimalType decimalReading = (DecimalType) value;
 
       callback.sendUpdate(new QuantityType<>(decimalReading.toBigDecimal(), unit));
     }
-    if (!incoming && reading instanceof QuantityType) {
-      QuantityType<?> quantifiedReading = (QuantityType<?>) reading;
-      try {
-        UnitConverter converter = quantifiedReading.getUnit().getConverterToAny(unit);
-        if (converter != null) {
-          if (converter.isIdentity()) {
-            callback.handleCommand(new DecimalType(quantifiedReading.toBigDecimal()));
-          } else {
-            Number converted = converter.convert(quantifiedReading.toBigDecimal());
-            callback.handleCommand(new DecimalType(converted.doubleValue()));
-          }
-          return;
+    if (incoming && value instanceof QuantityType) {
+      convert((QuantityType<?>) value, (number) -> callback.sendUpdate(new QuantityType<>(number, unit)));
+    }
+    if (!incoming && value instanceof QuantityType) {
+      convert((QuantityType<?>) value, (number) -> callback.handleCommand(new DecimalType(number)));
+    }
+  }
+
+  private void convert(QuantityType<?> value, Consumer<BigDecimal> callback) {
+    QuantityType<?> quantifiedReading = value;
+    try {
+      UnitConverter converter = quantifiedReading.getUnit().getConverterToAny(unit);
+      if (converter != null) {
+        if (converter.isIdentity()) {
+          callback.accept(quantifiedReading.toBigDecimal());
+        } else {
+          Number converted = converter.convert(quantifiedReading.toBigDecimal());
+          callback.accept(BigDecimal.valueOf(converted.doubleValue()));
         }
-        logger.debug("Unknown conversion from {} to {}", quantifiedReading.getUnit(), unit);
-      } catch (IncommensurableException e) {
-        logger.warn("Failed to lookup conversion from {} to {}", quantifiedReading.getUnit(), unit, e);
+        return;
       }
+      logger.debug("Unknown conversion from {} to {}", quantifiedReading.getUnit(), unit);
+    } catch (IncommensurableException e) {
+      logger.warn("Failed to lookup conversion from {} to {}", quantifiedReading.getUnit(), unit, e);
     }
   }
 

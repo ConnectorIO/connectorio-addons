@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import org.connectorio.addons.profile.ProfileFactoryRegistry;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,6 +54,8 @@ class ConnectorioProfileTest {
   public static final ProfileTypeUID PROFILE_TYPE_SCALE = new ProfileTypeUID(SCALE_PROFILE);
 
   @Mock
+  ProfileFactoryRegistry registry;
+  @Mock
   ProfileCallback callback;
   @Mock
   ProfileContext context;
@@ -69,7 +72,7 @@ class ConnectorioProfileTest {
 
     when(context.getConfiguration()).thenReturn(config);
 
-    Set<ProfileFactory> factories = new HashSet<>(Arrays.asList(factory1, factory2));
+    when(registry.getAll()).thenReturn(Arrays.asList(factory1, factory2));
 
     when(factory1.getSupportedProfileTypeUIDs()).thenReturn(Arrays.asList(PROFILE_TYPE_CONDITION));
     when(factory2.getSupportedProfileTypeUIDs()).thenReturn(Arrays.asList(PROFILE_TYPE_SCALE));
@@ -82,7 +85,7 @@ class ConnectorioProfileTest {
       inv.getArgument(2, ProfileContext.class)
     ));
 
-    ConnectorioProfile profile = new ConnectorioProfile(callback, context, factories);
+    ConnectorioProfile profile = new ConnectorioProfile(callback, context, registry);
     profile.onCommandFromItem(new DecimalType(22.0));
     Mockito.verify(callback).handleCommand(new DecimalType(11.0));
 

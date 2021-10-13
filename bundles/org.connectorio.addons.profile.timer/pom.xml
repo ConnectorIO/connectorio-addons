@@ -33,6 +33,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.chrono</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.openhab.core.bundles</groupId>
       <artifactId>org.openhab.core.thing</artifactId>
     </dependency>
@@ -48,6 +52,14 @@
       <groupId>javax.measure</groupId>
       <artifactId>unit-api</artifactId>
       <version>1.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.chrono</artifactId>
+      <classifier>features</classifier>
+      <type>xml</type>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>

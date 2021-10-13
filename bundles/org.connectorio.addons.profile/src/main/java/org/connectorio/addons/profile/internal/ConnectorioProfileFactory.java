@@ -17,11 +17,10 @@
  */
 package org.connectorio.addons.profile.internal;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Locale;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import org.connectorio.addons.profile.ProfileFactoryRegistry;
 import org.openhab.core.thing.profiles.Profile;
 import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.thing.profiles.ProfileContext;
@@ -29,42 +28,36 @@ import org.openhab.core.thing.profiles.ProfileFactory;
 import org.openhab.core.thing.profiles.ProfileType;
 import org.openhab.core.thing.profiles.ProfileTypeProvider;
 import org.openhab.core.thing.profiles.ProfileTypeUID;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
-@Component(service = {ProfileFactory.class, ProfileTypeProvider.class})
+@Component(service = {ProfileFactory.class, ProfileTypeProvider.class}, property = "composite=true")
 public class ConnectorioProfileFactory implements ProfileFactory, ProfileTypeProvider {
 
-  private Set<ProfileFactory> profileFactories = ConcurrentHashMap.newKeySet();
+  private final ProfileFactoryRegistry registry;
+
+  @Activate
+  public ConnectorioProfileFactory(@Reference ProfileFactoryRegistry registry) {
+    this.registry = registry;
+  }
 
   @Override
   public Profile createProfile(ProfileTypeUID profileTypeUID, ProfileCallback callback, ProfileContext profileContext) {
     if (ConnectorioProfiles.PROFILE.equals(profileTypeUID)) {
-      return new ConnectorioProfile(callback, profileContext, profileFactories);
+      return new ConnectorioProfile(callback, profileContext, registry);
     }
     return null;
   }
 
   @Override
   public Collection<ProfileTypeUID> getSupportedProfileTypeUIDs() {
-    return Arrays.asList(ConnectorioProfiles.PROFILE);
+    return Collections.singleton(ConnectorioProfiles.PROFILE);
   }
 
   @Override
   public Collection<ProfileType> getProfileTypes(Locale locale) {
-    return Arrays.asList(ConnectorioProfiles.PROFILE_TYPE);
-  }
-
-  @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-  protected void addProfileFactory(ProfileFactory profileFactory) {
-    profileFactories.add(profileFactory);
-  }
-
-  @SuppressWarnings("null")
-  protected void removeProfileFactory(ProfileFactory profileFactory) {
-    boolean links = profileFactories.remove(profileFactory);
+    return Collections.singleton(ConnectorioProfiles.PROFILE_TYPE);
   }
 
 }

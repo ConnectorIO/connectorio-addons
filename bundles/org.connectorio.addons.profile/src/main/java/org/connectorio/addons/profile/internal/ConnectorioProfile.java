@@ -19,12 +19,15 @@ package org.connectorio.addons.profile.internal;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import org.connectorio.addons.profile.ProfileFactoryRegistry;
+import org.connectorio.addons.profile.internal.util.NestedMapCreator;
 import org.openhab.core.common.AbstractUID;
+import org.openhab.core.config.core.Configuration;
 import org.openhab.core.thing.profiles.Profile;
 import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.thing.profiles.ProfileContext;
@@ -43,29 +46,35 @@ class ConnectorioProfile implements StateProfile {
   private final ProfileContext context;
   private final LinkedList<StateProfile> profileChain = new LinkedList<>();
 
-  private final Set<ProfileFactory> profileFactories;
+  private final ProfileFactoryRegistry registry;
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-  ConnectorioProfile(ProfileCallback callback, ProfileContext context, Set<ProfileFactory> profileFactories) {
+  ConnectorioProfile(ProfileCallback callback, ProfileContext context, ProfileFactoryRegistry registry) {
     this.callback = callback;
     this.context = context;
-    this.profileFactories = profileFactories;
+    this.registry = registry;
 
-    Object profiles = context.getConfiguration().get("profiles");
-    if (!(profiles instanceof List)) {
+    Map<String, Object> config = new NestedMapCreator().toNestedMap(context.getConfiguration().getProperties());
+    if (config.isEmpty()) {
       throw new IllegalArgumentException("Invalid configuration");
     }
 
     StackedProfileCallback chainedCallback = new StackedProfileCallback();
-    if (profiles instanceof List) {
-      List<String> profileList = (List<String>) profiles;
-      for (String profile : profileList) {
-        Profile createdProfile = getProfileFromFactories(getConfiguredProfileTypeUID(profile), context, chainedCallback);
-        if (!(createdProfile instanceof StateProfile)) {
-          throw new IllegalArgumentException("Could not create profile " + profile + " or it is not state profile");
-        }
-        profileChain.add((StateProfile) createdProfile);
+    for (Entry<String, Object> entry : config.entrySet()) {
+      if ("profile".equals(entry.getKey())) {
+        continue;
       }
+      if (!(entry.getValue() instanceof Map)) {
+        throw new IllegalStateException("Configuration values must be valid maps " + entry + " is invalid!");
+      }
+
+      Map<String, Object> profileCfg = (Map<String, Object>) entry.getValue();
+      String profileType = (String) profileCfg.get("profile");
+      Profile createdProfile = getProfileFromFactories(getConfiguredProfileTypeUID(profileType), profileCfg, chainedCallback);
+      if (!(createdProfile instanceof StateProfile)) {
+        throw new IllegalArgumentException("Could not create profile " + profileType + " or it is not state profile");
+      }
+      profileChain.add((StateProfile) createdProfile);
     }
   }
 
@@ -120,11 +129,11 @@ class ConnectorioProfile implements StateProfile {
     return profileName;
   }
 
-  private Profile getProfileFromFactories(ProfileTypeUID profileTypeUID, ProfileContext context, ProfileCallback callback) {
-    for (ProfileFactory factory : profileFactories) {
+  private Profile getProfileFromFactories(ProfileTypeUID profileTypeUID, Map<String, Object> config, ProfileCallback callback) {
+    for (ProfileFactory factory : registry.getAll()) {
       if (supportsProfileTypeUID(factory, profileTypeUID)) {
         logger.trace("using ProfileFactory '{}' to create profile '{}'", factory, profileTypeUID);
-        Profile profile = factory.createProfile(profileTypeUID, callback, context);
+        Profile profile = factory.createProfile(profileTypeUID, callback, new SubProfileContext(context, new Configuration(config)));
         if (profile == null) {
           logger.error("ProfileFactory '{}' returned 'null' although it claimed it supports item type '{}'", factory, profileTypeUID);
           return null;

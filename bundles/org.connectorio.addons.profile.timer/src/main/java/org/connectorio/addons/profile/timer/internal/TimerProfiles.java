@@ -24,10 +24,15 @@ import org.openhab.core.thing.profiles.StateProfileType;
 public interface TimerProfiles {
 
   ProfileTypeUID DEBOUNCE = new ProfileTypeUID("connectorio", "debounce");
+  ProfileTypeUID PERIODIC = new ProfileTypeUID("connectorio", "periodic");
+
 //  ProfileTypeUID THROTTLE = new ProfileTypeUID("connectorio", "throttle");
 //  ProfileTypeUID DELAY = new ProfileTypeUID("connectorio", "delay");
 
   StateProfileType DEBOUNCE_PROFILE_TYPE = ProfileTypeBuilder.newState(DEBOUNCE, "Debounce")
+    .build();
+
+  StateProfileType PERIODIC_PROFILE_TYPE = ProfileTypeBuilder.newState(PERIODIC, "Periodic")
     .build();
 
 //  StateProfileType THROTTLE_PROFILE_TYPE = ProfileTypeBuilder.newState(THROTTLE, "Throttle")
