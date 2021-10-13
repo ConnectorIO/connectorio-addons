@@ -81,6 +81,7 @@
         <default>NMT_LISTEN</default>
         <description>Node discovery strategy for this CANopen connection.</description>
         <options>
+          <option value="NONE">Disable discovery on this interface.</option>
           <option value="NMT_LISTEN">Listen for node heartbeat information.</option>
           <option value="SDO_SCAN">Actively scan bus by sending SDO to each possible node.</option>
         </options>

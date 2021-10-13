@@ -101,7 +101,9 @@ public abstract class BaseChannelHandler<T extends Value<?>, U extends TAUnit, C
     logger.debug("Received update of matching object {} with value {}", index, value);
 
     if (callback != null) {
-      callback.stateUpdated(channel.getUID(), createState(value));
+      State state = createState(value);
+      logger.debug("Determined channel {} state: {}", channel.getUID(), state);
+      callback.stateUpdated(channel.getUID(), state);
     } else {
       logger.warn("Ignoring state update {} for {}, handler not ready", value, config.readObjectIndex);
     }

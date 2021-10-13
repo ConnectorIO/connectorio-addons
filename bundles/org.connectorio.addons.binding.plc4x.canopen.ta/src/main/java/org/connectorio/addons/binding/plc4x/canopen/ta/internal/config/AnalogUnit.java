@@ -43,7 +43,7 @@ public enum AnalogUnit implements TAUnit {
   /* 6  analog  */ LITRE_PER_IMPULSE (6, Units.LITRE.divide(TAUnits.IMPULSE), 1),
   /* 7  analog  */ KELVIN  (7, Units.KELVIN, 1),
   /* 8  analog  */ HUMIDITY  (8, Units.PERCENT, 0.1),
-  /* 10 analog  */ KILOWATT (10, Units.WATT.multiply(1000), 0.1),
+  /* 10 analog  */ KILOWATT (10, MetricPrefix.KILO(Units.WATT), 0.01),
   /* 11 analog  */ KILOWATT_HOUR (11, Units.KILOWATT_HOUR, 0.1),
   /* 12 analog  */ MEGAWATT_HOUR (12, Units.MEGAWATT_HOUR, 1),
   /* 13 analog  */ VOLT  (13, Units.VOLT, 0.01),

@@ -150,6 +150,8 @@ public class CoSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<PlcConne
   public Collection<Class<? extends ThingHandlerService>> getServices() {
     DiscoveryMode discoveryMode = getBridgeConfig().map(config -> config.discoveryMode).orElse(DiscoveryMode.NMT_LISTEN);
     switch (discoveryMode) {
+      case NONE:
+        break;
       case NMT_LISTEN:
         return Collections.singleton(CoNetworkDiscoveryService.class);
       case SDO_SCAN:

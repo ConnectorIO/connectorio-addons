@@ -54,7 +54,11 @@ public class TAAnalogOutput extends TACanOutputObject<Value<?>> {
   public void update(short raw) {
     if (device.isInitialized()) {
       if (type != 0x50) { // value kept by controller is not encoded as Int
-        this.value = AnalogUnit.valueOf(getUnit()).parse(raw);
+        AnalogUnit unit = AnalogUnit.valueOf(getUnit());
+        if (unit != null) {
+          // unit can be null for digital encoded as analog
+          this.value = unit.parse(raw);
+        }
       } else {
         fetch();
       }
@@ -74,8 +78,12 @@ public class TAAnalogOutput extends TACanOutputObject<Value<?>> {
       int numericValue = parseNumber(buffer, data.length);
 
       if (numericValue > Short.MIN_VALUE && numericValue < Short.MAX_VALUE) {
-        if (AnalogUnit.KILOWATT_HOUR.getIndex() != unit) {
-          // force handling value as a short
+        // Here we verify if unit is a counter "type" for energy or power measurement.
+        // We can't know for sure what it is, so we take preventive measure.
+        // For units listed below we will use fetch calls and retrieve data over SDO.
+        // At this stage it is being made for kWh, W and kW are units which can exceed 32767
+        if (AnalogUnit.KILOWATT_HOUR.getIndex() != unit && AnalogUnit.WATT.getIndex() != unit && AnalogUnit.KILOWATT.getIndex() != unit) {
+          // force handling value as a short.
           this.type = 0x30;
         }
       }

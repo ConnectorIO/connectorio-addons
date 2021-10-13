@@ -19,6 +19,7 @@ package org.connectorio.addons.binding.plc4x.canopen.internal.config;
 
 public enum DiscoveryMode {
 
+  NONE,
   NMT_LISTEN,
   SDO_SCAN;
 
