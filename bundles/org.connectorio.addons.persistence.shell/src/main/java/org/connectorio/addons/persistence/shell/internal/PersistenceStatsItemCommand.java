@@ -18,13 +18,15 @@
 package org.connectorio.addons.persistence.shell.internal;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 import org.openhab.core.i18n.TimeZoneProvider;
 import org.openhab.core.io.console.Console;
@@ -32,12 +34,10 @@ import org.openhab.core.io.console.extensions.AbstractConsoleCommandExtension;
 import org.openhab.core.io.console.extensions.ConsoleCommandExtension;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemRegistry;
-import org.openhab.core.persistence.FilterCriteria;
-import org.openhab.core.persistence.FilterCriteria.Ordering;
-import org.openhab.core.persistence.HistoricItem;
-import org.openhab.core.persistence.ModifiablePersistenceService;
+import org.openhab.core.persistence.PersistenceItemInfo;
 import org.openhab.core.persistence.PersistenceService;
 import org.openhab.core.persistence.PersistenceServiceRegistry;
+import org.openhab.core.persistence.QueryablePersistenceService;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -62,10 +62,14 @@ public class PersistenceStatsItemCommand extends AbstractConsoleCommandExtension
 
   @Override
   public void execute(String[] args, Console console) {
-    TreeSet<Item> items = new TreeSet<>(Comparator.comparing(Item::getName));
-    items.addAll(itemRegistry.getAll());
-    for (Item item : items) {
-      stats(console, item, persistenceService.get("jdbc"));
+    try {
+      console.println("Default service: " + persistenceService.getDefaultId());
+      for (PersistenceService service : persistenceService.getAll()) {
+        console.println("Checking " + service.getId() + " persisted items");
+        stats(console, service);
+      }
+    } catch (Exception e) {
+      console.println("Error " + e.getMessage());
     }
   }
 
@@ -74,54 +78,38 @@ public class PersistenceStatsItemCommand extends AbstractConsoleCommandExtension
     return Arrays.asList("co7io-persistence-stats");
   }
 
-  private void stats(Console console, Item from, PersistenceService service) {
-    if (service instanceof ModifiablePersistenceService) {
-      ModifiablePersistenceService persistence = (ModifiablePersistenceService) service;
+  private void stats(Console console, PersistenceService service) {
+    if (service instanceof QueryablePersistenceService) {
+      QueryablePersistenceService persistence = (QueryablePersistenceService) service;
+      Set<PersistenceItemInfo> foundInfos = persistence.getItemInfo();
+      console.println("Service holds " + foundInfos.size() + " elements");
 
-      int page = 1;
-      int pageSize = 200;
+      Set<PersistenceItemInfo> infos = new TreeSet<>(Comparator.comparing(PersistenceItemInfo::getName));
+      infos.addAll(foundInfos);
+      console.println("Service " + service.getId() + " contains " + infos.size() + " items");
+      Long counter = 0L;
+      ZonedDateTime oldest = ZonedDateTime.now();
+      for (PersistenceItemInfo info : infos) {
+        console.println(info.getName() + " " + info.getCount() + " " + info.getEarliest() + " " + info.getLatest());
+        counter += info.getCount();
 
-      // fetch first reading
-      ZonedDateTime latest = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0), ZoneId.systemDefault());
-      ZonedDateTime earliest = null;
-
-      int sum = 0;
-
-      List<HistoricItem> result = new ArrayList<>();
-      do {
-        result = query(from, persistence, latest, page, pageSize);
-        if (result.size() == 0) {
-          break;
+        if (info.getEarliest() != null) {
+          ZonedDateTime earliest = Instant.ofEpochMilli(info.getEarliest().getTime()).atZone(ZoneId.systemDefault());
+          if (earliest.isBefore(oldest)) {
+            oldest = earliest;
+          }
         }
-
-        HistoricItem historicItem = result.get(0);
-        earliest = earliest == null ? historicItem.getTimestamp() : earliest;
-
-        historicItem = result.get(result.size() - 1);
-        latest = historicItem.getTimestamp();
-        sum += result.size();
-      } while (result.size() == pageSize);
-      if (sum == 0) {
-        console.println(from.getName() + " 0");
-        return;
       }
-      console.println(from.getName() + " " + sum + " " + earliest.toLocalDateTime() + " " + latest.toLocalDateTime());
+
+      if (foundInfos.size() > 0) {
+        console.println("");
+        console.println("Total: " + counter + " database entries. Average " + (counter / foundInfos.size()) + " per table");
+        Period period = Period.between(oldest.toLocalDate(), LocalDate.now());
+        console.println("Oldest: " + oldest + ",  " + period.getYears() + " years, " + period.getMonths() + " months, " + period.getDays() + " days ago");
+      }
+    } else {
+      console.println("Service " + service.getId() + " is not queryable");
     }
-  }
-
-  private List<HistoricItem> query(Item from, ModifiablePersistenceService persistence, ZonedDateTime latest, int page,
-    int pageSize) {
-    FilterCriteria c = new FilterCriteria();
-    c.setItemName(from.getName());
-    c.setBeginDate(latest);
-    c.setOrdering(Ordering.ASCENDING);
-    c.setPageNumber(1);
-    c.setPageSize(pageSize);
-
-    List<HistoricItem> items = new ArrayList<>();
-    persistence.query(c).forEach(items::add);
-
-    return items;
   }
 
 }
