@@ -59,16 +59,58 @@
       <groupId>org.code-house.bacnet4j</groupId>
       <artifactId>api</artifactId>
       <version>${bacnet4j-wrapper.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.serotonin</groupId>
+          <artifactId>bacnet4j</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ai.serotonin.oss</groupId>
+          <artifactId>sero-scheduler </artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ai.serotonin.oss</groupId>
+          <artifactId>sero-warp</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.code-house.bacnet4j</groupId>
       <artifactId>ip</artifactId>
       <version>${bacnet4j-wrapper.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.serotonin</groupId>
+          <artifactId>bacnet4j</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ai.serotonin.oss</groupId>
+          <artifactId>sero-scheduler </artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ai.serotonin.oss</groupId>
+          <artifactId>sero-warp</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.code-house.bacnet4j</groupId>
       <artifactId>mstp</artifactId>
       <version>${bacnet4j-wrapper.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.serotonin</groupId>
+          <artifactId>bacnet4j</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ai.serotonin.oss</groupId>
+          <artifactId>sero-scheduler </artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ai.serotonin.oss</groupId>
+          <artifactId>sero-warp</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
