@@ -18,6 +18,7 @@
 package org.connectorio.addons.norule.internal.context;
 
 import org.connectorio.addons.norule.Trigger;
+import org.connectorio.addons.norule.internal.ThingsActionsRegistry;
 import org.openhab.core.items.ItemRegistry;
 
 public class StartLevelRuleContext extends BaseRuleContext {
@@ -25,8 +26,8 @@ public class StartLevelRuleContext extends BaseRuleContext {
   private final int oldStartLevel;
   private final int startLevel;
 
-  public StartLevelRuleContext(ItemRegistry itemRegistry, Trigger trigger, int oldStartLevel, int startLevel) {
-    super(itemRegistry, trigger);
+  public StartLevelRuleContext(ItemRegistry itemRegistry, ThingsActionsRegistry actionsRegistry, Trigger trigger, int oldStartLevel, int startLevel) {
+    super(itemRegistry, actionsRegistry, trigger);
     this.oldStartLevel = oldStartLevel;
     this.startLevel = startLevel;
   }

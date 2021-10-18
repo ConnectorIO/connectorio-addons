@@ -17,10 +17,15 @@
  */
 package org.connectorio.addons.norule;
 
+import org.openhab.core.thing.ThingUID;
+import org.openhab.core.thing.binding.ThingActions;
+
 public interface RuleContext {
 
   Trigger getTrigger();
 
   ItemContext item(String itemName);
+
+  <T extends ThingActions> T getAction(ThingUID thing);
 
 }

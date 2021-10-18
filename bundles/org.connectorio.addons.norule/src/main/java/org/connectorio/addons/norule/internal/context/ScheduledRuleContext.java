@@ -18,6 +18,7 @@
 package org.connectorio.addons.norule.internal.context;
 
 import org.connectorio.addons.norule.Trigger;
+import org.connectorio.addons.norule.internal.ThingsActionsRegistry;
 import org.openhab.core.items.ItemRegistry;
 
 public class ScheduledRuleContext extends BaseRuleContext {
@@ -27,8 +28,8 @@ public class ScheduledRuleContext extends BaseRuleContext {
   private final long firstRun;
   private final Long previousRun;
 
-  public ScheduledRuleContext(ItemRegistry itemRegistry, Trigger trigger, long registration, long currentRun, long firstRun, Long previousRun) {
-    super(itemRegistry, trigger);
+  public ScheduledRuleContext(ItemRegistry itemRegistry, ThingsActionsRegistry actionsRegistry, Trigger trigger, long registration, long currentRun, long firstRun, Long previousRun) {
+    super(itemRegistry, actionsRegistry, trigger);
     this.registration = registration;
     this.currentRun = currentRun;
     this.firstRun = firstRun;

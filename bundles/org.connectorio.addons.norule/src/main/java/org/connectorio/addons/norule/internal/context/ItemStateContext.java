@@ -19,13 +19,14 @@ package org.connectorio.addons.norule.internal.context;
 
 import org.connectorio.addons.norule.RuleContext;
 import org.connectorio.addons.norule.Trigger;
+import org.connectorio.addons.norule.internal.ThingsActionsRegistry;
 import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.types.State;
 
 public class ItemStateContext extends BaseRuleContext implements RuleContext {
 
-  public ItemStateContext(ItemRegistry itemRegistry, Trigger trigger, String itemName, State itemState) {
-    super(itemRegistry, trigger);
+  public ItemStateContext(ItemRegistry itemRegistry, ThingsActionsRegistry actionsRegistry, Trigger trigger, String itemName, State itemState) {
+    super(itemRegistry, actionsRegistry, trigger);
   }
 
 }

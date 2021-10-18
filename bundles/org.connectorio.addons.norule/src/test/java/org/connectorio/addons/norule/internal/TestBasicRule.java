@@ -57,7 +57,7 @@ public class TestBasicRule {
 
     RuntimeRuleProvider provider = new RuntimeRuleProvider();
     provider.addRule(rule);
-    NoRuleRegistry launcher = new NoRuleRegistry(itemRegistry, new ReadyServiceImpl());
+    NoRuleRegistry launcher = new NoRuleRegistry(itemRegistry, new ReadyServiceImpl(), new ThingsActionsRegistry());
     launcher.addProvider(provider);
 
     when(itemRegistry.get("EnergyConsumed")).thenReturn(energyConsumed);

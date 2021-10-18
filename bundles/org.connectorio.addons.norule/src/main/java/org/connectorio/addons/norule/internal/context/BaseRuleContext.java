@@ -21,15 +21,20 @@ import java.util.Optional;
 import org.connectorio.addons.norule.ItemContext;
 import org.connectorio.addons.norule.RuleContext;
 import org.connectorio.addons.norule.Trigger;
+import org.connectorio.addons.norule.internal.ThingsActionsRegistry;
 import org.openhab.core.items.ItemRegistry;
+import org.openhab.core.thing.ThingUID;
+import org.openhab.core.thing.binding.ThingActions;
 
 public abstract class BaseRuleContext implements RuleContext {
 
   private final ItemRegistry itemRegistry;
+  private final ThingsActionsRegistry actionsRegistry;
   private final Trigger trigger;
 
-  public BaseRuleContext(ItemRegistry itemRegistry, Trigger trigger) {
+  public BaseRuleContext(ItemRegistry itemRegistry, ThingsActionsRegistry actionsRegistry, Trigger trigger) {
     this.itemRegistry = itemRegistry;
+    this.actionsRegistry = actionsRegistry;
     this.trigger = trigger;
   }
 
@@ -45,4 +50,12 @@ public abstract class BaseRuleContext implements RuleContext {
       .orElseGet(EmptyItemContext::new);
   }
 
+  @Override
+  public <T extends ThingActions> T getAction(ThingUID thing) {
+    ThingActions actions = actionsRegistry.lookup(thing).orElse(null);
+    if (actions == null) {
+      return null;
+    }
+    return (T) actions;
+  }
 }
