@@ -47,10 +47,10 @@
       <artifactId>org.osgi.service.component.annotations</artifactId>
     </dependency>
     <dependency>
-      <!-- not available in maven central! -->
-      <groupId>com.github.purejavacomm</groupId>
+      <!-- Keep in sync with feature file -->
+      <groupId>org.opensmarthouse</groupId>
       <artifactId>purejavacomm</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.5</version>
     </dependency>
   </dependencies>
 
@@ -63,15 +63,6 @@
       <plugin>
         <groupId>org.apache.karaf.tooling</groupId>
         <artifactId>karaf-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Embed-Dependency>*;artifactId=purejavacomm</Embed-Dependency>
-          </instructions>
-        </configuration>
       </plugin>
     </plugins>
   </build>

@@ -24,9 +24,15 @@
     <feature>co7io-transport-serial-purejavacomm</feature>
   </feature>
 
+  <feature name="co7io-transport-serial-purejavacomm-jna" version="5.6.0">
+    <bundle dependency="true">mvn:net.java.dev.jna/jna-platform/5.6.0</bundle>
+    <bundle dependency="true">mvn:net.java.dev.jna/jna/5.6.0</bundle>
+  </feature>
+
   <feature name="co7io-transport-serial-purejavacomm" description="Pure java serial port handling." version="${project.version}">
-    <feature>openhab-runtime-jna</feature>
+    <feature>co7io-transport-serial-purejavacomm-jna</feature>
     <feature>openhab-transport-serial</feature>
+    <bundle start-level="80">mvn:org.opensmarthouse/purejavacomm/1.0.5</bundle>
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.io.transport.serial.purejavacomm/${project.version}</bundle>
   </feature>
 
