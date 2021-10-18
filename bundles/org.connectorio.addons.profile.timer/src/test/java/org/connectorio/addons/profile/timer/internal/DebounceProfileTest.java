@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.profile.timer.internal;
 
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -28,11 +29,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openhab.core.config.core.Configuration;
-import org.openhab.core.config.core.internal.ConfigMapper;
-import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
-import org.openhab.core.library.types.QuantityType;
-import org.openhab.core.library.unit.Units;
 import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.thing.profiles.ProfileContext;
 
@@ -62,8 +59,8 @@ class DebounceProfileTest {
     profile.onStateUpdateFromHandler(OnOffType.OFF);
     profile.onStateUpdateFromHandler(OnOffType.ON);
     Mockito.verifyNoInteractions(callback);
-    Thread.sleep(500);
-    Mockito.verify(callback).sendUpdate(OnOffType.OFF);
+
+    Mockito.verify(callback, timeout(1000)).sendUpdate(OnOffType.OFF);
     Mockito.verifyNoMoreInteractions(callback);
   }
 
@@ -82,8 +79,8 @@ class DebounceProfileTest {
     profile.onStateUpdateFromHandler(OnOffType.OFF);
     profile.onStateUpdateFromHandler(OnOffType.ON);
     Mockito.verifyNoInteractions(callback);
-    Thread.sleep(500);
-    Mockito.verify(callback).sendUpdate(OnOffType.ON);
+
+    Mockito.verify(callback, timeout(1000)).sendUpdate(OnOffType.ON);
     Mockito.verifyNoMoreInteractions(callback);
   }
 
