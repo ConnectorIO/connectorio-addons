@@ -22,17 +22,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Constructor;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 import org.connectorio.addons.norule.ActualCopRule;
-import org.connectorio.addons.norule.Rule;
-import org.connectorio.addons.norule.RuleContext;
-import org.connectorio.addons.norule.RuleUID;
-import org.connectorio.addons.norule.Trigger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.openhab.core.internal.service.ReadyServiceImpl;
 import org.openhab.core.items.GenericItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemRegistry;
@@ -62,7 +57,7 @@ public class TestBasicRule {
 
     RuntimeRuleProvider provider = new RuntimeRuleProvider();
     provider.addRule(rule);
-    NoRuleRegistry launcher = new NoRuleRegistry(itemRegistry);
+    NoRuleRegistry launcher = new NoRuleRegistry(itemRegistry, new ReadyServiceImpl());
     launcher.addProvider(provider);
 
     when(itemRegistry.get("EnergyConsumed")).thenReturn(energyConsumed);

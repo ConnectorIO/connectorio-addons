@@ -26,7 +26,6 @@ import org.connectorio.addons.norule.internal.trigger.GroupStateChangeTrigger;
 import org.connectorio.addons.norule.internal.trigger.PeriodicTrigger;
 import org.connectorio.addons.norule.internal.trigger.ReadyMarkerAddedTrigger;
 import org.connectorio.addons.norule.internal.trigger.ReadyMarkerRemovedTrigger;
-import org.connectorio.addons.norule.internal.trigger.ReadyMarkerTrigger;
 import org.connectorio.addons.norule.internal.trigger.ScheduledTrigger;
 import org.connectorio.addons.norule.internal.trigger.StartLevelTrigger;
 import org.connectorio.addons.norule.internal.trigger.StateChangeTrigger;
@@ -76,6 +75,12 @@ public class DefaultTriggerBuilder implements TriggerBuilder {
 
   @Override
   public TriggerBuilder markerAdded(ReadyMarker marker) {
+    triggers.add(new ReadyMarkerAddedTrigger(marker));
+    return this;
+  }
+
+  @Override
+  public TriggerBuilder markerRemoved(ReadyMarker marker) {
     triggers.add(new ReadyMarkerRemovedTrigger(marker));
     return this;
   }
