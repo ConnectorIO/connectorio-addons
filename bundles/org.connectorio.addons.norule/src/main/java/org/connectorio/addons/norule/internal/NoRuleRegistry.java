@@ -57,6 +57,9 @@ import org.connectorio.addons.norule.internal.context.ReadyMarkerAddedRuleContex
 import org.connectorio.addons.norule.internal.context.ReadyMarkerRemovedRuleContext;
 import org.connectorio.addons.norule.internal.context.ScheduledRuleContext;
 import org.connectorio.addons.norule.internal.context.StartLevelRuleContext;
+import org.connectorio.addons.norule.internal.context.ThingRuleContext;
+import org.connectorio.addons.norule.internal.context.ThingStatusChangeRuleContext;
+import org.connectorio.addons.norule.internal.context.ThingStatusRuleContext;
 import org.connectorio.addons.norule.internal.trigger.EmptyTrigger;
 import org.connectorio.addons.norule.internal.trigger.MemberStateChangeTrigger;
 import org.connectorio.addons.norule.internal.trigger.MemberStateUpdateTrigger;
@@ -66,6 +69,9 @@ import org.connectorio.addons.norule.internal.trigger.ReadyMarkerTrigger;
 import org.connectorio.addons.norule.internal.trigger.StartLevelTrigger;
 import org.connectorio.addons.norule.internal.trigger.StateChangeTrigger;
 import org.connectorio.addons.norule.internal.trigger.StateUpdateTrigger;
+import org.connectorio.addons.norule.internal.trigger.ThingStatusChangeTrigger;
+import org.connectorio.addons.norule.internal.trigger.ThingStatusTrigger;
+import org.connectorio.addons.norule.internal.trigger.ThingTrigger;
 import org.connectorio.chrono.Period;
 import org.connectorio.chrono.shared.FuturePeriodCalculator;
 import org.connectorio.chrono.shared.PastPeriodCalculator;
@@ -85,6 +91,10 @@ import org.openhab.core.service.ReadyMarker;
 import org.openhab.core.service.ReadyMarkerFilter;
 import org.openhab.core.service.ReadyService;
 import org.openhab.core.service.ReadyService.ReadyTracker;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingRegistry;
+import org.openhab.core.thing.events.ThingStatusInfoChangedEvent;
+import org.openhab.core.thing.events.ThingStatusInfoEvent;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -108,14 +118,16 @@ public class NoRuleRegistry extends AbstractRegistry<Rule, RuleUID, RuleProvider
   private final Logger logger = LoggerFactory.getLogger(NoRuleRegistry.class);
   private final Map<Trigger, Future<?>> scheduledRules = new ConcurrentHashMap<>();
   private final Map<ReadyMarker, List<Rule>> readyMarkerRules = new ConcurrentHashMap<>();
+  private final ThingRegistry thingRegistry;
   private final ItemRegistry itemRegistry;
   private final ReadyService readyService;
   private final ThingActionsRegistry actionsRegistry;
   private final AtomicInteger startLevel = new AtomicInteger();
 
   @Activate
-  public NoRuleRegistry(@Reference ItemRegistry itemRegistry, @Reference ReadyService readyService, @Reference ThingActionsRegistry actionsRegistry) {
+  public NoRuleRegistry(@Reference ThingRegistry thingRegistry, @Reference ItemRegistry itemRegistry, @Reference ReadyService readyService, @Reference ThingActionsRegistry actionsRegistry) {
     super(RuleProvider.class);
+    this.thingRegistry = thingRegistry;
     this.itemRegistry = itemRegistry;
     this.readyService = readyService;
     this.actionsRegistry = actionsRegistry;
@@ -153,7 +165,9 @@ public class NoRuleRegistry extends AbstractRegistry<Rule, RuleUID, RuleProvider
       GroupItemStateChangedEvent.TYPE,
       ItemStateEvent.TYPE,
       ItemStateChangedEvent.TYPE,
-      StartlevelEvent.TYPE
+      StartlevelEvent.TYPE,
+      ThingStatusInfoEvent.TYPE,
+      ThingStatusInfoChangedEvent.TYPE
     )));
   }
 
@@ -192,6 +206,18 @@ public class NoRuleRegistry extends AbstractRegistry<Rule, RuleUID, RuleProvider
         return trigger instanceof StartLevelTrigger && startlevelEvent.getStartlevel() <= ((StartLevelTrigger) trigger).getStartLevel();
       }));
       startLevel.set(startlevelEvent.getStartlevel());
+    } else if (event instanceof ThingStatusInfoChangedEvent) {
+      ThingStatusInfoChangedEvent status = (ThingStatusInfoChangedEvent) event;
+      Thing thing = thingRegistry.get(status.getThingUID());
+      fire((rule, trigger) -> new ThingStatusChangeRuleContext(rule, itemRegistry, actionsRegistry, trigger, thing, status.getStatusInfo(), status.getOldStatusInfo()), (trigger -> {
+        return trigger instanceof ThingStatusChangeTrigger &&  ((ThingTrigger) trigger).getPredicate().test(thing);
+      }));
+    } else if (event instanceof ThingStatusInfoEvent) {
+      ThingStatusInfoEvent status = (ThingStatusInfoEvent) event;
+      Thing thing = thingRegistry.get(status.getThingUID());
+      fire((rule, trigger) -> new ThingStatusRuleContext(rule, itemRegistry, actionsRegistry, trigger, thing, status.getStatusInfo()), (trigger -> {
+        return trigger instanceof ThingStatusTrigger &&  ((ThingTrigger) trigger).getPredicate().test(thing);
+      }));
     } else {
       logger.debug("Unsupported event received {}", event);
     }

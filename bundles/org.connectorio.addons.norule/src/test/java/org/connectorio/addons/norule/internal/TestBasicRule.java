@@ -35,11 +35,14 @@ import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.items.events.ItemStateChangedEvent;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.unit.Units;
+import org.openhab.core.thing.ThingRegistry;
 import org.openhab.core.types.State;
 
 @ExtendWith(MockitoExtension.class)
 public class TestBasicRule {
 
+  @Mock
+  private ThingRegistry thingRegistry;
   @Mock
   private ItemRegistry itemRegistry;
 
@@ -58,7 +61,7 @@ public class TestBasicRule {
 
     RuntimeRuleProvider provider = new RuntimeRuleProvider();
     provider.addRule(rule);
-    NoRuleRegistry launcher = new NoRuleRegistry(itemRegistry, new ReadyServiceImpl(), new DefaultThingActionsRegistry());
+    NoRuleRegistry launcher = new NoRuleRegistry(thingRegistry, itemRegistry, new ReadyServiceImpl(), new DefaultThingActionsRegistry());
     launcher.addProvider(provider);
 
     when(itemRegistry.get("EnergyConsumed")).thenReturn(energyConsumed);

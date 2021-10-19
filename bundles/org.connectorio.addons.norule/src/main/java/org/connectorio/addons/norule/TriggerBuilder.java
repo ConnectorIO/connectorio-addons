@@ -19,8 +19,12 @@ package org.connectorio.addons.norule;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import org.connectorio.chrono.Period;
 import org.openhab.core.service.ReadyMarker;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingTypeUID;
+import org.openhab.core.thing.ThingUID;
 
 public interface TriggerBuilder {
 
@@ -40,6 +44,15 @@ public interface TriggerBuilder {
   TriggerBuilder schedule(long delay, TimeUnit unit);
 
   TriggerBuilder period(long delay, Period period);
+
+  TriggerBuilder thingStatus(ThingUID thing);
+  TriggerBuilder thingStatus(ThingTypeUID thing);
+  TriggerBuilder thingStatus(Predicate<Thing> predicate);
+
+  TriggerBuilder thingStatusChange(ThingUID thing);
+  TriggerBuilder thingStatusChange(ThingTypeUID thing);
+  TriggerBuilder thingStatusChange(Predicate<Thing> predicate);
+
 
   Set<Trigger> build();
 

@@ -20,6 +20,7 @@ package org.connectorio.addons.norule.internal;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import org.connectorio.addons.norule.Trigger;
 import org.connectorio.addons.norule.TriggerBuilder;
 import org.connectorio.addons.norule.internal.trigger.MemberStateChangeTrigger;
@@ -31,8 +32,13 @@ import org.connectorio.addons.norule.internal.trigger.ScheduledTrigger;
 import org.connectorio.addons.norule.internal.trigger.StartLevelTrigger;
 import org.connectorio.addons.norule.internal.trigger.StateChangeTrigger;
 import org.connectorio.addons.norule.internal.trigger.StateUpdateTrigger;
+import org.connectorio.addons.norule.internal.trigger.ThingStatusChangeTrigger;
+import org.connectorio.addons.norule.internal.trigger.ThingStatusTrigger;
 import org.connectorio.chrono.Period;
 import org.openhab.core.service.ReadyMarker;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingTypeUID;
+import org.openhab.core.thing.ThingUID;
 
 public class DefaultTriggerBuilder implements TriggerBuilder {
 
@@ -89,6 +95,42 @@ public class DefaultTriggerBuilder implements TriggerBuilder {
   @Override
   public TriggerBuilder markerRemoved(ReadyMarker marker) {
     triggers.add(new ReadyMarkerRemovedTrigger(marker));
+    return this;
+  }
+
+  @Override
+  public TriggerBuilder thingStatus(ThingUID uid) {
+    triggers.add(new ThingStatusTrigger((thing) -> uid.equals(thing.getUID())));
+    return this;
+  }
+
+  @Override
+  public TriggerBuilder thingStatus(ThingTypeUID type) {
+    triggers.add(new ThingStatusTrigger((thing) -> type.equals(thing.getThingTypeUID())));
+    return this;
+  }
+
+  @Override
+  public TriggerBuilder thingStatus(Predicate<Thing> predicate) {
+    triggers.add(new ThingStatusTrigger(predicate));
+    return this;
+  }
+
+  @Override
+  public TriggerBuilder thingStatusChange(ThingUID uid) {
+    triggers.add(new ThingStatusChangeTrigger((thing) -> uid.equals(thing.getUID())));
+    return this;
+  }
+
+  @Override
+  public TriggerBuilder thingStatusChange(ThingTypeUID type) {
+    triggers.add(new ThingStatusChangeTrigger((thing) -> type.equals(thing.getThingTypeUID())));
+    return this;
+  }
+
+  @Override
+  public TriggerBuilder thingStatusChange(Predicate<Thing> predicate) {
+    triggers.add(new ThingStatusChangeTrigger(predicate));
     return this;
   }
 

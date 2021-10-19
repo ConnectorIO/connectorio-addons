@@ -15,19 +15,15 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.norule;
+package org.connectorio.addons.norule.internal.trigger;
 
-import org.openhab.core.common.AbstractUID;
+import java.util.function.Predicate;
+import org.openhab.core.thing.Thing;
 
-public class RuleUID extends AbstractUID {
+public class ThingStatusTrigger extends ThingTrigger {
 
-  public RuleUID(String ... segments) {
-    super(segments);
-  }
-
-  @Override
-  protected int getMinimalNumberOfSegments() {
-    return 2;
+  public ThingStatusTrigger(Predicate<Thing> predicate) {
+    super(predicate);
   }
 
 }
