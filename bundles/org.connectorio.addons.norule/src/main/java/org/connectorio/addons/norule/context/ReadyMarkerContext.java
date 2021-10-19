@@ -15,23 +15,13 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.norule.internal.trigger;
+package org.connectorio.addons.norule.context;
 
-import org.connectorio.addons.norule.Trigger;
+import org.connectorio.addons.norule.RuleContext;
+import org.openhab.core.service.ReadyMarker;
 
-public class GroupStateChangeTrigger implements Trigger {
+public interface ReadyMarkerContext extends RuleContext {
 
-  private final String groupName;
+  ReadyMarker marker();
 
-  public GroupStateChangeTrigger(String groupName) {
-    this.groupName = groupName;
-  }
-
-  public String getGroupName() {
-    return groupName;
-  }
-
-  public String toString() {
-    return groupName + "(group state change)";
-  }
 }

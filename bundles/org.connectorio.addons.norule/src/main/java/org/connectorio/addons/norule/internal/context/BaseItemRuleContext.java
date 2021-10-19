@@ -17,34 +17,25 @@
  */
 package org.connectorio.addons.norule.internal.context;
 
-import java.util.Optional;
-import org.connectorio.addons.norule.ItemContext;
-import org.openhab.core.items.GenericItem;
+import org.connectorio.addons.norule.Rule;
+import org.connectorio.addons.norule.ThingActionsRegistry;
+import org.connectorio.addons.norule.Trigger;
+import org.connectorio.addons.norule.context.ItemContext;
 import org.openhab.core.items.Item;
-import org.openhab.core.types.State;
+import org.openhab.core.items.ItemRegistry;
 
-public class DefaultItemContext implements ItemContext {
+public class BaseItemRuleContext extends BaseRuleContext implements ItemContext {
 
-  private final Item item;
+  private final String triggerItem;
 
-  public DefaultItemContext(Item item) {
-    this.item = item;
+  public BaseItemRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger, String triggerItem) {
+    super(rule, itemRegistry, actionsRegistry, trigger);
+    this.triggerItem = triggerItem;
   }
 
   @Override
-  public Optional<State> state() {
-    return Optional.of(item.getState());
+  public Item triggerItem() {
+    return itemRegistry.get(triggerItem);
   }
 
-  @Override
-  public <X extends State> Optional<X> state(Class<X> type) {
-    return Optional.ofNullable(item.getStateAs(type));
-  }
-
-  @Override
-  public void state(State state) {
-    if (item instanceof GenericItem) {
-      ((GenericItem) item).setState(state);
-    }
-  }
 }

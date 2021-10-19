@@ -17,15 +17,17 @@
  */
 package org.connectorio.addons.norule.internal.context;
 
+import org.connectorio.addons.norule.Rule;
+import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.connectorio.addons.norule.Trigger;
-import org.connectorio.addons.norule.internal.ThingsActionsRegistry;
+import org.connectorio.addons.norule.context.ReadyMarkerAddedContext;
 import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.service.ReadyMarker;
 
-public class ReadyMarkerAddedRuleContext extends ReadyMarkerRuleContext {
+public class ReadyMarkerAddedRuleContext extends ReadyMarkerRuleContext implements ReadyMarkerAddedContext {
 
-  public ReadyMarkerAddedRuleContext(ItemRegistry itemRegistry, ThingsActionsRegistry actionsRegistry, Trigger trigger, ReadyMarker marker) {
-    super(itemRegistry, actionsRegistry, trigger, marker);
+  public ReadyMarkerAddedRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger, ReadyMarker marker) {
+    super(rule, itemRegistry, actionsRegistry, trigger, marker);
   }
 
 }

@@ -18,21 +18,28 @@
 package org.connectorio.addons.norule.internal.context;
 
 import java.util.Optional;
+import org.connectorio.addons.norule.Action;
 import org.connectorio.addons.norule.ItemContext;
+import org.connectorio.addons.norule.Rule;
 import org.connectorio.addons.norule.RuleContext;
+import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.connectorio.addons.norule.Trigger;
-import org.connectorio.addons.norule.internal.ThingsActionsRegistry;
 import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.thing.ThingUID;
 import org.openhab.core.thing.binding.ThingActions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class BaseRuleContext implements RuleContext {
 
-  private final ItemRegistry itemRegistry;
-  private final ThingsActionsRegistry actionsRegistry;
-  private final Trigger trigger;
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  protected final Rule rule;
+  protected final ItemRegistry itemRegistry;
+  protected final ThingActionsRegistry actionsRegistry;
+  protected final Trigger trigger;
 
-  public BaseRuleContext(ItemRegistry itemRegistry, ThingsActionsRegistry actionsRegistry, Trigger trigger) {
+  public BaseRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger) {
+    this.rule = rule;
     this.itemRegistry = itemRegistry;
     this.actionsRegistry = actionsRegistry;
     this.trigger = trigger;
@@ -46,16 +53,30 @@ public abstract class BaseRuleContext implements RuleContext {
   @Override
   public ItemContext item(String itemName) {
     return Optional.ofNullable(itemRegistry.get(itemName))
-      .<ItemContext>map(DefaultItemContext::new)
-      .orElseGet(EmptyItemContext::new);
+      .<ItemContext>map(DefaultItemRuleContext::new)
+      .orElseGet(EmptyRuleContext::new);
   }
 
   @Override
-  public <T extends ThingActions> T getAction(ThingUID thing) {
-    ThingActions actions = actionsRegistry.lookup(thing).orElse(null);
+  public <T> T getAction(String scope, ThingUID thing) {
+    ThingActions actions = actionsRegistry.lookup(scope, thing).orElse(null);
     if (actions == null) {
       return null;
     }
-    return (T) actions;
+    try {
+      return (T) actions;
+    } catch (ClassCastException e) {
+      logger.warn("Could not cast action {} to desired type, returning null", e);
+      return null;
+    }
+  }
+
+  @Override
+  public <T> Action<T> resolveAction(String scope, ThingUID thing) {
+    return (Action<T>) actionsRegistry.lookupAction(scope, thing, getClassLoader()).orElse(null);
+  }
+
+  private ClassLoader getClassLoader() {
+    return rule.getClass().getClassLoader();
   }
 }

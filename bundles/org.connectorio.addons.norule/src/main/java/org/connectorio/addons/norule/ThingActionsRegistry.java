@@ -15,18 +15,16 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.norule.internal.context;
+package org.connectorio.addons.norule;
 
-import org.connectorio.addons.norule.RuleContext;
-import org.connectorio.addons.norule.Trigger;
-import org.connectorio.addons.norule.internal.ThingsActionsRegistry;
-import org.openhab.core.items.ItemRegistry;
-import org.openhab.core.types.State;
+import java.util.Optional;
+import org.openhab.core.thing.ThingUID;
+import org.openhab.core.thing.binding.ThingActions;
 
-public class ItemStateContext extends BaseRuleContext implements RuleContext {
+public interface ThingActionsRegistry {
 
-  public ItemStateContext(ItemRegistry itemRegistry, ThingsActionsRegistry actionsRegistry, Trigger trigger, String itemName, State itemState) {
-    super(itemRegistry, actionsRegistry, trigger);
-  }
+  Optional<ThingActions> lookup(String scope, ThingUID thing);
+
+  <T> Optional<Action<T>> lookupAction(String scope, ThingUID thing, ClassLoader classLoader);
 
 }

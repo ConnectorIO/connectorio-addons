@@ -15,12 +15,14 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.norule.internal;
+package org.connectorio.addons.norule.internal.action;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import org.connectorio.addons.norule.Action;
+import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingUID;
 import org.openhab.core.thing.UID;
@@ -34,7 +36,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component
-public class ThingsActionsRegistry {
+public class DefaultThingActionsRegistry implements ThingActionsRegistry {
 
   private final Map<ActionKey, ThingActions> actions = new ConcurrentHashMap<>();
 
@@ -47,22 +49,29 @@ public class ThingsActionsRegistry {
     actions.remove(new ActionKey(thingActions));
   }
 
-  public Optional<ThingActions> lookup(ThingUID thing) {
-    return Optional.ofNullable(actions.get(new ActionKey("default", thing.getAsString())));
+  @Override
+  public Optional<ThingActions> lookup(String scope, ThingUID thing) {
+    return Optional.ofNullable(actions.get(new ActionKey(scope, thing.getAsString())));
+  }
+
+  @Override
+  public <T> Optional<Action<T>> lookupAction(String scope, ThingUID thing, ClassLoader classLoader) {
+    return lookup(scope, thing)
+      .map(action -> new WrappedActions<>(action, classLoader));
   }
 
   static class ActionKey {
     final String scope;
-    final String name;
+    final String id;
 
     ActionKey(ThingActions actions) {
       this.scope = resolveScope(actions);
-      this.name = resolveName(actions);
+      this.id = resolveId(actions);
     }
 
-    ActionKey(String scope, String name) {
+    ActionKey(String scope, String id) {
       this.scope = scope;
-      this.name = name;
+      this.id = id;
     }
 
     @Override
@@ -74,15 +83,15 @@ public class ThingsActionsRegistry {
         return false;
       }
       ActionKey actionKey = (ActionKey) o;
-      return Objects.equals(scope, actionKey.scope) && Objects.equals(name, actionKey.name);
+      return Objects.equals(scope, actionKey.scope) && Objects.equals(id, actionKey.id);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(scope, name);
+      return Objects.hash(scope, id);
     }
 
-    private static String resolveName(ThingActions thingActions) {
+    private static String resolveId(ThingActions thingActions) {
       return Optional.of(thingActions)
         .map(ThingHandlerService::getThingHandler)
         .map(ThingHandler::getThing)

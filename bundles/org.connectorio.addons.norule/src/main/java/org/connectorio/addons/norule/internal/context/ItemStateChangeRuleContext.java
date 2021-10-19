@@ -20,21 +20,37 @@ package org.connectorio.addons.norule.internal.context;
 import org.connectorio.addons.norule.Rule;
 import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.connectorio.addons.norule.Trigger;
-import org.connectorio.addons.norule.context.ReadyMarkerContext;
+import org.connectorio.addons.norule.context.ItemStateChangeContext;
+import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemRegistry;
-import org.openhab.core.service.ReadyMarker;
+import org.openhab.core.types.State;
 
-public class ReadyMarkerRuleContext extends BaseRuleContext implements ReadyMarkerContext {
+public class ItemStateChangeRuleContext extends BaseRuleContext implements ItemStateChangeContext {
 
-  private final ReadyMarker marker;
+  private final String itemName;
+  private final State previousState;
+  private final State currentState;
 
-  public ReadyMarkerRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger, ReadyMarker marker) {
+  public ItemStateChangeRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger, String itemName, State previousState, State currentState) {
     super(rule, itemRegistry, actionsRegistry, trigger);
-    this.marker = marker;
+    this.itemName = itemName;
+    this.previousState = previousState;
+    this.currentState = currentState;
   }
 
-  public ReadyMarker marker() {
-    return marker;
+  @Override
+  public Item triggerItem() {
+    return itemRegistry.get(itemName);
+  }
+
+  @Override
+  public State previousState() {
+    return previousState;
+  }
+
+  @Override
+  public State currentState() {
+    return currentState;
   }
 
 }

@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Constructor;
 import org.connectorio.addons.norule.ActualCopRule;
+import org.connectorio.addons.norule.internal.action.DefaultThingActionsRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -57,7 +58,7 @@ public class TestBasicRule {
 
     RuntimeRuleProvider provider = new RuntimeRuleProvider();
     provider.addRule(rule);
-    NoRuleRegistry launcher = new NoRuleRegistry(itemRegistry, new ReadyServiceImpl(), new ThingsActionsRegistry());
+    NoRuleRegistry launcher = new NoRuleRegistry(itemRegistry, new ReadyServiceImpl(), new DefaultThingActionsRegistry());
     launcher.addProvider(provider);
 
     when(itemRegistry.get("EnergyConsumed")).thenReturn(energyConsumed);

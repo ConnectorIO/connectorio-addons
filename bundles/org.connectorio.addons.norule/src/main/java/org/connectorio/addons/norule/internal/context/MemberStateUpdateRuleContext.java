@@ -20,21 +20,23 @@ package org.connectorio.addons.norule.internal.context;
 import org.connectorio.addons.norule.Rule;
 import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.connectorio.addons.norule.Trigger;
-import org.connectorio.addons.norule.context.ReadyMarkerContext;
+import org.connectorio.addons.norule.context.MemberStateUpdateContext;
+import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemRegistry;
-import org.openhab.core.service.ReadyMarker;
+import org.openhab.core.types.State;
 
-public class ReadyMarkerRuleContext extends BaseRuleContext implements ReadyMarkerContext {
+public class MemberStateUpdateRuleContext extends ItemStateUpdateRuleContext implements MemberStateUpdateContext {
 
-  private final ReadyMarker marker;
+  private final String group;
 
-  public ReadyMarkerRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger, ReadyMarker marker) {
-    super(rule, itemRegistry, actionsRegistry, trigger);
-    this.marker = marker;
+  public MemberStateUpdateRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger, String group, String itemName, State currentState) {
+    super(rule, itemRegistry, actionsRegistry, trigger, itemName, currentState);
+    this.group = group;
   }
 
-  public ReadyMarker marker() {
-    return marker;
+  @Override
+  public Item getGroup() {
+    return itemRegistry.get(group);
   }
 
 }

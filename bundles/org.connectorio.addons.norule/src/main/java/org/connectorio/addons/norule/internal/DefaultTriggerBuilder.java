@@ -22,7 +22,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.connectorio.addons.norule.Trigger;
 import org.connectorio.addons.norule.TriggerBuilder;
-import org.connectorio.addons.norule.internal.trigger.GroupStateChangeTrigger;
+import org.connectorio.addons.norule.internal.trigger.MemberStateChangeTrigger;
+import org.connectorio.addons.norule.internal.trigger.MemberStateUpdateTrigger;
 import org.connectorio.addons.norule.internal.trigger.PeriodicTrigger;
 import org.connectorio.addons.norule.internal.trigger.ReadyMarkerAddedTrigger;
 import org.connectorio.addons.norule.internal.trigger.ReadyMarkerRemovedTrigger;
@@ -38,8 +39,14 @@ public class DefaultTriggerBuilder implements TriggerBuilder {
   private final Set<Trigger> triggers = new LinkedHashSet<>();
 
   @Override
-  public TriggerBuilder groupStateChange(String item) {
-    triggers.add(new GroupStateChangeTrigger(item));
+  public TriggerBuilder memberStateChange(String group) {
+    triggers.add(new MemberStateChangeTrigger(group));
+    return this;
+  }
+
+  @Override
+  public TriggerBuilder memberStateUpdate(String group) {
+    triggers.add(new MemberStateUpdateTrigger(group));
     return this;
   }
 

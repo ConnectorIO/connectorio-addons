@@ -17,24 +17,34 @@
  */
 package org.connectorio.addons.norule.internal.context;
 
-import org.connectorio.addons.norule.Rule;
-import org.connectorio.addons.norule.ThingActionsRegistry;
-import org.connectorio.addons.norule.Trigger;
-import org.connectorio.addons.norule.context.ReadyMarkerContext;
-import org.openhab.core.items.ItemRegistry;
-import org.openhab.core.service.ReadyMarker;
+import java.util.Optional;
+import org.connectorio.addons.norule.ItemContext;
+import org.openhab.core.items.GenericItem;
+import org.openhab.core.items.Item;
+import org.openhab.core.types.State;
 
-public class ReadyMarkerRuleContext extends BaseRuleContext implements ReadyMarkerContext {
+public class DefaultItemRuleContext implements ItemContext {
 
-  private final ReadyMarker marker;
+  private final Item item;
 
-  public ReadyMarkerRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger, ReadyMarker marker) {
-    super(rule, itemRegistry, actionsRegistry, trigger);
-    this.marker = marker;
+  public DefaultItemRuleContext(Item item) {
+    this.item = item;
   }
 
-  public ReadyMarker marker() {
-    return marker;
+  @Override
+  public Optional<State> state() {
+    return Optional.of(item.getState());
   }
 
+  @Override
+  public <X extends State> Optional<X> state(Class<X> type) {
+    return Optional.ofNullable(item.getStateAs(type));
+  }
+
+  @Override
+  public void state(State state) {
+    if (item instanceof GenericItem) {
+      ((GenericItem) item).setState(state);
+    }
+  }
 }

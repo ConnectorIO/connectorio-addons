@@ -15,27 +15,13 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.norule.internal.context;
+package org.connectorio.addons.norule.context;
 
-import java.util.Optional;
-import org.connectorio.addons.norule.ItemContext;
-import org.openhab.core.types.State;
+import org.connectorio.addons.norule.RuleContext;
+import org.openhab.core.items.Item;
 
-public class EmptyItemContext implements ItemContext {
+public interface ItemContext extends RuleContext {
 
-  @Override
-  public Optional<State> state() {
-    return Optional.empty();
-  }
-
-  @Override
-  public <X extends State> Optional<X> state(Class<X> type) {
-    return Optional.empty();
-  }
-
-  @Override
-  public void state(State state) {
-    // ignore
-  }
+  Item triggerItem();
 
 }

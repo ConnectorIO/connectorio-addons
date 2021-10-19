@@ -15,18 +15,12 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.norule;
+package org.connectorio.addons.norule.context;
 
-import org.openhab.core.thing.ThingUID;
+import org.openhab.core.types.State;
 
-public interface RuleContext {
+public interface ItemStateUpdateContext extends ItemContext {
 
-  Trigger getTrigger();
-
-  ItemContext item(String itemName);
-
-  <T> T getAction(String scope, ThingUID thing);
-
-  <T> Action<T> resolveAction(String scope, ThingUID thing);
+  State currentState();
 
 }

@@ -15,18 +15,15 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.norule;
+package org.connectorio.addons.norule.context;
 
-import org.openhab.core.thing.ThingUID;
+import org.connectorio.addons.norule.RuleContext;
+import org.openhab.core.service.ReadyMarker;
 
-public interface RuleContext {
+public interface StartLevelContext extends RuleContext {
 
-  Trigger getTrigger();
+  int previousStartLevel();
 
-  ItemContext item(String itemName);
-
-  <T> T getAction(String scope, ThingUID thing);
-
-  <T> Action<T> resolveAction(String scope, ThingUID thing);
+  int currentStartLevel();
 
 }

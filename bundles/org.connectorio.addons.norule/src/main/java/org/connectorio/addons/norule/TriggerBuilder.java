@@ -24,7 +24,9 @@ import org.openhab.core.service.ReadyMarker;
 
 public interface TriggerBuilder {
 
-  TriggerBuilder groupStateChange(String item);
+  TriggerBuilder memberStateChange(String group);
+
+  TriggerBuilder memberStateUpdate(String group);
 
   TriggerBuilder itemStateChange(String item);
 

@@ -15,18 +15,23 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.norule;
+package org.connectorio.addons.norule.internal.trigger;
 
-import org.openhab.core.thing.ThingUID;
+import org.connectorio.addons.norule.Trigger;
 
-public interface RuleContext {
+public class MemberStateChangeTrigger implements Trigger {
 
-  Trigger getTrigger();
+  private final String groupName;
 
-  ItemContext item(String itemName);
+  public MemberStateChangeTrigger(String groupName) {
+    this.groupName = groupName;
+  }
 
-  <T> T getAction(String scope, ThingUID thing);
+  public String getGroupName() {
+    return groupName;
+  }
 
-  <T> Action<T> resolveAction(String scope, ThingUID thing);
-
+  public String toString() {
+    return groupName + "(member state change)";
+  }
 }

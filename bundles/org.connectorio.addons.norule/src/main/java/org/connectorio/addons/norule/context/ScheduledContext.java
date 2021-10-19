@@ -15,18 +15,16 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.norule;
+package org.connectorio.addons.norule.context;
 
-import org.openhab.core.thing.ThingUID;
+import org.connectorio.addons.norule.RuleContext;
 
-public interface RuleContext {
+public interface ScheduledContext extends RuleContext {
 
-  Trigger getTrigger();
+  long currentRun();
 
-  ItemContext item(String itemName);
+  long firstRun();
 
-  <T> T getAction(String scope, ThingUID thing);
-
-  <T> Action<T> resolveAction(String scope, ThingUID thing);
+  Long previousRun();
 
 }

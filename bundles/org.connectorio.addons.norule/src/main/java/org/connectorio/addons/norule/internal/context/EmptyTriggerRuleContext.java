@@ -17,15 +17,16 @@
  */
 package org.connectorio.addons.norule.internal.context;
 
+import org.connectorio.addons.norule.Rule;
 import org.connectorio.addons.norule.RuleContext;
+import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.connectorio.addons.norule.Trigger;
-import org.connectorio.addons.norule.internal.ThingsActionsRegistry;
 import org.openhab.core.items.ItemRegistry;
 
 public class EmptyTriggerRuleContext extends BaseRuleContext implements RuleContext {
 
-  public EmptyTriggerRuleContext(ItemRegistry itemRegistry, ThingsActionsRegistry actionsRegistry, Trigger trigger) {
-    super(itemRegistry, actionsRegistry, trigger);
+  public EmptyTriggerRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger) {
+    super(rule, itemRegistry, actionsRegistry, trigger);
   }
 
 }

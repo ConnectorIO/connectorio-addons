@@ -17,16 +17,19 @@
  */
 package org.connectorio.addons.norule;
 
-import org.openhab.core.thing.ThingUID;
+/**
+ * Wrapper for single instance of method defined in anonymous/annotated thing actions.
+ *
+ * This type allows to call the action without knowing its exact type.
+ * Since openHAB 3 some actions are not exposed in type safe way (they can't be cast to any interface type) this type is
+ * a high level wrapper.
+ *
+ * @param <T> Type of result
+ */
+public interface Action<T> {
 
-public interface RuleContext {
+  Action<T> setInput(String name, Object value);
 
-  Trigger getTrigger();
-
-  ItemContext item(String itemName);
-
-  <T> T getAction(String scope, ThingUID thing);
-
-  <T> Action<T> resolveAction(String scope, ThingUID thing);
+  T invoke(String action);
 
 }
