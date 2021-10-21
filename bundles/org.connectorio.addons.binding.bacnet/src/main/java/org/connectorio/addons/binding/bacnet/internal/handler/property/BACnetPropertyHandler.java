@@ -96,7 +96,7 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
 
   @Override
   public void handleCommand(ChannelUID channelUID, Command command) {
-    logger.debug("Handle command {} for channel {} and property {}", channelUID, command, property);
+    logger.debug("Handle command {} for channel {} and property {}", command, channelUID, property);
 
     if (!getBridgeHandler().isPresent()) {
       logger.error("Handler is not attached to an bridge or bridge initialization failed!");
@@ -126,16 +126,15 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
         client.join().setPropertyValue(property, null, converter, reset.getPriority());
       }
     } else {
-      AtomicReference<Command> cmd = new AtomicReference<>(command);
       Priority priority = writePriority;
       if (command instanceof PrioritizedCommand) {
         PrioritizedCommand prioritizedCmd = (PrioritizedCommand) command;
         priority = prioritizedCmd.getPriority();
-        cmd.set(prioritizedCmd.getCommand());
+        command = prioritizedCmd.getCommand();
       }
       JavaToBacNetConverter<Command> converter = (value) -> {
         Encodable encodable = BACnetValueConverter.openHabTypeToBacNetValue(type.getBacNetType(), value);
-        logger.trace("Command {} have been converter to BACnet value {} of type {}", command, encodable, encodable.getClass());
+        logger.trace("Command have been converter to BACnet value {} of type {}", encodable, encodable.getClass());
         return encodable;
       };
       if (priority == null) {

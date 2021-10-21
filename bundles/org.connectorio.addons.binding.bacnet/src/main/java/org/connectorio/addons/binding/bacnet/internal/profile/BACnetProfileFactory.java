@@ -38,10 +38,10 @@ public class BACnetProfileFactory implements ProfileFactory, ProfileTypeProvider
 
   @Override
   public Profile createProfile(ProfileTypeUID profileTypeUID, ProfileCallback callback, ProfileContext profileContext) {
-    if (BACnetProfiles.RESET_PROFILE_TYPE == profileTypeUID) {
+    if (BACnetProfiles.RESET_PROFILE_TYPE.equals(profileTypeUID)) {
       return new ResetProfile(callback, profileContext);
     }
-    if (BACnetProfiles.PRIORITY_PROFILE_TYPE == profileTypeUID) {
+    if (BACnetProfiles.PRIORITY_PROFILE_TYPE.equals(profileTypeUID)) {
       return new PriorityProfile(callback, profileContext);
     }
     return null;

@@ -22,11 +22,11 @@
 package org.connectorio.addons.binding.bacnet.internal.profile;
 
 import org.connectorio.addons.binding.bacnet.internal.command.ResetCommand;
-import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.thing.profiles.ProfileContext;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
+import org.openhab.core.types.UnDefType;
 
 public class ResetProfile extends BasePriorityProfile {
 
@@ -36,21 +36,18 @@ public class ResetProfile extends BasePriorityProfile {
 
   @Override
   public void onCommandFromItem(Command command) {
-    if (command == OnOffType.ON) {
-      callback.handleCommand(new ResetCommand(priority));
-      // debounce button, reset been dispatched
-      callback.sendCommand(OnOffType.OFF);
-    }
+    callback.handleCommand(new ResetCommand(priority));
+    // debounce button, reset been dispatched
+    callback.sendUpdate(UnDefType.NULL);
   }
 
   @Override
   public void onCommandFromHandler(Command command) {
-    callback.sendCommand(command);
+    // we ignore state from handler as our thing is different!
   }
 
   @Override
   public void onStateUpdateFromHandler(State state) {
-    callback.sendUpdate(state);
   }
 
 }

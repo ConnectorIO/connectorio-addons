@@ -22,7 +22,6 @@
 package org.connectorio.addons.binding.bacnet.internal.profile;
 
 import org.connectorio.addons.binding.bacnet.internal.BACnetBindingConstants;
-import org.openhab.core.library.CoreItemFactory;
 import org.openhab.core.thing.profiles.ProfileType;
 import org.openhab.core.thing.profiles.ProfileTypeBuilder;
 import org.openhab.core.thing.profiles.ProfileTypeUID;
@@ -33,11 +32,10 @@ public interface BACnetProfiles {
   ProfileTypeUID PRIORITY_PROFILE_TYPE = new ProfileTypeUID(BACnetBindingConstants.BINDING_ID, "priority");
 
   ProfileType RESET_PROFILE = ProfileTypeBuilder.newState(RESET_PROFILE_TYPE, "Reset BACnet setpoint")
-    .withSupportedItemTypes(CoreItemFactory.SWITCH)
     .withSupportedChannelTypeUIDs(BACnetBindingConstants.SUPPORTED_CHANNELS)
     .build();
 
-  ProfileType PRIORITY_PROFILE = ProfileTypeBuilder.newState(RESET_PROFILE_TYPE, "BACnet write priority")
+  ProfileType PRIORITY_PROFILE = ProfileTypeBuilder.newState(PRIORITY_PROFILE_TYPE, "BACnet write priority")
     .withSupportedChannelTypeUIDs(BACnetBindingConstants.SUPPORTED_CHANNELS)
     .build();
 
