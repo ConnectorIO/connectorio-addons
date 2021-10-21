@@ -23,18 +23,24 @@ package org.connectorio.addons.binding.bacnet.internal.handler.property;
 
 import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.type.Encodable;
+import com.serotonin.bacnet4j.type.primitive.Null;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.api.Device;
 import org.code_house.bacnet4j.wrapper.api.JavaToBacNetConverter;
+import org.code_house.bacnet4j.wrapper.api.Priorities;
+import org.code_house.bacnet4j.wrapper.api.Priority;
 import org.code_house.bacnet4j.wrapper.api.Property;
 import org.code_house.bacnet4j.wrapper.api.Type;
 import org.connectorio.addons.binding.bacnet.internal.BACnetBindingConstants;
+import org.connectorio.addons.binding.bacnet.internal.command.PrioritizedCommand;
+import org.connectorio.addons.binding.bacnet.internal.command.ResetCommand;
 import org.connectorio.addons.binding.bacnet.internal.config.ChannelConfig;
 import org.connectorio.addons.binding.bacnet.internal.config.ObjectConfig;
 import org.connectorio.addons.binding.handler.polling.common.BasePollingThingHandler;
@@ -53,7 +59,7 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
   private final Logger logger = LoggerFactory.getLogger(getClass());
   private final Type type;
   private Property property;
-  private Integer writePriority;
+  private Priority writePriority;
   private Future<?> reader;
 
   public BACnetPropertyHandler(Thing thing, Type type) {
@@ -65,10 +71,7 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
   public void initialize() {
     Device device = getBridgeHandler().map(b -> b.getDevice()).orElse(null);
     int instance = getThingConfig().map(c -> c.instance).orElseThrow(() -> new IllegalStateException("Undefined instance number"));
-    writePriority = getThingConfig().map(c -> c.writePriority).orElse(null);
-    if (writePriority != null && (writePriority < 1 || writePriority > 16)) {
-      throw new IllegalStateException("Invalid write priority value");
-    }
+    writePriority = getThingConfig().map(c -> c.writePriority).flatMap(Priorities::get).orElse(null);
 
     if (device != null) {
       this.property = new Property(device, instance, type);
@@ -104,18 +107,43 @@ public abstract class BACnetPropertyHandler<T extends BACnetObject, B extends BA
 
     if (command == RefreshType.REFRESH) {
       scheduler.execute(new ReadPropertyTask(() -> client, getCallback(), property, channelUID));
+    } else if (command instanceof ResetCommand) {
+      ResetCommand reset = (ResetCommand) command;
+      JavaToBacNetConverter<Object> converter = (value) -> {
+        logger.trace("Issuing NULL command to BACnet value to channel {}/property {}", channelUID, property);
+        return Null.instance;
+      };
+      if (reset.getPriority() == null) {
+        if (writePriority == null) {
+          logger.debug("Submitting NULL value for channel {} to {}", channelUID, property);
+          client.join().setPropertyValue(property, null, converter);
+        } else {
+          logger.debug("Submitting NULL value for channel {} to {} with priority {}", channelUID, property, writePriority);
+          client.join().setPropertyValue(property, null, converter, writePriority);
+        }
+      } else {
+        logger.debug("Submitting NULL value for channel {} to {} with custom reset priority {}", channelUID, property, writePriority);
+        client.join().setPropertyValue(property, null, converter, reset.getPriority());
+      }
     } else {
+      AtomicReference<Command> cmd = new AtomicReference<>(command);
+      Priority priority = writePriority;
+      if (command instanceof PrioritizedCommand) {
+        PrioritizedCommand prioritizedCmd = (PrioritizedCommand) command;
+        priority = prioritizedCmd.getPriority();
+        cmd.set(prioritizedCmd.getCommand());
+      }
       JavaToBacNetConverter<Command> converter = (value) -> {
         Encodable encodable = BACnetValueConverter.openHabTypeToBacNetValue(type.getBacNetType(), value);
         logger.trace("Command {} have been converter to BACnet value {} of type {}", command, encodable, encodable.getClass());
         return encodable;
       };
-      if (writePriority == null) {
+      if (priority == null) {
         logger.debug("Submitting write {} from channel {} to {}", channelUID, command, property);
         client.join().setPropertyValue(property, command, converter);
       } else {
-        logger.debug("Submitting write {} from channel {} to {} with priority {}", channelUID, command, property, writePriority);
-        client.join().setPropertyValue(property, command, converter, writePriority);
+        logger.debug("Submitting write {} from channel {} to {} with priority {}", channelUID, command, property, priority);
+        client.join().setPropertyValue(property, command, converter, priority);
       }
       logger.debug("Command {} for property {} executed successfully", command, property);
     }

@@ -21,7 +21,10 @@
  */
 package org.connectorio.addons.binding.bacnet.internal;
 
+import java.util.Arrays;
+import java.util.List;
 import org.openhab.core.thing.ThingTypeUID;
+import org.openhab.core.thing.type.ChannelTypeUID;
 
 public interface BACnetBindingConstants {
 
@@ -107,4 +110,16 @@ public interface BACnetBindingConstants {
     ThingTypeUID ACCUMULATOR_THING_TYPE = new ThingTypeUID(BINDING_ID, ACCUMULATOR_TYPE);
 
     Long DEFAULT_POLLING_INTERVAL = 1000L;
+
+    ChannelTypeUID WRITEABLE_BINARY_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, "writeableBinary");
+    ChannelTypeUID READABLE_BINARY_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, "readableBinary");
+    ChannelTypeUID WRITEABLE_NUMBER_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, "writeableNumber");
+    ChannelTypeUID READABLE_NUMBER_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, "readableNumber");
+    ChannelTypeUID WRITEABLE_DATETIME_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, "writeableDateTime");
+    ChannelTypeUID READABLE_DATETIME_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, "readableDateTime");
+
+    List<ChannelTypeUID> SUPPORTED_CHANNELS = Arrays.asList(
+      WRITEABLE_BINARY_CHANNEL_TYPE, READABLE_BINARY_CHANNEL_TYPE, WRITEABLE_NUMBER_CHANNEL_TYPE,
+      READABLE_NUMBER_CHANNEL_TYPE, WRITEABLE_DATETIME_CHANNEL_TYPE, READABLE_DATETIME_CHANNEL_TYPE
+    );
 }

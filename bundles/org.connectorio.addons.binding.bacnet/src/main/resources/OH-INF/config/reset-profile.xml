@@ -20,37 +20,18 @@
  -
  - SPDX-License-Identifier: GPL-3.0-or-later
 -->
-<config-description:config-descriptions
+<config-descriptions
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:config-description="https://openhab.org/schemas/config-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
 
-  <config-description uri="thing-type:co7io-bacnet:object">
-    <parameter-group name="basic">
-      <label>Required configuration</label>
-      <description>Below fields are required in order to read/write data from BACnet object.</description>
-    </parameter-group>
-
-    <parameter name="instance" type="integer" required="true">
-      <label>Instance</label>
-      <description>Instance number of object.</description>
-    </parameter>
-
-    <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
-      <label>Refresh interval</label>
+  <config-description uri="profile:co7io-bacnet:reset">
+    <parameter name="priority" type="integer" required="false" min="0" max="16">
+      <label>Priority</label>
       <description>
-        Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+        Priority of reset command (null value sent to device).
+        When no value is specified default channel priority is used.
+        If no priority is set on channel then device will receive just a null.
       </description>
-      <unitLabel>ms</unitLabel>
-      <default>0</default>
-    </parameter>
-    <parameter name="writePriority" type="integer" groupName="basic" required="false" min="1" max="16">
-      <label>Write priority</label>
-      <description>
-        Write priority to be set when value must be set on controller.
-        Defaults to no priority
-      </description>
-      <default>0</default>
       <options>
         <option value="1">Manual-Life Safety (1)</option>
         <option value="2">Automatic-Life Safety (2)</option>
@@ -71,4 +52,5 @@
       </options>
     </parameter>
   </config-description>
-</config-description:config-descriptions>
+
+</config-descriptions>
