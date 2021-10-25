@@ -30,7 +30,7 @@
   <packaging>bundle</packaging>
 
   <name>ConnectorIO - Addons - Binding - Relay Weblog</name>
-  <description>CAN bus integration.</description>
+  <description>Relay Weblog integration.</description>
 
   <dependencies>
     <dependency>
