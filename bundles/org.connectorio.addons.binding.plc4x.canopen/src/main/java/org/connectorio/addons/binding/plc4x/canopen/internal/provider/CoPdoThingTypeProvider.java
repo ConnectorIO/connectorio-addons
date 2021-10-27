@@ -47,10 +47,12 @@ public class CoPdoThingTypeProvider implements ThingTypeProvider, ConfigDescript
 
   private static final List<ThingTypeDef> entries = Arrays.asList(
     new ThingTypeDef(CANopenBindingConstants.RECEIVE_PDO_THING_TYPE, "Receive PDO", true,
-      CANOpenService.RECEIVE_PDO_1, CANOpenService.RECEIVE_PDO_2, CANOpenService.RECEIVE_PDO_3, CANOpenService.RECEIVE_PDO_4
+      // receive is a transit of foreign node
+      CANOpenService.TRANSMIT_PDO_1, CANOpenService.TRANSMIT_PDO_2, CANOpenService.TRANSMIT_PDO_3, CANOpenService.TRANSMIT_PDO_4
     ),
     new ThingTypeDef(CANopenBindingConstants.TRANSMIT_PDO_THING_TYPE, "Transmit PDO", false,
-      CANOpenService.TRANSMIT_PDO_1, CANOpenService.TRANSMIT_PDO_2, CANOpenService.TRANSMIT_PDO_3, CANOpenService.TRANSMIT_PDO_4
+      // transmit is receive for other node
+      CANOpenService.RECEIVE_PDO_1, CANOpenService.RECEIVE_PDO_2, CANOpenService.RECEIVE_PDO_3, CANOpenService.RECEIVE_PDO_4
     )
   );
 

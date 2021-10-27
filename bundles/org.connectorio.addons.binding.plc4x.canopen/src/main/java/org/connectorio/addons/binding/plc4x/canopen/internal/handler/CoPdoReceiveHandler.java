@@ -32,7 +32,7 @@ import org.connectorio.addons.binding.plc4x.canopen.api.CoNode;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoSubscription;
 import org.connectorio.addons.binding.plc4x.canopen.config.ReceivePdoConfig;
 import org.openhab.core.library.types.DecimalType;
-import org.openhab.core.library.types.OpenClosedType;
+import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.StringType;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
@@ -136,7 +136,7 @@ public class CoPdoReceiveHandler extends AbstractPdoHandler<ReceivePdoConfig> im
   private State createState(ReadBuffer buffer, CANOpenDataType type) throws ParseException {
     switch (type) {
       case BOOLEAN:
-        return buffer.readBit() ? OpenClosedType.OPEN : OpenClosedType.CLOSED;
+        return buffer.readBit() ? OnOffType.ON : OnOffType.OFF;
       case UNSIGNED8:
       case UNSIGNED16:
       case INTEGER8:

@@ -59,7 +59,7 @@ public class CoNodeThingTypeProvider implements ThingTypeProvider, ConfigDescrip
     URI configUri = URI.create(CANopenBindingConstants.BINDING_ID + ":" + CANopenBindingConstants.NODE_BRIDGE_TYPE.getId());
     ThingTypeBuilder builder = ThingTypeBuilder.instance(CANopenBindingConstants.NODE_BRIDGE_TYPE, "Generic CANOpen device")
       .withDescription("A generic purpose CANopen node which can be polled for data via SDO requests.")
-      .withSupportedBridgeTypeUIDs(Collections.singletonList(CANopenBindingConstants.SOCKETCAN_BRIDGE_THING_TYPE.getId()))
+      .withSupportedBridgeTypeUIDs(Collections.singletonList(CANopenBindingConstants.SOCKETCAN_BRIDGE_THING_TYPE.getAsString()))
       .withConfigDescriptionURI(configUri)
       .withExtensibleChannelTypeIds(channelIds);
 
@@ -84,7 +84,7 @@ public class CoNodeThingTypeProvider implements ThingTypeProvider, ConfigDescrip
       .build());
 
     this.configDescription = configBuilder.build();
-    this.thingType = builder.build();
+    this.thingType = builder.buildBridge();
   }
 
   @Override

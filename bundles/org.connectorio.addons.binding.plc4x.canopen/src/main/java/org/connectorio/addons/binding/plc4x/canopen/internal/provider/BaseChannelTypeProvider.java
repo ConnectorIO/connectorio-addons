@@ -25,7 +25,7 @@ import org.openhab.core.thing.type.ChannelTypeUID;
 abstract class BaseChannelTypeProvider {
 
   protected static final List<ChannelTypeDef> ENTRIES = Arrays.asList(
-    new ChannelTypeDef(CANOpenDataType.BOOLEAN, "%d", "Switch"),
+    new ChannelTypeDef(CANOpenDataType.BOOLEAN, "%s", "Contact"),
     new ChannelTypeDef(CANOpenDataType.UNSIGNED8, "%d", "Number"),
     new ChannelTypeDef(CANOpenDataType.UNSIGNED16, "%d", "Number"),
     new ChannelTypeDef(CANOpenDataType.UNSIGNED24, "%d", "Number"),
