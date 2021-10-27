@@ -67,13 +67,18 @@ public class CoPdoReceiveHandler extends AbstractPdoHandler<ReceivePdoConfig> im
     });
 
     Long refreshInterval = getRefreshInterval();
-    timeoutCheck = scheduler.scheduleAtFixedRate(this, 0, refreshInterval, TimeUnit.MILLISECONDS);
+    if (refreshInterval > 0L) {
+      timeoutCheck = scheduler.scheduleAtFixedRate(this, 0, refreshInterval, TimeUnit.MILLISECONDS);
+    } else {
+      // assume it is online as soon as parent is online
+      updateStatus(ThingStatus.ONLINE);
+    }
   }
 
   private Long getRefreshInterval() {
     Long refreshInterval = config.refreshInterval;
-    if (refreshInterval == 0) {
-      refreshInterval = 60_000L;
+    if (refreshInterval == null) {
+      refreshInterval = 0L;
     }
     return refreshInterval;
   }
