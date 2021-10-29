@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright (C) 2019-2021 ConnectorIO Sp. z o.o.
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -
+ - SPDX-License-Identifier: Apache-2.0
+ -->
+<thing:thing-descriptions bindingId="co7io-askoheat"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+  <bridge-type id="askoheat">
+    <label>Askoma Askoheat</label>
+    <description>A controllable heater.</description>
+
+    <channels>
+      <channel id="heater1" typeId="power">
+        <label>Heater 1 power</label>
+        <description>Power level for step 1 heater.</description>
+      </channel>
+      <channel id="heater2" typeId="power">
+        <label>Heater 2 power</label>
+        <description>Power level for step 2 heater.</description>
+      </channel>
+      <channel id="heater3" typeId="power">
+        <label>Heater 3 power</label>
+        <description>Power level for step 3 heater.</description>
+      </channel>
+      <channel id="status" typeId="number">
+        <label>Status flags</label>
+      </channel>
+      <channel id="load" typeId="power">
+        <label>Actual power consumption.</label>
+      </channel>
+      <channel id="temperatureLimit" typeId="temperature">
+        <label>Temperature limit</label>
+        <description>Temperature level which triggers device shutdown.</description>
+      </channel>
+      <channel id="temperatureSensor0" typeId="temperature">
+        <label>Sensor 0</label>
+        <description>Temperature reported by internal temperature sensor.</description>
+      </channel>
+      <channel id="maximumTemperature" typeId="temperature">
+        <label>Maximum temperature</label>
+        <description>Temperature setpoint.</description>
+      </channel>
+      <channel id="emergencyMode" typeId="switch">
+        <label>Emergency mode</label>
+      </channel>
+      <channel id="step" typeId="step">
+        <label>Current heating step</label>
+      </channel>
+      <channel id="gridPower" typeId="gridPower">
+        <label>Grid power balance</label>
+        <description>Positive value indicate import power, negative indicate export power.</description>
+      </channel>
+    </channels>
+
+    <config-description>
+      <parameter-group name="basic">
+        <label>Required configuration</label>
+        <description>Below fields are required in order to read/write data from Askoheat.</description>
+      </parameter-group>
+
+      <parameter name="address" type="text" required="true" groupName="basic">
+        <label>Askoheat Address</label>
+        <description>
+          IP or hostname to reach Askoheat. Provide value with http:// prefix.
+        </description>
+      </parameter>
+
+      <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+        <label>Refresh interval</label>
+        <description>
+          Time between poll cycles for meters. By default 5 minutes.
+        </description>
+        <unitLabel>ms</unitLabel>
+        <default>300000</default>
+      </parameter>
+    </config-description>
+  </bridge-type>
+
+</thing:thing-descriptions>

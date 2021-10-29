@@ -36,6 +36,7 @@
 
   <modules>
     <module>org.connectorio.addons.binding</module>
+    <module>org.connectorio.addons.binding.askoheat</module>
     <module>org.connectorio.addons.binding.bacnet</module>
     <module>org.connectorio.addons.binding.can</module>
     <module>org.connectorio.addons.binding.plc4x</module>
