@@ -99,6 +99,8 @@ public class ItemLoader {
         }
       } catch (MalformedURLException e) {
         logger.error("Could not read file {}", file, e);
+      } catch (Exception e) {
+        logger.error("Could not parse file {}", file, e);
       }
     }
     registrations.add(context.registerService(ItemProvider.class, new XStreamItemProvider(items), new Hashtable<>()));
