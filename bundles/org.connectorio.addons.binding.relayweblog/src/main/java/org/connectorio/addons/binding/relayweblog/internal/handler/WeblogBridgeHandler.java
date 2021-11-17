@@ -70,7 +70,8 @@ public class WeblogBridgeHandler extends BasePollingBridgeHandler<WeblogConfig> 
     }
 
     try {
-      client = new CachingWeblogClient(new SubMeterWeblogClient(new DirectWeblogClient(clientBuilder, cfg.address, cfg.password)));
+      String address = cfg.address.endsWith("/") ? cfg.address.substring(0, cfg.address.length() - 1) : cfg.address;
+      client = new CachingWeblogClient(new SubMeterWeblogClient(new DirectWeblogClient(clientBuilder, address, cfg.password)));
       updateStatus(ThingStatus.ONLINE);
     } catch (Exception e) {
       updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());

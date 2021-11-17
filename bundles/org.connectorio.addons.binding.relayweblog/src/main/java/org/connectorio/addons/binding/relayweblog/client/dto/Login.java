@@ -19,15 +19,17 @@ package org.connectorio.addons.binding.relayweblog.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.commons.lang3.RandomStringUtils;
 
+@JsonPropertyOrder({"payload", "password"})
 public class Login {
 
   private final String payload;
   private final String password;
 
   @JsonCreator
-  public Login(@JsonProperty("payload") String password, @JsonProperty("payload") String payload) {
+  public Login(@JsonProperty("password") String password, @JsonProperty("payload") String payload) {
     this.payload = payload;
     this.password = password;
   }

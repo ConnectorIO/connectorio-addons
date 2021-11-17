@@ -50,11 +50,15 @@ public class DirectWeblogClient implements WeblogClient {
   }
 
   public DirectWeblogClient(ClientBuilder clientBuilder, String uri, String password) {
+    this(clientBuilder, System::currentTimeMillis, uri, password);
+  }
+
+  public DirectWeblogClient(ClientBuilder clientBuilder, Supplier<Long> clock, String uri, String password) {
     this.passwordHash = sha512(password);
     this.signingContext = new SigningContext(passwordHash);
 
     this.client = clientBuilder.register(new JacksonJsonProvider())
-      .register(new SigningFilter(uri, signingContext))
+      .register(new SigningFilter(uri, signingContext, clock))
       .register(new LoggingFilter())
       .build();
 

@@ -19,6 +19,7 @@ package org.connectorio.addons.binding.relayweblog.client.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.function.Supplier;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.client.ClientRequestContext;
@@ -40,18 +41,20 @@ public class SigningFilter implements ClientRequestFilter {
 
   private final String baseUri;
   private final SigningContext signingContext;
+  private final Supplier<Long> clock;
 
   private ObjectMapper objectMapper = new ObjectMapper();
 
-  public SigningFilter(String baseUri, SigningContext signingContext) {
+  public SigningFilter(String baseUri, SigningContext signingContext, Supplier<Long> clock) {
     this.baseUri = baseUri;
     this.signingContext = signingContext;
+    this.clock = clock;
   }
 
   @Override
   public void filter(ClientRequestContext requestContext) throws IOException {
     MultivaluedMap<String, Object> headers = requestContext.getHeaders();
-    long microtime = System.currentTimeMillis() / 1000;
+    long microtime = clock.get() / 1000;
 
     String uri = requestContext.getUri().toString().replace(baseUri, "");
     if (uri.contains("?")) {
