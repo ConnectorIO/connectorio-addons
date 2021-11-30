@@ -57,6 +57,8 @@
     <module>org.connectorio.addons.norule</module>
     <module>org.connectorio.addons.norule.shell</module>
     <module>org.connectorio.addons.persistence.manager</module>
+    <module>org.connectorio.addons.persistence.migrator</module>
+    <module>org.connectorio.addons.persistence.migrator.shell</module>
     <module>org.connectorio.addons.persistence.shell</module>
     <module>org.connectorio.addons.profile</module>
     <module>org.connectorio.addons.profile.isg</module>
