@@ -32,4 +32,8 @@ public class ThingTrigger implements Trigger {
   public Predicate<Thing> getPredicate() {
     return predicate;
   }
+
+  public String toString() {
+    return "(thing trigger)";
+  }
 }

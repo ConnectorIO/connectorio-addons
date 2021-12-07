@@ -26,4 +26,8 @@ public class ThingStatusTrigger extends ThingTrigger {
     super(predicate);
   }
 
+  public String toString() {
+    return "Thing " + getPredicate() + " (status)";
+  }
+
 }
