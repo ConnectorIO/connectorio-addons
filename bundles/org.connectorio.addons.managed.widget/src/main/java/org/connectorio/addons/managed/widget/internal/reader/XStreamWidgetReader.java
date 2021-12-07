@@ -18,13 +18,22 @@
 package org.connectorio.addons.managed.widget.internal.reader;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.ConversionException;
+import com.thoughtworks.xstream.io.xml.AbstractPullReader;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.thoughtworks.xstream.io.xml.StaxReader;
+import java.net.URL;
+import javax.xml.stream.XMLStreamReader;
 import org.connectorio.addons.managed.widget.model.ComponentEntry;
 import org.connectorio.addons.managed.widget.model.Components;
 import org.connectorio.addons.managed.widget.model.RootEntry;
+import org.eclipse.jdt.annotation.Nullable;
+import org.openhab.core.config.core.ConfigDescriptionParameter;
 import org.openhab.core.config.core.ConfigDescriptionProvider;
 import org.openhab.core.config.core.dto.ConfigDescriptionDTO;
 import org.openhab.core.config.core.dto.ConfigDescriptionParameterDTO;
 import org.openhab.core.config.core.dto.ConfigDescriptionParameterGroupDTO;
+import org.openhab.core.config.xml.util.Java9XStream;
 import org.openhab.core.config.xml.util.XmlDocumentReader;
 
 public class XStreamWidgetReader extends XmlDocumentReader<Components> {
@@ -32,9 +41,31 @@ public class XStreamWidgetReader extends XmlDocumentReader<Components> {
   private XStream xstream;
 
   public XStreamWidgetReader() {
+    super(false);
+
+    StaxDriver driver = new StaxDriver() {
+      @Override
+      public AbstractPullReader createStaxReader(XMLStreamReader in) {
+        return new StaxReader(getQnameMap(), in) {
+          protected String pullText() {
+            String text = in.getText();
+            if (text.contains("\n")) {
+              return text.replaceAll("\\s+", " ").trim();
+            }
+            return text;
+          }
+        };
+      }
+    };
+
+    this.xstream = new Java9XStream(driver);
+    registerAliases(xstream);
+    registerConverters(xstream);
+    registerSecurity(xstream);
+
     ClassLoader classLoader = XStreamWidgetReader.class.getClassLoader();
     if (classLoader != null) {
-      super.setClassLoader(classLoader);
+      xstream.setClassLoader(classLoader);
     }
   }
 
@@ -52,22 +83,31 @@ public class XStreamWidgetReader extends XmlDocumentReader<Components> {
     xstream.addImplicitCollection(Components.class, "components");
     xstream.alias("root", RootEntry.class);
     xstream.alias("component", ComponentEntry.class);
+    xstream.alias("parameter", ConfigDescriptionParameterDTO.class);
+    xstream.alias("parameter-group", ConfigDescriptionParameterGroupDTO.class);
+    xstream.addImplicitCollection(ConfigDescriptionDTO.class, "parameters", "parameter", ConfigDescriptionParameterDTO.class);
+    xstream.addImplicitCollection(ConfigDescriptionDTO.class, "parameterGroups", "parameter-group", ConfigDescriptionParameterGroupDTO.class);
 
     xstream.useAttributeFor(RootEntry.class, "uid");
     xstream.useAttributeFor(RootEntry.class, "type");
-
+    xstream.useAttributeFor(ConfigDescriptionParameterDTO.class, "type");
   }
 
   // OH!
   public void configureSecurity(XStream xstream) {
     xstream.allowTypes(new Class[] { Components.class, RootEntry.class, ComponentEntry.class, ConfigDescriptionDTO.class,
-      ConfigDescriptionParameterDTO.class, ConfigDescriptionParameterGroupDTO.class});
+      ConfigDescriptionParameterDTO.class, ConfigDescriptionParameterGroupDTO.class, ConfigDescriptionParameter.Type.class});
     this.xstream = xstream;
   }
 
   // OSH!
   public void registerSecurity(XStream xStream) {
     configureSecurity(xStream);
+  }
+
+  @Override
+  public @Nullable Components readFromXML(URL xmlURL) throws ConversionException {
+    return (Components) this.xstream.fromXML(xmlURL);
   }
 
   public String write(Components things) {

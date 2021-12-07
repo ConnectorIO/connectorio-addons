@@ -50,9 +50,15 @@ public class NestedMapConverter implements Converter {
     if (digit.matches()) {
       key = "the_" + key;
     }
+    if (key.startsWith("--")) {
+      key = "the_" + key.substring(2);
+    }
     writer.startNode(key);
     if (digit.matches()) {
       writer.addAttribute("class", "digit");
+    }
+    if (key.startsWith("__")) {
+      writer.addAttribute("class", "suffix");
     }
     if (entry.getValue() instanceof Map) {
       Map<String, Object> nested = (Map<String, Object>) entry.getValue();
@@ -83,6 +89,9 @@ public class NestedMapConverter implements Converter {
       String clazz = reader.getAttribute("class");
       if (nodeName.startsWith("the_") && clazz.equals("digit")) {
         nodeName = nodeName.substring(4);
+      }
+      if (nodeName.startsWith("__") && clazz.equals("suffix")) {
+        nodeName = "--" + nodeName.substring(2);
       }
       if (reader.hasMoreChildren()) {
         if (clazz != null && "list".equals(clazz)) {
