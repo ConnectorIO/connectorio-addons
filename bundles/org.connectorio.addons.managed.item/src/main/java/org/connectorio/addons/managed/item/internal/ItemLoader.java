@@ -88,6 +88,9 @@ public class ItemLoader {
 
           if (entry.getMetadata() != null && !entry.getMetadata().isEmpty()) {
             for (Entry<String, MetadataEntry> meta : entry.getMetadata().entrySet()) {
+              if ("semantics".equalsIgnoreCase(meta.getKey())) {
+                continue;
+              }
               metadata.add(createMetadata(entry.getName(), meta));
             }
           }
