@@ -82,6 +82,10 @@ public class ItemLoader {
       try {
         XStreamItemReader reader = new XStreamItemReader();
         Items parsedItems = reader.readFromXML(file.toURI().toURL());
+        if (parsedItems == null || parsedItems.getItems() == null) {
+          logger.info("No items found in file {}", file);
+          continue;
+        }
         logger.info("Successfully read {} items from {}", parsedItems == null ? 0 : parsedItems.getItems().size(), file);
         for (ItemEntry entry : parsedItems.getItems()) {
           items.add(create(itemFactory.newItemBuilder(entry.getType(), entry.getName()), entry));
