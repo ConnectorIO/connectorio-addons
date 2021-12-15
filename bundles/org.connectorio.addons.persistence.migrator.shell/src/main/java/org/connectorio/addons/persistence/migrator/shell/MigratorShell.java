@@ -73,7 +73,10 @@ public class MigratorShell extends AbstractConsoleCommandExtension {
     if ("success".equals(args[0])) {
       console.println("" + migrationManager.isAllMigrationsSucceeded());
     }
-
+    if ("run".equals(args[0])) {
+      migrationManager.execute();
+      console.println("" + migrationManager.isAllMigrationsSucceeded());
+    }
   }
 
   @Override
@@ -81,7 +84,8 @@ public class MigratorShell extends AbstractConsoleCommandExtension {
     return Arrays.asList("co7io-persistence-migrator [sub-command]\n" +
       "Supported sub-commands: \n" +
       "   status: prints table of discovered migrations and their execution status \n" +
-      "  success: prints true if all migrations are considered as succeeded (no failures nro waiting elements reported) \n"
+      "  success: prints true if all migrations are considered as succeeded (no failures nro waiting elements reported) \n" +
+      "      run: force execution of migrations \n"
     );
   }
 
