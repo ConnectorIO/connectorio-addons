@@ -27,6 +27,8 @@ import org.connectorio.addons.managed.link.internal.reader.XStreamLinkReader;
 import org.connectorio.addons.managed.link.model.LinkEntry;
 import org.connectorio.addons.managed.link.model.Links;
 import org.openhab.core.config.core.Configuration;
+import org.openhab.core.service.ReadyMarker;
+import org.openhab.core.service.ReadyService;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.link.ItemChannelLink;
 import org.openhab.core.thing.link.ItemChannelLinkProvider;
@@ -35,6 +37,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +50,7 @@ public class LinkLoader {
   List<ServiceRegistration<?>> registrations = new ArrayList<>();
 
   @Activate
-  public LinkLoader(BundleContext context) {
+  public LinkLoader(BundleContext context, @Reference ReadyService readyService) {
     this.context = context;
     File managed = new File(System.getProperty("openhab.userdata"), "managed");
     logger.info("Attempting to load link definitions from files located in {}", managed);
@@ -80,6 +83,7 @@ public class LinkLoader {
     }
 
     registrations.add(context.registerService(ItemChannelLinkProvider.class, new XStreamLinkProvider(links), new Hashtable<>()));
+    readyService.markReady(new ReadyMarker("co7io-managed", "link"));
   }
 
   private ItemChannelLink createLink(String name, LinkEntry channel) {

@@ -75,7 +75,7 @@ public class ThingLoader {
 
   @Activate
   public ThingLoader(BundleContext context, @Reference ThingTypeRegistry thingTypeRegistry, @Reference ChannelTypeRegistry channelTypeRegistry,
-    @Reference ConfigDescriptionRegistry configDescriptionRegistry, @Reference ReadyService service) {
+    @Reference ConfigDescriptionRegistry configDescriptionRegistry, @Reference ReadyService readyService) {
     this.context = context;
     this.thingTypeRegistry = thingTypeRegistry;
     this.channelTypeRegistry = channelTypeRegistry;
@@ -118,6 +118,8 @@ public class ThingLoader {
     }
 
     registrations.add(context.registerService(ThingProvider.class, new XStreamThingProvider(things), new Hashtable<>()));
+
+    readyService.markReady(new ReadyMarker("co7io-managed", "thing"));
   }
 
   @Deactivate

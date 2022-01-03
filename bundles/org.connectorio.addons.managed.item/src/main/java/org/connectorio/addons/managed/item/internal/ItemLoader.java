@@ -41,6 +41,8 @@ import org.openhab.core.items.MetadataKey;
 import org.openhab.core.items.MetadataProvider;
 import org.openhab.core.items.dto.GroupFunctionDTO;
 import org.openhab.core.items.dto.ItemDTOMapper;
+import org.openhab.core.service.ReadyMarker;
+import org.openhab.core.service.ReadyService;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.link.ItemChannelLink;
 import org.openhab.core.thing.link.ItemChannelLinkProvider;
@@ -62,7 +64,7 @@ public class ItemLoader {
   List<ServiceRegistration<?>> registrations = new ArrayList<>();
 
   @Activate
-  public ItemLoader(BundleContext context, @Reference ItemBuilderFactory itemFactory) {
+  public ItemLoader(BundleContext context, @Reference ReadyService readyService, @Reference ItemBuilderFactory itemFactory) {
     this.itemFactory = itemFactory;
 
     File managed = new File(System.getProperty("openhab.userdata"), "managed");
@@ -113,6 +115,8 @@ public class ItemLoader {
     registrations.add(context.registerService(ItemProvider.class, new XStreamItemProvider(items), new Hashtable<>()));
     registrations.add(context.registerService(MetadataProvider.class, new XStreamMetadataProvider(metadata), new Hashtable<>()));
     registrations.add(context.registerService(ItemChannelLinkProvider.class, new XStreamLinkProvider(links), new Hashtable<>()));
+
+    readyService.markReady(new ReadyMarker("co7io-managed", "item"));
   }
 
   private ItemChannelLink createLink(String name, BaseLinkEntry channel) {
