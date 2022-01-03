@@ -18,8 +18,6 @@
  -->
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.6.0" name="co7io-binding-base-${project.version}">
 
-  <repository>mvn:org.openhab.core.features.karaf/org.openhab.core.features.karaf.openhab-core/${openhab.version}/xml/features</repository>
-
   <feature name="co7io-binding-base" description="ConnectorIO Binding Base" version="${project.version}">
     <details>Generic parts of bindings</details>
     <feature>openhab-core-base</feature>

@@ -45,10 +45,6 @@
     </license>
   </licenses>
 
-  <properties>
-    <bacnet4j-wrapper.version>1.2.1-SNAPSHOT</bacnet4j-wrapper.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
@@ -167,32 +163,6 @@
       <groupId>org.osgi</groupId>
       <artifactId>osgi.core</artifactId>
     </dependency>
-
-    <!-- distribution dependencies -->
-    <dependency>
-      <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.feature</artifactId>
-      <classifier>features</classifier>
-      <type>xml</type>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.karaf.features</groupId>
-      <artifactId>framework</artifactId>
-      <type>kar</type>
-    </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.karaf.tooling</groupId>
-        <artifactId>karaf-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

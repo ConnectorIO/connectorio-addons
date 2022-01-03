@@ -35,6 +35,8 @@
 
   <properties>
     <plc4x.version>0.8.1-connectorio-2</plc4x.version>
+    <bacnet4j-wrapper.version>1.2.1-SNAPSHOT</bacnet4j-wrapper.version>
+
     <openhab.version>3.0.0</openhab.version>
     <karaf.version>4.2.7</karaf.version>
 
@@ -46,7 +48,7 @@
     <mockito.version>3.6.28</mockito.version>
 
     <!-- various build related variables -->
-    <feature.directory>${project.basedir}/target/test-classes/feature.xml</feature.directory>
+    <feature.file>${project.basedir}/target/feature/feature.xml</feature.file>
     <osgi.version>7.0.0</osgi.version>
   </properties>
 
@@ -59,11 +61,12 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.chrono</artifactId>
+        <artifactId>org.connectorio.feature.chrono</artifactId>
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
       </dependency>
+
       <dependency>
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.plc4x.decorator</artifactId>
@@ -90,6 +93,20 @@
         <artifactId>org.connectorio.addons.binding</artifactId>
         <version>${project.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.binding.askoheat</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.feature.askoheat</artifactId>
+        <version>${project.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+      </dependency>
+
       <dependency>
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.binding.bacnet</artifactId>
@@ -97,22 +114,16 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.binding.bacnet</artifactId>
+        <artifactId>org.connectorio.addons.feature.bacnet</artifactId>
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
       </dependency>
+
       <dependency>
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.binding.can</artifactId>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.binding.can</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
@@ -140,10 +151,16 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.binding.plc4x.amsads</artifactId>
+        <artifactId>org.connectorio.addons.feature.amsads</artifactId>
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.binding.plc4x.can</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
@@ -152,23 +169,17 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.binding.plc4x.canopen</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.binding.plc4x.canopen.ta</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.binding.plc4x.canopen.ta</artifactId>
+        <artifactId>org.connectorio.addons.feature.canopen</artifactId>
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
       </dependency>
+
       <dependency>
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.binding.plc4x.s7</artifactId>
@@ -176,14 +187,20 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.binding.plc4x.s7</artifactId>
+        <artifactId>org.connectorio.addons.feature.s7</artifactId>
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
       </dependency>
+
       <dependency>
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.binding.relayweblog</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.feature.relayweblog</artifactId>
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
@@ -200,7 +217,6 @@
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
-        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -210,34 +226,13 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.io.transport.serial.persistent</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.io.transport.serial.purejavacomm</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.io.transport.serial.purejavacomm</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.io.transport.serial.shell</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.io.transport.serial.shell</artifactId>
         <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
@@ -245,7 +240,6 @@
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
-        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -255,22 +249,8 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.persistence.manager</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.persistence.migrator</artifactId>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.persistence.migrator</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
@@ -279,24 +259,8 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.persistence.migrator.shell</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.persistence.shell</artifactId>
         <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.persistence.shell</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
@@ -304,7 +268,6 @@
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
-        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -314,22 +277,8 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.profile</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.profile.isg</artifactId>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.profile.isg</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
@@ -338,22 +287,8 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.profile.math</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.profile.quantity</artifactId>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.profile.quantity</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
@@ -362,22 +297,8 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.profile.sma</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.profile.timer</artifactId>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.profile.timer</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
@@ -385,7 +306,6 @@
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
-        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -395,22 +315,8 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.managed.item</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.managed.link</artifactId>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.managed.link</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
@@ -419,10 +325,8 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.managed.thing</artifactId>
+        <artifactId>org.connectorio.addons.managed.widget</artifactId>
         <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
@@ -437,6 +341,12 @@
         <artifactId>org.connectorio.addons.norule</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.test</artifactId>
+        <version>${project.version}</version>
+        <scope>test</scope>
+      </dependency>
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
@@ -444,7 +354,6 @@
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
-        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -453,7 +362,6 @@
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
-        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -1021,19 +929,6 @@
   </dependencyManagement>
 
   <build>
-    <testResources>
-      <testResource>
-        <directory>src/main/feature</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>feature.xml</include>
-        </includes>
-      </testResource>
-      <testResource>
-        <directory>src/test/resources</directory>
-        <filtering>true</filtering>
-      </testResource>
-    </testResources>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -1061,7 +956,7 @@
               <configuration>
                 <artifacts>
                   <artifact>
-                    <file>${feature.directory}</file>
+                    <file>${feature.file}</file>
                     <classifier>features</classifier>
                     <type>xml</type>
                   </artifact>
@@ -1081,46 +976,40 @@
             <startLevel>80</startLevel>
             <enableGeneration>true</enableGeneration>
             <aggregateFeatures>false</aggregateFeatures>
-            <checkDependencyChange>true</checkDependencyChange>
+            <checkDependencyChange>false</checkDependencyChange>
             <failOnDependencyChange>false</failOnDependencyChange>
-            <logDependencyChanges>true</logDependencyChanges>
-            <overwriteChangedDependencies>true</overwriteChangedDependencies>
-            <javase>11</javase>
+            <logDependencyChanges>false</logDependencyChanges>
+            <overwriteChangedDependencies>false</overwriteChangedDependencies>
           </configuration>
           <executions>
-            <!--
             <execution>
-              <id>compile</id>
+              <id>karaf-kar</id>
               <goals>
-                <goal>features-generate-descriptor</goal>
+                <goal>kar</goal>
               </goals>
-              <phase>generate-resources</phase>
-              <configuration>
-                <inputFile>${feature.directory}</inputFile>
-              </configuration>
+              <phase>package</phase>
             </execution>
-            -->
             <execution>
-              <id>karaf-feature-verification</id>
+              <id>karaf-verification</id>
               <goals>
                 <goal>verify</goal>
               </goals>
-              <phase>deploy</phase>
+              <phase>verify</phase>
               <configuration>
                 <descriptors combine.children="append">
                   <!-- Apache Karaf -->
                   <descriptor>mvn:org.apache.karaf.features/framework/${karaf.version}/xml/features</descriptor>
                   <descriptor>mvn:org.apache.karaf.features/standard/${karaf.version}/xml/features</descriptor>
                   <!-- Current feature under verification -->
-                  <descriptor>file:${feature.directory}</descriptor>
+                  <descriptor>file:${feature.file}</descriptor>
                 </descriptors>
                 <distribution>org.apache.karaf.features:framework</distribution>
                 <javase>11</javase>
                 <framework>
                   <feature>framework</feature>
                 </framework>
-                <features>
-                  <feature>co7io-*</feature>
+                <features combine.children="override">
+                  <feature>_none_</feature>
                 </features>
                 <verifyTransitive>false</verifyTransitive>
                 <ignoreMissingConditions>true</ignoreMissingConditions>

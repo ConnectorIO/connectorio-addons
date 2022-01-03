@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright (C) 2019-2021 ConnectorIO sp. z o.o.
+ -
+ - This is free software; you can redistribute it and/or modify
+ - it under the terms of the GNU General Public License as published by
+ - the Free Software Foundation; either version 2 of the License, or
+ - (at your option) any later version.
+ -
+ -     https://www.gnu.org/licenses/gpl-3.0.txt
+ -
+ - This library is distributed in the hope that it will be useful,
+ - but WITHOUT ANY WARRANTY; without even the implied warranty of
+ - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ - GNU General Public License for more details.
+ -
+ - You should have received a copy of the GNU General Public License
+ - along with Foobar; if not, write to the Free Software
+ - Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ -
+ - SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<features name="co7io-binding-bacnet-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.6.0">
+
+  <repository>mvn:org.connectorio.addons/org.connectorio.addons.feature/${project.version}/xml/features</repository>
+
+  <feature name="openhab-binding-bacnet" description="BACnet Binding" version="${project.version}">
+    <feature>co7io-binding-bacnet</feature>
+  </feature>
+
+  <feature name="bacnet4j-wrapper" description="bacnet4j wrapper library" version="${bacnet4j-wrapper.version}">
+    <bundle>mvn:org.apache.commons/commons-lang3/3.7</bundle>
+    <bundle start-level="80">mvn:org.code-house.bacnet4j/api/${bacnet4j-wrapper.version}</bundle>
+    <bundle start-level="80">mvn:org.code-house.bacnet4j/ip/${bacnet4j-wrapper.version}</bundle>
+    <bundle start-level="80">mvn:org.code-house.bacnet4j/mstp/${bacnet4j-wrapper.version}</bundle>
+  </feature>
+
+  <feature name="co7io-binding-bacnet" description="BACnet Binding" version="${project.version}">
+    <feature>openhab-runtime-base</feature>
+    <feature>openhab-transport-serial</feature>
+    <feature>co7io-binding-base</feature>
+    <feature>bacnet4j-wrapper</feature>
+    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.binding.bacnet/${project.version}</bundle>
+  </feature>
+
+</features>

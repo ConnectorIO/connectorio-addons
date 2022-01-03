@@ -36,18 +36,18 @@
   <modules>
     <module>org.connectorio.addons.feature</module>
     <module>org.connectorio.addons.feature.amsads</module>
+    <module>org.connectorio.addons.feature.askoheat</module>
     <module>org.connectorio.addons.feature.bacnet</module>
     <module>org.connectorio.addons.feature.canopen</module>
     <module>org.connectorio.addons.feature.io</module>
     <module>org.connectorio.addons.feature.io.transport.serial</module>
-    <module>org.connectorio.addons.feature.isg</module>
     <module>org.connectorio.addons.feature.managed</module>
-    <module>org.connectorio.addons.feature.openhab</module>
     <module>org.connectorio.addons.feature.persistence</module>
     <module>org.connectorio.addons.feature.plc4x</module>
     <module>org.connectorio.addons.feature.profile</module>
     <module>org.connectorio.addons.feature.relayweblog</module>
     <module>org.connectorio.addons.feature.s7</module>
+    <module>org.connectorio.feature.chrono</module>
   </modules>
 
 </project>

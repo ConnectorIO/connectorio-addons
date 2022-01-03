@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>org.connectorio.addons.feature</artifactId>
+  <packaging>pom</packaging>
 
   <name>ConnectorIO - Addons - Features - Base</name>
   <description>Base features used in binding implementations.</description>
@@ -37,15 +38,35 @@
       <artifactId>org.connectorio.addons.binding</artifactId>
     </dependency>
 
+    <!-- remove after KARAF-7316 is fixed -->
     <dependency>
       <groupId>org.apache.karaf.features</groupId>
       <artifactId>framework</artifactId>
       <type>kar</type>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/feature</directory>
+        <filtering>true</filtering>
+        <targetPath>${project.build.directory}/feature</targetPath>
+      </resource>
+    </resources>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
@@ -53,31 +74,17 @@
       <plugin>
         <groupId>org.apache.karaf.tooling</groupId>
         <artifactId>karaf-maven-plugin</artifactId>
-        <configuration>
-          <startLevel>80</startLevel>
-          <enableGeneration>false</enableGeneration>
-          <aggregateFeatures>false</aggregateFeatures>
-          <checkDependencyChange>false</checkDependencyChange>
-          <failOnDependencyChange>false</failOnDependencyChange>
-          <logDependencyChanges>false</logDependencyChanges>
-          <overwriteChangedDependencies>false</overwriteChangedDependencies>
-          <ignoreDependencyFlag>true</ignoreDependencyFlag>
-          <archive>
-            <index>true</index>
-            <manifestEntries>
-              <Karaf-Feature-Start>false</Karaf-Feature-Start>
-            </manifestEntries>
-          </archive>
-        </configuration>
         <executions>
           <execution>
-            <id>karaf-feature-verification</id>
+            <id>karaf-verification</id>
+            <goals>
+              <goal>verify</goal>
+            </goals>
             <phase>package</phase>
             <configuration>
               <descriptors>
                 <descriptor>mvn:org.openhab.core.features.karaf/org.openhab.core.features.karaf.openhab-core/${openhab.version}/xml/features</descriptor>
               </descriptors>
-              <distribution>org.apache.karaf.features:framework</distribution>
               <features>
                 <feature>co7io-*</feature>
               </features>
