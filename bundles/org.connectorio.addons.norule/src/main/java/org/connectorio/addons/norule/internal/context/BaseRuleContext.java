@@ -53,7 +53,7 @@ public abstract class BaseRuleContext implements RuleContext {
   @Override
   public ItemContext item(String itemName) {
     return Optional.ofNullable(itemRegistry.get(itemName))
-      .<ItemContext>map(DefaultItemRuleContext::new)
+      .<ItemContext>map(DefaultItemContext::new)
       .orElseGet(EmptyRuleContext::new);
   }
 

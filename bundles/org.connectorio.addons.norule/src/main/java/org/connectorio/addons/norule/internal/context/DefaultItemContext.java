@@ -23,11 +23,11 @@ import org.openhab.core.items.GenericItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.types.State;
 
-public class DefaultItemRuleContext implements ItemContext {
+public class DefaultItemContext implements ItemContext {
 
   private final Item item;
 
-  public DefaultItemRuleContext(Item item) {
+  public DefaultItemContext(Item item) {
     this.item = item;
   }
 

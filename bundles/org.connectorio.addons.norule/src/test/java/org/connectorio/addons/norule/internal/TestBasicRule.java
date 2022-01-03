@@ -17,41 +17,35 @@
  */
 package org.connectorio.addons.norule.internal;
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import java.lang.reflect.Constructor;
+import javax.measure.quantity.Energy;
 import org.connectorio.addons.norule.ActualCopRule;
+import org.connectorio.addons.norule.BlockingRule;
 import org.connectorio.addons.norule.internal.action.DefaultThingActionsRegistry;
+import org.connectorio.addons.test.ItemMutation;
+import org.connectorio.addons.test.StubEventBuilder;
+import org.connectorio.addons.test.StubItemBuilder;
+import org.connectorio.addons.test.TestingItemRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openhab.core.internal.service.ReadyServiceImpl;
-import org.openhab.core.items.GenericItem;
-import org.openhab.core.items.Item;
-import org.openhab.core.items.ItemRegistry;
-import org.openhab.core.items.events.ItemStateChangedEvent;
+import org.openhab.core.library.items.NumberItem;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.unit.Units;
 import org.openhab.core.thing.ThingRegistry;
-import org.openhab.core.types.State;
 
 @ExtendWith(MockitoExtension.class)
 public class TestBasicRule {
 
   @Mock
   private ThingRegistry thingRegistry;
-  @Mock
-  private ItemRegistry itemRegistry;
 
-  @Mock
-  private Item heatProduced;
-  @Mock
-  private Item energyConsumed;
-  @Mock // generic item can receive state updates
-  private GenericItem efficiency;
+  private NumberItem heatProduced = StubItemBuilder.createQuantity(Energy.class, ActualCopRule.HEAT_PRODUCED).build();
+  private NumberItem energyConsumed = StubItemBuilder.createQuantity(Energy.class, ActualCopRule.ENERGY_CONSUMED).build();
+  private NumberItem efficiency = StubItemBuilder.createNumber(ActualCopRule.EFFICIENCY).build();
 
   @Test
   void checkBasicRule() throws InterruptedException {
@@ -59,35 +53,19 @@ public class TestBasicRule {
 
     BlockingRule rule = new BlockingRule(new ActualCopRule(triggerBuilderFactory));
 
-    RuntimeRuleProvider provider = new RuntimeRuleProvider();
-    provider.addRule(rule);
-    NoRuleRegistry launcher = new NoRuleRegistry(thingRegistry, itemRegistry, new ReadyServiceImpl(), new DefaultThingActionsRegistry());
+    RuntimeRuleProvider provider = new RuntimeRuleProvider(rule);
+    TestingItemRegistry registry = new TestingItemRegistry(heatProduced, energyConsumed, efficiency);
+    NoRuleRegistry launcher = new NoRuleRegistry(thingRegistry, registry, new ReadyServiceImpl(), new DefaultThingActionsRegistry());
     launcher.addProvider(provider);
 
-    when(itemRegistry.get("EnergyConsumed")).thenReturn(energyConsumed);
-    when(energyConsumed.getStateAs(eq(QuantityType.class))).thenReturn(new QuantityType<>(10, Units.KILOWATT_HOUR));
-    when(itemRegistry.get("HeatProduced")).thenReturn(heatProduced);
-    when(heatProduced.getStateAs(eq(QuantityType.class))).thenReturn(new QuantityType<>(50, Units.KILOWATT_HOUR));
-    when(itemRegistry.get("Efficiency")).thenReturn(efficiency);
+    new ItemMutation(energyConsumed).accept(new QuantityType<>(10, Units.KILOWATT_HOUR));
 
-    ItemStateChangedEvent event = create(ItemStateChangedEvent.class, new Class[] {
-        String.class, String.class, String.class, State.class, State.class
-      },
-      "", "", "HeatProduced", QuantityType.valueOf("10 kWh"), QuantityType.valueOf("9 kWh")
-    );
-    launcher.receive(event);
+    StubEventBuilder.createItemStateChangedEven(heatProduced,
+      QuantityType.valueOf("50 kWh"), QuantityType.valueOf("9 kWh")
+    ).build(launcher).fire();
+
     rule.getLatch().await();
-    verify(efficiency).setState(new QuantityType<>(5, Units.ONE));
-  }
-
-  private <T> T create(Class<T> type, Class[] arguments, Object ... args) {
-    try {
-      Constructor<T> constructor = type.getDeclaredConstructor(arguments);
-      constructor.setAccessible(true);
-      return constructor.newInstance(args);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+    assertThat(efficiency.getState()).isEqualTo(new QuantityType<>(5, Units.ONE));
   }
 
 }

@@ -30,13 +30,17 @@ import org.osgi.service.component.annotations.Reference;
 @Component
 public class ActualCopRule implements Rule {
 
+  public static final String HEAT_PRODUCED = "HeatProduced";
+  public static final String ENERGY_CONSUMED = "EnergyConsumed";
+  public static final String EFFICIENCY = "Efficiency";
+
   private final Set<Trigger> triggers;
 
   @Activate
   public ActualCopRule(@Reference TriggerBuilderFactory triggerFactory) {
     this.triggers = triggerFactory.createBuilder()
-      .itemStateChange("HeatProduced")
-      .itemStateChange("EnergyConsumed")
+      .itemStateChange(HEAT_PRODUCED)
+      .itemStateChange(ENERGY_CONSUMED)
       .build();
   }
 
@@ -47,15 +51,15 @@ public class ActualCopRule implements Rule {
 
   @Override
   public void handle(RuleContext context) {
-    QuantityType<Energy> heat = context.item("HeatProduced").state(QuantityType.class)
+    QuantityType<Energy> heat = context.item(HEAT_PRODUCED).state(QuantityType.class)
       .map(q -> (QuantityType<Energy>) q)
       .orElseThrow(SkipExecutionException::new);
 
-    QuantityType<Energy> energy = context.item("EnergyConsumed").state(QuantityType.class)
+    QuantityType<Energy> energy = context.item(ENERGY_CONSUMED).state(QuantityType.class)
         .map(q -> (QuantityType<Energy>) q)
       .orElseThrow(SkipExecutionException::new);
 
-    context.item("Efficiency").state(
+    context.item(EFFICIENCY).state(
       heat.divide(energy)
     );
   }

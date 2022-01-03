@@ -17,11 +17,14 @@
  */
 package org.connectorio.addons.norule.internal;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.connectorio.addons.norule.Rule;
 import org.connectorio.addons.norule.RuleProvider;
 import org.connectorio.addons.norule.RuleUID;
@@ -45,6 +48,10 @@ public class RuntimeRuleProvider implements RuleProvider, ManagedProvider<Rule, 
   @Activate
   public RuntimeRuleProvider() {
     this(new LinkedHashMap<>());
+  }
+
+  public RuntimeRuleProvider(Rule ... rules) {
+    this(Arrays.stream(rules).collect(Collectors.toMap(Rule::getUID, Function.identity(), (left, right) -> left)));
   }
 
   public RuntimeRuleProvider(Map<RuleUID, Rule> rules) {

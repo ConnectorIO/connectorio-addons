@@ -253,7 +253,7 @@ public class NoRuleRegistry extends AbstractRegistry<Rule, RuleUID, RuleProvider
     }
   }
 
-  void addProvider(RuleProvider provider) {
+  public void addProvider(RuleProvider provider) {
     if (provider instanceof ManagedProvider) {
       setManagedProvider((ManagedProvider<Rule, RuleUID>) provider);
     }
