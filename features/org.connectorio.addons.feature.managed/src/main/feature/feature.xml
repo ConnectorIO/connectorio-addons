@@ -16,7 +16,7 @@
  -
  - SPDX-License-Identifier: Apache-2.0
  -->
-<features name="co7io-managed-item-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.6.0">
+<features name="co7io-managed-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.6.0">
 
   <feature name="openhab-misc-managed-item" description="Managed item handling" version="${project.version}" hidden="true">
     <feature>co7io-managed-item</feature>
