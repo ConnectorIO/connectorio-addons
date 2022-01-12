@@ -55,8 +55,9 @@ public class TestBasicRule {
 
     RuntimeRuleProvider provider = new RuntimeRuleProvider(rule);
     TestingItemRegistry registry = new TestingItemRegistry(heatProduced, energyConsumed, efficiency);
-    NoRuleRegistry launcher = new NoRuleRegistry(thingRegistry, registry, new ReadyServiceImpl(), new DefaultThingActionsRegistry());
-    launcher.addProvider(provider);
+    NoRuleRegistry ruleRegistry = new NoRuleRegistry();
+    ruleRegistry.addProvider(provider);
+    NoRuleManager launcher = new NoRuleManager(ruleRegistry, thingRegistry, registry, new ReadyServiceImpl(), new DefaultThingActionsRegistry());
 
     new ItemMutation(energyConsumed).accept(new QuantityType<>(10, Units.KILOWATT_HOUR));
 

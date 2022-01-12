@@ -17,8 +17,12 @@
  */
 package org.connectorio.addons.norule;
 
-import org.openhab.core.common.registry.Registry;
+/**
+ * Rule manager is responsible for managing rule execution.
+ *
+ * At software contract level it does not track the rules themselves.
+ */
+public interface RuleManager {
 
-public interface RuleRegistry extends Registry<Rule, RuleUID> {
-
+  void run(RuleUID ruleUID);
 }

@@ -19,17 +19,11 @@ package org.connectorio.addons.norule.shell.internal;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import org.connectorio.addons.norule.ItemContext;
-import org.connectorio.addons.norule.Rule;
-import org.connectorio.addons.norule.RuleContext;
-import org.connectorio.addons.norule.RuleRegistry;
+import org.connectorio.addons.norule.RuleManager;
 import org.connectorio.addons.norule.RuleUID;
-import org.connectorio.addons.norule.Trigger;
 import org.openhab.core.io.console.Console;
 import org.openhab.core.io.console.extensions.AbstractConsoleCommandExtension;
 import org.openhab.core.io.console.extensions.ConsoleCommandExtension;
-import org.openhab.core.items.ItemRegistry;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -40,12 +34,12 @@ import org.osgi.service.component.annotations.Reference;
 @Component(immediate = true, service = ConsoleCommandExtension.class)
 public class RuleRunCommand extends AbstractConsoleCommandExtension {
 
-  private final RuleRegistry ruleRegistry;
+  private final RuleManager ruleRegistry;
 
   @Activate
-  public RuleRunCommand(@Reference RuleRegistry ruleRegistry) {
+  public RuleRunCommand(@Reference RuleManager ruleManager) {
     super("co7io-norule-run", "Trigger a rule");
-    this.ruleRegistry = ruleRegistry;
+    this.ruleRegistry = ruleManager;
   }
 
   @Override
