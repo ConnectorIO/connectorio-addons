@@ -41,7 +41,7 @@ public class StubEventBuilder<T extends Event> {
     return new StubEvent<T>(event, new CompositeSubscriber(subscribers));
   }
 
-  public static StubEventBuilder<ItemCommandEvent> createItemCommandEven(Item item, Command command) {
+  public static StubEventBuilder<ItemCommandEvent> createItemCommandEvent(Item item, Command command) {
     return new StubEventBuilder<>(new EventCreator<>(ItemCommandEvent.class, TOPIC, PAYLOAD,
       Argument.of("itemName", String.class, item.getName()),
       Argument.of("command", Command.class, command),
@@ -49,7 +49,7 @@ public class StubEventBuilder<T extends Event> {
     ));
   }
 
-  public static StubEventBuilder<ItemStateEvent> createItemStateEven(Item item, State itemState) {
+  public static StubEventBuilder<ItemStateEvent> createItemStateEvent(Item item, State itemState) {
     return new StubEventBuilder<>(new EventCreator<>(ItemStateEvent.class, TOPIC, PAYLOAD,
       Argument.of("itemName", String.class, item.getName()),
       Argument.of("itemState", State.class, itemState),
@@ -57,7 +57,7 @@ public class StubEventBuilder<T extends Event> {
     ));
   }
 
-  public static StubEventBuilder<ItemStateChangedEvent> createItemStateChangedEven(Item item, State newItemState, State oldItemState) {
+  public static StubEventBuilder<ItemStateChangedEvent> createItemStateChangedEvent(Item item, State newItemState, State oldItemState) {
     return new StubEventBuilder<>(new EventCreator<>(ItemStateChangedEvent.class, TOPIC, PAYLOAD,
       Argument.of("itemName", String.class, item.getName()),
       Argument.of("newItemState", State.class, newItemState),
@@ -65,7 +65,7 @@ public class StubEventBuilder<T extends Event> {
     ));
   }
 
-  public static StubEventBuilder<ItemStatePredictedEvent> createItemStatePredictedEven(Item item, State predictedState, boolean isConfirmation) {
+  public static StubEventBuilder<ItemStatePredictedEvent> createItemStatePredictedEvent(Item item, State predictedState, boolean isConfirmation) {
     return new StubEventBuilder<>(new EventCreator<>(ItemStatePredictedEvent.class, TOPIC, PAYLOAD,
       Argument.of("itemName", String.class, item.getName()),
       Argument.of("predictedState", State.class, predictedState),
@@ -74,7 +74,7 @@ public class StubEventBuilder<T extends Event> {
     ));
   }
 
-  public static StubEventBuilder<ThingStatusInfoEvent> createThingStatusInfoEven(ThingUID thingUID, ThingStatusInfo thingStatusInfo) {
+  public static StubEventBuilder<ThingStatusInfoEvent> createThingStatusInfoEvent(ThingUID thingUID, ThingStatusInfo thingStatusInfo) {
     return new StubEventBuilder<>(new EventCreator<>(ThingStatusInfoEvent.class, TOPIC, PAYLOAD,
       Argument.of("thingUID", ThingUID.class, thingUID),
       Argument.of("thingStatusInfo", ThingStatusInfo.class, thingStatusInfo),
@@ -82,23 +82,22 @@ public class StubEventBuilder<T extends Event> {
     ));
   }
 
-  public static StubEventBuilder<ThingStatusInfoChangedEvent> createThingStatusInfoChangedEven(ThingUID thingUID, ThingStatusInfo newThingStatusInfo, ThingStatusInfo oldThingStatusInfo) {
+  public static StubEventBuilder<ThingStatusInfoChangedEvent> createThingStatusInfoChangedEvent(ThingUID thingUID, ThingStatusInfo newThingStatusInfo, ThingStatusInfo oldThingStatusInfo) {
     return new StubEventBuilder<>(new EventCreator<>(ThingStatusInfoChangedEvent.class, TOPIC, PAYLOAD,
       Argument.of("thingUID", ThingUID.class, thingUID),
       Argument.of("newThingStatusInfo", ThingStatusInfo.class, newThingStatusInfo),
-      Argument.of("oldThingStatusInfo", ThingStatusInfo.class, oldThingStatusInfo),
-      SOURCE
+      Argument.of("oldThingStatusInfo", ThingStatusInfo.class, oldThingStatusInfo)
     ));
   }
 
-  public static StubEventBuilder<StartlevelEvent> createStartlevelEven(int startLevel) {
+  public static StubEventBuilder<StartlevelEvent> createStartLevelEvent(int startLevel) {
     return new StubEventBuilder<>(new EventCreator<>(StartlevelEvent.class, TOPIC, PAYLOAD,
       SOURCE,
       Argument.of("startLevel", Integer.class, startLevel)
     ));
   }
 
-  public static StubEventBuilder<ChannelTriggeredEvent> createChannelTriggeredEven(String event, ChannelUID channel) {
+  public static StubEventBuilder<ChannelTriggeredEvent> createChannelTriggeredEvent(String event, ChannelUID channel) {
     return new StubEventBuilder<>(new EventCreator<>(ChannelTriggeredEvent.class, TOPIC, PAYLOAD,
       SOURCE,
       Argument.of("event", String.class, event),

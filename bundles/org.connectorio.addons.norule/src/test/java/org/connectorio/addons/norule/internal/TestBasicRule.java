@@ -61,7 +61,7 @@ public class TestBasicRule {
 
     new ItemMutation(energyConsumed).accept(new QuantityType<>(10, Units.KILOWATT_HOUR));
 
-    StubEventBuilder.createItemStateChangedEven(heatProduced,
+    StubEventBuilder.createItemStateChangedEvent(heatProduced,
       QuantityType.valueOf("50 kWh"), QuantityType.valueOf("9 kWh")
     ).build(launcher).fire();
 
