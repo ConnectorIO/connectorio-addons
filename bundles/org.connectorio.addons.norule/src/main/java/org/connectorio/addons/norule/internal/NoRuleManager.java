@@ -43,7 +43,6 @@ import org.connectorio.addons.norule.Periodic;
 import org.connectorio.addons.norule.Rule;
 import org.connectorio.addons.norule.RuleContext;
 import org.connectorio.addons.norule.RuleManager;
-import org.connectorio.addons.norule.RuleProvider;
 import org.connectorio.addons.norule.RuleRegistry;
 import org.connectorio.addons.norule.RuleUID;
 import org.connectorio.addons.norule.Scheduled;
@@ -72,11 +71,10 @@ import org.connectorio.addons.norule.internal.trigger.StateChangeTrigger;
 import org.connectorio.addons.norule.internal.trigger.StateUpdateTrigger;
 import org.connectorio.addons.norule.internal.trigger.ThingStatusChangeTrigger;
 import org.connectorio.addons.norule.internal.trigger.ThingStatusTrigger;
-import org.connectorio.addons.norule.internal.trigger.ThingTrigger;
+import org.connectorio.addons.norule.internal.trigger.ThingReferenceTrigger;
 import org.connectorio.chrono.Period;
 import org.connectorio.chrono.shared.FuturePeriodCalculator;
 import org.connectorio.chrono.shared.PastPeriodCalculator;
-import org.openhab.core.common.registry.ManagedProvider;
 import org.openhab.core.common.registry.RegistryChangeListener;
 import org.openhab.core.events.Event;
 import org.openhab.core.events.EventFilter;
@@ -94,6 +92,7 @@ import org.openhab.core.service.ReadyService;
 import org.openhab.core.service.ReadyService.ReadyTracker;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingRegistry;
+import org.openhab.core.thing.ThingUID;
 import org.openhab.core.thing.events.ThingStatusInfoChangedEvent;
 import org.openhab.core.thing.events.ThingStatusInfoEvent;
 import org.osgi.service.component.annotations.Activate;
@@ -212,15 +211,15 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
       startLevel.set(startlevelEvent.getStartlevel());
     } else if (event instanceof ThingStatusInfoChangedEvent) {
       ThingStatusInfoChangedEvent status = (ThingStatusInfoChangedEvent) event;
-      Thing thing = thingRegistry.get(status.getThingUID());
-      fire((rule, trigger) -> new ThingStatusChangeRuleContext(rule, itemRegistry, actionsRegistry, trigger, thing, status.getStatusInfo(), status.getOldStatusInfo()), (trigger -> {
-        return trigger instanceof ThingStatusChangeTrigger &&  ((ThingTrigger) trigger).getPredicate().test(thing);
+      ThingUID thing = status.getThingUID();
+      fire((rule, trigger) -> new ThingStatusChangeRuleContext(rule, itemRegistry, actionsRegistry, trigger, thingRegistry.get(thing), status.getStatusInfo(), status.getOldStatusInfo()), (trigger -> {
+        return trigger instanceof ThingStatusChangeTrigger &&  ((ThingReferenceTrigger) trigger).getPredicate().test(thing);
       }));
     } else if (event instanceof ThingStatusInfoEvent) {
       ThingStatusInfoEvent status = (ThingStatusInfoEvent) event;
-      Thing thing = thingRegistry.get(status.getThingUID());
-      fire((rule, trigger) -> new ThingStatusRuleContext(rule, itemRegistry, actionsRegistry, trigger, thing, status.getStatusInfo()), (trigger -> {
-        return trigger instanceof ThingStatusTrigger &&  ((ThingTrigger) trigger).getPredicate().test(thing);
+      ThingUID thing = status.getThingUID();
+      fire((rule, trigger) -> new ThingStatusRuleContext(rule, itemRegistry, actionsRegistry, trigger, thingRegistry.get(thing), status.getStatusInfo()), (trigger -> {
+        return trigger instanceof ThingStatusTrigger &&  ((ThingReferenceTrigger) trigger).getPredicate().test(thing);
       }));
     } else {
       logger.debug("Unsupported event received {}", event);

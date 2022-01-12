@@ -47,11 +47,11 @@ public interface TriggerBuilder {
 
   TriggerBuilder thingStatus(ThingUID thing);
   TriggerBuilder thingStatus(ThingTypeUID thing);
-  TriggerBuilder thingStatus(Predicate<Thing> predicate);
+  TriggerBuilder thingStatus(Predicate<ThingUID> predicate);
 
   TriggerBuilder thingStatusChange(ThingUID thing);
   TriggerBuilder thingStatusChange(ThingTypeUID thing);
-  TriggerBuilder thingStatusChange(Predicate<Thing> predicate);
+  TriggerBuilder thingStatusChange(Predicate<ThingUID> predicate);
 
 
   Set<Trigger> build();

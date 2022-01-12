@@ -39,6 +39,7 @@ import org.openhab.core.service.ReadyMarker;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingTypeUID;
 import org.openhab.core.thing.ThingUID;
+import org.openhab.core.thing.UID;
 
 public class DefaultTriggerBuilder implements TriggerBuilder {
 
@@ -100,36 +101,42 @@ public class DefaultTriggerBuilder implements TriggerBuilder {
 
   @Override
   public TriggerBuilder thingStatus(ThingUID uid) {
-    triggers.add(new ThingStatusTrigger((thing) -> uid.equals(thing.getUID())));
+    triggers.add(new ThingStatusTrigger(uid::equals));
     return this;
   }
 
   @Override
   public TriggerBuilder thingStatus(ThingTypeUID type) {
-    triggers.add(new ThingStatusTrigger((thing) -> type.equals(thing.getThingTypeUID())));
+    triggers.add(new ThingStatusTrigger((thing) -> {
+      FlexibleUID uid = new FlexibleUID(thing);
+      return type.equals(new ThingTypeUID(uid.getSegment(0), uid.getSegment(1)));
+    }));
     return this;
   }
 
   @Override
-  public TriggerBuilder thingStatus(Predicate<Thing> predicate) {
+  public TriggerBuilder thingStatus(Predicate<ThingUID> predicate) {
     triggers.add(new ThingStatusTrigger(predicate));
     return this;
   }
 
   @Override
   public TriggerBuilder thingStatusChange(ThingUID uid) {
-    triggers.add(new ThingStatusChangeTrigger((thing) -> uid.equals(thing.getUID())));
+    triggers.add(new ThingStatusChangeTrigger(uid::equals));
     return this;
   }
 
   @Override
   public TriggerBuilder thingStatusChange(ThingTypeUID type) {
-    triggers.add(new ThingStatusChangeTrigger((thing) -> type.equals(thing.getThingTypeUID())));
+    triggers.add(new ThingStatusChangeTrigger((thing) -> {
+      FlexibleUID uid = new FlexibleUID(thing);
+      return type.equals(new ThingTypeUID(uid.getSegment(0), uid.getSegment(1)));
+    }));
     return this;
   }
 
   @Override
-  public TriggerBuilder thingStatusChange(Predicate<Thing> predicate) {
+  public TriggerBuilder thingStatusChange(Predicate<ThingUID> predicate) {
     triggers.add(new ThingStatusChangeTrigger(predicate));
     return this;
   }
@@ -137,5 +144,23 @@ public class DefaultTriggerBuilder implements TriggerBuilder {
   @Override
   public Set<Trigger> build() {
     return triggers;
+  }
+
+  static class FlexibleUID extends UID {
+
+    public FlexibleUID(UID other) {
+      super(other.getAsString());
+    }
+
+    @Override
+    public String getSegment(int segment) {
+      return super.getSegment(segment);
+    }
+
+    @Override
+    protected int getMinimalNumberOfSegments() {
+      return 0;
+    }
+
   }
 }

@@ -18,11 +18,11 @@
 package org.connectorio.addons.norule.internal.trigger;
 
 import java.util.function.Predicate;
-import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingUID;
 
-public class ThingStatusChangeTrigger extends ThingTrigger {
+public class ThingStatusChangeTrigger extends ThingReferenceTrigger {
 
-  public ThingStatusChangeTrigger(Predicate<Thing> predicate) {
+  public ThingStatusChangeTrigger(Predicate<ThingUID> predicate) {
     super(predicate);
   }
 

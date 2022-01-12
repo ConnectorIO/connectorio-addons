@@ -20,16 +20,17 @@ package org.connectorio.addons.norule.internal.trigger;
 import java.util.function.Predicate;
 import org.connectorio.addons.norule.Trigger;
 import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingUID;
 
-public class ThingTrigger implements Trigger {
+public abstract class ThingReferenceTrigger implements Trigger {
 
-  private final Predicate<Thing> predicate;
+  private final Predicate<ThingUID> predicate;
 
-  public ThingTrigger(Predicate<Thing> predicate) {
+  public ThingReferenceTrigger(Predicate<ThingUID> predicate) {
     this.predicate = predicate;
   }
 
-  public Predicate<Thing> getPredicate() {
+  public Predicate<ThingUID> getPredicate() {
     return predicate;
   }
 
