@@ -17,18 +17,19 @@
  */
 package org.connectorio.addons.norule;
 
-import java.util.Collections;
 import java.util.Set;
-import org.openhab.core.common.registry.Identifiable;
+import org.openhab.core.service.ReadyMarker;
 
-public interface Rule extends Identifiable<RuleUID> {
+public interface ConditionBuilder {
 
-  Set<Trigger> getTriggers();
+  ConditionBuilder systemIsStarted();
 
-  void handle(RuleContext context);
+  ConditionBuilder startLevelReached(int level);
 
-  default Set<Condition> getConditions() {
-    return Collections.emptySet();
-  }
+  ConditionBuilder readyMarkerReached(ReadyMarker readyMarker);
+
+  ConditionBuilder hasBinding(String id);
+
+  Set<Condition> build();
 
 }

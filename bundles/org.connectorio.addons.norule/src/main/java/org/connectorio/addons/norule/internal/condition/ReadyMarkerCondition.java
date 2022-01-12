@@ -15,20 +15,22 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.norule;
+package org.connectorio.addons.norule.internal.condition;
 
-import java.util.Collections;
-import java.util.Set;
-import org.openhab.core.common.registry.Identifiable;
+import org.openhab.core.service.ReadyMarker;
+import org.openhab.core.service.ReadyService;
 
-public interface Rule extends Identifiable<RuleUID> {
+public class ReadyMarkerCondition extends BaseReadyMarkerCondition {
 
-  Set<Trigger> getTriggers();
+  private final ReadyMarker marker;
 
-  void handle(RuleContext context);
+  public ReadyMarkerCondition(ReadyService readyService, ReadyMarker marker) {
+    super(readyService);
+    this.marker = marker;
+  }
 
-  default Set<Condition> getConditions() {
-    return Collections.emptySet();
+  protected ReadyMarker getMarker() {
+    return marker;
   }
 
 }

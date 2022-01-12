@@ -15,20 +15,25 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.norule;
+package org.connectorio.addons.norule.internal.condition;
 
-import java.util.Collections;
-import java.util.Set;
-import org.openhab.core.common.registry.Identifiable;
+import org.connectorio.addons.norule.Condition;
+import org.connectorio.addons.norule.ConditionBuilder;
+import org.openhab.core.binding.BindingInfoRegistry;
 
-public interface Rule extends Identifiable<RuleUID> {
+public class HasBindingCondition implements Condition {
 
-  Set<Trigger> getTriggers();
+  private final BindingInfoRegistry bindingInfoRegistry;
+  private final String binding;
 
-  void handle(RuleContext context);
+  public HasBindingCondition(BindingInfoRegistry bindingInfoRegistry, String binding) {
+    this.bindingInfoRegistry = bindingInfoRegistry;
+    this.binding = binding;
+  }
 
-  default Set<Condition> getConditions() {
-    return Collections.emptySet();
+  @Override
+  public boolean evaluate() {
+    return bindingInfoRegistry.getBindingInfo(binding) != null;
   }
 
 }

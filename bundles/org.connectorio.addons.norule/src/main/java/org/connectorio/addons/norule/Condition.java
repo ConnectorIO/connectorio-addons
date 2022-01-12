@@ -17,18 +17,29 @@
  */
 package org.connectorio.addons.norule;
 
-import java.util.Collections;
-import java.util.Set;
-import org.openhab.core.common.registry.Identifiable;
+/**
+ * Condition allows ignoring rule execution when certain criteria is not met.
+ *
+ * Conditions are not parametrized and must be provided.
+ */
+public interface Condition {
 
-public interface Rule extends Identifiable<RuleUID> {
+  boolean evaluate();
 
-  Set<Trigger> getTriggers();
+  default boolean negate() {
+    return !evaluate();
+  }
 
-  void handle(RuleContext context);
+  default Condition and(Condition other) {
+    return () -> {
+      return evaluate() && other.evaluate();
+    };
+  }
 
-  default Set<Condition> getConditions() {
-    return Collections.emptySet();
+  default Condition or(Condition other) {
+    return () -> {
+      return evaluate() || other.evaluate();
+    };
   }
 
 }

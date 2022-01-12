@@ -17,18 +17,8 @@
  */
 package org.connectorio.addons.norule;
 
-import java.util.Collections;
-import java.util.Set;
-import org.openhab.core.common.registry.Identifiable;
+public interface ConditionBuilderFactory {
 
-public interface Rule extends Identifiable<RuleUID> {
-
-  Set<Trigger> getTriggers();
-
-  void handle(RuleContext context);
-
-  default Set<Condition> getConditions() {
-    return Collections.emptySet();
-  }
+  ConditionBuilder createBuilder();
 
 }

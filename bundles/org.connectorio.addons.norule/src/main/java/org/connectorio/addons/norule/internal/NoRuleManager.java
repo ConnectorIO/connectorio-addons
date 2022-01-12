@@ -38,6 +38,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
+import org.connectorio.addons.norule.Condition;
 import org.connectorio.addons.norule.Periodic;
 import org.connectorio.addons.norule.Rule;
 import org.connectorio.addons.norule.RuleContext;
@@ -249,6 +250,12 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
     for (Rule rule : rules) {
       for (Trigger trigger : rule.getTriggers()) {
         if (predicate.test(trigger)) {
+          Set<Condition> conditions = rule.getConditions();
+          Condition block;
+          if (conditions != null && (block = isBlocked(conditions)) != null) {
+            logger.info("Not firing rule {} triggered by {}, condition {} is not met.", rule, trigger, block);
+            return;
+          }
           logger.info("Rule {} is triggered by {}.", rule, trigger);
           executor.submit(new RuleRunnable(rule, contextFactory.apply(rule, trigger)));
         }
@@ -256,6 +263,14 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
     }
   }
 
+  private Condition isBlocked(Set<Condition> conditions) {
+    for (Condition condition : conditions) {
+      if (!condition.evaluate()) {
+        return condition;
+      }
+    }
+    return null;
+  }
 
   @Override
   public void added(Rule element) throws IllegalArgumentException {

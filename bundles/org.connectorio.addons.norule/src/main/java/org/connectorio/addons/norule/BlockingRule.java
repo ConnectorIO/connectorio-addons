@@ -43,6 +43,11 @@ public class BlockingRule implements Rule {
   }
 
   @Override
+  public Set<Condition> getConditions() {
+    return rule.getConditions();
+  }
+
+  @Override
   public void handle(RuleContext context) {
     try {
       rule.handle(context);

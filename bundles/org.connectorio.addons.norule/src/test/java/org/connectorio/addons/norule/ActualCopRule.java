@@ -50,6 +50,11 @@ public class ActualCopRule implements Rule {
   }
 
   @Override
+  public Set<Condition> getConditions() {
+    return null;
+  }
+
+  @Override
   public void handle(RuleContext context) {
     QuantityType<Energy> heat = context.item(HEAT_PRODUCED).state(QuantityType.class)
       .map(q -> (QuantityType<Energy>) q)
