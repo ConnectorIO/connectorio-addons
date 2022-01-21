@@ -22,8 +22,7 @@ import java.util.Collections;
 import org.connectorio.addons.binding.handler.GenericBridgeHandlerBase;
 import org.connectorio.addons.binding.plc4x.amsads.internal.config.AmsAdsConfiguration;
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.AmsAdsDeviceDiscoveryService;
-import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.DiscoveryReceiver;
-import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.DiscoverySender;
+import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.AmsAdsDiscoveryDriver;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.ThingStatus;
@@ -41,13 +40,11 @@ import org.slf4j.LoggerFactory;
 public class AmsAdsBridgeHandler extends GenericBridgeHandlerBase<AmsAdsConfiguration> {
 
   private final Logger logger = LoggerFactory.getLogger(AmsAdsBridgeHandler.class);
-  private final DiscoverySender sender;
-  private final DiscoveryReceiver receiver;
+  private final AmsAdsDiscoveryDriver discoveryDriver;
 
-  public AmsAdsBridgeHandler(Bridge thing, DiscoverySender sender, DiscoveryReceiver receiver) {
+  public AmsAdsBridgeHandler(Bridge thing, AmsAdsDiscoveryDriver discoveryDriver) {
     super(thing);
-    this.sender = sender;
-    this.receiver = receiver;
+    this.discoveryDriver = discoveryDriver;
   }
 
   @Override
@@ -64,11 +61,8 @@ public class AmsAdsBridgeHandler extends GenericBridgeHandlerBase<AmsAdsConfigur
     return Collections.singleton(AmsAdsDeviceDiscoveryService.class);
   }
 
-  public DiscoverySender getSender() {
-    return sender;
+  public AmsAdsDiscoveryDriver getDiscoveryDriver() {
+    return discoveryDriver;
   }
 
-  public DiscoveryReceiver getReceiver() {
-    return receiver;
-  }
 }

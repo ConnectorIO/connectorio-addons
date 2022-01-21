@@ -36,6 +36,7 @@ import org.connectorio.addons.binding.handler.GenericBridgeHandler;
 import org.connectorio.addons.binding.plc4x.amsads.internal.AmsAdsBindingConstants;
 import org.connectorio.addons.binding.plc4x.amsads.internal.config.AmsAdsConfiguration;
 import org.connectorio.addons.binding.plc4x.amsads.internal.config.NetworkConfiguration;
+import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.AmsAdsDiscoveryDriver;
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.DiscoverySender;
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.RouteReceiver;
 import org.connectorio.addons.binding.plc4x.osgi.internal.OsgiDriverManager;
@@ -46,8 +47,7 @@ import org.junit.jupiter.api.Test;
 
 class AmsAdsNetworkBridgeHandlerTest {
 
-  DiscoverySender sender = mock(DiscoverySender.class);
-  RouteReceiver routeReceiver = mock(RouteReceiver.class);
+  AmsAdsDiscoveryDriver discoveryDriver = mock(AmsAdsDiscoveryDriver.class);
 
   @Test
   void testHandlerInitializationWithNoConfig() {
@@ -55,7 +55,7 @@ class AmsAdsNetworkBridgeHandlerTest {
       .withConfig(new NetworkConfiguration())
       .create();
 
-    AmsAdsNetworkBridgeHandler handler = new AmsAdsNetworkBridgeHandler(bridge, new OsgiDriverManager(Collections.emptyList()), sender, routeReceiver);
+    AmsAdsNetworkBridgeHandler handler = new AmsAdsNetworkBridgeHandler(bridge, new OsgiDriverManager(Collections.emptyList()), discoveryDriver);
     handler.initialize();
 
     CompletableFuture<PlcConnection> initializer = handler.getPlcConnection();
@@ -90,7 +90,7 @@ class AmsAdsNetworkBridgeHandlerTest {
 
     Bridge bridge = bridgeMock.create();
 
-    AmsAdsNetworkBridgeHandler handler = new AmsAdsNetworkBridgeHandler(bridge, new OsgiDriverManager(Collections.emptyList()), sender, routeReceiver);
+    AmsAdsNetworkBridgeHandler handler = new AmsAdsNetworkBridgeHandler(bridge, new OsgiDriverManager(Collections.emptyList()), discoveryDriver);
     handler.setCallback(bridgeMock.getCallback());
     handler.initialize();
 

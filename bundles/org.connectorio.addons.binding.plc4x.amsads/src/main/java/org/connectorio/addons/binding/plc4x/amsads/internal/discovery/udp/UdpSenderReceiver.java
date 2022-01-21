@@ -40,6 +40,7 @@ import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
 import org.apache.plc4x.java.spi.generation.WriteBuffer;
 import org.connectorio.addons.binding.plc4x.amsads.internal.AmsConverter;
+import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.AmsAdsDiscoveryDriver;
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.AmsAdsDiscoveryListener;
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.AmsAdsRouteListener;
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.DiscoveryReceiver;
@@ -54,9 +55,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component(immediate = true, service = {
-  DiscoverySender.class, DiscoveryReceiver.class, RouteReceiver.class
+  DiscoverySender.class, DiscoveryReceiver.class, RouteReceiver.class, AmsAdsDiscoveryDriver.class
 })
-public class UdpSenderReceiver implements DiscoverySender, DiscoveryReceiver, RouteReceiver {
+public class UdpSenderReceiver implements DiscoverySender, DiscoveryReceiver, RouteReceiver, AmsAdsDiscoveryDriver {
 
   private static final int AMSADS_UDP_PORT = 48899;
 
@@ -153,6 +154,7 @@ public class UdpSenderReceiver implements DiscoverySender, DiscoveryReceiver, Ro
 
             socket.send(packet);
           }
+          Thread.sleep(1000);
         } catch (ParseException | IOException | InterruptedException e) {
           logger.info("Could not send packet", e);
         }
@@ -239,6 +241,12 @@ public class UdpSenderReceiver implements DiscoverySender, DiscoveryReceiver, Ro
             routeListeners.forEach(listener -> listener.add(reply.host, AmsConverter.parseDiscoveryAms(route.getAmsNetId()), route.getStatus() == RouteStatus.SUCCESS));
           } else {
             logger.warn("Unknown response from {}, packet {}", reply.host, reply.structure);
+          }
+        } else {
+          try {
+            Thread.sleep(1000);
+          } catch (InterruptedException e) {
+            logger.error("Thread was interrupted", e);
           }
         }
       }

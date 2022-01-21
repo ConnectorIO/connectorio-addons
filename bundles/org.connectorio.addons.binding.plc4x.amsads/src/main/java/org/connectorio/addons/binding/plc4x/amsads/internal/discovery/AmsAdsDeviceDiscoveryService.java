@@ -49,11 +49,11 @@ public class AmsAdsDeviceDiscoveryService extends AbstractDiscoveryService imple
 
   @Override
   protected void startScan() {
-    getHandler().map(AmsAdsBridgeHandler::getSender)
-      .ifPresent(sender -> {
+    getHandler().map(AmsAdsBridgeHandler::getDiscoveryDriver)
+      .ifPresent(discoveryDriver -> {
         AmsAdsConfiguration cfg = getConfig().get();
 
-        sender.send(new Envelope(
+        discoveryDriver.send(new Envelope(
           cfg.broadcastAddress,
           new DiscoveryRequest(Operation.DISCOVERY, Direction.REQUEST, createDiscoveryAms(cfg.sourceAmsId))
         ));
@@ -77,13 +77,13 @@ public class AmsAdsDeviceDiscoveryService extends AbstractDiscoveryService imple
 
   @Override
   public void activate() {
-    getHandler().map(AmsAdsBridgeHandler::getReceiver)
+    getHandler().map(AmsAdsBridgeHandler::getDiscoveryDriver)
       .ifPresent(receiver -> receiver.addDiscoveryListener(this));
   }
 
   @Override
   public void deactivate() {
-    getHandler().map(AmsAdsBridgeHandler::getReceiver)
+    getHandler().map(AmsAdsBridgeHandler::getDiscoveryDriver)
       .ifPresent(receiver -> receiver.removeDiscoveryListener(this));
   }
 

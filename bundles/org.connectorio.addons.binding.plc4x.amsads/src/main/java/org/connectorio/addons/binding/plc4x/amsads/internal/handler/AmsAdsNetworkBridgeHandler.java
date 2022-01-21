@@ -32,6 +32,7 @@ import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.connectorio.addons.binding.plc4x.amsads.internal.AmsConverter;
 import org.connectorio.addons.binding.plc4x.amsads.internal.config.AmsAdsConfiguration;
 import org.connectorio.addons.binding.plc4x.amsads.internal.config.NetworkConfiguration;
+import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.AmsAdsDiscoveryDriver;
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.AmsAdsRouteListener;
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.DiscoverySender;
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.DiscoverySender.Envelope;
@@ -58,26 +59,28 @@ public class AmsAdsNetworkBridgeHandler extends AbstractAmsAdsBridgeHandler<PlcC
   private final AtomicBoolean routing = new AtomicBoolean(false);
 
   private final PlcDriverManager driverManager;
-  private final DiscoverySender sender;
-  private final RouteReceiver router;
+  private final AmsAdsDiscoveryDriver discoveryDriver;
 
-  public AmsAdsNetworkBridgeHandler(Bridge thing, PlcDriverManager driverManager, DiscoverySender sender, RouteReceiver router) {
+  public AmsAdsNetworkBridgeHandler(Bridge thing, PlcDriverManager driverManager, AmsAdsDiscoveryDriver discoveryDriver) {
     super(thing);
     this.driverManager = driverManager;
-    this.sender = sender;
-    this.router = router;
+    this.discoveryDriver = discoveryDriver;
   }
 
   @Override
   public void initialize() {
-    router.addRouteListener(this);
+    if (discoveryDriver != null) {
+      discoveryDriver.addRouteListener(this);
+    }
     super.initialize();
   }
 
   @Override
   public void dispose() {
     super.dispose();
-    router.removeRouteListener(this);
+    if (discoveryDriver != null) {
+      discoveryDriver.removeRouteListener(this);
+    }
   }
 
   @Override
@@ -92,7 +95,7 @@ public class AmsAdsNetworkBridgeHandler extends AbstractAmsAdsBridgeHandler<PlcC
         try {
           NetworkConfiguration config = getBridgeConfig().get();
 
-          if (config.username != null) {
+          if (config.username != null && discoveryDriver != null) {
             AmsNetId sendingAms = AmsConverter.createDiscoveryAms(amsAds.sourceAmsId);
             AmsMagicString routeName = new AmsMagicString(("openhab-" + amsAds.ipAddress).getBytes(StandardCharsets.UTF_8));
             AmsNetId target = AmsConverter.createDiscoveryAms(amsAds.sourceAmsId);
@@ -102,7 +105,7 @@ public class AmsAdsNetworkBridgeHandler extends AbstractAmsAdsBridgeHandler<PlcC
             RouteRequest request = new RouteRequest(Operation.ROUTE, Direction.REQUEST,
               sendingAms, routeName, target, username, password, address);
             logger.info("Making an attempt to setup route from {} to us using {}", config.host, request);
-            sender.send(new Envelope(config.host, request));
+            discoveryDriver.send(new Envelope(config.host, request));
 
             try {
               // we should coordinate and wait for response from PLC, but real fact is that Beckhoff does not send reply

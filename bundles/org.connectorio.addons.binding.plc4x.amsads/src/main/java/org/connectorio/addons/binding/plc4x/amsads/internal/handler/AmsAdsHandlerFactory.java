@@ -22,6 +22,7 @@ import static org.connectorio.addons.binding.plc4x.amsads.internal.AmsAdsBinding
 import static org.connectorio.addons.binding.plc4x.amsads.internal.AmsAdsBindingConstants.THING_TYPE_NETWORK;
 import static org.connectorio.addons.binding.plc4x.amsads.internal.AmsAdsBindingConstants.THING_TYPE_SERIAL;
 
+import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.AmsAdsDiscoveryDriver;
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.DiscoveryReceiver;
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.DiscoverySender;
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.RouteReceiver;
@@ -35,6 +36,8 @@ import org.openhab.core.thing.binding.ThingHandlerFactory;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 /**
  * The {@link AmsAdsHandlerFactory} is responsible for creating handlers fod ads enabled elements.
@@ -45,17 +48,12 @@ import org.osgi.service.component.annotations.Reference;
 public class AmsAdsHandlerFactory extends Plc4xHandlerFactory {
 
   private final PlcDriverManager driverManager;
-  private final DiscoverySender sender;
-  private final DiscoveryReceiver receiver;
-  private final RouteReceiver router;
+  private AmsAdsDiscoveryDriver discoveryDriver;
 
   @Activate
-  public AmsAdsHandlerFactory(@Reference PlcDriverManager driverManager, @Reference DiscoverySender sender, @Reference DiscoveryReceiver receiver, @Reference RouteReceiver router) {
+  public AmsAdsHandlerFactory(@Reference PlcDriverManager driverManager) {
     super(THING_TYPE_AMS, THING_TYPE_NETWORK, THING_TYPE_SERIAL, THING_TYPE_ADS);
     this.driverManager = driverManager;
-    this.sender = sender;
-    this.receiver = receiver;
-    this.router = router;
   }
 
   @Override
@@ -63,9 +61,9 @@ public class AmsAdsHandlerFactory extends Plc4xHandlerFactory {
     ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
     if (THING_TYPE_AMS.equals(thingTypeUID)) {
-      return new AmsAdsBridgeHandler((Bridge) thing, sender, receiver);
+      return new AmsAdsBridgeHandler((Bridge) thing, discoveryDriver);
     } else if (THING_TYPE_NETWORK.equals(thingTypeUID)) {
-      return new AmsAdsNetworkBridgeHandler((Bridge) thing, driverManager, sender, router);
+      return new AmsAdsNetworkBridgeHandler((Bridge) thing, driverManager, discoveryDriver);
     } else if (THING_TYPE_SERIAL.equals(thingTypeUID)) {
       return new AmsAdsSerialBridgeHandler((Bridge) thing, driverManager);
     } else if (THING_TYPE_ADS.equals(thingTypeUID)) {
@@ -73,5 +71,14 @@ public class AmsAdsHandlerFactory extends Plc4xHandlerFactory {
     }
 
     return null;
+  }
+
+  @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
+  void setDiscoveryDriver(AmsAdsDiscoveryDriver discoveryDriver) {
+    this.discoveryDriver = discoveryDriver;
+  }
+
+  void unsetDiscoveryDriver(AmsAdsDiscoveryDriver discoveryDriver) {
+    this.discoveryDriver = null;
   }
 }
