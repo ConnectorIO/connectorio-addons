@@ -45,9 +45,8 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.measure</groupId>
-      <artifactId>unit-api</artifactId>
-      <version>1.0</version>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.units</artifactId>
     </dependency>
 
     <dependency>
@@ -68,12 +67,6 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-junit-jupiter</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>tec.uom</groupId>
-      <artifactId>uom-se</artifactId>
-      <version>1.0.10</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 

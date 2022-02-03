@@ -34,9 +34,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>javax.measure</groupId>
-      <artifactId>unit-api</artifactId>
-      <version>1.0</version>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.units</artifactId>
     </dependency>
     <dependency>
       <groupId>com.github.hypfvieh</groupId>

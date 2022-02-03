@@ -58,6 +58,14 @@
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
+
+    <!-- remove after KARAF-7316 is fixed -->
+    <dependency>
+      <groupId>org.apache.karaf.features</groupId>
+      <artifactId>framework</artifactId>
+      <type>kar</type>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>

@@ -50,6 +50,8 @@
     <!-- various build related variables -->
     <feature.file>${project.basedir}/target/feature/feature.xml</feature.file>
     <osgi.version>7.0.0</osgi.version>
+    <unit-api.version>1.0</unit-api.version>
+    <unit-se.version>1.0.10</unit-se.version>
   </properties>
 
   <dependencyManagement>
@@ -363,6 +365,17 @@
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.units</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.units.si</artifactId>
+        <version>${project.version}</version>
       </dependency>
 
       <dependency>
@@ -827,6 +840,17 @@
         <groupId>org.openhab.core.bundles</groupId>
         <artifactId>org.openhab.core.storage.mapdb</artifactId>
         <version>${openhab.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.measure</groupId>
+        <artifactId>unit-api</artifactId>
+        <version>${unit-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>tec.uom</groupId>
+        <artifactId>uom-se</artifactId>
+        <version>${unit-se.version}</version>
       </dependency>
 
       <dependency>

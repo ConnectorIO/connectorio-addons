@@ -36,7 +36,6 @@
     <dependency>
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.norule</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>

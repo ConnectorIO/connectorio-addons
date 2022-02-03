@@ -50,6 +50,14 @@
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.binding</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.units</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.units.si</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.code-house.bacnet4j</groupId>
@@ -132,17 +140,6 @@
     <dependency>
       <groupId>com.fasterxml</groupId>
       <artifactId>classmate</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.measure</groupId>
-      <artifactId>unit-api</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>tec.uom</groupId>
-      <artifactId>uom-se</artifactId>
-      <version>1.0.10</version>
-      <scope>compile</scope>
     </dependency>
 
     <dependency>

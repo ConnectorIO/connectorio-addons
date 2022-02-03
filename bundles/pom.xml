@@ -75,6 +75,8 @@
     <module>org.connectorio.plc4x.decorator.retry</module>
     <module>org.connectorio.plc4x.decorator.phase</module>
     <module>org.connectorio.plc4x.decorator.throttle</module>
+    <module>org.connectorio.units</module>
+    <module>org.connectorio.units.si</module>
   </modules>
 
 </project>

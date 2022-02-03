@@ -33,6 +33,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.units</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.openhab.core.bundles</groupId>
       <artifactId>org.openhab.core.thing</artifactId>
     </dependency>
@@ -44,12 +49,12 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>javax.measure</groupId>
-      <artifactId>unit-api</artifactId>
-      <version>1.0</version>
-    </dependency>
 
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.units.si</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
@@ -68,12 +73,6 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-junit-jupiter</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>tec.uom</groupId>
-      <artifactId>uom-se</artifactId>
-      <version>1.0.10</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
