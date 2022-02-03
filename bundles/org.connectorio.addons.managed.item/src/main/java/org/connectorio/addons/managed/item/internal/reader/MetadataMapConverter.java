@@ -22,66 +22,37 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.connectorio.addons.managed.item.model.MetadataEntry;
+import org.connectorio.addons.managed.xstream.NestedMapConverter;
 
-public class NestedMapConverter implements Converter {
+public class MetadataMapConverter implements Converter {
 
   @Override
   public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
-    for (Entry<String, Object> entry: ((Map<String, Object>) source).entrySet()) {
-      mapToXML(writer, entry);
+    Map<String, MetadataEntry> metadata = (Map<String, MetadataEntry>) source;
+    for (Entry<String, MetadataEntry> entry : metadata.entrySet()) {
+      writer.startNode(entry.getKey());
+      context.convertAnother(entry.getValue());
+      writer.endNode();
     }
-  }
-
-  @SuppressWarnings("unchecked")
-  private void mapToXML(HierarchicalStreamWriter writer, Entry<String, Object> entry) {
-    writer.startNode(entry.getKey());
-    if (entry.getValue() instanceof Map) {
-      Map<String, Object> nested = (Map<String, Object>) entry.getValue();
-      for (Entry<String, Object> child : nested.entrySet()) {
-        mapToXML(writer, child);
-      }
-    } else {
-      if (entry.getValue() != null) {
-        writer.setValue(entry.getValue().toString());
-     }
-    }
-    writer.endNode();
   }
 
   @Override
   public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-    return xmlToMap(reader, new LinkedHashMap<>());
-  }
-
-  private Map<String, Object> xmlToMap(HierarchicalStreamReader reader, Map<String, Object> map) {
-    while(reader.hasMoreChildren()) {
+    Map<String, MetadataEntry> metadata = new LinkedHashMap<>();
+    if (reader.hasMoreChildren()) {
       reader.moveDown();
-      if( reader.hasMoreChildren() ) {
-        map.put(reader.getNodeName(), xmlToMap(reader, new LinkedHashMap<>()));
-      } else {
-        String value = reader.getValue();
-        BigDecimal val;
-        if (value != null) {
-          map.put(reader.getNodeName(), value);
-        }
-      }
+      String key = reader.getNodeName();
+      MetadataEntry value = (MetadataEntry) context.convertAnother(null, MetadataEntry.class);
+      metadata.put(key, value);
       reader.moveUp();
     }
-    return map;
+    return metadata;
   }
 
-  private BigDecimal decimal(String value) {
-    try {
-      return new BigDecimal(value);
-    } catch (NumberFormatException e) {
-      return null;
-    }
-  }
   @Override
   public boolean canConvert(Class type) {
     return Map.class.isAssignableFrom(type);

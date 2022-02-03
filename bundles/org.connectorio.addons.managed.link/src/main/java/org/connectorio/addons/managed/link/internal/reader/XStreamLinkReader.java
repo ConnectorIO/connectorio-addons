@@ -21,6 +21,7 @@ import com.thoughtworks.xstream.XStream;
 import org.connectorio.addons.managed.link.model.BaseLinkEntry;
 import org.connectorio.addons.managed.link.model.LinkEntry;
 import org.connectorio.addons.managed.link.model.Links;
+import org.connectorio.addons.managed.xstream.NestedMapConverter;
 import org.openhab.core.config.xml.util.XmlDocumentReader;
 
 public class XStreamLinkReader extends XmlDocumentReader<Links> {

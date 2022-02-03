@@ -45,7 +45,6 @@
       <groupId>org.apache.servicemix.bundles</groupId>
       <artifactId>org.apache.servicemix.bundles.xstream</artifactId>
       <version>1.4.11.1_1</version>
-<!--      <version>1.4.7_1</version>-->
     </dependency>
 
     <dependency>

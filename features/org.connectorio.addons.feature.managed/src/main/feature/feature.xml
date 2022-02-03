@@ -18,6 +18,11 @@
  -->
 <features name="co7io-managed-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.6.0">
 
+  <feature name="co7io-managed-xstream" description="Support for managed configuration through XStream mapped files." version="${project.version}">
+    <feature>openhab-runtime-base</feature>
+    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.managed.xstream/${project.version}</bundle>
+  </feature>
+
   <feature name="openhab-misc-managed-item" description="Managed item handling" version="${project.version}" hidden="true">
     <feature>co7io-managed-item</feature>
   </feature>
@@ -30,7 +35,7 @@
     <feature>co7io-managed-link</feature>
   </feature>
   <feature name="co7io-managed-link" description="Managed link handling." version="${project.version}">
-    <feature>openhab-runtime-base</feature>
+    <feature>co7io-managed-xstream</feature>
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.managed.link/${project.version}</bundle>
   </feature>
 
@@ -38,7 +43,7 @@
     <feature>co7io-managed-thing</feature>
   </feature>
   <feature name="co7io-managed-thing" description="Managed thing handling." version="${project.version}">
-    <feature>openhab-runtime-base</feature>
+    <feature>co7io-managed-xstream</feature>
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.managed.thing/${project.version}</bundle>
   </feature>
 

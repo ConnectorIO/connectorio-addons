@@ -18,20 +18,12 @@
 package org.connectorio.addons.managed.item.internal.reader;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import org.connectorio.addons.managed.item.model.GroupEntry;
 import org.connectorio.addons.managed.item.model.ItemEntry;
 import org.connectorio.addons.managed.item.model.Items;
 import org.connectorio.addons.managed.item.model.MetadataEntry;
 import org.connectorio.addons.managed.link.model.BaseLinkEntry;
-import org.openhab.core.config.xml.util.NodeListConverter;
+import org.connectorio.addons.managed.xstream.NestedMapConverter;
 import org.openhab.core.config.xml.util.XmlDocumentReader;
 
 public class XStreamItemReader extends XmlDocumentReader<Items> {
@@ -47,57 +39,9 @@ public class XStreamItemReader extends XmlDocumentReader<Items> {
 
   @Override
   protected void registerConverters(XStream xstream) {
-    xstream.registerConverter(new Converter() {
-      private NestedMapConverter delegate = new NestedMapConverter();
-      @Override
-      public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
-        MetadataEntry metadata = (MetadataEntry) source;
-        if (metadata.getValue() != null) {
-          writer.addAttribute("value", metadata.getValue());
-        }
-        delegate.marshal(metadata.getConfig(), writer, context);
-      }
-
-      @Override
-      public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-        String value = reader.getAttribute("value");
-        Map<String, Object> config = (Map<String, Object>) delegate.unmarshal(reader, context);
-        return new MetadataEntry(value, config);
-      }
-
-      @Override
-      public boolean canConvert(Class type) {
-        return MetadataEntry.class.isAssignableFrom(type);
-      }
-    });
-    xstream.registerLocalConverter(ItemEntry.class, "metadata", new Converter() {
-      @Override
-      public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
-        Map<String, MetadataEntry> meta = (Map<String, MetadataEntry>) source;
-        for (Entry<String, MetadataEntry> entry : meta.entrySet()) {
-          writer.startNode(entry.getKey());
-          context.convertAnother(entry.getValue());
-          writer.endNode();
-        }
-      }
-
-      @Override
-      public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-        Map<String, MetadataEntry> entries = new LinkedHashMap<>();
-        while (reader.hasMoreChildren()) {
-          reader.moveDown();
-          entries.put(reader.getNodeName(), (MetadataEntry) context.convertAnother(reader, MetadataEntry.class));
-          reader.moveUp();
-        }
-        return entries;
-      }
-
-      @Override
-      public boolean canConvert(Class type) {
-        return Map.class.isAssignableFrom(type);
-      }
-    });
+    xstream.registerConverter(new MetadataEntryConverter());
     xstream.registerLocalConverter(BaseLinkEntry.class, "config", new NestedMapConverter());
+    xstream.registerLocalConverter(ItemEntry.class, "metadata", new MetadataMapConverter());
   }
 
   @Override

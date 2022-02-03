@@ -26,38 +26,21 @@
     <version>3.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>org.connectorio.addons.managed.item</artifactId>
+  <artifactId>org.connectorio.addons.managed.xstream</artifactId>
   <packaging>bundle</packaging>
 
-  <name>ConnectorIO - Addons - Managed - Item</name>
-  <description>A managed item provide which rely on text files.</description>
+  <name>ConnectorIO - Addons - Managed - XStream</name>
+  <description>Utilities to work with serialized form of managed elements.</description>
 
   <dependencies>
     <dependency>
-      <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.managed.xstream</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.managed.link</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.openhab.core.bundles</groupId>
-      <artifactId>org.openhab.core</artifactId>
+      <artifactId>org.openhab.core.config.core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.openhab.core.bundles</groupId>
-      <artifactId>org.openhab.core.thing</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.openhab.core.bundles</groupId>
-      <artifactId>org.openhab.core.config.xml</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>3.0.1</version>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.xstream</artifactId>
+      <version>1.4.11.1_1</version>
     </dependency>
     <dependency>
       <groupId>org.osgi</groupId>
@@ -75,36 +58,6 @@
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.service.component.annotations</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>1.29</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.jettison</groupId>
-      <artifactId>jettison</artifactId>
-      <version>1.4.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-params</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
     </dependency>
   </dependencies>
 

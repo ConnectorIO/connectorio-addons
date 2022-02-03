@@ -10,6 +10,10 @@
       </state-description>
       <co7io-test value="yes">
         <name>x</name>
+        <multiple class="list">
+          <string>1</string>
+          <string>2</string>
+        </multiple>
       </co7io-test>
       <co7io-abc>
         <label>y</label>

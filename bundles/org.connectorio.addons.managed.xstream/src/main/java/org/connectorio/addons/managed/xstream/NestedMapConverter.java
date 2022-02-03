@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.managed.thing.internal.reader;
+package org.connectorio.addons.managed.xstream;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -23,8 +23,8 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -33,18 +33,22 @@ public class NestedMapConverter implements Converter {
   @Override
   public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
     for (Entry<String, Object> entry: ((Map<String, Object>) source).entrySet()) {
-      mapToXML(writer, entry);
+      mapToXML(writer, entry, context);
     }
   }
 
   @SuppressWarnings("unchecked")
-  private void mapToXML(HierarchicalStreamWriter writer, Entry<String, Object> entry) {
+  private void mapToXML(HierarchicalStreamWriter writer, Entry<String, Object> entry,
+    MarshallingContext context) {
     writer.startNode(entry.getKey());
     if (entry.getValue() instanceof Map) {
       Map<String, Object> nested = (Map<String, Object>) entry.getValue();
       for (Entry<String, Object> child : nested.entrySet()) {
-        mapToXML(writer, child);
+        mapToXML(writer, child, context);
       }
+    } else if (entry.getValue() instanceof List) {
+      writer.addAttribute("class", "list");
+      context.convertAnother(entry.getValue());
     } else {
       if (entry.getValue() != null) {
         writer.setValue(entry.getValue().toString());
@@ -55,14 +59,21 @@ public class NestedMapConverter implements Converter {
 
   @Override
   public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-    return xmlToMap(reader, new LinkedHashMap<>());
+    return xmlToMap(reader, new LinkedHashMap<>(), context);
   }
 
-  private Map<String, Object> xmlToMap(HierarchicalStreamReader reader, Map<String, Object> map) {
+  private Map<String, Object> xmlToMap(HierarchicalStreamReader reader, Map<String, Object> map,
+    UnmarshallingContext context) {
     while (reader.hasMoreChildren()) {
       reader.moveDown();
+      String clazz = reader.getAttribute("class");
       if (reader.hasMoreChildren()) {
-        map.put(reader.getNodeName(), xmlToMap(reader, new LinkedHashMap<>()));
+        if (clazz == null) {
+          map.put(reader.getNodeName(), xmlToMap(reader, new LinkedHashMap<>(), context));
+        } else if ("list".equals(clazz)) {
+          Object value = context.convertAnother(null, List.class);
+          map.put(reader.getNodeName(), value);
+        }
       } else {
         String value = reader.getValue();
         BigDecimal val;
