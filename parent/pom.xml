@@ -35,7 +35,7 @@
 
   <properties>
     <plc4x.version>0.8.1-connectorio-3</plc4x.version>
-    <bacnet4j-wrapper.version>1.2.1-SNAPSHOT</bacnet4j-wrapper.version>
+    <bacnet4j-wrapper.version>1.2.1</bacnet4j-wrapper.version>
 
     <openhab.version>3.0.0</openhab.version>
     <karaf.version>4.2.7</karaf.version>
