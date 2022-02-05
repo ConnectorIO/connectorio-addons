@@ -46,6 +46,14 @@
       <artifactId>org.connectorio.addons.io.transport.serial.shell</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.openhab.core.features.karaf</groupId>
+      <artifactId>org.openhab.core.features.karaf.openhab-core</artifactId>
+      <version>${openhab.version}</version>
+      <classifier>features</classifier>
+      <type>xml</type>
+      <scope>runtime</scope>
+    </dependency>
     <!-- remove after KARAF-7316 is fixed -->
     <dependency>
       <groupId>org.apache.karaf.features</groupId>
