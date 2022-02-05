@@ -42,6 +42,13 @@
       <artifactId>org.connectorio.addons.norule.shell</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.feature.chrono</artifactId>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+
     <!-- remove after KARAF-7316 is fixed -->
     <dependency>
       <groupId>org.apache.karaf.features</groupId>
