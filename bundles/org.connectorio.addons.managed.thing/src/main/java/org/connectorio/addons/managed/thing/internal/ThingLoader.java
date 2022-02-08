@@ -26,12 +26,15 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.connectorio.addons.managed.thing.internal.reader.XStreamThingReader;
 import org.connectorio.addons.managed.thing.model.BridgeEntry;
 import org.connectorio.addons.managed.thing.model.ChannelEntry;
 import org.connectorio.addons.managed.thing.model.ThingEntry;
 import org.connectorio.addons.managed.thing.model.Things;
+import org.connectorio.addons.managed.xstream.SimpleProvider;
 import org.openhab.core.config.core.ConfigDescription;
 import org.openhab.core.config.core.ConfigDescriptionParameter;
 import org.openhab.core.config.core.ConfigDescriptionRegistry;
@@ -71,7 +74,7 @@ public class ThingLoader {
   private final ChannelTypeRegistry channelTypeRegistry;
   private final ConfigDescriptionRegistry configDescriptionRegistry;
 
-  List<ServiceRegistration<?>> registrations = new ArrayList<>();
+  private final Map<ServiceRegistration<?>, SimpleProvider<?>> registrations = new ConcurrentHashMap<>();
 
   @Activate
   public ThingLoader(BundleContext context, @Reference ThingTypeRegistry thingTypeRegistry, @Reference ChannelTypeRegistry channelTypeRegistry,
@@ -117,15 +120,17 @@ public class ThingLoader {
       }
     }
 
-    registrations.add(context.registerService(ThingProvider.class, new XStreamThingProvider(things), new Hashtable<>()));
+    XStreamThingProvider thingProvider = new XStreamThingProvider(things);
+    registrations.put(context.registerService(ThingProvider.class, thingProvider, new Hashtable<>()), thingProvider);
 
     readyService.markReady(new ReadyMarker("co7io-managed", "thing"));
   }
 
   @Deactivate
   void deactivate() {
-    for (ServiceRegistration<?> registration : registrations) {
-      registration.unregister();
+    for (Entry<ServiceRegistration<?>, SimpleProvider<?>> registration : registrations.entrySet()) {
+      registration.getValue().deactivate();
+      registration.getKey().unregister();
     }
   }
 

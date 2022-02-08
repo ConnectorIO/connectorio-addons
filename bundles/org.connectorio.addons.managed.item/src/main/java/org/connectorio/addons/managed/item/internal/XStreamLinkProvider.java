@@ -18,6 +18,7 @@
 package org.connectorio.addons.managed.item.internal;
 
 import java.util.List;
+import org.connectorio.addons.managed.xstream.SimpleProvider;
 import org.openhab.core.thing.link.ItemChannelLink;
 import org.openhab.core.thing.link.ItemChannelLinkProvider;
 

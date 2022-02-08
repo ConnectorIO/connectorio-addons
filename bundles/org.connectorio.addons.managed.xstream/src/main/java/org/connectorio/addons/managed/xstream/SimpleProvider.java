@@ -1,4 +1,4 @@
-package org.connectorio.addons.managed.item.internal;
+package org.connectorio.addons.managed.xstream;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,10 +16,7 @@ public abstract class SimpleProvider<T> implements Provider<T> {
   private final List<ProviderChangeListener<T>> listeners = new CopyOnWriteArrayList<>();
   private final Set<T> elements = new CopyOnWriteArraySet<>();
 
-  public SimpleProvider() {
-  }
-
-  public SimpleProvider(List<T> elements) {
+  public SimpleProvider(Collection<T> elements) {
     this.elements.addAll(elements);
   }
 
@@ -28,11 +25,27 @@ public abstract class SimpleProvider<T> implements Provider<T> {
     return elements;
   }
 
-  void add(T element) {
+  public void add(T element) {
     if (elements.add(element)) {
       listeners.forEach(listener -> listener.added(this, element));
     } else {
       logger.warn("Duplicate element added {}, ignoring", element);
+    }
+  }
+
+  public void update(T oldElement, T element) {
+    if (elements.contains(oldElement)) {
+      elements.remove(oldElement);
+      elements.add(element);
+      listeners.forEach(listener -> listener.updated(this, oldElement, element));
+    } else {
+      add(element);
+    }
+  }
+
+  public void remove(T element) {
+    if (elements.remove(element)) {
+      listeners.forEach(listener -> listener.removed(this, element));
     }
   }
 
@@ -46,4 +59,12 @@ public abstract class SimpleProvider<T> implements Provider<T> {
     this.listeners.remove(listener);
   }
 
+  public void deactivate() {
+    for (T element : elements) {
+      for (ProviderChangeListener<T> listener : listeners) {
+        listener.removed(this, element);
+      }
+    }
+    elements.clear();
+  }
 }

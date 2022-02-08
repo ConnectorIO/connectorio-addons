@@ -19,30 +19,15 @@ package org.connectorio.addons.managed.thing.internal;
 
 import java.util.Collection;
 import java.util.Set;
+import org.connectorio.addons.managed.xstream.SimpleProvider;
 import org.openhab.core.common.registry.ProviderChangeListener;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingProvider;
 
-public class XStreamThingProvider implements ThingProvider {
-
-  private final Set<Thing> things;
+public class XStreamThingProvider extends SimpleProvider<Thing> implements ThingProvider {
 
   public XStreamThingProvider(Set<Thing> things) {
-    this.things = things;
+    super(things);
   }
 
-  @Override
-  public void addProviderChangeListener(ProviderChangeListener<Thing> listener) {
-
-  }
-
-  @Override
-  public Collection<Thing> getAll() {
-    return things;
-  }
-
-  @Override
-  public void removeProviderChangeListener(ProviderChangeListener<Thing> listener) {
-
-  }
 }

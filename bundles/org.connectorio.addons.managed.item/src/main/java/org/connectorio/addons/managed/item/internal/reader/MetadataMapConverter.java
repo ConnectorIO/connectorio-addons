@@ -43,7 +43,7 @@ public class MetadataMapConverter implements Converter {
   @Override
   public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
     Map<String, MetadataEntry> metadata = new LinkedHashMap<>();
-    if (reader.hasMoreChildren()) {
+    while (reader.hasMoreChildren()) {
       reader.moveDown();
       String key = reader.getNodeName();
       MetadataEntry value = (MetadataEntry) context.convertAnother(null, MetadataEntry.class);

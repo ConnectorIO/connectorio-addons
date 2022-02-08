@@ -23,13 +23,16 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import org.connectorio.addons.managed.item.internal.reader.XStreamItemReader;
 import org.connectorio.addons.managed.item.model.GroupEntry;
 import org.connectorio.addons.managed.item.model.ItemEntry;
 import org.connectorio.addons.managed.item.model.Items;
 import org.connectorio.addons.managed.item.model.MetadataEntry;
 import org.connectorio.addons.managed.link.model.BaseLinkEntry;
+import org.connectorio.addons.managed.xstream.SimpleProvider;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.items.GroupFunction;
 import org.openhab.core.items.Item;
@@ -61,7 +64,7 @@ public class ItemLoader {
   private final Logger logger = LoggerFactory.getLogger(ItemLoader.class);
   private final ItemBuilderFactory itemFactory;
 
-  List<ServiceRegistration<?>> registrations = new ArrayList<>();
+  private Map<ServiceRegistration<?>, SimpleProvider<?>> registrations = new ConcurrentHashMap<>();
 
   @Activate
   public ItemLoader(BundleContext context, @Reference ReadyService readyService, @Reference ItemBuilderFactory itemFactory) {
@@ -112,9 +115,13 @@ public class ItemLoader {
         logger.error("Could not parse file {}", file, e);
       }
     }
-    registrations.add(context.registerService(ItemProvider.class, new XStreamItemProvider(items), new Hashtable<>()));
-    registrations.add(context.registerService(MetadataProvider.class, new XStreamMetadataProvider(metadata), new Hashtable<>()));
-    registrations.add(context.registerService(ItemChannelLinkProvider.class, new XStreamLinkProvider(links), new Hashtable<>()));
+    XStreamItemProvider itemProvider = new XStreamItemProvider(items);
+    XStreamMetadataProvider metadataProvider = new XStreamMetadataProvider(metadata);
+    XStreamLinkProvider linkProvider = new XStreamLinkProvider(links);
+
+    registrations.put(context.registerService(ItemProvider.class, itemProvider, new Hashtable<>()), itemProvider);
+    registrations.put(context.registerService(MetadataProvider.class, metadataProvider, new Hashtable<>()), metadataProvider);
+    registrations.put(context.registerService(ItemChannelLinkProvider.class, linkProvider, new Hashtable<>()), linkProvider);
 
     readyService.markReady(new ReadyMarker("co7io-managed", "item"));
   }
@@ -129,8 +136,9 @@ public class ItemLoader {
 
   @Deactivate
   void deactivate() {
-    for (ServiceRegistration<?> registration : registrations) {
-      registration.unregister();
+    for (Entry<ServiceRegistration<?>, SimpleProvider<?>> registration : registrations.entrySet()) {
+      registration.getValue().deactivate();
+      registration.getKey().unregister();
     }
   }
 
