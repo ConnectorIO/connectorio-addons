@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.openhab.core.common.registry.RegistryChangeListener;
+import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.items.ItemNotUniqueException;
@@ -26,13 +27,33 @@ public class TestingItemRegistry implements ItemRegistry {
 
   public TestingItemRegistry(Item ... items) {
     for (Item item : items) {
-      this.items.put(item.getName(), item);
+      associate(item);
+    }
+  }
+
+  private void associate(Item item) {
+    this.items.put(item.getName(), item);
+
+    // assign item to its group elements
+    for (String group : item.getGroupNames()) {
+      if (items.containsKey(group)) {
+        Item parent = items.get(group);
+        if (parent instanceof GroupItem) {
+          ((GroupItem) parent).addMember(item);
+        }
+      }
+    }
+
+    for (Item existing : getAll()) {
+      if (existing.getGroupNames().contains(item.getName()) && item instanceof GroupItem) {
+        ((GroupItem) item).addMember(existing);
+      }
     }
   }
 
   public TestingItemRegistry(ItemProvider provider) {
     for (Item item : provider.getAll()) {
-      this.items.put(item.getName(), item);
+      associate(item);
     }
   }
 
@@ -130,13 +151,13 @@ public class TestingItemRegistry implements ItemRegistry {
 
   @Override
   public Item add(Item element) {
-    items.put(element.getName(), element);
+    associate(element);
     return element;
   }
 
   @Override
   public Item update(Item element) {
-    items.put(element.getName(), element);
+    associate(element);
     return element;
   }
 

@@ -25,9 +25,20 @@ public class RuleUID extends AbstractUID {
     super(segments);
   }
 
+  public RuleUID(String ruleId) {
+    super(ruleId(ruleId));
+  }
+
   @Override
   protected int getMinimalNumberOfSegments() {
     return 2;
+  }
+
+  private static String[] ruleId(String ruleId) {
+    if (ruleId.contains(":")) {
+      return ruleId.split(":");
+    }
+    return new String[] {"norule", ruleId};
   }
 
 }
