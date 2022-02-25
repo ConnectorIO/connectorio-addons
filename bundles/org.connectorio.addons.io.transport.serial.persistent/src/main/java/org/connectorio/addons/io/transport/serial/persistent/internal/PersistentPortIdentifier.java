@@ -60,7 +60,7 @@ public class PersistentPortIdentifier implements SerialPortIdentifier {
 
   public static boolean isPersistent(URI portName) {
     String fragment = portName.getFragment();
-    return !fragment.isEmpty() && fragment.startsWith(PERSISTENT);
+    return fragment != null && fragment.startsWith(PERSISTENT);
   }
 
   public static PersistentPortIdentifier fromUri(SerialPortDelegate delegate, URI portName) {
