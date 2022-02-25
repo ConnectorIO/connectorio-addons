@@ -19,6 +19,7 @@ package org.connectorio.addons.norule;
 
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Rule which signals its execution via latch.
@@ -63,6 +64,14 @@ public class BlockingRule implements Rule {
 
   public CountDownLatch getLatch() {
     return latch;
+  }
+
+  public boolean await() throws InterruptedException {
+    return await(5, TimeUnit.SECONDS);
+  }
+
+  public boolean await(int amount, TimeUnit unit) throws InterruptedException {
+    return latch.await(amount, unit);
   }
 
   public String toString() {
