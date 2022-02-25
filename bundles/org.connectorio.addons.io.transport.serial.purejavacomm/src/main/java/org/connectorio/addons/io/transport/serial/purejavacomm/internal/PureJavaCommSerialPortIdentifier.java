@@ -43,14 +43,8 @@ public class PureJavaCommSerialPortIdentifier implements SerialPortIdentifier {
     try {
       return new PureJavaCommSerialPort((purejavacomm.SerialPort) identifier.open(owner, timeout));
     } catch (purejavacomm.PortInUseException e) {
-      PortInUseException exception = new PortInUseException() {
-        @Override
-        public String getMessage() {
-          // propagate error message from purejavacomm since openhab does not support that directly
-          return e.getMessage();
-        }
-      };
-      exception.setStackTrace(e.getStackTrace());
+      PortInUseException exception = new PortInUseException();
+      exception.initCause(e);
       throw exception;
     }
   }
