@@ -17,16 +17,21 @@
  */
 package org.connectorio.addons.norule;
 
-import org.openhab.core.service.ReadyMarker;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
-/**
- * Rule manager is responsible for managing rule execution.
- *
- * At software contract level it does not track the rules themselves.
- */
-public interface RuleManager {
+public interface RuleExecutor {
 
-  ReadyMarker READY_MARKER = new ReadyMarker("norule", "manager");
+  int getActivateExecutions();
+  long getExecutionsCounter();
+  long getFailuresCounter();
 
-  void run(RuleUID ruleUID);
+  void shutdown();
+
+  void execute(Runnable runnable);
+
+  void submit(Runnable runnable);
+
+  ScheduledFuture<?> scheduleAtFixedRate(Runnable runnable, long initialDelay, long delay, TimeUnit delayUnit);
+
 }

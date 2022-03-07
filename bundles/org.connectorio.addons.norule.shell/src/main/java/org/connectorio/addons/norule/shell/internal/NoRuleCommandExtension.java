@@ -19,6 +19,7 @@ package org.connectorio.addons.norule.shell.internal;
 
 import java.util.Arrays;
 import java.util.List;
+import org.connectorio.addons.norule.RuleExecutor;
 import org.connectorio.addons.norule.RuleManager;
 import org.connectorio.addons.norule.RuleRegistry;
 import org.openhab.core.io.console.Console;
@@ -35,13 +36,17 @@ public class NoRuleCommandExtension extends AbstractConsoleCommandExtension {
 
   private static final String SUBCMD_RUN = "run";
   private static final String SUBCMD_LIST = "list";
+  private static final String SUBCMD_STATS = "stats";
+
   private final RuleManager ruleManager;
+  private final RuleExecutor ruleExecutor;
   private final RuleRegistry ruleRegistry;
 
   @Activate
-  public NoRuleCommandExtension(@Reference RuleManager ruleManager, @Reference RuleRegistry ruleRegistry) {
+  public NoRuleCommandExtension(@Reference RuleManager ruleManager, @Reference RuleExecutor ruleExecutor, @Reference RuleRegistry ruleRegistry) {
     super(NORULE, "Browse and fire system managed rules.");
     this.ruleManager = ruleManager;
+    this.ruleExecutor = ruleExecutor;
     this.ruleRegistry = ruleRegistry;
   }
 
@@ -54,6 +59,9 @@ public class NoRuleCommandExtension extends AbstractConsoleCommandExtension {
           return;
         case SUBCMD_LIST:
           new RuleListCommand(ruleRegistry).execute(trimArgs(args), console);
+          return;
+        case SUBCMD_STATS:
+          new RuleStatsCommand(ruleExecutor).execute(trimArgs(args), console);
           return;
       }
       return;
@@ -74,7 +82,8 @@ public class NoRuleCommandExtension extends AbstractConsoleCommandExtension {
   public List<String> getUsages() {
     return Arrays.asList(
       buildCommandUsage(SUBCMD_RUN + " <rule-uid>", "Fire a rule using system trigger. Be aware that some rules might not react properly to manual execution."),
-      buildCommandUsage(SUBCMD_LIST, "List all rules known to the system.")
+      buildCommandUsage(SUBCMD_LIST, "List all rules known to the system."),
+      buildCommandUsage(SUBCMD_STATS, "Displays basic statistics about rule execution.")
     );
   }
 

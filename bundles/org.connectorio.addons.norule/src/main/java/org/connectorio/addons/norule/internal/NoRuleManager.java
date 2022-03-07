@@ -17,7 +17,6 @@
  */
 package org.connectorio.addons.norule.internal;
 
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.ZoneOffset;
@@ -30,9 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -60,6 +57,8 @@ import org.connectorio.addons.norule.internal.context.ScheduledRuleContext;
 import org.connectorio.addons.norule.internal.context.StartLevelRuleContext;
 import org.connectorio.addons.norule.internal.context.ThingStatusChangeRuleContext;
 import org.connectorio.addons.norule.internal.context.ThingStatusRuleContext;
+import org.connectorio.addons.norule.RuleExecutor;
+import org.connectorio.addons.norule.internal.executor.DefaultRuleExecutor;
 import org.connectorio.addons.norule.internal.trigger.EmptyTrigger;
 import org.connectorio.addons.norule.internal.trigger.MemberStateChangeTrigger;
 import org.connectorio.addons.norule.internal.trigger.MemberStateUpdateTrigger;
@@ -90,7 +89,6 @@ import org.openhab.core.service.ReadyMarker;
 import org.openhab.core.service.ReadyMarkerFilter;
 import org.openhab.core.service.ReadyService;
 import org.openhab.core.service.ReadyService.ReadyTracker;
-import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingRegistry;
 import org.openhab.core.thing.ThingUID;
 import org.openhab.core.thing.events.ThingStatusInfoChangedEvent;
@@ -105,29 +103,32 @@ import org.slf4j.LoggerFactory;
 @Component(service = {RuleManager.class, ReadyTracker.class, EventSubscriber.class})
 public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber, RegistryChangeListener<Rule> {
 
-  private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1, runnable -> {
-    Thread thread = new Thread(runnable, "rule-execution");
-    thread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-      @Override
-      public void uncaughtException(Thread t, Throwable e) {
-        LoggerFactory.getLogger(NoRuleRegistry.class).error("Error while running task", e);
-      }
-    });
-    return thread;
-  });
+  // marker needed to activate norule engine
+  private static final ReadyMarker PERSISTENCE_RESTORE = new ReadyMarker("persistence", "restore");
+
   private final Logger logger = LoggerFactory.getLogger(NoRuleRegistry.class);
   private final Map<Trigger, Future<?>> scheduledRules = new ConcurrentHashMap<>();
   private final Map<ReadyMarker, List<Rule>> readyMarkerRules = new ConcurrentHashMap<>();
   private final RuleRegistry ruleRegistry;
+  private final RuleExecutor ruleExecutor;
   private final ThingRegistry thingRegistry;
   private final ItemRegistry itemRegistry;
   private final ReadyService readyService;
   private final ThingActionsRegistry actionsRegistry;
   private final AtomicInteger startLevel = new AtomicInteger();
 
+  public NoRuleManager(RuleRegistry ruleRegistry,
+      ThingRegistry thingRegistry, ItemRegistry itemRegistry,
+      ReadyService readyService, ThingActionsRegistry actionsRegistry) {
+    this(ruleRegistry, new DefaultRuleExecutor(), thingRegistry, itemRegistry, readyService, actionsRegistry);
+  }
+
   @Activate
-  public NoRuleManager(@Reference RuleRegistry ruleRegistry, @Reference ThingRegistry thingRegistry, @Reference ItemRegistry itemRegistry, @Reference ReadyService readyService, @Reference ThingActionsRegistry actionsRegistry) {
+  public NoRuleManager(@Reference RuleRegistry ruleRegistry, @Reference RuleExecutor ruleExecutor,
+    @Reference ThingRegistry thingRegistry, @Reference ItemRegistry itemRegistry,
+    @Reference ReadyService readyService, @Reference ThingActionsRegistry actionsRegistry) {
     this.ruleRegistry = ruleRegistry;
+    this.ruleExecutor = ruleExecutor;
     this.thingRegistry = thingRegistry;
     this.itemRegistry = itemRegistry;
     this.readyService = readyService;
@@ -138,9 +139,10 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
 
   @Deactivate
   void shutdown() {
+    readyService.unmarkReady(READY_MARKER);
     readyService.unregisterTracker(this);
     ruleRegistry.removeRegistryChangeListener(this);
-    executor.shutdown();
+    ruleExecutor.shutdown();
   }
 
   @Override
@@ -155,9 +157,9 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
         }
       }
       if (schedule != null) {
-        executor.execute(new ScheduledRunnable(itemRegistry, actionsRegistry, rule, schedule));
+        ruleExecutor.execute(new ScheduledRunnable(itemRegistry, actionsRegistry, rule, schedule));
       } else {
-        executor.execute(new RuleRunnable(rule, new EmptyTriggerRuleContext(rule, itemRegistry, actionsRegistry, new EmptyTrigger())));
+        ruleExecutor.execute(new RuleRunnable(rule, new EmptyTriggerRuleContext(rule, itemRegistry, actionsRegistry, new EmptyTrigger())));
       }
     }
   }
@@ -256,7 +258,7 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
             return;
           }
           logger.info("Rule {} is triggered by {}.", rule, trigger);
-          executor.submit(new RuleRunnable(rule, contextFactory.apply(rule, trigger)));
+          ruleExecutor.submit(new RuleRunnable(rule, contextFactory.apply(rule, trigger)));
         }
       }
     }
@@ -282,7 +284,7 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
           schedule.getTimeUnit().convert(initialDelay, delayUnit), schedule.getTimeUnit(),
           schedule.getDelay(), schedule.getTimeUnit()
         );
-        ScheduledFuture<?> future = executor.scheduleAtFixedRate(new ScheduledRunnable(itemRegistry, actionsRegistry, element, schedule), initialDelay,
+        ScheduledFuture<?> future = ruleExecutor.scheduleAtFixedRate(new ScheduledRunnable(itemRegistry, actionsRegistry, element, schedule), initialDelay,
           delayUnit.convert(schedule.getDelay(), schedule.getTimeUnit()), delayUnit);
         scheduledRules.put(schedule, future);
       }
@@ -291,7 +293,7 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
         long initialDelay = calculateDelay(periodic);
         long milli = delay(periodic);
         logger.debug("First run of periodic rule {} in {} ms. Then every {} ms", element, initialDelay, milli);
-        ScheduledFuture<?> future = executor.scheduleAtFixedRate(new ScheduledRunnable(itemRegistry, actionsRegistry, element, periodic), initialDelay,
+        ScheduledFuture<?> future = ruleExecutor.scheduleAtFixedRate(new ScheduledRunnable(itemRegistry, actionsRegistry, element, periodic), initialDelay,
           milli, TimeUnit.MILLISECONDS);
         scheduledRules.put(periodic, future);
       }
@@ -379,6 +381,9 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
 
   @Override
   public void onReadyMarkerAdded(ReadyMarker readyMarker) {
+    if (readyMarker.equals(PERSISTENCE_RESTORE)) {
+      readyService.markReady(READY_MARKER);
+    }
     if (readyMarkerRules.containsKey(readyMarker)) {
       fire(readyMarkerRules.get(readyMarker), (rule, trigger) -> new ReadyMarkerAddedRuleContext(rule, itemRegistry, actionsRegistry, trigger, readyMarker), (trigger -> {
         return trigger instanceof ReadyMarkerAddedTrigger && ((ReadyMarkerTrigger) trigger).getMarker().equals(readyMarker);
