@@ -25,20 +25,134 @@ package org.connectorio.chrono;
  * PeriodCalculator.
  */
 public enum Period {
-  YEAR ("Every year"),
-  MONTH ("Every month"),
-  WEEK ("Every week"),
-  DAY ("Every day"),
-  HOUR ("Every hour"),
-  HALF_HOUR ("Every half hour"),
-  QUARTER_HOUR("Every quarter of an hour"),
-  MINUTE ("Every minute"),
-  SECOND ("Every second");
+  YEAR ("Every year", "Y") {
+    @Override
+    public Period smaller() {
+      return MONTH;
+    }
+
+    @Override
+    public Period larger() {
+      return null;
+    }
+  },
+  MONTH ("Every month", "M") {
+    @Override
+    public Period smaller() {
+      return WEEK;
+    }
+
+    @Override
+    public Period larger() {
+      return YEAR;
+    }
+  },
+  WEEK ("Every week", "W") {
+    @Override
+    public Period smaller() {
+      return DAY;
+    }
+
+    @Override
+    public Period larger() {
+      return MONTH;
+    }
+  },
+  DAY ("Every day", "D") {
+    @Override
+    public Period smaller() {
+      return HOUR;
+    }
+
+    @Override
+    public Period larger() {
+      return WEEK;
+    }
+  },
+  HOUR ("Every hour", "h") {
+    @Override
+    public Period smaller() {
+      return MINUTE;
+    }
+
+    @Override
+    public Period larger() {
+      return DAY;
+    }
+  },
+  HALF_HOUR ("Every half hour", "30m", false) {
+    @Override
+    public Period smaller() {
+      return MINUTE;
+    }
+
+    @Override
+    public Period larger() {
+      return HOUR;
+    }
+  },
+  QUARTER_HOUR("Every quarter of an hour", "15m", false) {
+    @Override
+    public Period smaller() {
+      return MINUTE;
+    }
+
+    @Override
+    public Period larger() {
+      return HOUR;
+    }
+  },
+  MINUTE ("Every minute", "m") {
+    @Override
+    public Period smaller() {
+      return SECOND;
+    }
+
+    @Override
+    public Period larger() {
+      return HOUR;
+    }
+  },
+  SECOND ("Every second", "s") {
+    @Override
+    public Period smaller() {
+      return null;
+    }
+
+    @Override
+    public Period larger() {
+      return MINUTE;
+    }
+  };
 
   private final String label;
+  private final String symbol;
+  private final boolean rounded;
 
-  Period(String description) {
-    this.label = description;
+  Period(String label, String symbol) {
+    this(label, symbol, true);
+  }
+
+  Period(String label, String symbol, boolean rounded) {
+    this.label = label;
+    this.symbol = symbol;
+    this.rounded = rounded;
+  }
+
+  public boolean isRounded() {
+    return rounded;
+  }
+
+  public Period smaller() {
+    throw new AbstractMethodError();
+  }
+
+  public Period larger() {
+    throw new AbstractMethodError();
+  }
+
+  public String getSymbol() {
+    return symbol;
   }
 
   public String getLabel() {
