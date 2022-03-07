@@ -26,22 +26,21 @@ import org.openhab.core.service.ReadyMarker;
 import org.openhab.core.service.ReadyMarkerFilter;
 import org.openhab.core.service.ReadyService;
 import org.openhab.core.service.ReadyService.ReadyTracker;
-import org.openhab.core.service.StartLevelService;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * Simple console addon which gets start level information.
+ * Simple console addon which gets ready marker information.
  */
 @Component(immediate = true, service = ConsoleCommandExtension.class)
-public class StartLevelCommand extends AbstractConsoleCommandExtension {
+public class ReadyMarkerCommand extends AbstractConsoleCommandExtension {
 
   private final ReadyService readyService;
 
   @Activate
-  public StartLevelCommand(@Reference ReadyService readyService) {
-    super("co7io-start-level", "Start level information");
+  public ReadyMarkerCommand(@Reference ReadyService readyService) {
+    super("co7io-ready-marker", "Show ready markers");
     this.readyService = readyService;
   }
 
@@ -58,7 +57,7 @@ public class StartLevelCommand extends AbstractConsoleCommandExtension {
       }
     };
     try {
-      readyService.registerTracker(readyTracker, new ReadyMarkerFilter().withType(StartLevelService.STARTLEVEL_MARKER_TYPE));
+      readyService.registerTracker(readyTracker, new ReadyMarkerFilter());
     } finally {
       readyService.unregisterTracker(readyTracker);
     }
@@ -66,7 +65,7 @@ public class StartLevelCommand extends AbstractConsoleCommandExtension {
 
   @Override
   public List<String> getUsages() {
-    return Arrays.asList("co7io-start-level");
+    return Arrays.asList("co7io-ready-marker");
   }
 
 }
