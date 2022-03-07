@@ -100,42 +100,13 @@ public class CopyPatternOperation extends PatternOperation implements Operation 
       Item item = context.getItem(targetItemPattern);
       if (item != null) {
         getLogger().info("Copy data from {} to {}", entry.getKey().getName(), item.getName());
-        copy(targetService, item, sourceService, entry.getKey());
+        CopyHelper.copy(sourceService, entry.getKey(), targetService, item);
       } else {
         getLogger().info("Migration of data from {} to {} could not be performed, target item is not found", entry.getKey().getName(), targetItemPattern);
       }
     }
 
     return Statuses.SUCCESS;
-  }
-
-  private void copy(ModifiablePersistenceService targetService, Item targetItem, ModifiablePersistenceService sourceService, Item sourceItem) {
-    int page = 0;
-    int pageSize = 1000;
-    int amount = 0;
-    boolean nextPage = false;
-    long startTime = System.currentTimeMillis();
-    do {
-      getLogger().debug("Copy page {} from {} to {}", page, sourceItem.getName(), targetItem.getName());
-      for (HistoricItem historic : sourceService.query(new FilterCriteria().setPageSize(pageSize).setPageNumber(page).setItemName(sourceItem.getName()))) {
-        State state = historic.getState();
-        if (state == UnDefType.UNDEF || state == UnDefType.NULL) {
-          continue;
-        }
-        ZonedDateTime timestamp = historic.getTimestamp();
-        targetService.store(new StubItem(targetItem, state), Date.from(timestamp.toInstant()), state);
-        amount++;
-        if (amount == pageSize) {
-          page++;
-          nextPage = true;
-          amount = 0;
-        } else {
-          nextPage = false;
-        }
-      }
-    } while (nextPage);
-    long seconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTime);
-    getLogger().info("Copied {} pages containing {} data entries in {} seconds", page, (page == 0 ? "approx. " + pageSize : (pageSize * page) + amount), seconds);
   }
 
   @Override

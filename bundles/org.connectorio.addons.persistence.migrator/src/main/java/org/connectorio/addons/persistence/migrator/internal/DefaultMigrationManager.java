@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.connectorio.addons.persistence.migrator.CompositeExecutionStatus;
 import org.connectorio.addons.persistence.migrator.operation.Container;
 import org.connectorio.addons.persistence.migrator.MigrationManager;
@@ -103,7 +104,7 @@ public class DefaultMigrationManager implements MigrationManager, ReadyTracker {
   @Override
   public boolean isAllMigrationsSucceeded() {
     for (CompositeExecutionStatus<Container> status : statuses.values()) {
-      if (Statuses.FAILURE == status || Statuses.WAITING == status) {
+      if (Statuses.FAILURE == status.getStatus() || Statuses.WAITING == status.getStatus()) {
         return false;
       }
     }
@@ -112,6 +113,7 @@ public class DefaultMigrationManager implements MigrationManager, ReadyTracker {
 
   @Override
   public void execute() {
+    long start = System.currentTimeMillis();
     for (Container migration : migrationRegistry.getAll()) {
       DefaultMigrationContext context = new DefaultMigrationContext(migration.getService(), itemRegistry, persistenceServiceRegistry);
       List<Operation> steps = migration.getSteps();
@@ -146,6 +148,8 @@ public class DefaultMigrationManager implements MigrationManager, ReadyTracker {
         executionStatus.failed();
       }
     }
+    long time = System.currentTimeMillis() - start;
+    logger.info("Migration of data took {}/{}", TimeUnit.MILLISECONDS.toMinutes(time), TimeUnit.MILLISECONDS.toSeconds(time));
   }
 
   @Override

@@ -60,12 +60,8 @@ public class CopyOperation extends ItemPairOperation implements Operation {
 
     Item targetItem = target.item;
     ModifiablePersistenceService targetService = (ModifiablePersistenceService) service;
-    for (HistoricItem state : sourceService.query(new FilterCriteria().setItemName(item.getName()))) {
-      ZonedDateTime timestamp = state.getTimestamp();
-      Date date = new Date(timestamp.toInstant().toEpochMilli());
-      targetService.store(targetItem, date, state.getState());
-    }
 
+    CopyHelper.copy(sourceService, item, targetService, targetItem);
     return Statuses.SUCCESS;
   }
 
