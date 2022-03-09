@@ -110,7 +110,7 @@ public class PersistenceCleanCounterItemCommand extends AbstractConsoleCommandEx
       ModifiablePersistenceService persistence = (ModifiablePersistenceService) service;
 
       int page = 1;
-      int pageSize = 200;
+      int pageSize = 10000;
 
       // fetch first reading
       ZonedDateTime latest = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0), ZoneId.systemDefault());
@@ -136,11 +136,11 @@ public class PersistenceCleanCounterItemCommand extends AbstractConsoleCommandEx
             FilterCriteria criteria = new FilterCriteria();
             criteria.setItemName(item.getName());
             criteria.setBeginDate(historicItem.getTimestamp());
-            criteria.setEndDate(historicItem.getTimestamp());
+            criteria.setEndDate(historicItem.getTimestamp().plusNanos(1));
             criteria.setOperator(Operator.EQ);
             criteria.setPageSize(1);
 
-            console.println("Removing state " + historicItem.getState() + ", cause it is lower than " + previous.getState());
+            console.println("Removing state " + historicItem.getState() + " at " + historicItem.getTimestamp() + " cause it is lower than " + previous.getState() + " " + previous.getTimestamp());
             persistence.remove(criteria);
             removed++;
           } else {
@@ -148,6 +148,7 @@ public class PersistenceCleanCounterItemCommand extends AbstractConsoleCommandEx
           }
           latest = historicItem.getTimestamp();
         }
+        console.println("Went over " + (pageSize * page) + " entries");
       } while (result.size() == pageSize);
       console.println(item.getName() + " removed " + removed + " records");
     }
