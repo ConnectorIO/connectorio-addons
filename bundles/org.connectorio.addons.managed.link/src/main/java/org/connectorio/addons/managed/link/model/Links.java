@@ -17,12 +17,23 @@
  */
 package org.connectorio.addons.managed.link.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 public class Links {
 
   private List<LinkEntry> links;
+
+  public Links() {
+    this(Collections.emptyList());
+  }
+
+  public Links(Collection<LinkEntry> links) {
+    this.links = new ArrayList<>(links);
+  }
 
   public List<LinkEntry> getLinks() {
     return links;
