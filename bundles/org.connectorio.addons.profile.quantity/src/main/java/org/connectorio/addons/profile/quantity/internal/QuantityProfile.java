@@ -22,8 +22,10 @@ import java.util.function.Consumer;
 import javax.measure.IncommensurableException;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
+import javax.measure.quantity.Dimensionless;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.QuantityType;
+import org.openhab.core.library.unit.Units;
 import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.thing.profiles.ProfileContext;
 import org.openhab.core.thing.profiles.ProfileTypeUID;
@@ -88,9 +90,14 @@ class QuantityProfile implements StateProfile {
     }
   }
 
-  private void convert(QuantityType<?> value, Consumer<BigDecimal> callback) {
-    QuantityType<?> quantifiedReading = value;
+  private void convert(QuantityType<?> quantifiedReading, Consumer<BigDecimal> callback) {
+    logger.debug("Attempting to convert value {} to unit {}", quantifiedReading, unit);
+    if (quantifiedReading.getUnit().equals(Units.ONE)) {
+      // dimensionless, nothing to do
+      callback.accept(quantifiedReading.toBigDecimal());
+    }
     try {
+      logger.trace("Value require {} conversion to {}, locating unit converter", quantifiedReading, unit);
       UnitConverter converter = quantifiedReading.getUnit().getConverterToAny(unit);
       if (converter != null) {
         if (converter.isIdentity()) {
