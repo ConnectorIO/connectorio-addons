@@ -37,12 +37,15 @@ class ExecutionWrapper implements Runnable {
 
   @Override
   public void run() {
+    ClassLoader loader = Thread.currentThread().getContextClassLoader();
     try {
+      Thread.currentThread().setContextClassLoader(delegate.getClass().getClassLoader());
       counter.incrementAndGet();
       delegate.run();
     } finally {
       executions.incrementAndGet();
       counter.decrementAndGet();
+      Thread.currentThread().setContextClassLoader(loader);
     }
   }
 

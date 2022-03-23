@@ -46,7 +46,7 @@ public class DefaultRuleExecutor implements RuleExecutor {
 
   public DefaultRuleExecutor() {
     executor = Executors.newScheduledThreadPool(calculatePoolSize(), runnable -> {
-      Thread thread = new Thread(new ExecutionWrapper(runnable, executions, counter), "rule-execution-" + threadId.getAndIncrement());
+      Thread thread = new Thread(runnable, "rule-execution-" + threadId.getAndIncrement());
       thread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
         @Override
         public void uncaughtException(Thread parent, Throwable error) {
@@ -80,17 +80,17 @@ public class DefaultRuleExecutor implements RuleExecutor {
 
   @Override
   public void execute(Runnable runnable) {
-    executor.execute(runnable);
+    executor.execute(new ExecutionWrapper(runnable, executions, counter));
   }
 
   @Override
   public void submit(Runnable runnable) {
-    executor.submit(runnable);
+    executor.submit(new ExecutionWrapper(runnable, executions, counter));
   }
 
   @Override
   public ScheduledFuture<?> scheduleAtFixedRate(Runnable runnable, long initialDelay, long period, TimeUnit delayUnit) {
-    return executor.scheduleAtFixedRate(runnable, initialDelay, period, delayUnit);
+    return executor.scheduleAtFixedRate(new ExecutionWrapper(runnable, executions, counter), initialDelay, period, delayUnit);
   }
 
   private static int calculatePoolSize() {
