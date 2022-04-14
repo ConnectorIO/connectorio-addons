@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright (C) 2022-2022 ConnectorIO Sp. z o.o.
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -
+ - SPDX-License-Identifier: Apache-2.0
+ -->
+<thing:thing-descriptions bindingId="co7io-ocpp"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+  <bridge-type id="server">
+    <label>OCPP Server</label>
+    <description>Defines a local control point for chargers to enable bidirectional communication.</description>
+
+    <config-description>
+      <parameter name="address" type="text" required="false">
+        <label>Bind address</label>
+        <description>IP or hostname used to launch server, if none given a primary network interface is being used.</description>
+      </parameter>
+      <parameter name="port" type="integer" required="false">
+        <label>Server port</label>
+        <description></description>
+        <default>8887</default>
+      </parameter>
+      <parameter name="heartbeat" type="integer" required="true" min="1">
+        <label>Default heartbeat</label>
+        <description>
+          A time (in seconds) under which chargers should send its heartbeat.
+          This setting can be overridden at charger level.
+        </description>
+        <default>10</default>
+        <unitLabel>s</unitLabel>
+      </parameter>
+      <parameter name="chargers" type="text" required="false" multiple="true">
+        <label>Charger identities</label>
+        <description>
+          List of chargers which are permitted to connect to server. When empty all chargers can connect.
+          If at least one entry is defined all incoming connections will be answered with "Rejected" state and closed.
+        </description>
+        <default></default>
+      </parameter>
+      <parameter name="tags" type="text" required="false" multiple="true">
+        <label>RFID tags</label>
+        <description>
+          List of tags which are permitted to activate charging. If none given, no authentication is conducted.
+          If at least one value is provided requests from unknown tags will be rejected.
+        </description>
+      </parameter>
+    </config-description>
+  </bridge-type>
+
+  <thing-type id="charger">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="server"/>
+    </supported-bridge-type-refs>
+
+    <label>Charger</label>
+    <description>An instance of electric charger.</description>
+
+    <config-description>
+      <parameter name="heartbeat" type="integer" required="false" min="1">
+        <label>Heartbeat</label>
+        <description>
+          A time (in seconds) under which this charger should send its heartbeat.
+        </description>
+        <default>10</default>
+        <unitLabel>s</unitLabel>
+      </parameter>
+    </config-description>
+  </thing-type>
+
+  <thing-type id="connector">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="charger"/>
+    </supported-bridge-type-refs>
+
+    <label>Connector</label>
+    <description>A charger connector.</description>
+  </thing-type>
+
+</thing:thing-descriptions>
