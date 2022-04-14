@@ -19,13 +19,13 @@ package org.connectorio.addons.binding.handler;
 
 import java.util.Optional;
 import org.connectorio.addons.binding.GenericTypeUtil;
-import org.connectorio.addons.binding.config.PollingConfiguration;
+import org.connectorio.addons.binding.config.Configuration;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.binding.BaseThingHandler;
 import org.openhab.core.thing.binding.BridgeHandler;
 
-public abstract class GenericThingHandlerBase<B extends BridgeHandler, C extends PollingConfiguration> extends
+public abstract class GenericThingHandlerBase<B extends BridgeHandler, C extends Configuration> extends
     BaseThingHandler implements GenericThingHandler<B, C> {
 
   private final Class<B> bridgeType;
