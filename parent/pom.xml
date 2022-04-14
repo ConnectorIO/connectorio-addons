@@ -34,6 +34,9 @@
   <description>Parent for ConnectorIO supplied bindings and extensions.</description>
 
   <properties>
+    <compiler.source>11</compiler.source>
+    <compiler.target>11</compiler.target>
+
     <plc4x.version>0.8.1-connectorio-3</plc4x.version>
     <bacnet4j-wrapper.version>1.2.1</bacnet4j-wrapper.version>
 
