@@ -289,6 +289,16 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.profile.boundary</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.profile.counter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.profile.isg</artifactId>
         <version>${project.version}</version>
       </dependency>

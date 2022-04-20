@@ -63,6 +63,8 @@
     <module>org.connectorio.addons.persistence.migrator.shell</module>
     <module>org.connectorio.addons.persistence.shell</module>
     <module>org.connectorio.addons.profile</module>
+    <module>org.connectorio.addons.profile.boundary</module>
+    <module>org.connectorio.addons.profile.counter</module>
     <module>org.connectorio.addons.profile.isg</module>
     <module>org.connectorio.addons.profile.math</module>
     <module>org.connectorio.addons.profile.quantity</module>

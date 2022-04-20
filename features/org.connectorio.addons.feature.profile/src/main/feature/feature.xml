@@ -20,9 +20,30 @@
 
   <repository>mvn:org.connectorio.addons/org.connectorio.feature.chrono/${project.version}/xml/features</repository>
 
-  <feature name="co7io-profile" description="ConnectorIO profiles" version="${project.version}">
+  <feature name="co7io-profiles" description="ConnectorIO profiles" version="${project.version}">
+    <feature>co7io-profile</feature>
+    <feature>co7io-profile-boundary</feature>
+    <feature>co7io-profile-counter</feature>
+    <feature>co7io-profile-math</feature>
+    <feature>co7io-profile-quantity</feature>
+    <feature>co7io-profile-sma</feature>
+    <feature>co7io-profile-isg</feature>
+    <feature>co7io-profile-timer</feature>
+  </feature>
+
+  <feature name="co7io-profile" description="ConnectorIO multi-profile" version="${project.version}">
     <feature>openhab-runtime-base</feature>
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.profile/${project.version}</bundle>
+  </feature>
+
+  <feature name="co7io-profile-boundary" description="Utility profiles for filtering bounds" version="${project.version}">
+    <feature>openhab-runtime-base</feature>
+    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.profile.boundary/${project.version}</bundle>
+  </feature>
+
+  <feature name="co7io-profile-counter" description="Utility profiles for counter handling" version="${project.version}">
+    <feature>openhab-runtime-base</feature>
+    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.profile.counter/${project.version}</bundle>
   </feature>
 
   <feature name="co7io-profile-math" description="Utility profiles for math operations" version="${project.version}">
