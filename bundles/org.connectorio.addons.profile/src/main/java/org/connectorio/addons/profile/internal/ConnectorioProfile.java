@@ -17,10 +17,13 @@
  */
 package org.connectorio.addons.profile.internal;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -71,6 +74,14 @@ class ConnectorioProfile implements StateProfile {
       Map<String, Object> profileCfg = (Map<String, Object>) entry.getValue();
       String profileType = (String) profileCfg.get("profile");
       Profile createdProfile = getProfileFromFactories(getConfiguredProfileTypeUID(profileType), profileCfg, chainedCallback);
+      if (createdProfile == null) {
+        Optional<String> supported = registry.getAll().stream()
+          .map(ProfileFactory::getSupportedProfileTypeUIDs)
+          .flatMap(Collection::stream)
+          .map(Objects::toString)
+          .reduce((l, r) -> l + ", " + r);
+        throw new IllegalArgumentException("Profile " + profileType + " not found. Known profiles are: " + supported.orElse("none"));
+      }
       if (!(createdProfile instanceof StateProfile)) {
         throw new IllegalArgumentException("Could not create profile " + profileType + " or it is not state profile");
       }
