@@ -28,6 +28,7 @@ import org.openhab.core.thing.link.ItemChannelLink;
 import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.types.State;
 import org.openhab.core.types.Type;
+import org.openhab.core.types.UnDefType;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -46,11 +47,7 @@ public class PersistenceItemStateRetriever implements LinkedItemStateRetriever {
   }
 
   @Override
-  public State retrieve(ProfileCallback callback) {
-    return null;
-  }
-
-  private Type retrieveState(ProfileCallback callback, PersistenceServiceRegistry psr) {
+  public String getItemName(ProfileCallback callback) {
     Class<?> clazz = callback.getClass();
 
     Field linkField = null;
@@ -71,16 +68,31 @@ public class PersistenceItemStateRetriever implements LinkedItemStateRetriever {
         linkField.setAccessible(true);
         ItemChannelLink link = (ItemChannelLink) linkField.get(callback);
         if (link != null && link.getItemName() != null) {
-          PersistenceService service = psr.getDefault();
-          if (service instanceof QueryablePersistenceService) {
-            return retrieveState((QueryablePersistenceService) service, link.getItemName());
-          }
+          return link.getItemName();
         }
       } catch (IllegalAccessException e) {
         logger.warn("Could not extract link information from profile callback {}.", callback, e);
       }
     }
+    return null;
+  }
 
+  @Override
+  public State retrieveState(String itemName) {
+    PersistenceService service = persistenceServiceRegistry.getDefault();
+    if (service == null) {
+      logger.error("Could not find default persistence service to retrieve last state of the counter!");
+      return null;
+    }
+    if (!(service instanceof QueryablePersistenceService)) {
+      logger.error("Default persistence service is not queryable!");
+      return null;
+    }
+    Type type = retrieveState((QueryablePersistenceService) service, itemName);
+    if (type instanceof State) {
+      return (State) type;
+    }
+    logger.error("Last historical recording of linked item is not a state!");
     return null;
   }
 
@@ -93,4 +105,5 @@ public class PersistenceItemStateRetriever implements LinkedItemStateRetriever {
     }
     return null;
   }
+
 }

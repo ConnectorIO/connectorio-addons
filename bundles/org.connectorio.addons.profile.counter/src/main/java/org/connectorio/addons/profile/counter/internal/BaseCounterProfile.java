@@ -33,13 +33,22 @@ public abstract class BaseCounterProfile implements StateProfile {
   protected final Logger logger = LoggerFactory.getLogger(BaseCounterProfile.class);
   protected final ProfileCallback callback;
   protected final UninitializedBehavior uninitializedBehavior;
+  protected final ProfileContext context;
   protected Type last;
 
   protected BaseCounterProfile(ProfileCallback callback, ProfileContext context, LinkedItemStateRetriever linkedItemStateRetriever) {
     this.callback = callback;
     this.uninitializedBehavior = UninitializedBehavior.parse(context.getConfiguration().get("uninitializedBehavior"));
-    if (uninitializedBehavior == UninitializedBehavior.RESTORE_FROM_PERSISTENCE) {
-      last = linkedItemStateRetriever.retrieve(callback);
+    this.context = context;
+    if (UninitializedBehavior.RESTORE_FROM_PERSISTENCE.equals(uninitializedBehavior)) {
+      logger.info("Initialized last state of counter");
+      String itemName = linkedItemStateRetriever.getItemName(callback);
+      if (itemName == null) {
+        logger.error("Could not determine item name for callback {}", callback);
+      } else {
+        last = linkedItemStateRetriever.retrieveState(itemName);
+        logger.info("Initialized link with initial state {}", last);
+      }
     }
   }
 
@@ -74,6 +83,7 @@ public abstract class BaseCounterProfile implements StateProfile {
   }
 
   private void handleReading(Type val, boolean incoming) {
+    logger.trace("Verify reading {} vs {}. Value received from handler: {}", val, last, incoming);
     if (last == null) {
       if (uninitializedBehavior == UninitializedBehavior.RESTORE_FROM_ITEM) {
         if (!incoming && val instanceof Command) {

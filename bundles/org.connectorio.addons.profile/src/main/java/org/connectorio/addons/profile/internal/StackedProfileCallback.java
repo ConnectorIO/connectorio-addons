@@ -17,31 +17,45 @@
  */
 package org.connectorio.addons.profile.internal;
 
+import org.openhab.core.thing.link.ItemChannelLink;
 import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StackedProfileCallback implements ProfileCallback {
 
   private final static ThreadLocal<ProfileCallback> DELEGATE = new ThreadLocal<>();
 
+  private final Logger logger = LoggerFactory.getLogger(StackedProfileCallback.class);
+  private final ItemChannelLink link;
+
+  public StackedProfileCallback(ItemChannelLink link) {
+    this.link = link;
+  }
+
   @Override
   public void handleCommand(Command command) {
+    logger.trace("Passing command {} to profile chain", command);
     getDelegate().handleCommand(command);
   }
 
   @Override
   public void sendCommand(Command command) {
+    logger.trace("Sending command {} toi profile chain", command);
     getDelegate().sendCommand(command);
   }
 
   @Override
   public void sendUpdate(State state) {
+    logger.trace("Sending state {} to profile chain", state);
     getDelegate().sendUpdate(state);
   }
 
   private ProfileCallback getDelegate() {
     ProfileCallback callback = DELEGATE.get();
+    logger.trace("Callback looked up on thread stack {}", callback);
     if (callback != null) {
       return callback;
     }

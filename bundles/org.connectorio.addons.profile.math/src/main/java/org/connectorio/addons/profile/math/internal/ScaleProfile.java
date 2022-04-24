@@ -44,7 +44,7 @@ class ScaleProfile implements StateProfile {
     this.callback = callback;
     this.context = context;
 
-    this.scale = BigDecimal.valueOf(Integer.parseInt(context.getConfiguration().get("scale").toString()));
+    this.scale = new BigDecimal(context.getConfiguration().get("scale").toString());
   }
 
   @Override

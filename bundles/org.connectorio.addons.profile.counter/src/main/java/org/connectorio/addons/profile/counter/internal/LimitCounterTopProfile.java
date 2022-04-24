@@ -78,21 +78,28 @@ class LimitCounterTopProfile extends BaseCounterProfile {
     BigDecimal currentReading = val.toBigDecimal();
     BigDecimal lastReading = last.toBigDecimal();
     BigDecimal maxIncrease = lastReading.multiply(anomaly).divide(_100, RoundingMode.HALF_UP);
+    logger.trace("Verify value {} is smaller than {} + {} ({})%", val, last, maxIncrease, anomaly);
     if (currentReading.compareTo(lastReading.add(maxIncrease)) <= 0) {
       value.accept(val);
+      return;
     }
+    logger.debug("Rejecting value {}, its lower than {}", val, last);
   }
 
   private <T extends Quantity<T>> void compare(QuantityType<T> val, QuantityType<?> last, Consumer<QuantityType<T>> value) {
     BigDecimal currentReading = convert(val, last.getUnit());
     BigDecimal lastReading = last.toBigDecimal();
     if (currentReading == null) {
+      logger.warn("Failed to convert {} to unit compatible with {}.", val, last);
       return;
     }
     BigDecimal maxIncrease = lastReading.multiply(anomaly).divide(_100, RoundingMode.HALF_UP);
+    logger.trace("Verify value {} is smaller than {} + {} ({})%", val, last, maxIncrease, anomaly);
     if (currentReading.compareTo(lastReading.add(maxIncrease)) <= 0) {
       value.accept(val);
+      return;
     }
+    logger.debug("Rejecting value {}, its lower than {}", val, last);
   }
 
   private BigDecimal convert(QuantityType<?> quantifiedReading, Unit<?> unit) {
@@ -117,6 +124,10 @@ class LimitCounterTopProfile extends BaseCounterProfile {
       logger.warn("Failed to lookup conversion from {} to {}", quantifiedReading.getUnit(), unit, e);
     }
     return null;
+  }
+
+  public String toString() {
+    return "LimitCounterTop [" + last + " " + anomaly + "]";
   }
 
 }

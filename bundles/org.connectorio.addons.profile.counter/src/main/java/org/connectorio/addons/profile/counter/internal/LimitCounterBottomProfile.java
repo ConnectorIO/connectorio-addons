@@ -62,16 +62,26 @@ class LimitCounterBottomProfile extends BaseCounterProfile {
   }
 
   private void compare(DecimalType current, DecimalType previous, Consumer<DecimalType> consumer) {
+    logger.trace("Verify value {} is larger than {}", current, previous);
     if (current.compareTo(previous) >= 0) {
       consumer.accept(current);
+      return;
     }
+    logger.debug("Rejecting value {}, its lower than {}", current, previous);
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   private void compare(QuantityType current, QuantityType previous, Consumer<QuantityType> consumer) {
+    logger.trace("Verify value {} is larger than {}", current, previous);
     if (current.compareTo(previous) >= 0) {
       consumer.accept(current);
+      return;
     }
+    logger.debug("Rejecting value {}, its lower than {}", current, previous);
+  }
+
+  public String toString() {
+    return "LimitCounterBottom [" + last + "]";
   }
 
 }

@@ -27,12 +27,15 @@ import org.openhab.core.thing.profiles.StateProfile;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
 import org.openhab.core.types.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class DecimalLimitProfile implements StateProfile {
 
   public final static String TOP = "top";
   public final static String BOTTOM = "bottom";
 
+  protected final Logger logger = LoggerFactory.getLogger(DecimalLimitProfile.class);
   protected final ProfileCallback callback;
   protected final ProfileContext profileContext;
   protected final BigDecimal limit;
@@ -70,7 +73,9 @@ public abstract class DecimalLimitProfile implements StateProfile {
       BigDecimal value = ((DecimalType) current).toBigDecimal();
       if (evaluate(value, limit)) {
         consumer.accept(current);
+        return;
       }
+      logger.debug("Refusing value {}, it does not pass limit condition {}", current, limit);
     }
   }
 

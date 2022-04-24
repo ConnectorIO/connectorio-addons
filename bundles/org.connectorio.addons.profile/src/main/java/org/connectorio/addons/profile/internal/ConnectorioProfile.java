@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.profile.internal;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -31,6 +32,7 @@ import org.connectorio.addons.profile.ProfileFactoryRegistry;
 import org.connectorio.addons.profile.internal.util.NestedMapCreator;
 import org.openhab.core.common.AbstractUID;
 import org.openhab.core.config.core.Configuration;
+import org.openhab.core.thing.link.ItemChannelLink;
 import org.openhab.core.thing.profiles.Profile;
 import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.thing.profiles.ProfileContext;
@@ -39,6 +41,7 @@ import org.openhab.core.thing.profiles.ProfileTypeUID;
 import org.openhab.core.thing.profiles.StateProfile;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
+import org.openhab.core.types.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,12 +60,14 @@ class ConnectorioProfile implements StateProfile {
     this.context = context;
     this.registry = registry;
 
+    logger.debug("Chained profile configuration {}", context.getConfiguration());
     Map<String, Object> config = new NestedMapCreator().toNestedMap(context.getConfiguration().getProperties());
     if (config.isEmpty()) {
       throw new IllegalArgumentException("Invalid configuration");
     }
 
-    StackedProfileCallback chainedCallback = new StackedProfileCallback();
+    ItemChannelLink link = determnineLink(callback);
+    StackedProfileCallback chainedCallback = new StackedProfileCallback(link);
     for (Entry<String, Object> entry : config.entrySet()) {
       if ("profile".equals(entry.getKey())) {
         continue;
@@ -73,6 +78,7 @@ class ConnectorioProfile implements StateProfile {
 
       Map<String, Object> profileCfg = (Map<String, Object>) entry.getValue();
       String profileType = (String) profileCfg.get("profile");
+      logger.debug("Creating profile {} for config key {}", profileType, entry.getKey());
       Profile createdProfile = getProfileFromFactories(getConfiguredProfileTypeUID(profileType), profileCfg, chainedCallback);
       if (createdProfile == null) {
         Optional<String> supported = registry.getAll().stream()
@@ -89,6 +95,36 @@ class ConnectorioProfile implements StateProfile {
     }
   }
 
+  private ItemChannelLink determnineLink(ProfileCallback callback) {
+    Class<?> clazz = callback.getClass();
+
+    Field linkField = null;
+    do {
+      try {
+        linkField = clazz.getDeclaredField("link");
+      } catch (NoSuchFieldException e) {
+        clazz = clazz.getSuperclass();
+      }
+    } while (linkField == null && clazz != Object.class);
+
+    if (linkField == null) {
+      return null;
+    }
+
+    if (ItemChannelLink.class.equals(linkField.getType())) {
+      try {
+        linkField.setAccessible(true);
+        ItemChannelLink link = (ItemChannelLink) linkField.get(callback);
+        if (link != null && link.getItemName() != null) {
+          return link;
+        }
+      } catch (IllegalAccessException e) {
+        logger.warn("Could not extract link information from profile callback {}.", callback, e);
+      }
+    }
+    return null;
+  }
+
   @Override
   public ProfileTypeUID getProfileTypeUID() {
     return ConnectorioProfiles.PROFILE;
@@ -96,31 +132,60 @@ class ConnectorioProfile implements StateProfile {
 
   @Override
   public void onStateUpdateFromItem(State state) {
-    handleReading(false, (profile) -> profile.onStateUpdateFromItem(state));
+    logger.trace("Chaining state from item to handler {}", state);
+    handleReading(false, state, (profile) -> profile.onStateUpdateFromItem(state));
   }
 
   @Override
   public void onCommandFromItem(Command command) {
-    handleReading(false, (profile) -> profile.onCommandFromItem(command));
+    logger.trace("Chaining command from item to handler {}", command);
+    handleReading(false, command, (profile) -> profile.onCommandFromItem(command));
   }
 
   @Override
   public void onCommandFromHandler(Command command) {
-    handleReading(true, (profile) -> profile.onCommandFromHandler(command));
+    logger.trace("Chaining command from handler to item {}", command);
+    handleReading(true, command, (profile) -> profile.onCommandFromHandler(command));
   }
 
   @Override
   public void onStateUpdateFromHandler(State state) {
-    handleReading(true, (profile) -> profile.onStateUpdateFromHandler(state));
+    logger.trace("Chaining state from handler to item {}", state);
+    handleReading(true, state, (profile) -> profile.onStateUpdateFromHandler(state));
   }
 
-  private void handleReading(boolean incoming, Consumer<StateProfile> head) {
-    executor.execute(new Runnable() {
+  private void handleReading(boolean incoming, Type type, Consumer<StateProfile> head) {
+    context.getExecutorService().execute(new Runnable() {
       @Override
       public void run() {
-        Iterator<StateProfile> iterator = incoming ? profileChain.iterator() : profileChain.descendingIterator();
-        StackedProfileCallback.set(new ChainedProfileCallback(iterator, callback));
-        head.accept(iterator.next());
+        try {
+          Iterator<StateProfile> delegate = incoming ? profileChain.iterator() : profileChain.descendingIterator();
+          Iterator<StateProfile> iterator = new Iterator<StateProfile>() {
+            int pos = 0;
+            @Override
+            public boolean hasNext() {
+              return delegate.hasNext();
+            }
+
+            @Override
+            public StateProfile next() {
+              pos++;
+              return delegate.next();
+            }
+
+            public String toString() {
+              return "Iterator [" + pos + ", " + profileChain + "]";
+            }
+          };
+          ChainedProfileCallback callback = new ChainedProfileCallback(iterator, ConnectorioProfile.this.callback);
+          logger.trace("Setting chained callback for {} to {}", type, callback);
+          StackedProfileCallback.set(callback);
+          head.accept(iterator.next());
+        } catch (Throwable e) {
+          logger.warn("Uncaught error found while calling profile chain for {}", type, e);
+        } finally {
+          StackedProfileCallback.set(null);
+        }
       }
     });
   }

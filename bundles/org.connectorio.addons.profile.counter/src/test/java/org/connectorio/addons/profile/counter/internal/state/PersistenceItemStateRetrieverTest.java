@@ -57,7 +57,8 @@ class PersistenceItemStateRetrieverTest {
     when(persistenceServiceRegistry.getDefault()).thenReturn(persistenceService);
 
     PersistenceItemStateRetriever registry = new PersistenceItemStateRetriever(persistenceServiceRegistry);
-    State state = registry.retrieve(stub);
+    String itemName = registry.getItemName(stub);
+    State state = registry.retrieveState(itemName);
     assertThat(state).isEqualTo(initialState);
   }
 

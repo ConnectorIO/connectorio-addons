@@ -4,10 +4,12 @@
   xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
 
   <config-description uri="profile:connectorio:math-scale">
-    <parameter name="scale" type="integer" required="true">
+    <parameter name="scale" type="decimal" required="true">
       <label>Scale</label>
       <description>
         Value used to multiply values sent from system and divide values received from integration.
+        When set to ie. 10, value received from device will be divided by 10, all values sent to
+        device will be multiplied by 10. Use decimal format 0.1 to achieve opposite result.
       </description>
     </parameter>
   </config-description>

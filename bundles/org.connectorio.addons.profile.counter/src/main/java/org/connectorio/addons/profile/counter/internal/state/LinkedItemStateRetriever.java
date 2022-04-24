@@ -22,6 +22,8 @@ import org.openhab.core.types.State;
 
 public interface LinkedItemStateRetriever {
 
-  State retrieve(ProfileCallback callback);
+  String getItemName(ProfileCallback callback);
+
+  State retrieveState(String itemName);
 
 }

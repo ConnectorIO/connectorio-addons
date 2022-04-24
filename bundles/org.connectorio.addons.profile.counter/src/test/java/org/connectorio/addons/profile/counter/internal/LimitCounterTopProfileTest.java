@@ -112,7 +112,8 @@ class LimitCounterTopProfileTest {
     Configuration config = new Configuration(cfgMap);
 
     when(context.getConfiguration()).thenReturn(config);
-    when(itemStateRetriever.retrieve(callback)).thenReturn(new DecimalType(10.0));
+    when(itemStateRetriever.getItemName(callback)).thenReturn("foo");
+    when(itemStateRetriever.retrieveState("foo")).thenReturn(new DecimalType(10.0));
 
     // we shall start with 10.0 retrieved from persistence
     LimitCounterTopProfile profile = new LimitCounterTopProfile(callback, context, itemStateRetriever);

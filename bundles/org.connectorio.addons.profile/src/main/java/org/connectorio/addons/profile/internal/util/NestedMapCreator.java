@@ -17,16 +17,16 @@
  */
 package org.connectorio.addons.profile.internal.util;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 // little helper to twist keys such as {a.b.c=d, a.b.e=f} into map {a={b={c=d, e=f}}}.
 public class NestedMapCreator {
 
   public Map<String, Object> toNestedMap(Map<String, Object> flattened) {
-    Map<String, Object> nested = new LinkedHashMap<>();
+    Map<String, Object> nested = new TreeMap<>();
     for (Entry<String, Object> entry : flattened.entrySet()) {
       if (entry.getKey().contains(".")) {
         String[] chunks = entry.getKey().split("\\.");

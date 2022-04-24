@@ -22,9 +22,12 @@ import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.thing.profiles.StateProfile;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ChainedProfileCallback implements ProfileCallback {
 
+  private final Logger logger = LoggerFactory.getLogger(ChainedProfileCallback.class);
   private final Iterator<StateProfile> profiles;
   private final ProfileCallback delegate;
 
@@ -36,8 +39,11 @@ public class ChainedProfileCallback implements ProfileCallback {
   @Override
   public void handleCommand(Command command) {
     if (profiles.hasNext()) {
-      profiles.next().onCommandFromItem(command);
+      StateProfile next = profiles.next();
+      logger.trace("Passing command {} to next profile {}", command, next);
+      next.onCommandFromItem(command);
     } else {
+      logger.trace("Passing command {} final callback", command);
       delegate.handleCommand(command);
     }
   }
@@ -45,8 +51,11 @@ public class ChainedProfileCallback implements ProfileCallback {
   @Override
   public void sendCommand(Command command) {
     if (profiles.hasNext()) {
-      profiles.next().onCommandFromHandler(command);
+      StateProfile next = profiles.next();
+      logger.trace("Sending command {} to next profile {}", command, next);
+      next.onCommandFromHandler(command);
     } else {
+      logger.trace("Sending command {} to final callback", command);
       delegate.sendCommand(command);
     }
   }
@@ -54,9 +63,16 @@ public class ChainedProfileCallback implements ProfileCallback {
   @Override
   public void sendUpdate(State state) {
     if (profiles.hasNext()) {
-      profiles.next().onStateUpdateFromHandler(state);
+      StateProfile next = profiles.next();
+      logger.trace("Sending state {} to next profile {}", state, next);
+      next.onStateUpdateFromHandler(state);
     } else {
+      logger.trace("Sending state {} to final callback", state);
       delegate.sendUpdate(state);
     }
+  }
+
+  public String toString() {
+    return "ChainedProfileCallback [" + profiles + ", " + delegate + "]";
   }
 }
