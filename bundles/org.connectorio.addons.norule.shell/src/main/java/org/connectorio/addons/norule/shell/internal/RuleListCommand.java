@@ -20,6 +20,7 @@ package org.connectorio.addons.norule.shell.internal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import org.connectorio.addons.norule.Condition;
 import org.connectorio.addons.norule.RuleRegistry;
 import org.connectorio.addons.norule.Rule;
 import org.connectorio.addons.norule.Trigger;
@@ -55,6 +56,13 @@ public class RuleListCommand extends AbstractConsoleCommandExtension {
         console.println(" triggers:");
         for (Trigger trigger : triggers) {
           console.println(" - " + trigger);
+        }
+      }
+      Set<Condition> conditions = rule.getConditions();
+      if (!conditions.isEmpty()) {
+        console.println(" condition:");
+        for (Condition condition : conditions) {
+          console.println(" - " + condition + " (evaluates to: " + condition.evaluate() + ")");
         }
       }
       console.println("");
