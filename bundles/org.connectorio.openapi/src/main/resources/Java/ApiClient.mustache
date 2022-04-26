@@ -1,0 +1,519 @@
+package {{invokerPackage}};
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+{{>generatedAnnotation}}
+public class ApiClient {
+  private Map<String, String> defaultHeaderMap = new HashMap<String, String>();
+  private Map<String, String> defaultCookieMap = new HashMap<String, String>();
+  private String basePath = "{{{basePath}}}";
+  private boolean debugging = false;
+
+  private Client httpClient;
+  private String tempFolderPath = null;
+
+  private int statusCode;
+  private Map<String, List<String>> responseHeaders;
+
+  private DateFormat dateFormat;
+
+
+  public ApiClient(Client client) {
+    this.httpClient = client;
+  }
+
+  public ApiClient(ClientBuilder clientBuilder) {
+    this(clientBuilder.build());
+  }
+
+  public Client getHttpClient() {
+    return httpClient;
+  }
+
+  public ApiClient setHttpClient(Client httpClient) {
+    this.httpClient = httpClient;
+    return this;
+  }
+
+  public String getBasePath() {
+    return basePath;
+  }
+
+  public ApiClient setBasePath(String basePath) {
+    this.basePath = basePath;
+    return this;
+  }
+
+  /**
+   * Gets the status code of the previous request
+   * @return the status code of the previous request
+   */
+  public int getStatusCode() {
+    return statusCode;
+  }
+
+  /**
+   * Gets the response headers of the previous request
+   * @return the response headers of the previous request
+   */
+  public Map<String, List<String>> getResponseHeaders() {
+    return responseHeaders;
+  }
+  /**
+   * Set the User-Agent header's value (by adding to the default header map).
+   * @param userAgent the User-Agent header value
+   * @return this {@code ApiClient}
+   */
+  public ApiClient setUserAgent(String userAgent) {
+    addDefaultHeader("User-Agent", userAgent);
+    return this;
+  }
+
+  /**
+   * Add a default header.
+   *
+   * @param key The header's key
+   * @param value The header's value
+   * @return this {@code ApiClient}
+   */
+  public ApiClient addDefaultHeader(String key, String value) {
+    defaultHeaderMap.put(key, value);
+    return this;
+  }
+
+  /**
+   * Check that whether debugging is enabled for this API client.
+   * @return {@code true} if debugging is enabled for this API client
+   */
+  public boolean isDebugging() {
+    return debugging;
+  }
+
+  /**
+   * Enable/disable debugging for this API client.
+   *
+   * @param debugging To enable (true) or disable (false) debugging
+   * @return this {@code ApiClient}
+   */
+  public ApiClient setDebugging(boolean debugging) {
+    this.debugging = debugging;
+    // Rebuild HTTP Client according to the new "debugging" value.
+    this.httpClient = buildHttpClient(debugging);
+    return this;
+  }
+
+  /**
+   * The path of temporary folder used to store downloaded files from endpoints
+   * with file response. The default value is <code>null</code>, i.e. using
+   * the system's default temporary folder.
+   *
+   * @return the temporary folder path
+   * @see <a href="https://docs.oracle.com/javase/7/docs/api/java/nio/file/Files.html#createTempFile(java.lang.String,%20java.lang.String,%20java.nio.file.attribute.FileAttribute...)">createTempFile</a>
+   */
+  public String getTempFolderPath() {
+    return tempFolderPath;
+  }
+
+  public ApiClient setTempFolderPath(String tempFolderPath) {
+    this.tempFolderPath = tempFolderPath;
+    return this;
+  }
+
+  /**
+   * Get the date format used to parse/format date parameters.
+   * @return the date format used to parse/format date parameters
+   */
+  public DateFormat getDateFormat() {
+    return dateFormat;
+  }
+
+  /**
+   * Parse the given string into Date object.
+   * @param str a string to parse
+   * @return a {@code Date} object
+   */
+  public Date parseDate(String str) {
+    try {
+      return dateFormat.parse(str);
+    } catch (java.text.ParseException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Format the given Date object into string.
+   * @param date a {@code Date} object to format
+   * @return the {@code String} version of the {@code Date} object
+   */
+  public String formatDate(Date date) {
+    return dateFormat.format(date);
+  }
+
+  /**
+   * Format the given parameter object into string.
+   * @param param an object to format
+   * @return the {@code String} version of the object
+   */
+  public String parameterToString(Object param) {
+    if (param == null) {
+      return "";
+    } else if (param instanceof Date) {
+      return formatDate((Date) param);
+    } {{#jsr310}}else if (param instanceof OffsetDateTime) {
+      return formatOffsetDateTime((OffsetDateTime) param);
+    } {{/jsr310}}else if (param instanceof Collection) {
+      StringBuilder b = new StringBuilder();
+      for(Object o : (Collection)param) {
+        if(b.length() > 0) {
+          b.append(",");
+        }
+        b.append(String.valueOf(o));
+      }
+      return b.toString();
+    } else {
+      return String.valueOf(param);
+    }
+  }
+
+  /*
+    Format to {@code Pair} objects.
+  */
+  public List<Pair> parameterToPairs(String collectionFormat, String name, Object value){
+    List<Pair> params = new ArrayList<Pair>();
+
+    // preconditions
+    if (name == null || name.isEmpty() || value == null) return params;
+
+    Collection valueCollection = null;
+    if (value instanceof Collection) {
+      valueCollection = (Collection) value;
+    } else {
+      params.add(new Pair(name, parameterToString(value)));
+      return params;
+    }
+
+    if (valueCollection.isEmpty()){
+      return params;
+    }
+
+    // get the collection format
+    collectionFormat = (collectionFormat == null || collectionFormat.isEmpty() ? "csv" : collectionFormat); // default: csv
+
+    // create the params based on the collection format
+    if (collectionFormat.equals("multi")) {
+      for (Object item : valueCollection) {
+        params.add(new Pair(name, parameterToString(item)));
+      }
+
+      return params;
+    }
+
+    String delimiter = ",";
+
+    if (collectionFormat.equals("csv")) {
+      delimiter = ",";
+    } else if (collectionFormat.equals("ssv")) {
+      delimiter = " ";
+    } else if (collectionFormat.equals("tsv")) {
+      delimiter = "\t";
+    } else if (collectionFormat.equals("pipes")) {
+      delimiter = "|";
+    }
+
+    StringBuilder sb = new StringBuilder() ;
+    for (Object item : valueCollection) {
+      sb.append(delimiter);
+      sb.append(parameterToString(item));
+    }
+
+    params.add(new Pair(name, sb.substring(1)));
+
+    return params;
+  }
+
+  /**
+   * Escape the given string to be used as URL query value.
+   * @param str a {@code String} to escape
+   * @return the escaped version of the {@code String}
+   */
+  public String escapeString(String str) {
+    try {
+      return URLEncoder.encode(str, "utf8").replaceAll("\\+", "%20");
+    } catch (UnsupportedEncodingException e) {
+      return str;
+    }
+  }
+
+  /**
+   * Serialize the given Java object into string entity according the given
+   * Content-Type (only JSON is supported for now).
+   * @param obj the object to serialize
+   * @param formParams the form parameters
+   * @param contentType the content type
+   * @return an {@code Entity}
+   * @throws ApiException on failure to serialize
+   */
+  public Entity<?> serialize(Object obj, Map<String, Object> formParams, String contentType) throws ApiException {
+    return Entity.entity(obj, contentType);
+  }
+
+  /**
+   * Deserialize response body to Java object according to the Content-Type.
+   * @param <T> a Java type parameter
+   * @param response the response body to deserialize
+   * @param returnType a Java type to deserialize into
+   * @return a deserialized Java object
+   * @throws ApiException on failure to deserialize
+   */
+  public <T> T deserialize(Response response, GenericType<T> returnType) throws ApiException {
+    if (response == null || returnType == null) {
+      return null;
+    }
+
+    if ("byte[]".equals(returnType.toString())) {
+      // Handle binary response (byte array).
+      return (T) response.readEntity(byte[].class);
+    } else if (returnType.equals(File.class)) {
+      // Handle file downloading.
+      @SuppressWarnings("unchecked")
+      T file = (T) downloadFileFromResponse(response);
+      return file;
+    }
+
+    String contentType = null;
+    List<Object> contentTypes = response.getHeaders().get("Content-Type");
+    if (contentTypes != null && !contentTypes.isEmpty())
+      contentType = String.valueOf(contentTypes.get(0));
+    if (contentType == null)
+      throw new ApiException(500, "missing Content-Type in response");
+
+    return response.readEntity(returnType);
+  }
+
+  /**
+   * Download file from the given response.
+   * @param response a response
+   * @return a file from the given response
+   * @throws ApiException If fail to read file content from response and write to disk
+   */
+  public File downloadFileFromResponse(Response response) throws ApiException {
+    try {
+      File file = prepareDownloadFile(response);
+      Files.copy(response.readEntity(InputStream.class), file.toPath());
+      return file;
+    } catch (IOException e) {
+      throw new ApiException(e);
+    }
+  }
+
+  public File prepareDownloadFile(Response response) throws IOException {
+    String filename = null;
+    String contentDisposition = (String) response.getHeaders().getFirst("Content-Disposition");
+    if (contentDisposition != null && !"".equals(contentDisposition)) {
+      // Get filename from the Content-Disposition header.
+      Pattern pattern = Pattern.compile("filename=['\"]?([^'\"\\s]+)['\"]?");
+      Matcher matcher = pattern.matcher(contentDisposition);
+      if (matcher.find())
+        filename = matcher.group(1);
+    }
+
+    String prefix = null;
+    String suffix = null;
+    if (filename == null) {
+      prefix = "download-";
+      suffix = "";
+    } else {
+      int pos = filename.lastIndexOf(".");
+      if (pos == -1) {
+        prefix = filename + "-";
+      } else {
+        prefix = filename.substring(0, pos) + "-";
+        suffix = filename.substring(pos);
+      }
+      // Files.createTempFile requires the prefix to be at least three characters long
+      if (prefix.length() < 3)
+        prefix = "download-";
+    }
+
+    if (tempFolderPath == null)
+      return Files.createTempFile(prefix, suffix).toFile();
+    else
+      return Files.createTempFile(Paths.get(tempFolderPath), prefix, suffix).toFile();
+  }
+
+  /**
+   * Invoke API by sending HTTP request with the given options.
+   *
+   * @param <T> a Java type parameter
+   * @param path The sub-path of the HTTP URL
+   * @param method The request method, one of "GET", "POST", "PUT", "HEAD" and "DELETE"
+   * @param queryParams The query parameters
+   * @param body The request body object
+   * @param headerParams The header parameters
+   * @param cookieParams The cookie parameters
+   * @param formParams The form parameters
+   * @param accept The request's Accept header
+   * @param contentType The request's Content-Type header
+   * @param authNames The authentications to apply
+   * @param returnType The return type into which to deserialize the response
+   * @return The response body in type of string
+   * @throws ApiException if the invocation failed
+   */
+  public <T> T invokeAPI(String path, String method, List<Pair> queryParams, Object body, Map<String, String> headerParams, Map<String, String> cookieParams, Map<String, Object> formParams, String accept, String contentType, String[] authNames, GenericType<T> returnType) throws ApiException {
+    // Not using `.target(this.basePath).path(path)` below,
+    // to support (constant) query string in `path`, e.g. "/posts?draft=1"
+    WebTarget target = httpClient.target(this.basePath + path);
+
+    if (queryParams != null) {
+      for (Pair queryParam : queryParams) {
+        if (queryParam.getValue() != null) {
+          target = target.queryParam(queryParam.getName(), queryParam.getValue());
+        }
+      }
+    }
+
+    Invocation.Builder invocationBuilder = target.request().accept(accept);
+
+    for (Entry<String, String> headerParamsEntry : headerParams.entrySet()) {
+      String value = headerParamsEntry.getValue();
+      if (value != null) {
+        invocationBuilder = invocationBuilder.header(headerParamsEntry.getKey(), value);
+      }
+    }
+
+    for (Entry<String, String> defaultHeaderEntry: defaultHeaderMap.entrySet()) {
+      if (!headerParams.containsKey(defaultHeaderEntry.getKey())) {
+        String value = defaultHeaderEntry.getValue();
+        if (value != null) {
+          invocationBuilder = invocationBuilder.header(defaultHeaderEntry.getKey(), value);
+        }
+      }
+    }
+
+    for (Entry<String, String> cookieParamsEntry : cookieParams.entrySet()) {
+      String value = cookieParamsEntry.getValue();
+      if (value != null) {
+        invocationBuilder = invocationBuilder.cookie(cookieParamsEntry.getKey(), value);
+      }
+    }
+
+    for (Entry<String, String> defaultCookieEntry: defaultHeaderMap.entrySet()) {
+      if (!cookieParams.containsKey(defaultCookieEntry.getKey())) {
+        String value = defaultCookieEntry.getValue();
+        if (value != null) {
+          invocationBuilder = invocationBuilder.cookie(defaultCookieEntry.getKey(), value);
+        }
+      }
+    }
+
+    Entity<?> entity = serialize(body, formParams, contentType);
+
+    Response response = null;
+
+    if ("GET".equals(method)) {
+      response = invocationBuilder.get();
+    } else if ("POST".equals(method)) {
+      response = invocationBuilder.post(entity);
+    } else if ("PUT".equals(method)) {
+      response = invocationBuilder.put(entity);
+    } else if ("DELETE".equals(method)) {
+      response = invocationBuilder.method("DELETE", entity);
+    } else if ("PATCH".equals(method)) {
+      response = invocationBuilder.method("PATCH", entity);
+    } else if ("HEAD".equals(method)) {
+      response = invocationBuilder.head();
+    } else if ("OPTIONS".equals(method)) {
+      response = invocationBuilder.options();
+    } else if ("TRACE".equals(method)) {
+      response = invocationBuilder.trace();
+    } else {
+      throw new ApiException(500, "unknown method type " + method);
+    }
+
+    statusCode = response.getStatusInfo().getStatusCode();
+    responseHeaders = buildResponseHeaders(response);
+
+    if (response.getStatus() == Status.NO_CONTENT.getStatusCode()) {
+      return null;
+    } else if (response.getStatusInfo().getFamily().equals(Status.Family.SUCCESSFUL)) {
+      if (returnType == null)
+        return null;
+      else
+        return deserialize(response, returnType);
+    } else {
+      String message = "error";
+      String respBody = null;
+      if (response.hasEntity()) {
+        try {
+          respBody = String.valueOf(response.readEntity(String.class));
+          message = respBody;
+        } catch (RuntimeException e) {
+          // e.printStackTrace();
+        }
+      }
+      throw new ApiException(
+        response.getStatus(),
+        message,
+        buildResponseHeaders(response),
+        respBody);
+    }
+  }
+
+   /**
+   * Build the Client used to make HTTP requests.
+   */
+  private Client buildHttpClient(boolean debugging) {
+    final ClientConfiguration clientConfig = new ClientConfiguration(ResteasyProviderFactory.getInstance());
+    clientConfig.register(json);
+    if(debugging){
+      clientConfig.register(Logger.class);
+    }
+    return ClientBuilder.newClient(clientConfig);
+  }
+  private Map<String, List<String>> buildResponseHeaders(Response response) {
+    Map<String, List<String>> responseHeaders = new HashMap<String, List<String>>();
+    for (Entry<String, List<Object>> entry: response.getHeaders().entrySet()) {
+      List<Object> values = entry.getValue();
+      List<String> headers = new ArrayList<String>();
+      for (Object o : values) {
+        headers.add(String.valueOf(o));
+      }
+      responseHeaders.put(entry.getKey(), headers);
+    }
+    return responseHeaders;
+  }
+
+}
