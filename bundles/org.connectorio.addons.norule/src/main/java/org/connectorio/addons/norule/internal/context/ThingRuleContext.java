@@ -18,6 +18,7 @@
 package org.connectorio.addons.norule.internal.context;
 
 import org.connectorio.addons.norule.Rule;
+import org.connectorio.addons.norule.StateDispatcher;
 import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.connectorio.addons.norule.Trigger;
 import org.connectorio.addons.norule.context.ThingContext;
@@ -28,8 +29,9 @@ public class ThingRuleContext extends BaseRuleContext implements ThingContext {
 
   protected final Thing thing;
 
-  public ThingRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger, Thing thing) {
-    super(rule, itemRegistry, actionsRegistry, trigger);
+  public ThingRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry,
+    StateDispatcher stateDispatcher, Trigger trigger, Thing thing) {
+    super(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger);
     this.thing = thing;
   }
 

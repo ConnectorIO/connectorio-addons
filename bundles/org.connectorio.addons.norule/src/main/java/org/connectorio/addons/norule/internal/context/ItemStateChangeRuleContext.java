@@ -19,6 +19,7 @@ package org.connectorio.addons.norule.internal.context;
 
 import org.connectorio.addons.norule.ItemContext;
 import org.connectorio.addons.norule.Rule;
+import org.connectorio.addons.norule.StateDispatcher;
 import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.connectorio.addons.norule.Trigger;
 import org.connectorio.addons.norule.context.ItemStateChangeContext;
@@ -32,8 +33,9 @@ public class ItemStateChangeRuleContext extends BaseRuleContext implements ItemS
   private final State previousState;
   private final State currentState;
 
-  public ItemStateChangeRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger, String itemName, State previousState, State currentState) {
-    super(rule, itemRegistry, actionsRegistry, trigger);
+  public ItemStateChangeRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry,
+    StateDispatcher stateDispatcher, Trigger trigger, String itemName, State previousState, State currentState) {
+    super(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger);
     this.itemName = itemName;
     this.previousState = previousState;
     this.currentState = currentState;
@@ -42,7 +44,7 @@ public class ItemStateChangeRuleContext extends BaseRuleContext implements ItemS
   @Override
   public ItemContext item(String itemName) {
     if (this.itemName.equals(itemName)) {
-      return new StateChangeItemContext(itemRegistry.get(itemName), currentState);
+      return new StateChangeItemContext(stateDispatcher, itemRegistry.get(itemName), currentState);
     }
     return super.item(itemName);
   }

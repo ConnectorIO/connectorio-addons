@@ -18,6 +18,7 @@
 package org.connectorio.addons.norule.internal.context;
 
 import org.connectorio.addons.norule.Rule;
+import org.connectorio.addons.norule.StateDispatcher;
 import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.connectorio.addons.norule.Trigger;
 import org.connectorio.addons.norule.context.ScheduledContext;
@@ -30,8 +31,9 @@ public class ScheduledRuleContext extends BaseRuleContext implements ScheduledCo
   private final long firstRun;
   private final Long previousRun;
 
-  public ScheduledRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger, long registration, long currentRun, long firstRun, Long previousRun) {
-    super(rule, itemRegistry, actionsRegistry, trigger);
+  public ScheduledRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry,
+    StateDispatcher stateDispatcher, Trigger trigger, long registration, long currentRun, long firstRun, Long previousRun) {
+    super(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger);
     this.registration = registration;
     this.currentRun = currentRun;
     this.firstRun = firstRun;

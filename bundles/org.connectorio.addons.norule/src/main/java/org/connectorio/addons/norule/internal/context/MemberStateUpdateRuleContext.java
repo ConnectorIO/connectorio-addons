@@ -18,6 +18,7 @@
 package org.connectorio.addons.norule.internal.context;
 
 import org.connectorio.addons.norule.Rule;
+import org.connectorio.addons.norule.StateDispatcher;
 import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.connectorio.addons.norule.Trigger;
 import org.connectorio.addons.norule.context.MemberStateUpdateContext;
@@ -29,8 +30,9 @@ public class MemberStateUpdateRuleContext extends ItemStateUpdateRuleContext imp
 
   private final String group;
 
-  public MemberStateUpdateRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger, String group, String itemName, State currentState) {
-    super(rule, itemRegistry, actionsRegistry, trigger, itemName, currentState);
+  public MemberStateUpdateRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry,
+    StateDispatcher stateDispatcher, Trigger trigger, String group, String itemName, State currentState) {
+    super(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, itemName, currentState);
     this.group = group;
   }
 

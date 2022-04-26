@@ -18,6 +18,7 @@
 package org.connectorio.addons.norule.internal.context;
 
 import org.connectorio.addons.norule.Rule;
+import org.connectorio.addons.norule.StateDispatcher;
 import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.connectorio.addons.norule.Trigger;
 import org.connectorio.addons.norule.context.StartLevelContext;
@@ -28,8 +29,9 @@ public class StartLevelRuleContext extends BaseRuleContext implements StartLevel
   private final int oldStartLevel;
   private final int startLevel;
 
-  public StartLevelRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger, int oldStartLevel, int startLevel) {
-    super(rule, itemRegistry, actionsRegistry, trigger);
+  public StartLevelRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry,
+    StateDispatcher stateDispatcher, Trigger trigger, int oldStartLevel, int startLevel) {
+    super(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger);
     this.oldStartLevel = oldStartLevel;
     this.startLevel = startLevel;
   }

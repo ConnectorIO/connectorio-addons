@@ -18,6 +18,7 @@
 package org.connectorio.addons.norule.internal.context;
 
 import org.connectorio.addons.norule.Rule;
+import org.connectorio.addons.norule.StateDispatcher;
 import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.connectorio.addons.norule.Trigger;
 import org.connectorio.addons.norule.context.ReadyMarkerRemovedContext;
@@ -26,8 +27,9 @@ import org.openhab.core.service.ReadyMarker;
 
 public class ReadyMarkerRemovedRuleContext extends ReadyMarkerRuleContext implements ReadyMarkerRemovedContext {
 
-  public ReadyMarkerRemovedRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger, ReadyMarker marker) {
-    super(rule, itemRegistry, actionsRegistry, trigger, marker);
+  public ReadyMarkerRemovedRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry,
+    StateDispatcher stateDispatcher, Trigger trigger, ReadyMarker marker) {
+    super(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, marker);
   }
 
 }

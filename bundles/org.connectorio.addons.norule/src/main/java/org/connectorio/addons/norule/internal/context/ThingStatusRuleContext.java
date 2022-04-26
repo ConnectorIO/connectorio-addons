@@ -18,6 +18,7 @@
 package org.connectorio.addons.norule.internal.context;
 
 import org.connectorio.addons.norule.Rule;
+import org.connectorio.addons.norule.StateDispatcher;
 import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.connectorio.addons.norule.Trigger;
 import org.connectorio.addons.norule.context.ThingContext;
@@ -30,8 +31,8 @@ public class ThingStatusRuleContext extends ThingRuleContext implements ThingSta
 
   private final ThingStatusInfo currentStatus;
 
-  public ThingStatusRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger, Thing thing, ThingStatusInfo currentStatus) {
-    super(rule, itemRegistry, actionsRegistry, trigger, thing);
+  public ThingStatusRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, StateDispatcher stateDispatcher, Trigger trigger, Thing thing, ThingStatusInfo currentStatus) {
+    super(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, thing);
     this.currentStatus = currentStatus;
   }
 

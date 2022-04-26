@@ -18,6 +18,7 @@
 package org.connectorio.addons.norule.internal.context;
 
 import org.connectorio.addons.norule.Rule;
+import org.connectorio.addons.norule.StateDispatcher;
 import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.connectorio.addons.norule.Trigger;
 import org.connectorio.addons.norule.context.ReadyMarkerContext;
@@ -28,8 +29,9 @@ public class ReadyMarkerRuleContext extends BaseRuleContext implements ReadyMark
 
   private final ReadyMarker marker;
 
-  public ReadyMarkerRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger, ReadyMarker marker) {
-    super(rule, itemRegistry, actionsRegistry, trigger);
+  public ReadyMarkerRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry,
+    StateDispatcher stateDispatcher, Trigger trigger, ReadyMarker marker) {
+    super(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger);
     this.marker = marker;
   }
 

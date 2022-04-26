@@ -19,16 +19,19 @@ package org.connectorio.addons.norule.internal.context;
 
 import java.util.Optional;
 import org.connectorio.addons.norule.ItemContext;
+import org.connectorio.addons.norule.StateDispatcher;
 import org.openhab.core.items.GenericItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.types.State;
 
 public class StateChangeItemContext implements ItemContext {
 
+  private final StateDispatcher stateDispatcher;
   private final Item item;
   private final State state;
 
-  public StateChangeItemContext(Item item, State state) {
+  public StateChangeItemContext(StateDispatcher stateDispatcher, Item item, State state) {
+    this.stateDispatcher = stateDispatcher;
     this.item = item;
     this.state = state;
   }
@@ -45,8 +48,6 @@ public class StateChangeItemContext implements ItemContext {
 
   @Override
   public void state(State state) {
-    if (item instanceof GenericItem) {
-      ((GenericItem) item).setState(state);
-    }
+    stateDispatcher.dispatch(item, state);
   }
 }

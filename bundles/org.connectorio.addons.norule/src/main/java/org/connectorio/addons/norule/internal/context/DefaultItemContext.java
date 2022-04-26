@@ -18,16 +18,19 @@
 package org.connectorio.addons.norule.internal.context;
 
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import org.connectorio.addons.norule.ItemContext;
-import org.openhab.core.items.GenericItem;
+import org.connectorio.addons.norule.StateDispatcher;
 import org.openhab.core.items.Item;
 import org.openhab.core.types.State;
 
 public class DefaultItemContext implements ItemContext {
 
+  private final StateDispatcher stateDispatcher;
   private final Item item;
 
-  public DefaultItemContext(Item item) {
+  public DefaultItemContext(StateDispatcher stateDispatcher, Item item) {
+    this.stateDispatcher = stateDispatcher;
     this.item = item;
   }
 
@@ -43,8 +46,6 @@ public class DefaultItemContext implements ItemContext {
 
   @Override
   public void state(State state) {
-    if (item instanceof GenericItem) {
-      ((GenericItem) item).setState(state);
-    }
+    stateDispatcher.dispatch(item, state);
   }
 }

@@ -18,6 +18,7 @@
 package org.connectorio.addons.norule.internal.context;
 
 import org.connectorio.addons.norule.Rule;
+import org.connectorio.addons.norule.StateDispatcher;
 import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.connectorio.addons.norule.Trigger;
 import org.connectorio.addons.norule.context.ItemStateUpdateContext;
@@ -28,8 +29,9 @@ public class ItemStateUpdateRuleContext extends BaseItemRuleContext implements I
 
   private final State currentState;
 
-  public ItemStateUpdateRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger, String itemName, State currentState) {
-    super(rule, itemRegistry, actionsRegistry, trigger, itemName);
+  public ItemStateUpdateRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry,
+    StateDispatcher stateDispatcher, Trigger trigger, String itemName, State currentState) {
+    super(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, itemName);
     this.currentState = currentState;
   }
 

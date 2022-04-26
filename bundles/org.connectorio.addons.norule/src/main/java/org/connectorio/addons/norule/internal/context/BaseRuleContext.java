@@ -18,15 +18,20 @@
 package org.connectorio.addons.norule.internal.context;
 
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import org.connectorio.addons.norule.Action;
 import org.connectorio.addons.norule.ItemContext;
 import org.connectorio.addons.norule.Rule;
 import org.connectorio.addons.norule.RuleContext;
+import org.connectorio.addons.norule.StateDispatcher;
 import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.connectorio.addons.norule.Trigger;
+import org.openhab.core.items.GenericItem;
+import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.thing.ThingUID;
 import org.openhab.core.thing.binding.ThingActions;
+import org.openhab.core.types.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,12 +41,16 @@ public abstract class BaseRuleContext implements RuleContext {
   protected final Rule rule;
   protected final ItemRegistry itemRegistry;
   protected final ThingActionsRegistry actionsRegistry;
+  protected final StateDispatcher stateDispatcher;
   protected final Trigger trigger;
 
-  public BaseRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Trigger trigger) {
+
+  public BaseRuleContext(Rule rule, ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry,
+    StateDispatcher stateDispatcher, Trigger trigger) {
     this.rule = rule;
     this.itemRegistry = itemRegistry;
     this.actionsRegistry = actionsRegistry;
+    this.stateDispatcher = stateDispatcher;
     this.trigger = trigger;
   }
 
@@ -53,7 +62,7 @@ public abstract class BaseRuleContext implements RuleContext {
   @Override
   public ItemContext item(String itemName) {
     return Optional.ofNullable(itemRegistry.get(itemName))
-      .<ItemContext>map(DefaultItemContext::new)
+      .<ItemContext>map(item -> new DefaultItemContext(stateDispatcher, item))
       .orElseGet(EmptyRuleContext::new);
   }
 

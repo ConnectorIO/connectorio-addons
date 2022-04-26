@@ -44,6 +44,7 @@ import org.connectorio.addons.norule.RuleRegistry;
 import org.connectorio.addons.norule.RuleUID;
 import org.connectorio.addons.norule.Scheduled;
 import org.connectorio.addons.norule.SkipExecutionException;
+import org.connectorio.addons.norule.StateDispatcher;
 import org.connectorio.addons.norule.ThingActionsRegistry;
 import org.connectorio.addons.norule.Trigger;
 import org.connectorio.addons.norule.internal.context.EmptyTriggerRuleContext;
@@ -58,6 +59,8 @@ import org.connectorio.addons.norule.internal.context.StartLevelRuleContext;
 import org.connectorio.addons.norule.internal.context.ThingStatusChangeRuleContext;
 import org.connectorio.addons.norule.internal.context.ThingStatusRuleContext;
 import org.connectorio.addons.norule.RuleExecutor;
+import org.connectorio.addons.norule.internal.dispatch.FallbackStateDispatcher;
+import org.connectorio.addons.norule.internal.dispatch.EventPublisherStateDispatcher;
 import org.connectorio.addons.norule.internal.executor.DefaultRuleExecutor;
 import org.connectorio.addons.norule.internal.trigger.EmptyTrigger;
 import org.connectorio.addons.norule.internal.trigger.MemberStateChangeTrigger;
@@ -77,6 +80,7 @@ import org.connectorio.chrono.shared.PastPeriodCalculator;
 import org.openhab.core.common.registry.RegistryChangeListener;
 import org.openhab.core.events.Event;
 import org.openhab.core.events.EventFilter;
+import org.openhab.core.events.EventPublisher;
 import org.openhab.core.events.EventSubscriber;
 import org.openhab.core.events.system.StartlevelEvent;
 import org.openhab.core.items.GroupItem;
@@ -115,24 +119,38 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
   private final ItemRegistry itemRegistry;
   private final ReadyService readyService;
   private final ThingActionsRegistry actionsRegistry;
+  private final StateDispatcher stateDispatcher;
   private final AtomicInteger startLevel = new AtomicInteger();
 
   public NoRuleManager(RuleRegistry ruleRegistry,
       ThingRegistry thingRegistry, ItemRegistry itemRegistry,
       ReadyService readyService, ThingActionsRegistry actionsRegistry) {
-    this(ruleRegistry, new DefaultRuleExecutor(), thingRegistry, itemRegistry, readyService, actionsRegistry);
+    this(ruleRegistry, new DefaultRuleExecutor(), thingRegistry, itemRegistry, readyService, actionsRegistry,
+      new FallbackStateDispatcher()
+    );
   }
 
   @Activate
   public NoRuleManager(@Reference RuleRegistry ruleRegistry, @Reference RuleExecutor ruleExecutor,
     @Reference ThingRegistry thingRegistry, @Reference ItemRegistry itemRegistry,
-    @Reference ReadyService readyService, @Reference ThingActionsRegistry actionsRegistry) {
+    @Reference ReadyService readyService, @Reference ThingActionsRegistry actionsRegistry,
+    @Reference EventPublisher eventPublisher) {
+    this(ruleRegistry, ruleExecutor, thingRegistry, itemRegistry, readyService, actionsRegistry,
+      new EventPublisherStateDispatcher(eventPublisher)
+    );
+  }
+
+  protected NoRuleManager(RuleRegistry ruleRegistry, RuleExecutor ruleExecutor,
+      ThingRegistry thingRegistry, ItemRegistry itemRegistry,
+      ReadyService readyService, ThingActionsRegistry actionsRegistry,
+      StateDispatcher stateDispatcher) {
     this.ruleRegistry = ruleRegistry;
     this.ruleExecutor = ruleExecutor;
     this.thingRegistry = thingRegistry;
     this.itemRegistry = itemRegistry;
     this.readyService = readyService;
     this.actionsRegistry = actionsRegistry;
+    this.stateDispatcher = stateDispatcher;
     readyService.registerTracker(this, new ReadyMarkerFilter());
     ruleRegistry.addRegistryChangeListener(this);
   }
@@ -157,9 +175,9 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
         }
       }
       if (schedule != null) {
-        ruleExecutor.execute(new ScheduledRunnable(itemRegistry, actionsRegistry, rule, schedule));
+        ruleExecutor.execute(new ScheduledRunnable(itemRegistry, actionsRegistry, rule, stateDispatcher, schedule));
       } else {
-        ruleExecutor.execute(new RuleRunnable(rule, new EmptyTriggerRuleContext(rule, itemRegistry, actionsRegistry, new EmptyTrigger())));
+        ruleExecutor.execute(new RuleRunnable(rule, new EmptyTriggerRuleContext(rule, itemRegistry, actionsRegistry, stateDispatcher, new EmptyTrigger())));
       }
     }
   }
@@ -191,36 +209,36 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
 //      });
     } else if (event instanceof ItemStateChangedEvent) {
       ItemStateChangedEvent stateChangeEvent = (ItemStateChangedEvent) event;
-      fire((rule, trigger) -> new ItemStateChangeRuleContext(rule, itemRegistry, actionsRegistry, trigger, stateChangeEvent.getItemName(), stateChangeEvent.getOldItemState(), stateChangeEvent.getItemState()), (trigger) -> {
+      fire((rule, trigger) -> new ItemStateChangeRuleContext(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, stateChangeEvent.getItemName(), stateChangeEvent.getOldItemState(), stateChangeEvent.getItemState()), (trigger) -> {
         return trigger instanceof StateChangeTrigger && stateChangeEvent.getItemName().equals(((StateChangeTrigger) trigger).getItemName());
       });
-      fire((rule, trigger) -> new MemberStateChangeRuleContext(rule, itemRegistry, actionsRegistry, trigger, ((MemberStateChangeTrigger) trigger).getGroupName(), stateChangeEvent.getItemName(), stateChangeEvent.getOldItemState(), stateChangeEvent.getItemState()), (trigger) -> {
+      fire((rule, trigger) -> new MemberStateChangeRuleContext(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, ((MemberStateChangeTrigger) trigger).getGroupName(), stateChangeEvent.getItemName(), stateChangeEvent.getOldItemState(), stateChangeEvent.getItemState()), (trigger) -> {
         return trigger instanceof MemberStateChangeTrigger && isMemberOf(((MemberStateChangeTrigger) trigger).getGroupName(), stateChangeEvent.getItemName());
       });
     } else if (event instanceof ItemStateEvent) {
       ItemStateEvent stateEvent = (ItemStateEvent) event;
-      fire((rule, trigger) -> new ItemStateUpdateRuleContext(rule, itemRegistry, actionsRegistry, trigger, stateEvent.getItemName(), stateEvent.getItemState()), (trigger -> {
+      fire((rule, trigger) -> new ItemStateUpdateRuleContext(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, stateEvent.getItemName(), stateEvent.getItemState()), (trigger -> {
         return trigger instanceof StateUpdateTrigger && stateEvent.getItemName().equals(((StateUpdateTrigger) trigger).getItemName());
       }));
-      fire((rule, trigger) -> new MemberStateUpdateRuleContext(rule, itemRegistry, actionsRegistry, trigger, ((MemberStateUpdateTrigger) trigger).getGroupName(), stateEvent.getItemName(), stateEvent.getItemState()), (trigger) -> {
+      fire((rule, trigger) -> new MemberStateUpdateRuleContext(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, ((MemberStateUpdateTrigger) trigger).getGroupName(), stateEvent.getItemName(), stateEvent.getItemState()), (trigger) -> {
         return trigger instanceof MemberStateUpdateTrigger && isMemberOf(((MemberStateUpdateTrigger) trigger).getGroupName(), stateEvent.getItemName());
       });
     } else if (event instanceof StartlevelEvent) {
       StartlevelEvent startlevelEvent = (StartlevelEvent) event;
-      fire((rule, trigger) -> new StartLevelRuleContext(rule, itemRegistry, actionsRegistry, trigger, startLevel.get(), startlevelEvent.getStartlevel()), (trigger -> {
+      fire((rule, trigger) -> new StartLevelRuleContext(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, startLevel.get(), startlevelEvent.getStartlevel()), (trigger -> {
         return trigger instanceof StartLevelTrigger && startlevelEvent.getStartlevel() <= ((StartLevelTrigger) trigger).getStartLevel();
       }));
       startLevel.set(startlevelEvent.getStartlevel());
     } else if (event instanceof ThingStatusInfoChangedEvent) {
       ThingStatusInfoChangedEvent status = (ThingStatusInfoChangedEvent) event;
       ThingUID thing = status.getThingUID();
-      fire((rule, trigger) -> new ThingStatusChangeRuleContext(rule, itemRegistry, actionsRegistry, trigger, thingRegistry.get(thing), status.getStatusInfo(), status.getOldStatusInfo()), (trigger -> {
+      fire((rule, trigger) -> new ThingStatusChangeRuleContext(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, thingRegistry.get(thing), status.getStatusInfo(), status.getOldStatusInfo()), (trigger -> {
         return trigger instanceof ThingStatusChangeTrigger &&  ((ThingReferenceTrigger) trigger).getPredicate().test(thing);
       }));
     } else if (event instanceof ThingStatusInfoEvent) {
       ThingStatusInfoEvent status = (ThingStatusInfoEvent) event;
       ThingUID thing = status.getThingUID();
-      fire((rule, trigger) -> new ThingStatusRuleContext(rule, itemRegistry, actionsRegistry, trigger, thingRegistry.get(thing), status.getStatusInfo()), (trigger -> {
+      fire((rule, trigger) -> new ThingStatusRuleContext(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, thingRegistry.get(thing), status.getStatusInfo()), (trigger -> {
         return trigger instanceof ThingStatusTrigger &&  ((ThingReferenceTrigger) trigger).getPredicate().test(thing);
       }));
     } else {
@@ -284,8 +302,12 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
           schedule.getTimeUnit().convert(initialDelay, delayUnit), schedule.getTimeUnit(),
           schedule.getDelay(), schedule.getTimeUnit()
         );
-        ScheduledFuture<?> future = ruleExecutor.scheduleAtFixedRate(new ScheduledRunnable(itemRegistry, actionsRegistry, element, schedule), initialDelay,
-          delayUnit.convert(schedule.getDelay(), schedule.getTimeUnit()), delayUnit);
+        ScheduledFuture<?> future = ruleExecutor.scheduleAtFixedRate(
+          new ScheduledRunnable(itemRegistry, actionsRegistry, element, stateDispatcher, schedule),
+          initialDelay,
+          delayUnit.convert(schedule.getDelay(), schedule.getTimeUnit()),
+          delayUnit
+        );
         scheduledRules.put(schedule, future);
       }
       if (trigger instanceof Periodic) {
@@ -293,8 +315,12 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
         long initialDelay = calculateDelay(periodic);
         long milli = delay(periodic);
         logger.debug("First run of periodic rule {} in {} ms. Then every {} ms", element, initialDelay, milli);
-        ScheduledFuture<?> future = ruleExecutor.scheduleAtFixedRate(new ScheduledRunnable(itemRegistry, actionsRegistry, element, periodic), initialDelay,
-          milli, TimeUnit.MILLISECONDS);
+        ScheduledFuture<?> future = ruleExecutor.scheduleAtFixedRate(
+          new ScheduledRunnable(itemRegistry, actionsRegistry, element, stateDispatcher, periodic),
+          initialDelay,
+          milli,
+          TimeUnit.MILLISECONDS
+        );
         scheduledRules.put(periodic, future);
       }
       if (trigger instanceof ReadyMarkerTrigger) {
@@ -385,7 +411,7 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
       readyService.markReady(READY_MARKER);
     }
     if (readyMarkerRules.containsKey(readyMarker)) {
-      fire(readyMarkerRules.get(readyMarker), (rule, trigger) -> new ReadyMarkerAddedRuleContext(rule, itemRegistry, actionsRegistry, trigger, readyMarker), (trigger -> {
+      fire(readyMarkerRules.get(readyMarker), (rule, trigger) -> new ReadyMarkerAddedRuleContext(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, readyMarker), (trigger -> {
         return trigger instanceof ReadyMarkerAddedTrigger && ((ReadyMarkerTrigger) trigger).getMarker().equals(readyMarker);
       }));
     }
@@ -394,7 +420,7 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
   @Override
   public void onReadyMarkerRemoved(ReadyMarker readyMarker) {
     if (readyMarkerRules.containsKey(readyMarker)) {
-      fire(readyMarkerRules.get(readyMarker), (rule, trigger) -> new ReadyMarkerRemovedRuleContext(rule, itemRegistry, actionsRegistry, trigger, readyMarker), (trigger -> {
+      fire(readyMarkerRules.get(readyMarker), (rule, trigger) -> new ReadyMarkerRemovedRuleContext(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, readyMarker), (trigger -> {
         return trigger instanceof ReadyMarkerRemovedTrigger && ((ReadyMarkerTrigger) trigger).getMarker().equals(readyMarker);
       }));
     }
@@ -430,16 +456,18 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
     private final ItemRegistry itemRegistry;
     private final ThingActionsRegistry actionsRegistry;
     private final Rule rule;
+    private final StateDispatcher stateDispatcher;
     private final Trigger trigger;
     private final long registration;
     private long currentRun;
     private long firstRun;
     private Long previousRun;
 
-    public ScheduledRunnable(ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Rule rule, Trigger trigger) {
+    public ScheduledRunnable(ItemRegistry itemRegistry, ThingActionsRegistry actionsRegistry, Rule rule, StateDispatcher stateDispatcher, Trigger trigger) {
       this.itemRegistry = itemRegistry;
       this.actionsRegistry = actionsRegistry;
       this.rule = rule;
+      this.stateDispatcher = stateDispatcher;
       this.trigger = trigger;
       this.registration = System.currentTimeMillis();
     }
@@ -451,7 +479,7 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
         firstRun = currentRun;
       }
       try {
-        ScheduledRuleContext context = new ScheduledRuleContext(rule, itemRegistry, actionsRegistry, trigger, registration, currentRun, firstRun, previousRun);
+        ScheduledRuleContext context = new ScheduledRuleContext(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, registration, currentRun, firstRun, previousRun);
         rule.handle(context);
       } catch (SkipExecutionException e) {
         logger.info("Rule {} execution skipped.", rule);
