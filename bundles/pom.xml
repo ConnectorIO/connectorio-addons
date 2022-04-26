@@ -46,6 +46,7 @@
     <module>org.connectorio.addons.binding.plc4x.canopen.ta</module>
     <module>org.connectorio.addons.binding.plc4x.s7</module>
     <module>org.connectorio.addons.binding.relayweblog</module>
+    <module>org.connectorio.addons.binding.smartme</module>
     <module>org.connectorio.addons.binding.test</module>
     <module>org.connectorio.addons.io.proxy.http</module>
     <module>org.connectorio.addons.io.transport.serial.persistent</module>

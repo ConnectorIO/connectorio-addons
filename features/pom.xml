@@ -49,6 +49,7 @@
     <module>org.connectorio.addons.feature.profile</module>
     <module>org.connectorio.addons.feature.relayweblog</module>
     <module>org.connectorio.addons.feature.s7</module>
+    <module>org.connectorio.addons.feature.smartme</module>
     <module>org.connectorio.feature.chrono</module>
   </modules>
 
