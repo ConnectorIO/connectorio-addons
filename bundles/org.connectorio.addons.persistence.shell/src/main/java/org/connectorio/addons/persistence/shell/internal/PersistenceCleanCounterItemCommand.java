@@ -27,7 +27,6 @@ import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -36,7 +35,6 @@ import org.openhab.core.io.console.Console;
 import org.openhab.core.io.console.extensions.AbstractConsoleCommandExtension;
 import org.openhab.core.io.console.extensions.ConsoleCommandExtension;
 import org.openhab.core.items.Item;
-import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.QuantityType;
@@ -109,7 +107,7 @@ public class PersistenceCleanCounterItemCommand extends AbstractConsoleCommandEx
     if (service instanceof ModifiablePersistenceService) {
       ModifiablePersistenceService persistence = (ModifiablePersistenceService) service;
 
-      int page = 1;
+      int page = 0;
       int pageSize = 10000;
 
       // fetch first reading
@@ -122,7 +120,7 @@ public class PersistenceCleanCounterItemCommand extends AbstractConsoleCommandEx
       List<HistoricItem> result = new ArrayList<>();
       int removed = 0;
       do {
-        result = query(item, persistence, latest, page, pageSize);
+        result = query(item, persistence, latest, pageSize);
         if (result.size() == 0) {
           break;
         }
@@ -148,7 +146,7 @@ public class PersistenceCleanCounterItemCommand extends AbstractConsoleCommandEx
           }
           latest = historicItem.getTimestamp();
         }
-        console.println("Went over " + (pageSize * page) + " entries");
+        console.println("Went over " + (pageSize * page++) + " entries");
       } while (result.size() == pageSize);
       console.println(item.getName() + " removed " + removed + " records");
     }
@@ -170,13 +168,12 @@ public class PersistenceCleanCounterItemCommand extends AbstractConsoleCommandEx
     return false;
   }
 
-  private List<HistoricItem> query(Item from, ModifiablePersistenceService persistence, ZonedDateTime latest, int page,
-    int pageSize) {
+  private List<HistoricItem> query(Item from, ModifiablePersistenceService persistence, ZonedDateTime latest, int pageSize) {
     FilterCriteria c = new FilterCriteria();
     c.setItemName(from.getName());
     c.setBeginDate(latest);
     c.setOrdering(Ordering.ASCENDING);
-    c.setPageNumber(1);
+    c.setPageNumber(0);
     c.setPageSize(pageSize);
 
     List<HistoricItem> items = new ArrayList<>();
