@@ -53,6 +53,7 @@ public class FilesystemMigrationProvider implements MigrationProvider {
     if (migrationsDir.exists() && migrationsDir.isDirectory()) {
       File[] files = migrationsDir.listFiles(name -> name.getName().endsWith(".xml"));
       if (files == null || files.length == 0) {
+        readyService.markReady(Constants.FILESYSTEM_MARKER);
         return;
       }
 
