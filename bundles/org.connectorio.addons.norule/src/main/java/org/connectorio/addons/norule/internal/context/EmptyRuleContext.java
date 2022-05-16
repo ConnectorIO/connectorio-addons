@@ -20,8 +20,17 @@ package org.connectorio.addons.norule.internal.context;
 import java.util.Optional;
 import org.connectorio.addons.norule.ItemContext;
 import org.openhab.core.types.State;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EmptyRuleContext implements ItemContext {
+
+  private final Logger logger = LoggerFactory.getLogger(EmptyRuleContext.class);
+  private final String itemName;
+
+  public EmptyRuleContext(String itemName) {
+    this.itemName = itemName;
+  }
 
   @Override
   public Optional<State> state() {
@@ -30,12 +39,13 @@ public class EmptyRuleContext implements ItemContext {
 
   @Override
   public <X extends State> Optional<X> state(Class<X> type) {
+    logger.info("Could not retrieve state of item {} as it does not exist", itemName);
     return Optional.empty();
   }
 
   @Override
   public void state(State state) {
-    // ignore
+    logger.info("Could not update state of item {} as it does not exist", itemName);
   }
 
 }

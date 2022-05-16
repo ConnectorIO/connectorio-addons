@@ -18,6 +18,7 @@
 package org.connectorio.addons.norule.internal.dispatch;
 
 import org.connectorio.addons.norule.StateDispatcher;
+import org.openhab.core.items.GenericItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.types.State;
 
@@ -25,7 +26,9 @@ public class FallbackStateDispatcher implements StateDispatcher {
 
   @Override
   public void dispatch(Item item, State state) {
-
+    if (item instanceof GenericItem) {
+      ((GenericItem) item).setState(state);
+    }
   }
 
 }
