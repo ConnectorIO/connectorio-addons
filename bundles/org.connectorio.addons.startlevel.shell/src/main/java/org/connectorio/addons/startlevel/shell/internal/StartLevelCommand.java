@@ -18,7 +18,10 @@
 package org.connectorio.addons.startlevel.shell.internal;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import org.openhab.core.io.console.Console;
 import org.openhab.core.io.console.extensions.AbstractConsoleCommandExtension;
 import org.openhab.core.io.console.extensions.ConsoleCommandExtension;
@@ -47,21 +50,24 @@ public class StartLevelCommand extends AbstractConsoleCommandExtension {
 
   @Override
   public void execute(String[] args, Console console) {
+    Set<ReadyMarker> ready = new TreeSet<>(Comparator.comparing(ReadyMarker::toString));
     ReadyTracker readyTracker = new ReadyTracker() {
       @Override
       public void onReadyMarkerAdded(ReadyMarker readyMarker) {
-        console.println("Added " + readyMarker);
+        ready.add(readyMarker);
       }
 
       @Override
       public void onReadyMarkerRemoved(ReadyMarker readyMarker) {
       }
     };
+
     try {
       readyService.registerTracker(readyTracker, new ReadyMarkerFilter().withType(StartLevelService.STARTLEVEL_MARKER_TYPE));
     } finally {
       readyService.unregisterTracker(readyTracker);
     }
+    ready.forEach(marker -> System.out.println("Added " + marker));
   }
 
   @Override
