@@ -273,7 +273,7 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
           Condition block;
           if (conditions != null && (block = isBlocked(conditions)) != null) {
             logger.info("Not firing rule {} triggered by {}, condition {} is not met.", rule, trigger, block);
-            return;
+            break;
           }
           logger.info("Rule {} is triggered by {}.", rule, trigger);
           ruleExecutor.submit(new RuleRunnable(rule, contextFactory.apply(rule, trigger)));
