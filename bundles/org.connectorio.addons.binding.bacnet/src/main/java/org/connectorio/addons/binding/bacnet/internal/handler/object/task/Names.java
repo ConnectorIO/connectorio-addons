@@ -19,25 +19,20 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-package org.connectorio.addons.binding.bacnet.internal.handler;
+package org.connectorio.addons.binding.bacnet.internal.handler.object.task;
 
-import com.serotonin.bacnet4j.obj.BACnetObject;
-import org.connectorio.addons.binding.bacnet.internal.handler.network.BACnetNetworkBridgeHandler;
-import org.connectorio.addons.binding.bacnet.internal.BACnetBindingConstants;
-import org.connectorio.addons.binding.bacnet.internal.config.BACnetConfig;
-import org.connectorio.addons.binding.handler.polling.common.BasePollingBridgeHandler;
-import org.openhab.core.thing.Bridge;
+public class Names {
 
-public abstract class BACnetObjectHandler<T extends BACnetObject, B extends BACnetNetworkBridgeHandler<?>, C extends BACnetConfig>
-  extends BasePollingBridgeHandler<C> {
-
-  public BACnetObjectHandler(Bridge bridge) {
-    super(bridge);
-  }
-
-  @Override
-  protected Long getDefaultPollingInterval() {
-    return BACnetBindingConstants.DEFAULT_POLLING_INTERVAL;
+  public static String dashed(String channel) {
+    StringBuilder name = new StringBuilder();
+    for (char ch : channel.toCharArray()) {
+      if (Character.isUpperCase(ch)) {
+        name.append("-").append(Character.toLowerCase(ch));
+      } else {
+        name.append(Character.toLowerCase(ch));
+      }
+    }
+    return name.toString();
   }
 
 }

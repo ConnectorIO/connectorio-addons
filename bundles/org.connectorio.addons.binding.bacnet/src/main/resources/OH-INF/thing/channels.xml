@@ -25,6 +25,54 @@
   xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
+  <channel-type id="eventState">
+    <item-type>Number</item-type>
+    <label>Event State</label>
+    <state>
+      <options>
+        <option value="0">Normal</option>
+        <option value="1">Fault</option>
+        <option value="2">Off normal</option>
+        <option value="3">High limit</option>
+        <option value="4">Low limit</option>
+        <option value="5">Life safety</option>
+      </options>
+    </state>
+  </channel-type>
+
+  <channel-type id="reliability">
+    <item-type>Number</item-type>
+    <label>Reliability</label>
+    <state>
+      <options>
+        <option value="0">No fault detected</option>
+        <option value="1">No sensor</option>
+        <option value="2">Over range</option>
+        <option value="3">Under range</option>
+        <option value="4">Open loop</option>
+        <option value="5">Shorted loop</option>
+        <option value="6">No output</option>
+        <option value="7">Unreliable other</option>
+        <option value="8">Process eror</option>
+        <option value="9">Multi-state fault</option>
+        <option value="10">Configuration error</option>
+        <option value="12">Communication failure</option>
+        <option value="13">Member fault</option>
+        <option value="14">Monitored object fault</option>
+        <option value="15">Tripped</option>
+        <option value="16">Lamp failure</option>
+        <option value="17">Activation failure</option>
+        <option value="18">Renew dhcp failure</option>
+        <option value="19">Renew registration failure</option>
+        <option value="20">Restart auto negotiation failure</option>
+        <option value="21">Restart failure</option>
+        <option value="22">Proprietary command failure</option>
+        <option value="23">Faults listed</option>
+        <option value="24">Referenced object fault</option>
+      </options>
+    </state>
+  </channel-type>
+
   <channel-type id="writeableBinary">
     <item-type>Switch</item-type>
     <label>Present value</label>

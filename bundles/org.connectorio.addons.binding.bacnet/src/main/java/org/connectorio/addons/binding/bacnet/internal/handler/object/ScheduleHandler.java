@@ -19,23 +19,23 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-package org.connectorio.addons.binding.bacnet.internal.handler.property;
+package org.connectorio.addons.binding.bacnet.internal.handler.object;
 
-import com.serotonin.bacnet4j.obj.AnalogInputObject;
+import com.serotonin.bacnet4j.obj.ScheduleObject;
 import org.code_house.bacnet4j.wrapper.api.Type;
 import org.connectorio.addons.binding.bacnet.internal.config.ObjectConfig;
 import org.openhab.core.thing.Thing;
 
-public class BinaryInputHandler extends BACnetPropertyHandler<AnalogInputObject, BACnetDeviceBridgeHandler<?, ?>, ObjectConfig> {
+public class ScheduleHandler extends
+    BACnetObjectThingHandler<ScheduleObject, BACnetDeviceBridgeHandler<?, ?>, ObjectConfig> {
 
   /**
    * Creates a new instance of this class for the {@link Thing}.
    *
    * @param thing the thing that should be handled, not null
    */
-  public BinaryInputHandler(Thing thing) {
-    super(thing, Type.BINARY_INPUT);
+  public ScheduleHandler(Thing thing) {
+    super(thing, Type.SCHEDULE);
   }
-
 
 }

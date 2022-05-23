@@ -35,6 +35,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableNumber" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -51,6 +54,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableNumber" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -67,6 +73,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableNumber" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -83,6 +92,9 @@
 
     <channels>
       <channel id="presentValue" typeId="readableBinary" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -99,6 +111,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableBinary" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -115,6 +130,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableBinary" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -143,6 +161,9 @@
 
     <channels>
       <channel id="presentValue" typeId="readableNumber" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -159,6 +180,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableNumber" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -175,6 +199,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableNumber" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -191,6 +218,9 @@
 
     <channels>
       <channel id="presentValue" typeId="readableNumber" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -207,6 +237,11 @@
 
     <channels>
       <channel id="presentValue" typeId="readableNumber" />
+      <channel id="scheduleDefault" typeId="readableNumber" />
+
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -223,6 +258,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableText" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -239,6 +277,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableDateTime" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -255,6 +296,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableNumber" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -271,6 +315,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableText" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -287,6 +334,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableDateTime" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -303,6 +353,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableNumber" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -319,6 +372,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableNumber" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -335,6 +391,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableDateTime" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -351,6 +410,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableDateTime" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -367,6 +429,9 @@
 
     <channels>
       <channel id="presentValue" typeId="writeableDateTime" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>
@@ -383,6 +448,9 @@
 
     <channels>
       <channel id="presentValue" typeId="readableNumber" />
+      <channel id="outOfService" typeId="writeableBoolean" />
+      <channel id="reliability" typeId="reliability" />
+      <channel id="eventState" typeId="eventState" />
     </channels>
 
     <config-description-ref uri="thing-type:co7io-bacnet:object"/>

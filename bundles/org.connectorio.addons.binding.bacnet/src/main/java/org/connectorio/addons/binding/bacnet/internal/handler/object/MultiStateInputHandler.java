@@ -19,23 +19,24 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-package org.connectorio.addons.binding.bacnet.internal.handler.property;
+package org.connectorio.addons.binding.bacnet.internal.handler.object;
 
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import org.code_house.bacnet4j.wrapper.api.BacNetClient;
-import org.code_house.bacnet4j.wrapper.api.Device;
-import org.connectorio.addons.binding.bacnet.internal.config.DeviceConfig;
-import org.connectorio.addons.binding.bacnet.internal.handler.network.BACnetNetworkBridgeHandler;
-import org.connectorio.addons.binding.handler.polling.PollingBridgeHandler;
+import com.serotonin.bacnet4j.obj.AnalogInputObject;
+import org.code_house.bacnet4j.wrapper.api.Type;
+import org.connectorio.addons.binding.bacnet.internal.config.ObjectConfig;
+import org.openhab.core.thing.Thing;
 
-public interface BACnetDeviceBridgeHandler<B extends BACnetNetworkBridgeHandler<?>, C extends DeviceConfig> extends
-  PollingBridgeHandler<C> {
+public class MultiStateInputHandler extends
+    BACnetObjectThingHandler<AnalogInputObject, BACnetDeviceBridgeHandler<?, ?>, ObjectConfig> {
 
-  CompletableFuture<BacNetClient> getClient();
+  /**
+   * Creates a new instance of this class for the {@link Thing}.
+   *
+   * @param thing the thing that should be handled, not null
+   */
+  public MultiStateInputHandler(Thing thing) {
+    super(thing, Type.MULTISTATE_INPUT);
+  }
 
-  Optional<B> getBridgeHandler();
-
-  Device getDevice();
 
 }

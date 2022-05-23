@@ -19,27 +19,24 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-package org.connectorio.addons.binding.bacnet.internal.handler.property;
+package org.connectorio.addons.binding.bacnet.internal.handler.object;
 
-import org.code_house.bacnet4j.wrapper.api.Device;
-import org.code_house.bacnet4j.wrapper.ip.IpDevice;
-import org.connectorio.addons.binding.bacnet.internal.config.IpDeviceConfig;
-import org.openhab.core.thing.Bridge;
+import com.serotonin.bacnet4j.obj.AnalogInputObject;
+import org.code_house.bacnet4j.wrapper.api.Type;
+import org.connectorio.addons.binding.bacnet.internal.config.ObjectConfig;
 import org.openhab.core.thing.Thing;
 
-public class BACnetIpDeviceHandler extends BACnetDeviceHandler<IpDeviceConfig> {
+public class AnalogOutputHandler extends
+    BACnetObjectThingHandler<AnalogInputObject, BACnetDeviceBridgeHandler<?, ?>, ObjectConfig> {
 
   /**
    * Creates a new instance of this class for the {@link Thing}.
    *
-   * @param bridge the thing that should be handled, not null
+   * @param thing the thing that should be handled, not null
    */
-  public BACnetIpDeviceHandler(Bridge bridge) {
-    super(bridge);
+  public AnalogOutputHandler(Thing thing) {
+    super(thing, Type.ANALOG_OUTPUT);
   }
 
-  @Override
-  protected Device createDevice(IpDeviceConfig config, Integer networkNumber) {
-    return new IpDevice(config.instance, config.address, config.port, networkNumber);
-  }
+
 }

@@ -19,7 +19,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-package org.connectorio.addons.binding.bacnet.internal.handler.property;
+package org.connectorio.addons.binding.bacnet.internal.handler.object;
 
 import com.serotonin.bacnet4j.obj.DeviceObject;
 import java.util.Collection;
@@ -30,7 +30,7 @@ import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.api.Device;
 import org.connectorio.addons.binding.bacnet.internal.discovery.BACnetPropertyDiscoveryService;
 import org.connectorio.addons.binding.bacnet.internal.config.DeviceConfig;
-import org.connectorio.addons.binding.bacnet.internal.handler.BACnetObjectHandler;
+import org.connectorio.addons.binding.bacnet.internal.handler.BACnetObjectBridgeHandler;
 import org.connectorio.addons.binding.bacnet.internal.handler.network.BACnetNetworkBridgeHandler;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
@@ -42,7 +42,7 @@ import org.openhab.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnetObjectHandler<DeviceObject, BACnetNetworkBridgeHandler<?>, C>
+public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnetObjectBridgeHandler<DeviceObject, BACnetNetworkBridgeHandler<?>, C>
   implements BACnetDeviceBridgeHandler<BACnetNetworkBridgeHandler<?>, C> {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());

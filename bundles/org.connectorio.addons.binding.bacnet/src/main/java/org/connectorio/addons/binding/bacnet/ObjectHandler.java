@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 ConnectorIO sp. z o.o.
+ * Copyright (C) 2022-2022 ConnectorIO sp. z o.o.
  *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,23 +19,16 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-package org.connectorio.addons.binding.bacnet.internal.handler.property;
+package org.connectorio.addons.binding.bacnet;
 
-import com.serotonin.bacnet4j.obj.AnalogInputObject;
-import org.code_house.bacnet4j.wrapper.api.Type;
-import org.connectorio.addons.binding.bacnet.internal.config.ObjectConfig;
-import org.openhab.core.thing.Thing;
+import java.util.Optional;
+import org.code_house.bacnet4j.wrapper.api.BacNetClient;
+import org.code_house.bacnet4j.wrapper.api.BacNetObject;
+import org.code_house.bacnet4j.wrapper.api.Property;
 
-public class AnalogValueHandler extends BACnetPropertyHandler<AnalogInputObject, BACnetDeviceBridgeHandler<?, ?>, ObjectConfig> {
+public interface ObjectHandler {
 
-  /**
-   * Creates a new instance of this class for the {@link Thing}.
-   *
-   * @param thing the thing that should be handled, not null
-   */
-  public AnalogValueHandler(Thing thing) {
-    super(thing, Type.ANALOG_VALUE);
-  }
-
+  Optional<BacNetClient> getClient();
+  BacNetObject getObject();
 
 }

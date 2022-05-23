@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.mstp.BacNetMstpClient;
-import org.code_house.bacnet4j.wrapper.mstp.JsscMstpNetworkBuilder;
 import org.code_house.bacnet4j.wrapper.mstp.MstpNetworkBuilder;
 import org.connectorio.addons.binding.bacnet.internal.discovery.BACnetMstpDeviceDiscoveryService;
 import org.connectorio.addons.binding.bacnet.internal.handler.network.mstp.ManagedMstpNetworkBuilder;

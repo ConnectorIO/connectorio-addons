@@ -60,6 +60,17 @@
     </dependency>
 
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.j2html</groupId>
+      <artifactId>j2html</artifactId>
+      <version>1.5.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.code-house.bacnet4j</groupId>
       <artifactId>api</artifactId>
       <version>${bacnet4j-wrapper.version}</version>
@@ -145,6 +156,14 @@
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.service.component.annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>osgi.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>osgi.cmpn</artifactId>
     </dependency>
 
     <dependency>

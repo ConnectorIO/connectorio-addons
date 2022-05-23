@@ -23,15 +23,11 @@ package org.connectorio.addons.binding.bacnet.internal.discovery;
 
 import static org.connectorio.addons.binding.bacnet.internal.BACnetBindingConstants.*;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.api.Property;
-import org.connectorio.addons.binding.bacnet.internal.handler.property.BACnetDeviceBridgeHandler;
+import org.connectorio.addons.binding.bacnet.internal.handler.object.BACnetDeviceBridgeHandler;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
 import org.openhab.core.config.discovery.DiscoveryResultBuilder;
@@ -104,6 +100,9 @@ public class BACnetPropertyDiscoveryService extends AbstractDiscoveryService imp
         break;
       case MULTISTATE_VALUE:
         builder = DiscoveryResultBuilder.create(new ThingUID(MULTISTATE_VALUE_THING_TYPE, bridgeUID, id));
+        break;
+      case SCHEDULE:
+        builder = DiscoveryResultBuilder.create(new ThingUID(SCHEDULE_THING_TYPE, bridgeUID, id));
         break;
       default:
         logger.info("Unsupported object type " + property.getType());

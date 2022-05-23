@@ -23,17 +23,18 @@ package org.connectorio.addons.binding.bacnet.internal;
 
 import org.connectorio.addons.binding.bacnet.internal.handler.network.BACnetIpv4BridgeHandler;
 import org.connectorio.addons.binding.bacnet.internal.handler.network.BACnetMstpBridgeHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.property.AnalogInputHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.property.AnalogOutputHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.property.AnalogValueHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.property.BACnetIpDeviceHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.property.BACnetMstpDeviceHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.property.BinaryInputHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.property.BinaryOutputHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.property.BinaryValueHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.property.MultiStateInputHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.property.MultiStateOutputHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.property.MultiStateValueHandler;
+import org.connectorio.addons.binding.bacnet.internal.handler.object.AnalogInputHandler;
+import org.connectorio.addons.binding.bacnet.internal.handler.object.AnalogOutputHandler;
+import org.connectorio.addons.binding.bacnet.internal.handler.object.AnalogValueHandler;
+import org.connectorio.addons.binding.bacnet.internal.handler.object.BACnetIpDeviceHandler;
+import org.connectorio.addons.binding.bacnet.internal.handler.object.BACnetMstpDeviceHandler;
+import org.connectorio.addons.binding.bacnet.internal.handler.object.BinaryInputHandler;
+import org.connectorio.addons.binding.bacnet.internal.handler.object.BinaryOutputHandler;
+import org.connectorio.addons.binding.bacnet.internal.handler.object.BinaryValueHandler;
+import org.connectorio.addons.binding.bacnet.internal.handler.object.MultiStateInputHandler;
+import org.connectorio.addons.binding.bacnet.internal.handler.object.MultiStateOutputHandler;
+import org.connectorio.addons.binding.bacnet.internal.handler.object.MultiStateValueHandler;
+import org.connectorio.addons.binding.bacnet.internal.handler.object.ScheduleHandler;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingTypeUID;
@@ -95,6 +96,8 @@ public class BACnetThingHandlerFactory extends BaseThingHandlerFactory implement
       return new MultiStateOutputHandler(thing);
     } else if (MULTISTATE_VALUE_THING_TYPE.equals(thingTypeUID)) {
       return new MultiStateValueHandler(thing);
+    } else if (SCHEDULE_THING_TYPE.equals(thingTypeUID)) {
+      return new ScheduleHandler(thing);
     }
 
     return null;

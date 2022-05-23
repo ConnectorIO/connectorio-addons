@@ -19,27 +19,27 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-package org.connectorio.addons.binding.bacnet.internal.handler.property;
+package org.connectorio.addons.binding.bacnet.internal.handler.object;
 
 import org.code_house.bacnet4j.wrapper.api.Device;
-import org.code_house.bacnet4j.wrapper.mstp.MstpDevice;
-import org.connectorio.addons.binding.bacnet.internal.config.MstpDeviceConfig;
+import org.code_house.bacnet4j.wrapper.ip.IpDevice;
+import org.connectorio.addons.binding.bacnet.internal.config.IpDeviceConfig;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
 
-public class BACnetMstpDeviceHandler extends BACnetDeviceHandler<MstpDeviceConfig> {
+public class BACnetIpDeviceHandler extends BACnetDeviceHandler<IpDeviceConfig> {
 
   /**
    * Creates a new instance of this class for the {@link Thing}.
    *
    * @param bridge the thing that should be handled, not null
    */
-  public BACnetMstpDeviceHandler(Bridge bridge) {
+  public BACnetIpDeviceHandler(Bridge bridge) {
     super(bridge);
   }
 
   @Override
-  protected Device createDevice(MstpDeviceConfig config, Integer networkNumber) {
-    return new MstpDevice(config.instance, new byte[] { (byte) config.address }, networkNumber);
+  protected Device createDevice(IpDeviceConfig config, Integer networkNumber) {
+    return new IpDevice(config.instance, config.address, config.port, networkNumber);
   }
 }

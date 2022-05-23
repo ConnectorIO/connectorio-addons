@@ -19,24 +19,33 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-package org.connectorio.addons.binding.bacnet.internal.handler.property;
+package org.connectorio.addons.binding.bacnet.internal.handler.object.task;
 
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.enumerated.BinaryPV;
 import com.serotonin.bacnet4j.type.enumerated.Polarity;
 import com.serotonin.bacnet4j.type.primitive.Boolean;
 import com.serotonin.bacnet4j.type.primitive.Date;
+import com.serotonin.bacnet4j.type.primitive.Enumerated;
 import com.serotonin.bacnet4j.type.primitive.Null;
 import com.serotonin.bacnet4j.type.primitive.Real;
 import com.serotonin.bacnet4j.type.primitive.SignedInteger;
 import com.serotonin.bacnet4j.type.primitive.Time;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.api.BacNetClientException;
+import org.code_house.bacnet4j.wrapper.api.BacNetObject;
 import org.code_house.bacnet4j.wrapper.api.BacNetToJavaConverter;
 import org.code_house.bacnet4j.wrapper.api.Property;
 import org.openhab.core.library.types.DateTimeType;
@@ -49,19 +58,23 @@ import org.openhab.core.types.UnDefType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ReadPropertyTask implements Runnable, BacNetToJavaConverter<State> {
+public class ReadObjectTask implements Runnable, BacNetToJavaConverter<State> {
 
-  private final Logger logger = LoggerFactory.getLogger(ReadPropertyTask.class);
+  private final Logger logger = LoggerFactory.getLogger(ReadObjectTask.class);
   private final Supplier<CompletableFuture<BacNetClient>> client;
   private final ThingHandlerCallback callback;
-  private final Property property;
-  private final ChannelUID channelUID;
+  private final BacNetObject object;
+  private final Map<String, ChannelUID> channels;
 
-  public ReadPropertyTask(Supplier<CompletableFuture<BacNetClient>> client, ThingHandlerCallback callback, Property property, ChannelUID channelUID) {
+  public ReadObjectTask(Supplier<CompletableFuture<BacNetClient>> client, ThingHandlerCallback callback, BacNetObject object, Set<ChannelUID> channels) {
     this.client = client;
     this.callback = callback;
-    this.property = property;
-    this.channelUID = channelUID;
+    this.object = object;
+    this.channels = channels.stream()
+      .collect(Collectors.toMap(
+        channel -> Names.dashed(channel.getId()),
+        Function.identity()
+      ));
   }
 
   @Override
@@ -69,14 +82,24 @@ public class ReadPropertyTask implements Runnable, BacNetToJavaConverter<State> 
     CompletableFuture<BacNetClient> clientFuture = client.get();
     if (clientFuture.isDone() && !clientFuture.isCancelled() && !clientFuture.isCompletedExceptionally()) {
       try {
+        final List<String> identifiers = new ArrayList<>(channels.keySet());
         Optional.ofNullable(clientFuture.get())
-          .map(connection -> connection.getPropertyValue(property, this))
-          .ifPresent(state -> {
-            logger.debug("Requesting state {} for property {}", state, property);
-            callback.stateUpdated(channelUID, state);
+          .map(connection -> connection.getObjectAttributeValues(object, identifiers))
+          .ifPresent(states -> {
+            int index = 0;
+            for (Entry<String, ChannelUID> entry : channels.entrySet()) {
+              Object state = states.get(index++);
+              State channelState = UnDefType.UNDEF;
+              if (state instanceof Encodable) {
+                channelState = fromBacNet((Encodable) state);
+              }
+
+              logger.debug("Retrieved state for property {} attribute {}: {}", object, entry, channelState);
+              callback.stateUpdated(entry.getValue(), channelState);
+            }
           });
       } catch (BacNetClientException e) {
-        logger.warn("Could not read property {} value. Client reported an error", property, e);
+        logger.warn("Could not read property {} value. Client reported an error", object, e);
       } catch (InterruptedException | ExecutionException e) {
         logger.debug("Could not complete operation", e);
       }
@@ -85,7 +108,6 @@ public class ReadPropertyTask implements Runnable, BacNetToJavaConverter<State> 
 
   @Override
   public State fromBacNet(Encodable encodable) {
-    logger.debug("Mapping value {} of type {} for channel {}", encodable, encodable.getClass(), channelUID);
     if (encodable instanceof Null) {
       return UnDefType.NULL;
     } else if (encodable instanceof Real) {
@@ -108,8 +130,12 @@ public class ReadPropertyTask implements Runnable, BacNetToJavaConverter<State> 
     } else if (encodable instanceof Date) {
       Date date = (Date) encodable;
       return new DateTimeType(date.calculateGC().toZonedDateTime());
+    } else if (encodable instanceof Enumerated) {
+      return new DecimalType(((Enumerated) encodable).intValue());
     }
+
     logger.info("Received property value is currently not supported");
-    return null;
+    return UnDefType.UNDEF;
   }
+
 }

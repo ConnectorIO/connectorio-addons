@@ -40,6 +40,8 @@
     <feature>openhab-transport-serial</feature>
     <feature>co7io-binding-base</feature>
     <feature>bacnet4j-wrapper</feature>
+    <bundle start-level="80">mvn:com.j2html/j2html/1.5.0</bundle>
+
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.binding.bacnet/${project.version}</bundle>
   </feature>
 
