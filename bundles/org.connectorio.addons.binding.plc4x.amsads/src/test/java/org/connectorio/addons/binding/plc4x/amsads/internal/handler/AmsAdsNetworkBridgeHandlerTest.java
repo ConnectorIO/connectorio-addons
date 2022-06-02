@@ -39,7 +39,7 @@ import org.connectorio.addons.binding.plc4x.amsads.internal.config.NetworkConfig
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.AmsAdsDiscoveryDriver;
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.DiscoverySender;
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.RouteReceiver;
-import org.connectorio.addons.binding.plc4x.osgi.internal.OsgiDriverManager;
+import org.connectorio.plc4x.extras.osgi.core.internal.OsgiDriverManager;
 import org.connectorio.addons.binding.test.BridgeMock;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ThingUID;

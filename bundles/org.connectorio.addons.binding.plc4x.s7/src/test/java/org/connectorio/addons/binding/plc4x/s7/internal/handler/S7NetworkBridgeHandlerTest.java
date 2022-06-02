@@ -28,7 +28,7 @@ import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.s7.readwrite.S7Driver;
 import org.assertj.core.api.AbstractThrowableAssert;
-import org.connectorio.addons.binding.plc4x.osgi.internal.OsgiDriverManager;
+import org.connectorio.plc4x.extras.osgi.core.internal.OsgiDriverManager;
 import org.connectorio.addons.binding.plc4x.s7.internal.config.S7NetworkConfiguration;
 import org.connectorio.addons.binding.test.BridgeMock;
 import org.openhab.core.thing.Bridge;

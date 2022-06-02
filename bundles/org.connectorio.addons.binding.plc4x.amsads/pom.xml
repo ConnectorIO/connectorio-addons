@@ -40,7 +40,6 @@
     <dependency>
       <groupId>org.apache.plc4x</groupId>
       <artifactId>plc4j-driver-ads</artifactId>
-      <version>${plc4x.version}</version>
     </dependency>
 
     <dependency>
@@ -64,6 +63,12 @@
       <artifactId>org.connectorio.addons.feature.plc4x</artifactId>
       <classifier>features</classifier>
       <type>xml</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.connectorio.plc4x.extras</groupId>
+      <artifactId>org.connectorio.plc4x.extras.osgi.core</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

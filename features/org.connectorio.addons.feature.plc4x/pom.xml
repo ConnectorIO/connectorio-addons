@@ -35,24 +35,13 @@
   <dependencies>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.plc4x.decorator</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.plc4x.decorator.phase</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.plc4x.decorator.retry</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.plc4x.decorator.throttle</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.feature</artifactId>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.plc4x.extras.features</groupId>
+      <artifactId>org.connectorio.plc4x.extras.feature.osgi</artifactId>
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
@@ -98,10 +87,11 @@
             <id>karaf-verification</id>
             <configuration>
               <descriptors>
+                <descriptor>mvn:org.connectorio.plc4x.extras.features/org.connectorio.plc4x.extras.feature.osgi/${plc4x-extras.version}/xml/features</descriptor>
                 <descriptor>mvn:org.openhab.core.features.karaf/org.openhab.core.features.karaf.openhab-core/${openhab.version}/xml/features</descriptor>
               </descriptors>
               <features>
-                <feature>plc4x-*</feature>
+                <feature>co7io-binding-*</feature>
               </features>
             </configuration>
           </execution>

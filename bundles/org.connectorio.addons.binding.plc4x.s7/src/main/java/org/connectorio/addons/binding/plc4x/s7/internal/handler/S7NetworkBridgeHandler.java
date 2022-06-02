@@ -22,7 +22,7 @@ import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.connectorio.addons.binding.plc4x.handler.base.PollingPlc4xBridgeHandler;
-import org.connectorio.addons.binding.plc4x.osgi.PlcDriverManager;
+import org.connectorio.plc4x.extras.osgi.PlcDriverManager;
 import org.connectorio.addons.binding.plc4x.s7.internal.S7BindingConstants;
 import org.connectorio.addons.binding.plc4x.s7.internal.config.S7NetworkConfiguration;
 import org.openhab.core.thing.Bridge;

@@ -38,28 +38,9 @@
       <artifactId>org.connectorio.addons.binding</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.plc4x</groupId>
-      <artifactId>plc4j-spi</artifactId>
+      <groupId>org.connectorio.plc4x.extras</groupId>
+      <artifactId>org.connectorio.plc4x.extras.osgi</artifactId>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Import-Package>
-              org.osgi.framework;version=0,
-              *
-            </Import-Package>
-            <Provide-Capability>osgi.service;objectClass="org.connectorio.addons.binding.plc4x.osgi.PlcDriverManager"</Provide-Capability>
-            <Bundle-Activator>org.connectorio.addons.binding.plc4x.osgi.internal.Activator</Bundle-Activator>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

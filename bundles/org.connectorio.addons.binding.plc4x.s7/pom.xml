@@ -68,6 +68,12 @@
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
+
+    <dependency>
+      <groupId>org.connectorio.plc4x.extras</groupId>
+      <artifactId>org.connectorio.plc4x.extras.osgi.core</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>

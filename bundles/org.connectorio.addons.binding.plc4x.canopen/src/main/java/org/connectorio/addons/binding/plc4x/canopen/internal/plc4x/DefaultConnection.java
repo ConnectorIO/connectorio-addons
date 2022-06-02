@@ -32,8 +32,8 @@ import org.apache.plc4x.java.spi.values.PlcStruct;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoConnection;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoNode;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoSubscription;
-import org.connectorio.plc4x.decorator.CompositeDecorator;
-import org.connectorio.plc4x.decorator.DecoratorConnection;
+import org.connectorio.plc4x.extras.decorator.CompositeDecorator;
+import org.connectorio.plc4x.extras.decorator.DecoratorConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

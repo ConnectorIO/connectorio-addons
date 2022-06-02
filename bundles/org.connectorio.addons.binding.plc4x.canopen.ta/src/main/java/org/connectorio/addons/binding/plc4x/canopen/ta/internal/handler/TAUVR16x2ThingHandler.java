@@ -42,7 +42,7 @@ import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAUnit;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.type.TAValue;
 import org.connectorio.addons.binding.plc4x.handler.Plc4xThingHandler;
 import org.connectorio.addons.binding.plc4x.handler.base.PollingPlc4xThingHandler;
-import org.connectorio.plc4x.decorator.phase.Phase;
+import org.connectorio.plc4x.extras.decorator.phase.Phase;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.thing.ChannelUID;

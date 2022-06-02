@@ -26,7 +26,7 @@ import org.connectorio.addons.binding.plc4x.canopen.discovery.CoDiscoveryPartici
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.TACANopenBindingConstants;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.TADeviceFactory;
 import org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev.TADevice;
-import org.connectorio.plc4x.decorator.phase.Phase;
+import org.connectorio.plc4x.extras.decorator.phase.Phase;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
 import org.openhab.core.config.discovery.DiscoveryResultBuilder;

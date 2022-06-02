@@ -22,7 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.connectorio.addons.binding.handler.factory.BaseThingHandlerFactory;
 import org.connectorio.addons.binding.plc4x.canopen.internal.CANopenBindingConstants;
 import org.connectorio.addons.binding.plc4x.canopen.discovery.CoDiscoveryParticipant;
-import org.connectorio.addons.binding.plc4x.osgi.PlcDriverManager;
+import org.connectorio.plc4x.extras.osgi.PlcDriverManager;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.binding.ThingHandler;

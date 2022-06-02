@@ -37,7 +37,7 @@ import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.AmsAdsRout
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.DiscoverySender;
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.DiscoverySender.Envelope;
 import org.connectorio.addons.binding.plc4x.amsads.internal.discovery.RouteReceiver;
-import org.connectorio.addons.binding.plc4x.osgi.PlcDriverManager;
+import org.connectorio.plc4x.extras.osgi.PlcDriverManager;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.ThingStatus;

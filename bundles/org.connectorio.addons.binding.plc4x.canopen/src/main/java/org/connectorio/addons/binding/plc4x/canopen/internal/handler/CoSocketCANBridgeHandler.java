@@ -38,11 +38,11 @@ import org.connectorio.addons.binding.plc4x.canopen.internal.discovery.CoNetwork
 import org.connectorio.addons.binding.plc4x.canopen.internal.plc4x.DefaultConnection;
 import org.connectorio.addons.binding.plc4x.canopen.internal.statistics.SocketCANStatisticCollectors;
 import org.connectorio.addons.binding.plc4x.handler.base.PollingPlc4xBridgeHandler;
-import org.connectorio.addons.binding.plc4x.osgi.PlcDriverManager;
-import org.connectorio.plc4x.decorator.CompositeDecorator;
-import org.connectorio.plc4x.decorator.Decorator;
-import org.connectorio.plc4x.decorator.retry.RetryDecorator;
-import org.connectorio.plc4x.decorator.throttle.ThrottleDecorator;
+import org.connectorio.plc4x.extras.osgi.PlcDriverManager;
+import org.connectorio.plc4x.extras.decorator.CompositeDecorator;
+import org.connectorio.plc4x.extras.decorator.Decorator;
+import org.connectorio.plc4x.extras.decorator.retry.RetryDecorator;
+import org.connectorio.plc4x.extras.decorator.throttle.ThrottleDecorator;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.unit.Units;

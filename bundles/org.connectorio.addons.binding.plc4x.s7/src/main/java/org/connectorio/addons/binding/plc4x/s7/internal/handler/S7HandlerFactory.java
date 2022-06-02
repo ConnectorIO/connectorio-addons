@@ -21,7 +21,7 @@ import static org.connectorio.addons.binding.plc4x.s7.internal.S7BindingConstant
 import static org.connectorio.addons.binding.plc4x.s7.internal.S7BindingConstants.THING_TYPE_TCP_IP;
 
 import org.connectorio.addons.binding.plc4x.Plc4xHandlerFactory;
-import org.connectorio.addons.binding.plc4x.osgi.PlcDriverManager;
+import org.connectorio.plc4x.extras.osgi.PlcDriverManager;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingTypeUID;

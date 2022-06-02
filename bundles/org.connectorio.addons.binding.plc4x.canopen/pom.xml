@@ -61,16 +61,16 @@
     </dependency>
 
     <dependency>
-      <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.plc4x.decorator.phase</artifactId>
+      <groupId>org.connectorio.plc4x.extras</groupId>
+      <artifactId>org.connectorio.plc4x.extras.decorator.phase</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.plc4x.decorator.retry</artifactId>
+      <groupId>org.connectorio.plc4x.extras</groupId>
+      <artifactId>org.connectorio.plc4x.extras.decorator.retry</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.plc4x.decorator.throttle</artifactId>
+      <groupId>org.connectorio.plc4x.extras</groupId>
+      <artifactId>org.connectorio.plc4x.extras.decorator.throttle</artifactId>
     </dependency>
 
     <!--

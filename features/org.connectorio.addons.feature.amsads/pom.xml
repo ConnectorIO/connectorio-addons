@@ -84,10 +84,11 @@
             <id>karaf-verification</id>
             <configuration>
               <descriptors>
+                <descriptor>mvn:org.connectorio.plc4x.extras.features/org.connectorio.plc4x.extras.feature.osgi/${plc4x-extras.version}/xml/features</descriptor>
                 <descriptor>mvn:org.openhab.core.features.karaf/org.openhab.core.features.karaf.openhab-core/${openhab.version}/xml/features</descriptor>
               </descriptors>
               <features>
-                <feature>co7io-*</feature>
+                <feature>co7io-binding-*</feature>
               </features>
             </configuration>
           </execution>

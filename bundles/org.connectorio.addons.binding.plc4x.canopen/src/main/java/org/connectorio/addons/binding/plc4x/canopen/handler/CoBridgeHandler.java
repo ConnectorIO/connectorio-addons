@@ -24,7 +24,7 @@ import org.connectorio.addons.binding.plc4x.canopen.api.CoConnection;
 import org.connectorio.addons.binding.plc4x.canopen.config.CoNodeConfig;
 import org.connectorio.addons.binding.plc4x.canopen.discovery.CoDiscoveryParticipant;
 import org.connectorio.addons.binding.plc4x.handler.Plc4xBridgeHandler;
-import org.connectorio.plc4x.decorator.Decorator;
+import org.connectorio.plc4x.extras.decorator.Decorator;
 
 public interface CoBridgeHandler<C extends CoNodeConfig> extends Plc4xBridgeHandler<PlcConnection, C> {
 
