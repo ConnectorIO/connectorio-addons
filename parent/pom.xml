@@ -52,7 +52,7 @@
 
     <!-- various build related variables -->
     <feature.file>${project.basedir}/target/feature/feature.xml</feature.file>
-    <osgi.version>7.0.0</osgi.version>
+    <osgi.version>6.0.0</osgi.version>
     <unit-api.version>1.0</unit-api.version>
     <unit-se.version>1.0.10</unit-se.version>
     <ocpp-16.version>1.0.1</ocpp-16.version>
