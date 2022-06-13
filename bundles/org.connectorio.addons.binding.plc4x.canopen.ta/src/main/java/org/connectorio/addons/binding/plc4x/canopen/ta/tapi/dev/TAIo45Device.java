@@ -15,37 +15,14 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.plc4x.canopen.ta.internal.config;
+package org.connectorio.addons.binding.plc4x.canopen.ta.tapi.dev;
 
-public enum DeviceType {
+import org.connectorio.addons.binding.plc4x.canopen.api.CoNode;
 
-  UVR16x2 (0x87),
-  RSM610 (0x88),
-  IO45 (0x89),
-  EZ3 (0x8F),
-  UVR610(0x91),
-  SIMULATOR (0x8A),
+public class TAIo45Device extends TADevice {
 
-  UNKNOWN (0x00);
-
-  private final int code;
-
-  DeviceType(int code) {
-    this.code = code;
-  }
-
-  public int code() {
-    return code;
-  }
-
-  public static DeviceType fromCode(int code) {
-    for (DeviceType type : values()) {
-      if (type.code == code) {
-        return type;
-      }
-    }
-
-    return UNKNOWN;
+  public TAIo45Device(CoNode node, int clientId, boolean identifyOnly) {
+    super(node, clientId, identifyOnly, 44, 4, 5);
   }
 
 }

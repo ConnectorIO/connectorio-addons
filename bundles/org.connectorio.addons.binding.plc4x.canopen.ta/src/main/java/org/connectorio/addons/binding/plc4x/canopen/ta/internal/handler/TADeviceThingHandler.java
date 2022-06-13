@@ -17,19 +17,15 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoConnection;
@@ -48,8 +44,6 @@ import org.connectorio.addons.binding.plc4x.handler.Plc4xBridgeHandler;
 import org.connectorio.addons.binding.plc4x.handler.base.PollingPlc4xBridgeHandler;
 import org.connectorio.plc4x.extras.decorator.phase.Phase;
 import org.connectorio.plc4x.extras.decorator.phase.PhaseDecorator;
-import org.connectorio.plc4x.extras.decorator.retry.RetryDecorator;
-import org.connectorio.plc4x.extras.decorator.throttle.ThrottleDecorator;
 import org.openhab.core.common.NamedThreadFactory;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.thing.Bridge;
@@ -102,6 +96,7 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
 
       network.thenAccept((networkConnection) -> {
         this.network = networkConnection;
+
         this.taDevice = new TADeviceFactory().get(config.deviceType, networkConnection.getNode(config.nodeId), clientId);
         this.taDevice.login();
         this.taDevice.addStatusCallback(this);

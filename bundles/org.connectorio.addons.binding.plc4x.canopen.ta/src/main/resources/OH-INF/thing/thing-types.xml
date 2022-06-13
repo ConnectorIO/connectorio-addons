@@ -42,6 +42,7 @@
         <options>
           <option value="UVR16x2">UVR 16x2</option>
           <option value="RSM610">RSM 610</option>
+          <option value="IO45">IO 45</option>
           <option value="EZ3">EZ3</option>
           <option value="UVR610">UVR 610</option>
           <option value="SIMULATOR">Simulator</option>
