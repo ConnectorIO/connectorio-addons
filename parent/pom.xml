@@ -294,6 +294,11 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.profile.cast</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.profile.counter</artifactId>
         <version>${project.version}</version>
       </dependency>

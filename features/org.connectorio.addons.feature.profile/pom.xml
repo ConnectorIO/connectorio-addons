@@ -43,6 +43,10 @@
     </dependency>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.profile.cast</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.profile.counter</artifactId>
     </dependency>
     <dependency>

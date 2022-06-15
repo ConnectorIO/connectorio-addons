@@ -23,6 +23,7 @@
   <feature name="co7io-profiles" description="ConnectorIO profiles" version="${project.version}">
     <feature>co7io-profile</feature>
     <feature>co7io-profile-boundary</feature>
+    <feature>co7io-profile-cast</feature>
     <feature>co7io-profile-counter</feature>
     <feature>co7io-profile-math</feature>
     <feature>co7io-profile-quantity</feature>
@@ -39,6 +40,11 @@
   <feature name="co7io-profile-boundary" description="Utility profiles for filtering bounds" version="${project.version}">
     <feature>openhab-runtime-base</feature>
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.profile.boundary/${project.version}</bundle>
+  </feature>
+
+  <feature name="co7io-profile-cast" description="Utility profiles to cast states" version="${project.version}">
+    <feature>openhab-runtime-base</feature>
+    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.profile.cast/${project.version}</bundle>
   </feature>
 
   <feature name="co7io-profile-counter" description="Utility profiles for counter handling" version="${project.version}">
