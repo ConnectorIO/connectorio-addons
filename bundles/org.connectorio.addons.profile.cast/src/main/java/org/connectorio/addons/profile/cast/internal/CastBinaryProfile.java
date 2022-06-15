@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2019-2022 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,9 @@
  */
 package org.connectorio.addons.profile.cast.internal;
 
-import java.math.BigDecimal;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import javax.measure.Quantity;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.OpenClosedType;
-import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.thing.profiles.ProfileContext;
 import org.openhab.core.thing.profiles.ProfileTypeUID;
