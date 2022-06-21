@@ -36,4 +36,8 @@ public abstract class BaseReadyMarkerCondition implements Condition {
 
   protected abstract ReadyMarker getMarker();
 
+  public String toString() {
+    return getClass().getSimpleName() + "[" + getMarker() + ", result=" + evaluate() + "]";
+  }
+
 }

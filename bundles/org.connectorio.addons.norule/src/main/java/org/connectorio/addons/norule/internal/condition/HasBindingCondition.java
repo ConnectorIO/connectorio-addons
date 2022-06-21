@@ -36,4 +36,8 @@ public class HasBindingCondition implements Condition {
     return bindingInfoRegistry.getBindingInfo(binding) != null;
   }
 
+  public String toString() {
+    return "HasBindingCondition [" + binding + ", result=" + evaluate() + "]";
+  }
+
 }
