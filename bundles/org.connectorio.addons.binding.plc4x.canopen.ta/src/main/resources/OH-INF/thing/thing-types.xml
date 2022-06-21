@@ -75,6 +75,16 @@
         <description>Force retrieval of channels from controller.</description>
         <default>true</default>
       </parameter>
+      <parameter name="heartbeatTimeout" type="integer" required="true">
+        <label>Heartbeat timeout</label>
+        <description>
+          Time after which this node is considered disconnected. TA devices use heartbeat interval of 10 seconds.
+          This means that a heartbeat message is emitted approximately every 5 seconds, but depending on bus load it might be delayed.
+          Configure this timeout to a sensible default which reflects bus load. By default value is set to 120 000 ms (2 minutes).
+        </description>
+        <default>120000</default>
+        <unitLabel>ms</unitLabel>
+      </parameter>
     </config-description>
   </bridge-type>
 

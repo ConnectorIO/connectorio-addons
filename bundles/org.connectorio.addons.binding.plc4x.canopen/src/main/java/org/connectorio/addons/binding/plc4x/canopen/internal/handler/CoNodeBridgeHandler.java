@@ -33,9 +33,12 @@ import org.apache.plc4x.java.spi.values.PlcStruct;
 import org.connectorio.addons.binding.plc4x.canopen.CANopenBindingConstants;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoConnection;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoNode;
+import org.connectorio.addons.binding.plc4x.canopen.config.CoNodeBridgeConfig;
 import org.connectorio.addons.binding.plc4x.canopen.config.CoSdoConfig;
 import org.connectorio.addons.binding.plc4x.canopen.handler.CoBridgeHandler;
 import org.connectorio.addons.binding.plc4x.canopen.config.CoNodeConfig;
+import org.connectorio.addons.binding.plc4x.canopen.handler.HeartbeatMonitor;
+import org.connectorio.addons.binding.plc4x.canopen.handler.ThingStatusHeartbeatCallback;
 import org.connectorio.addons.binding.plc4x.canopen.internal.provider.CoSdoChannelTypeProvider;
 import org.connectorio.addons.binding.plc4x.handler.Plc4xBridgeHandler;
 import org.connectorio.addons.binding.plc4x.handler.base.PollingPlc4xBridgeHandler;
@@ -50,7 +53,7 @@ import org.openhab.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CoNodeBridgeHandler extends PollingPlc4xBridgeHandler<PlcConnection, CoNodeConfig> implements Consumer<PlcStruct> {
+public class CoNodeBridgeHandler extends PollingPlc4xBridgeHandler<PlcConnection, CoNodeBridgeConfig> {
 
   private final Logger logger = LoggerFactory.getLogger(CoNodeBridgeHandler.class);
 
@@ -58,7 +61,8 @@ public class CoNodeBridgeHandler extends PollingPlc4xBridgeHandler<PlcConnection
 
   private CompletableFuture<CoNode> node = new CompletableFuture<>();
   private CoNode coNode;
-  private CoNodeConfig config;
+  private CoNodeBridgeConfig config;
+  private ScheduledFuture<?> heartbeatMonitorTask;
 
   public CoNodeBridgeHandler(Bridge thing) {
     super(thing);
@@ -74,7 +78,7 @@ public class CoNodeBridgeHandler extends PollingPlc4xBridgeHandler<PlcConnection
 
   @Override
   public void initialize() {
-    this.config = getConfigAs(CoNodeConfig.class);
+    this.config = getConfigAs(CoNodeBridgeConfig.class);
 
     getPlcConnection().thenAccept(connection -> {
       CompletableFuture<CoConnection> network = getBridgeHandler().get().getCoConnection();
@@ -84,9 +88,7 @@ public class CoNodeBridgeHandler extends PollingPlc4xBridgeHandler<PlcConnection
           return;
         }
 
-        nw.heartbeat(config.nodeId, this);
         this.coNode = nw.getNode(config.nodeId);
-        this.node.complete(this.coNode);
 
         for (Channel channel : getThing().getChannels()) {
           final CoSdoConfig config = channel.getConfiguration().as(CoSdoConfig.class);
@@ -111,6 +113,12 @@ public class CoNodeBridgeHandler extends PollingPlc4xBridgeHandler<PlcConnection
             }
           }, 0, refreshInterval, TimeUnit.MILLISECONDS));
         }
+
+        this.node.complete(this.coNode);
+
+        ThingStatusHeartbeatCallback callback = new ThingStatusHeartbeatCallback(thing, getCallback());
+        HeartbeatMonitor heartbeatMonitor = new HeartbeatMonitor(nw, coNode, callback, System.currentTimeMillis(), config.heartbeatTimeout);
+        heartbeatMonitorTask = scheduler.scheduleAtFixedRate(heartbeatMonitor, 1000, config.heartbeatTimeout, TimeUnit.MILLISECONDS);
 
         updateStatus(ThingStatus.ONLINE);
       });
@@ -156,33 +164,17 @@ public class CoNodeBridgeHandler extends PollingPlc4xBridgeHandler<PlcConnection
   }
 
   @Override
-  public void accept(PlcStruct heartbeat) {
-    final Map<String, ? extends PlcValue> struct = heartbeat.getStruct();
-    final Integer node = Optional.ofNullable(struct.get("node")).map(PlcValue::getInt).orElse(0);
-    final Integer state = Optional.ofNullable(struct.get("state")).map(PlcValue::getInt).orElse(0);
-
-    if (node != config.nodeId) {
-      return;
-    }
-
-    if (0x00 == state) {
-      updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.DISABLED, "Booting up");
-    } else if (0x04 == state) {
-      updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.DISABLED, "Node stopped");
-    } else if (0x05 == state) {
-      updateStatus(ThingStatus.ONLINE);
-    } else if (0x7F == state) {
-      updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.DISABLED, "Not is in pre-operational state");
-    } else {
-      updateStatus(ThingStatus.OFFLINE);
-    }
-  }
-
-  @Override
   public void dispose() {
     clearTasks();
+    if (heartbeatMonitorTask != null) {
+      if (!heartbeatMonitorTask.isDone()) {
+        heartbeatMonitorTask.cancel(true);
+        heartbeatMonitorTask = null;
+      }
+    }
     if (coNode != null) {
       coNode.close();
+      coNode = null;
     }
   }
 

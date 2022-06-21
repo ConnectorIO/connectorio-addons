@@ -25,11 +25,16 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.connectorio.addons.binding.plc4x.canopen.api.CoConnection;
+import org.connectorio.addons.binding.plc4x.canopen.api.CoNode;
 import org.connectorio.addons.binding.plc4x.canopen.handler.CoBridgeHandler;
+import org.connectorio.addons.binding.plc4x.canopen.handler.HeartbeatMonitor;
+import org.connectorio.addons.binding.plc4x.canopen.handler.ThingStatusHeartbeatCallback;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.config.DeviceConfig;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.builder.DeviceChannelBuilder;
 import org.connectorio.addons.binding.plc4x.canopen.ta.internal.handler.builder.StandardDeviceChannelBuilder;
@@ -73,6 +78,7 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
   private Map<ChannelUID, ChannelHandler<?, ?, ?>> channelHandlers = new ConcurrentHashMap<>();
   private TADevice taDevice;
   private DeviceChannelBuilder builder;
+  private ScheduledFuture<?> heartbeatMonitorTask;
 
   public TADeviceThingHandler(Bridge bridge) {
     super(bridge);
@@ -97,7 +103,8 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
       network.thenAccept((networkConnection) -> {
         this.network = networkConnection;
 
-        this.taDevice = new TADeviceFactory().get(config.deviceType, networkConnection.getNode(config.nodeId), clientId);
+        CoNode node = networkConnection.getNode(config.nodeId);
+        this.taDevice = new TADeviceFactory().get(config.deviceType, node, clientId);
         this.taDevice.login();
         this.taDevice.addStatusCallback(this);
 
@@ -149,6 +156,10 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
 
             taDevice.setInitialized(true);
             taDevice.logout();
+
+            ThingStatusHeartbeatCallback callback = new ThingStatusHeartbeatCallback(thing, getCallback());
+            HeartbeatMonitor heartbeatMonitor = new HeartbeatMonitor(networkConnection, node, callback, System.currentTimeMillis(), config.heartbeatTimeout);
+            heartbeatMonitorTask = scheduler.scheduleAtFixedRate(heartbeatMonitor, 1000, config.heartbeatTimeout, TimeUnit.MILLISECONDS);
           }
         });
       });
@@ -176,6 +187,13 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
   public void dispose() {
     for (ChannelHandler<?, ?, ?> handler : channelHandlers.values()) {
       handler.dispose();
+    }
+
+    if (heartbeatMonitorTask != null) {
+      if (!heartbeatMonitorTask.isDone()) {
+        heartbeatMonitorTask.cancel(true);
+      }
+      heartbeatMonitorTask = null;
     }
 
     if (taDevice != null) {

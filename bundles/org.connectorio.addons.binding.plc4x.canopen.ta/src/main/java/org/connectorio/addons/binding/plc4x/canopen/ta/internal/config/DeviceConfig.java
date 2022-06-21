@@ -28,6 +28,7 @@ public class DeviceConfig extends CoNodeConfig {
   public boolean reload = true;
   public DeviceType deviceType;
   public InputOutputLinkMode inputOutputLinkMode = InputOutputLinkMode.NAME;
+  public long heartbeatTimeout = 120_000L;
 
   public boolean reload() {
     return reload || alwaysReload;
