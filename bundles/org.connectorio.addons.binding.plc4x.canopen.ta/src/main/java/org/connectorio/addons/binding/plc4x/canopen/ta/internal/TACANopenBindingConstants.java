@@ -29,6 +29,7 @@ import org.openhab.core.thing.type.ChannelTypeUID;
 public interface TACANopenBindingConstants extends CANopenBindingConstants {
 
   // thing types
+  @Deprecated
   String TA_UVR_16x2 = "ta-uvr16x2";
 
   String TA_DEVICE = "ta-device";
@@ -64,6 +65,7 @@ public interface TACANopenBindingConstants extends CANopenBindingConstants {
   String TA_DIGITAL_SWITCH = TA_DIGITAL_PREFIX + "-switch";
   String TA_DIGITAL_CONTACT = TA_DIGITAL_PREFIX + "-contact";
 
+  @Deprecated
   ThingTypeUID TA_UVR_16x2_THING_TYPE = new ThingTypeUID(BINDING_ID, TA_UVR_16x2);
 
   ThingTypeUID TA_DEVICE_THING_TYPE = new ThingTypeUID(BINDING_ID, TA_DEVICE);
