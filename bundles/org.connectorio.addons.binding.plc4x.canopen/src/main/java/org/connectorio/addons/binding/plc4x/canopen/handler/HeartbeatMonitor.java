@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.plc4x.canopen.handler;
 
+import java.time.Clock;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
@@ -40,12 +41,19 @@ public class HeartbeatMonitor implements Runnable, Consumer<PlcStruct> {
 
   private final Logger logger = LoggerFactory.getLogger(HeartbeatMonitor.class);
   private final AtomicLong lastSeen = new AtomicLong();
+  private final Clock clock;
   private final CoNode node;
   private final HeartbeatCallback callback;
   private final long timeoutMs;
   private CoSubscription subscription;
 
+
   public HeartbeatMonitor(CoConnection connection, CoNode node, HeartbeatCallback callback, long lastSeen, long timeoutMs) {
+    this(Clock.systemUTC(), connection, node, callback, lastSeen, timeoutMs);
+  }
+
+  HeartbeatMonitor(Clock clock, CoConnection connection, CoNode node, HeartbeatCallback callback, long lastSeen, long timeoutMs) {
+    this.clock = clock;
     this.node = node;
     this.callback = callback;
     this.timeoutMs = timeoutMs;
@@ -62,7 +70,7 @@ public class HeartbeatMonitor implements Runnable, Consumer<PlcStruct> {
 
   @Override
   public void run() {
-    if (System.currentTimeMillis() >= lastSeen.get() + timeoutMs) {
+    if (clock.millis() >= lastSeen.get() + timeoutMs) {
       callback.updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.OFFLINE.COMMUNICATION_ERROR, "Heartbeat not received within configured timeout");
     }
   }
@@ -83,6 +91,7 @@ public class HeartbeatMonitor implements Runnable, Consumer<PlcStruct> {
       return;
     }
 
+    lastSeen.set(clock.millis());
     if (0x00 == state) {
       callback.updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.DUTY_CYCLE, "Booting up");
     } else if (0x04 == state) {
