@@ -28,9 +28,15 @@ public class FuturePeriodCalculator implements PeriodCalculator {
 
   private final Clock clock;
   private final Period period;
+  private final int offset;
 
   public FuturePeriodCalculator(Clock clock, Period period) {
+    this(clock, 1, period);
+  }
+
+  public FuturePeriodCalculator(Clock clock, int offset, Period period) {
     this.clock = clock;
+    this.offset = offset;
     this.period = period;
   }
 
@@ -40,25 +46,25 @@ public class FuturePeriodCalculator implements PeriodCalculator {
 
     switch (period) {
       case YEAR:
-        time = time.plusYears(1).withDayOfYear(1).with(midnight);
+        time = time.plusYears(offset).withDayOfYear(1).with(midnight);
         break;
       case MONTH:
-        time = time.plusMonths(1).withDayOfMonth(1).with(midnight);
+        time = time.plusMonths(offset).withDayOfMonth(1).with(midnight);
         break;
       case WEEK:
-        time = time.plusWeeks(1).with(DayOfWeek.MONDAY).with(midnight);
+        time = time.plusWeeks(offset).with(DayOfWeek.MONDAY).with(midnight);
         break;
       case DAY:
-        time = time.plusDays(1).with(midnight);
+        time = time.plusDays(offset).with(midnight);
         break;
       case HOUR:
         time = time.plusHours(1).withMinute(0).withSecond(0).withNano(0);
         break;
       case HALF_HOUR:
-        time = time.withMinute(0).withSecond(0).withNano(0).plusMinutes((time.getMinute() / 30) * 30 + 30);
+        time = time.withMinute(0).withSecond(0).withNano(0).plusMinutes((time.getMinute() / 30) * 30).plusMinutes(offset * 30L);
         break;
       case QUARTER_HOUR:
-        time = time.withMinute(0).withSecond(0).withNano(0).plusMinutes((time.getMinute() / 15) * 15 + 15);
+        time = time.withMinute(0).withSecond(0).withNano(0).plusMinutes((time.getMinute() / 15) * 15).plusMinutes(offset * 15L);
         break;
       case MINUTE:
         time = time.plusMinutes(1).withSecond(0).withNano(0);
