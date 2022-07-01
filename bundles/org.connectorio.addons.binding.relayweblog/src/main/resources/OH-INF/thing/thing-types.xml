@@ -54,7 +54,7 @@
     </config-description>
   </bridge-type>
 
-  <thing-type id="meter">
+  <thing-type id="meter" extensible="power,energy,volume,volumetricflowrate,temperature,time">
     <supported-bridge-type-refs>
       <bridge-type-ref id="weblog"/>
     </supported-bridge-type-refs>
@@ -83,7 +83,7 @@
     </config-description>
   </thing-type>
 
-  <thing-type id="sub-meter">
+  <thing-type id="sub-meter" extensible="power,energy,volume,volumetricflowrate,temperature,time">
     <supported-bridge-type-refs>
       <bridge-type-ref id="weblog"/>
     </supported-bridge-type-refs>

@@ -116,11 +116,14 @@ abstract class AbstractMeterThingHandler<B extends WeblogBridgeHandler, C extend
       .ifPresent(client -> {
         try {
           List<MeterReading> readings = readOut(client, config);
-          ThingBuilder thing = editThing();
-          thing.withProperties(properties(getThing(), readings));
+          if (getThing().getChannels().isEmpty()) {
+            // fetch channels from weblog
+            ThingBuilder thing = editThing();
+            thing.withProperties(properties(getThing(), readings));
 
-          thing.withChannels(lookupChannels(readings));
-          updateThing(thing.build());
+            thing.withChannels(lookupChannels(readings));
+            updateThing(thing.build());
+          }
 
           Long cycleTime = getRefreshInterval();
           future = scheduler.scheduleAtFixedRate(this, 1000, cycleTime, TimeUnit.MILLISECONDS);
