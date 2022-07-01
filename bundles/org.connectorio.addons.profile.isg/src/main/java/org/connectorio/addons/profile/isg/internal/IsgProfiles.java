@@ -25,9 +25,14 @@ public interface IsgProfiles {
 
   ProfileTypeUID ISG_ENERGY = new ProfileTypeUID("connectorio", "isg-energy");
 
+  ProfileTypeUID ISG_VALUE = new ProfileTypeUID("connectorio", "isg-value");
+
   StateProfileType ISG_ENERGY_PROFILE_TYPE = ProfileTypeBuilder.newState(ISG_ENERGY, "ISG Energy Reading (as uint 32)")
     .withSupportedItemTypes("Number:Energy")
     .withSupportedItemTypesOfChannel("Number")
+    .build();
+
+  StateProfileType ISG_VALUE_PROFILE_TYPE = ProfileTypeBuilder.newState(ISG_ENERGY, "ISG Reading")
     .build();
 
 }

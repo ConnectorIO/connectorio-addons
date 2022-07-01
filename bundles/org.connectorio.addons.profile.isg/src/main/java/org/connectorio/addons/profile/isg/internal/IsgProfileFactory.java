@@ -37,17 +37,20 @@ public class IsgProfileFactory implements ProfileFactory, ProfileTypeProvider {
     if (IsgProfiles.ISG_ENERGY.equals(profileTypeUID)) {
       return new IsgEnergyProfile(callback, profileContext);
     }
+    if (IsgProfiles.ISG_VALUE.equals(profileTypeUID)) {
+      return new IsgValueProfile(callback, profileContext);
+    }
     return null;
   }
 
   @Override
   public Collection<ProfileTypeUID> getSupportedProfileTypeUIDs() {
-    return Arrays.asList(IsgProfiles.ISG_ENERGY);
+    return Arrays.asList(IsgProfiles.ISG_ENERGY, IsgProfiles.ISG_VALUE);
   }
 
   @Override
   public Collection<ProfileType> getProfileTypes(Locale locale) {
-    return Arrays.asList(IsgProfiles.ISG_ENERGY_PROFILE_TYPE);
+    return Arrays.asList(IsgProfiles.ISG_ENERGY_PROFILE_TYPE, IsgProfiles.ISG_VALUE_PROFILE_TYPE);
   }
 
 }
