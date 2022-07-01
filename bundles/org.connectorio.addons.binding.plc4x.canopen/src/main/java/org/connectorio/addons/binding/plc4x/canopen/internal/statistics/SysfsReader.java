@@ -51,7 +51,7 @@ public class SysfsReader<Q extends Quantity<Q>> {
       try {
         List<String> readings = Files.readAllLines(statistic.toPath());
         if (readings.size() == 1 && !readings.get(0).isEmpty()) {
-          return Quantities.getQuantity(Integer.parseInt(readings.get(0)), unit);
+          return Quantities.getQuantity(Long.parseLong(readings.get(0)), unit);
         } else {
           logger.debug("Can not map readings {} for statistic {}.", readings, statistic.getName());
         }
