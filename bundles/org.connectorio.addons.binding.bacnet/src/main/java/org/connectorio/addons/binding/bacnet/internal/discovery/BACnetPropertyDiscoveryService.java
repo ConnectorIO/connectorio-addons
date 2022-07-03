@@ -26,6 +26,7 @@ import static org.connectorio.addons.binding.bacnet.internal.BACnetBindingConsta
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.code_house.bacnet4j.wrapper.api.BacNetObject;
 import org.code_house.bacnet4j.wrapper.api.Property;
 import org.connectorio.addons.binding.bacnet.internal.handler.object.BACnetDeviceBridgeHandler;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
@@ -56,11 +57,11 @@ public class BACnetPropertyDiscoveryService extends AbstractDiscoveryService imp
   @Override
   protected void startScan() {
     handler.getClient().thenAccept(bacNetClient -> {
-      List<Property> properties = bacNetClient.getDeviceProperties(handler.getDevice());
-      for (Property property : properties) {
-        DiscoveryResult result = toDiscoveryResult(handler, property);
+      List<BacNetObject> properties = bacNetClient.getDeviceObjects(handler.getDevice());
+      for (BacNetObject obj : properties) {
+        DiscoveryResult result = toDiscoveryResult(handler, obj);
         if (result == null) {
-          logger.info("Discovery process found a BACnet property {} which is not yet supported by this binding", property);
+          logger.info("Discovery process found a BACnet property {} which is not yet supported by this binding", obj);
           continue;
         }
         thingDiscovered(result);
@@ -68,12 +69,12 @@ public class BACnetPropertyDiscoveryService extends AbstractDiscoveryService imp
     });
   }
 
-  private DiscoveryResult toDiscoveryResult(BACnetDeviceBridgeHandler<?, ?> bridge, Property property) {
+  private DiscoveryResult toDiscoveryResult(BACnetDeviceBridgeHandler<?, ?> bridge, BacNetObject object) {
     DiscoveryResultBuilder builder;
-    String id = "" + property.getId();
+    String id = "" + object.getId();
 
     ThingUID bridgeUID = bridge.getThing().getUID();
-    switch (property.getType()) {
+    switch (object.getType()) {
       case ANALOG_INPUT:
         builder = DiscoveryResultBuilder.create(new ThingUID(ANALOG_INPUT_THING_TYPE, bridgeUID, id));
         break;
@@ -105,16 +106,16 @@ public class BACnetPropertyDiscoveryService extends AbstractDiscoveryService imp
         builder = DiscoveryResultBuilder.create(new ThingUID(SCHEDULE_THING_TYPE, bridgeUID, id));
         break;
       default:
-        logger.info("Unsupported object type " + property.getType());
+        logger.info("Unsupported object type " + object.getType());
         return null;
 
     }
 
-    return builder.withLabel(property.getName())
-      .withProperty("description", property.getDescription())
+    return builder.withLabel(object.getName())
+      .withProperty("description", object.getDescription())
       .withBridge(bridgeUID)
-      .withProperty("instance", property.getId())
-      .withProperty("object", property.getBacNet4jIdentifier().toString())
+      .withProperty("instance", object.getId())
+      .withProperty("object", object.getBacNet4jIdentifier().toString())
       .withRepresentationProperty("object")
       .build();
   }

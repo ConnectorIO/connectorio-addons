@@ -73,6 +73,12 @@
     </state>
   </channel-type>
 
+  <channel-type id="writeableBoolean">
+    <item-type>Switch</item-type>
+    <label>Writeable boolean</label>
+    <config-description-ref uri="thing-type:co7io-bacnet:read-write"></config-description-ref>
+  </channel-type>
+
   <channel-type id="writeableBinary">
     <item-type>Switch</item-type>
     <label>Present value</label>
