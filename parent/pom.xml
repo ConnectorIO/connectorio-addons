@@ -57,6 +57,7 @@
     <unit-se.version>1.0.10</unit-se.version>
     <ocpp-16.version>1.0.1</ocpp-16.version>
     <ocpp-common.version>1.0</ocpp-common.version>
+    <milo.version>0.6.7</milo.version>
   </properties>
 
   <dependencyManagement>
@@ -872,6 +873,22 @@
         <groupId>org.openhab.core.bundles</groupId>
         <artifactId>org.openhab.core.storage.mapdb</artifactId>
         <version>${openhab.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.eclipse.milo</groupId>
+        <artifactId>sdk-client</artifactId>
+        <version>${milo.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.milo</groupId>
+        <artifactId>stack-client</artifactId>
+        <version>${milo.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.milo</groupId>
+        <artifactId>stack-core</artifactId>
+        <version>${milo.version}</version>
       </dependency>
 
       <dependency>

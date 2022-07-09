@@ -40,6 +40,7 @@
     <module>org.connectorio.addons.binding.bacnet</module>
     <module>org.connectorio.addons.binding.can</module>
     <module>org.connectorio.addons.binding.ocpp</module>
+    <module>org.connectorio.addons.binding.opcua</module>
     <module>org.connectorio.addons.binding.plc4x</module>
     <module>org.connectorio.addons.binding.plc4x.amsads</module>
     <module>org.connectorio.addons.binding.plc4x.canopen</module>
