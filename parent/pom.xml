@@ -1076,6 +1076,30 @@
                 <fail>first</fail>
               </configuration>
             </execution>
+            <!-- generate descriptor which is then used to produce a "fat kar" with all dependencies -->
+            <execution>
+              <id>aggregate-descriptor</id>
+              <goals>
+                <goal>features-generate-descriptor</goal>
+              </goals>
+              <configuration>
+                <enableGeneration>true</enableGeneration>
+                <aggregateFeatures>true</aggregateFeatures>
+                <attachmentArtifactClassifier></attachmentArtifactClassifier>
+                <attachmentArtifactType></attachmentArtifactType>
+                <outputFile>${project.build.directory}/feature/aggregate-feature.xml</outputFile>
+              </configuration>
+            </execution>
+            <execution>
+              <id>oh-kar</id>
+              <goals>
+                <goal>kar</goal>
+              </goals>
+              <configuration>
+                <classifier>openhab</classifier>
+                <featuresFile>${project.build.directory}/feature/aggregate-feature.xml</featuresFile>
+              </configuration>
+            </execution>
           </executions>
         </plugin>
       </plugins>

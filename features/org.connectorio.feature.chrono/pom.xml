@@ -83,6 +83,14 @@
               </features>
             </configuration>
           </execution>
+          <execution>
+            <id>aggregate-descriptor</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>oh-kar</id>
+            <phase>none</phase>
+          </execution>
         </executions>
       </plugin>
     </plugins>
