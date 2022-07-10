@@ -20,7 +20,7 @@
   <repository>mvn:org.connectorio.addons/org.connectorio.addons.feature/${project.version}/xml/features</repository>
 
   <feature name="openhab-binding-askoheat" description="openHAB Askoheat Binding" version="${project.version}">
-    <feature>co7io-binding-relayweblog</feature>
+    <feature>co7io-binding-askoheat</feature>
   </feature>
 
   <feature name="co7io-binding-askoheat" description="Askoheat Binding" version="${project.version}">
