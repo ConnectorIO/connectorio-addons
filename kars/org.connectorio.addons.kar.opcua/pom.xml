@@ -22,25 +22,29 @@
 
   <parent>
     <groupId>org.connectorio.addons</groupId>
-    <artifactId>parent</artifactId>
+    <artifactId>kars</artifactId>
     <version>3.0.0-SNAPSHOT</version>
-    <relativePath>../parent/pom.xml</relativePath>
   </parent>
 
-  <artifactId>itests</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>org.connectorio.addons.kar.opcua</artifactId>
+  <packaging>kar</packaging>
 
-  <name>ConnectorIO - Addons - ITests</name>
-  <description>Integration tests.</description>
+  <name>ConnectorIO - Addons - KARs - OPC UA</name>
+  <description>OPC UA deployment archive dedicated to openHAB runtime.</description>
 
-  <modules>
-    <module>org.connectorio.addons.itest.base</module>
-    <module>org.connectorio.addons.itest.exam</module>
-    <module>org.connectorio.addons.itest.amsads</module>
-    <module>org.connectorio.addons.itest.bacnet</module>
-    <module>org.connectorio.addons.itest.canopen</module>
-    <module>org.connectorio.addons.itest.opcua</module>
-    <module>org.connectorio.addons.itest.s7</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.feature.opcua</artifactId>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.feature</artifactId>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+  </dependencies>
 
 </project>

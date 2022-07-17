@@ -37,6 +37,7 @@
     <module>org.connectorio.addons.kar.amsads</module>
     <module>org.connectorio.addons.kar.bacnet</module>
     <module>org.connectorio.addons.kar.canopen</module>
+    <module>org.connectorio.addons.kar.opcua</module>
     <module>org.connectorio.addons.kar.s7</module>
   </modules>
 

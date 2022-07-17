@@ -43,6 +43,7 @@
     <module>org.connectorio.addons.feature.io.transport.serial</module>
     <module>org.connectorio.addons.feature.managed</module>
     <module>org.connectorio.addons.feature.norule</module>
+    <module>org.connectorio.addons.feature.opcua</module>
     <module>org.connectorio.addons.feature.ocpp</module>
     <module>org.connectorio.addons.feature.persistence</module>
     <module>org.connectorio.addons.feature.plc4x</module>
