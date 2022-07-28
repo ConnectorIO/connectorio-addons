@@ -31,7 +31,7 @@
   </parent>
 
   <artifactId>org.connectorio.addons.feature.bacnet</artifactId>
-  <packaging>kar</packaging>
+  <packaging>pom</packaging>
 
   <name>ConnectorIO - Addons - Features - BACnet</name>
   <description>BACnet deployment archive.</description>

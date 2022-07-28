@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- - Copyright (C) 2019-2021 ConnectorIO Sp. z o.o.
+ - Copyright (C) 2019-2022 ConnectorIO Sp. z o.o.
  -
  - Licensed under the Apache License, Version 2.0 (the "License");
  - you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 
   <repository>mvn:org.connectorio.addons/org.connectorio.addons.feature.plc4x/${project.version}/xml/features</repository>
 
-  <feature name="openhab-binding-s7" description="S7 PLC Binding" version="${project.version}" hidden="true">
+  <feature name="openhab-binding-s7" description="S7 PLC Binding" version="${project.version}">
     <feature>co7io-binding-plc4x-s7</feature>
   </feature>
 

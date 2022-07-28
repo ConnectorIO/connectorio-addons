@@ -41,6 +41,7 @@
     <bacnet4j-wrapper.version>1.3.0-alpha1</bacnet4j-wrapper.version>
 
     <openhab.version>3.0.4-connectorio-1</openhab.version>
+    <openhab-distro.version>3.0.4</openhab-distro.version>
     <karaf.version>4.2.7</karaf.version>
 
     <slf4j.version>1.7.21</slf4j.version>
@@ -58,6 +59,7 @@
     <ocpp-16.version>1.0.1</ocpp-16.version>
     <ocpp-common.version>1.0</ocpp-common.version>
     <milo.version>0.6.7</milo.version>
+    <pax-exam.version>4.13.5</pax-exam.version>
   </properties>
 
   <dependencyManagement>
@@ -114,6 +116,12 @@
         <classifier>features</classifier>
         <type>xml</type>
       </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.kar.bacnet</artifactId>
+        <version>${project.version}</version>
+        <type>kar</type>
+      </dependency>
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
@@ -156,6 +164,12 @@
         <classifier>features</classifier>
         <type>xml</type>
       </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.kar.amsads</artifactId>
+        <version>${project.version}</version>
+        <type>kar</type>
+      </dependency>
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
@@ -179,6 +193,12 @@
         <classifier>features</classifier>
         <type>xml</type>
       </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.kar.canopen</artifactId>
+        <version>${project.version}</version>
+        <type>kar</type>
+      </dependency>
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
@@ -191,6 +211,12 @@
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.kar.s7</artifactId>
+        <version>${project.version}</version>
+        <type>kar</type>
       </dependency>
 
       <dependency>
@@ -876,6 +902,19 @@
       </dependency>
 
       <dependency>
+        <groupId>org.openhab.distro</groupId>
+        <artifactId>openhab</artifactId>
+        <version>${openhab-distro.version}</version>
+        <type>zip</type>
+        <exclusions>
+          <exclusion>
+            <groupId>org.openhab.distro</groupId>
+            <artifactId>openhab-addons</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
         <groupId>org.eclipse.milo</groupId>
         <artifactId>sdk-client</artifactId>
         <version>${milo.version}</version>
@@ -902,6 +941,17 @@
         <version>${unit-se.version}</version>
       </dependency>
 
+
+      <dependency>
+        <groupId>org.apache.karaf.features</groupId>
+        <artifactId>org.apache.karaf.features.core</artifactId>
+        <version>${karaf.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.karaf.kar</groupId>
+        <artifactId>org.apache.karaf.kar.core</artifactId>
+        <version>${karaf.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.karaf.features</groupId>
         <artifactId>framework</artifactId>
@@ -956,6 +1006,38 @@
         <groupId>org.mockito</groupId>
         <artifactId>mockito-junit-jupiter</artifactId>
         <version>${mockito.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.itest.base</artifactId>
+        <version>${project.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.itest.exam</artifactId>
+        <version>${project.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-atinject_1.0_spec</artifactId>
+        <version>1.2</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-junit4</artifactId>
+        <version>${pax-exam.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-container-karaf</artifactId>
+        <version>${pax-exam.version}</version>
         <scope>test</scope>
       </dependency>
 
@@ -1034,7 +1116,7 @@
           <inherited>true</inherited>
           <configuration>
             <startLevel>80</startLevel>
-            <enableGeneration>true</enableGeneration>
+            <enableGeneration>false</enableGeneration>
             <aggregateFeatures>false</aggregateFeatures>
             <checkDependencyChange>false</checkDependencyChange>
             <failOnDependencyChange>false</failOnDependencyChange>
@@ -1042,13 +1124,6 @@
             <overwriteChangedDependencies>false</overwriteChangedDependencies>
           </configuration>
           <executions>
-            <execution>
-              <id>karaf-kar</id>
-              <goals>
-                <goal>kar</goal>
-              </goals>
-              <phase>package</phase>
-            </execution>
             <execution>
               <id>karaf-verification</id>
               <goals>
@@ -1074,30 +1149,6 @@
                 <verifyTransitive>false</verifyTransitive>
                 <ignoreMissingConditions>true</ignoreMissingConditions>
                 <fail>first</fail>
-              </configuration>
-            </execution>
-            <!-- generate descriptor which is then used to produce a "fat kar" with all dependencies -->
-            <execution>
-              <id>aggregate-descriptor</id>
-              <goals>
-                <goal>features-generate-descriptor</goal>
-              </goals>
-              <configuration>
-                <enableGeneration>true</enableGeneration>
-                <aggregateFeatures>true</aggregateFeatures>
-                <attachmentArtifactClassifier></attachmentArtifactClassifier>
-                <attachmentArtifactType></attachmentArtifactType>
-                <outputFile>${project.build.directory}/feature/aggregate-feature.xml</outputFile>
-              </configuration>
-            </execution>
-            <execution>
-              <id>oh-kar</id>
-              <goals>
-                <goal>kar</goal>
-              </goals>
-              <configuration>
-                <classifier>openhab</classifier>
-                <featuresFile>${project.build.directory}/feature/aggregate-feature.xml</featuresFile>
               </configuration>
             </execution>
           </executions>

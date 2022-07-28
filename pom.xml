@@ -39,6 +39,8 @@
     <module>parent</module>
     <module>bundles</module>
     <module>features</module>
+    <module>kars</module>
+    <module>itests</module>
   </modules>
 
   <scm>
