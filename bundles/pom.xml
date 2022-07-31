@@ -56,7 +56,6 @@
     <module>org.connectorio.addons.managed.item</module>
     <module>org.connectorio.addons.managed.link</module>
     <module>org.connectorio.addons.managed.thing</module>
-    <module>org.connectorio.addons.managed.widget</module>
     <module>org.connectorio.addons.managed.xstream</module>
     <module>org.connectorio.addons.norule</module>
     <module>org.connectorio.addons.norule.shell</module>
@@ -81,5 +80,14 @@
     <module>org.connectorio.units</module>
     <module>org.connectorio.units.si</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>osh</id>
+      <modules>
+        <module>org.connectorio.addons.managed.widget</module>
+      </modules>
+    </profile>
+  </profiles>
 
 </project>
