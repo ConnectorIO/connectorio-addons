@@ -1,0 +1,8 @@
+Bridge co7io-opcua:client:test-device "OPC UA Client connection" [host="10.10.10.2", port=4840] {
+
+}
+
+Thing co7io-opcua:node:test-device:node1 "Test OPC UA Node" [ns=3, identifierType="i", identifier="1000"] {
+  Channels:
+    Type byte : byte-value-from-opc "Byte value retrieved from OPC UA" [ns=3, identifierType="i", identifier="1010"]
+}

@@ -1,0 +1,7 @@
+name: addons
+title: ConnectorIO® Add-ons
+start_page: ROOT:overview.adoc
+version: true
+nav:
+  - modules/ROOT/nav.adoc
+  - modules/bindings/nav.adoc

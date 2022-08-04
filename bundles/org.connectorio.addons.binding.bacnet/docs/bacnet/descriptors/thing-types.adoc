@@ -1,0 +1,977 @@
+
+= Thing types
+
+[width="100%",cols="1,1,2"]
+|===
+|Thing | Label ^|Description
+
+| co7io-bacnet:analog-input
+| BACnet Analog Input
+| Analog input of an device.
+
+<<co7io-bacnet:analog-input>>
+
+| co7io-bacnet:analog-output
+| BACnet Analog Output
+| Analog output of an device.
+
+<<co7io-bacnet:analog-output>>
+
+| co7io-bacnet:analog-value
+| BACnet Analog Value
+| Analog value of an device
+
+<<co7io-bacnet:analog-value>>
+
+| co7io-bacnet:binary-input
+| BACnet Binary Input
+| Binary input of an device
+
+<<co7io-bacnet:binary-input>>
+
+| co7io-bacnet:binary-output
+| BACnet Binary Output
+| Binary output of an device
+
+<<co7io-bacnet:binary-output>>
+
+| co7io-bacnet:binary-value
+| BACnet Binary Value
+| Binary value of an device
+
+<<co7io-bacnet:binary-value>>
+
+| co7io-bacnet:calendar
+| BACnet Calendar
+| Calendar object
+
+<<co7io-bacnet:calendar>>
+
+| co7io-bacnet:multistate-input
+| BACnet Multi state input
+| Multi state input is an object which can transit between defined states.
+
+<<co7io-bacnet:multistate-input>>
+
+| co7io-bacnet:multistate-output
+| BACnet Multi state output
+| Multi state output is an object with limited set of values which can be set on it.
+
+<<co7io-bacnet:multistate-output>>
+
+| co7io-bacnet:multistate-value
+| BACnet Multi state value
+| A value object with limited set of states.
+
+<<co7io-bacnet:multistate-value>>
+
+| co7io-bacnet:pulse-converter
+| BACnet Pulse converter
+| Pulse converter is object which can do basic calculations based on inputs from other places.
+
+<<co7io-bacnet:pulse-converter>>
+
+| co7io-bacnet:schedule
+| BACnet Schedule
+| Schedule defines a set of states for a given week which can be set on other devices.
+
+<<co7io-bacnet:schedule>>
+
+| co7io-bacnet:character-string
+| BACnet Character String
+| A textual value.
+
+<<co7io-bacnet:character-string>>
+
+| co7io-bacnet:date-time
+| BACnet Date Time
+| Date time value
+
+<<co7io-bacnet:date-time>>
+
+| co7io-bacnet:large-analog
+| BACnet Large analog
+| Value which uses additional precession for expressing values.
+
+<<co7io-bacnet:large-analog>>
+
+| co7io-bacnet:octet-string
+| BACnet Octet string
+| Text value encoded as hex string.
+
+<<co7io-bacnet:octet-string>>
+
+| co7io-bacnet:time
+| BACnet Time
+| Time object.
+
+<<co7io-bacnet:time>>
+
+| co7io-bacnet:integer
+| BACnet Integer
+| An integer number (signed value).
+
+<<co7io-bacnet:integer>>
+
+| co7io-bacnet:postitive-integer
+| BACnet Positive Integer
+| An integer number without additional bit used for sign.
+
+<<co7io-bacnet:postitive-integer>>
+
+| co7io-bacnet:date-time-pattern
+| BACnet Date Time pattern
+| Pattern defining date and time.
+
+<<co7io-bacnet:date-time-pattern>>
+
+| co7io-bacnet:time-pattern
+| BACnet Time pattern
+| Time pattern.
+
+<<co7io-bacnet:time-pattern>>
+
+| co7io-bacnet:date-pattern
+| BACnet Date pattern
+| Date pattern.
+
+<<co7io-bacnet:date-pattern>>
+
+| co7io-bacnet:accumulator
+| BACnet Accumulator
+| Value accumulator.
+
+<<co7io-bacnet:accumulator>>
+
+|===
+
+
+[[co7io-bacnet:analog-input]]
+== Thing `co7io-bacnet:analog-input`
+
+Below table contains complete configuration of `co7io-bacnet:analog-input`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Analog Input configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:analog-output]]
+== Thing `co7io-bacnet:analog-output`
+
+Below table contains complete configuration of `co7io-bacnet:analog-output`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Analog Output configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:analog-value]]
+== Thing `co7io-bacnet:analog-value`
+
+Below table contains complete configuration of `co7io-bacnet:analog-value`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Analog Value configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:binary-input]]
+== Thing `co7io-bacnet:binary-input`
+
+Below table contains complete configuration of `co7io-bacnet:binary-input`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Binary Input configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:binary-output]]
+== Thing `co7io-bacnet:binary-output`
+
+Below table contains complete configuration of `co7io-bacnet:binary-output`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Binary Output configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:binary-value]]
+== Thing `co7io-bacnet:binary-value`
+
+Below table contains complete configuration of `co7io-bacnet:binary-value`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Binary Value configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:calendar]]
+== Thing `co7io-bacnet:calendar`
+
+Below table contains complete configuration of `co7io-bacnet:calendar`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Calendar configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:multistate-input]]
+== Thing `co7io-bacnet:multistate-input`
+
+Below table contains complete configuration of `co7io-bacnet:multistate-input`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Multi state input configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:multistate-output]]
+== Thing `co7io-bacnet:multistate-output`
+
+Below table contains complete configuration of `co7io-bacnet:multistate-output`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Multi state output configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:multistate-value]]
+== Thing `co7io-bacnet:multistate-value`
+
+Below table contains complete configuration of `co7io-bacnet:multistate-value`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Multi state value configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:pulse-converter]]
+== Thing `co7io-bacnet:pulse-converter`
+
+Below table contains complete configuration of `co7io-bacnet:pulse-converter`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Pulse converter configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:schedule]]
+== Thing `co7io-bacnet:schedule`
+
+Below table contains complete configuration of `co7io-bacnet:schedule`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Schedule configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:character-string]]
+== Thing `co7io-bacnet:character-string`
+
+Below table contains complete configuration of `co7io-bacnet:character-string`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Character String configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:date-time]]
+== Thing `co7io-bacnet:date-time`
+
+Below table contains complete configuration of `co7io-bacnet:date-time`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Date Time configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:large-analog]]
+== Thing `co7io-bacnet:large-analog`
+
+Below table contains complete configuration of `co7io-bacnet:large-analog`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Large analog configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:octet-string]]
+== Thing `co7io-bacnet:octet-string`
+
+Below table contains complete configuration of `co7io-bacnet:octet-string`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Octet string configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:time]]
+== Thing `co7io-bacnet:time`
+
+Below table contains complete configuration of `co7io-bacnet:time`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Time configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:integer]]
+== Thing `co7io-bacnet:integer`
+
+Below table contains complete configuration of `co7io-bacnet:integer`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Integer configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:postitive-integer]]
+== Thing `co7io-bacnet:postitive-integer`
+
+Below table contains complete configuration of `co7io-bacnet:postitive-integer`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Positive Integer configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:date-time-pattern]]
+== Thing `co7io-bacnet:date-time-pattern`
+
+Below table contains complete configuration of `co7io-bacnet:date-time-pattern`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Date Time pattern configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:time-pattern]]
+== Thing `co7io-bacnet:time-pattern`
+
+Below table contains complete configuration of `co7io-bacnet:time-pattern`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Time pattern configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:date-pattern]]
+== Thing `co7io-bacnet:date-pattern`
+
+Below table contains complete configuration of `co7io-bacnet:date-pattern`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Date pattern configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+[[co7io-bacnet:accumulator]]
+== Thing `co7io-bacnet:accumulator`
+
+Below table contains complete configuration of `co7io-bacnet:accumulator`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ip-device[co7io-bacnet:ip-device]
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp-device[co7io-bacnet:mstp-device]
+
+
+
+
+[width="100%",caption="Thing BACnet Accumulator configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+
+

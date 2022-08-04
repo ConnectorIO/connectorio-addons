@@ -23,21 +23,29 @@
 
   <thing-type id="server">
     <label>OPC UA Server</label>
-    <description>Launches a OPC UA server based on information collected by this system instance (not implemented).</description>
+    <description>Launches a OPC UA server based on information collected by this system instance (experimental).</description>
   </thing-type>
 
   <bridge-type id="client">
     <label>OPC UA Client Connection</label>
-    <description>Defines a connection to server for read and write purposes.</description>
+    <description>
+      Defines a connection to OPC UA server for read and write purposes.
+      Connection negotiation currently assumes username/password authentication.
+      Additional security settings such as certificates require certificate management addon.
+    </description>
 
     <config-description>
       <parameter name="host" type="text" required="false">
         <label>Bind address</label>
-        <description>IP or hostname used to launch server, if none given a primary network interface is being used.</description>
+        <description>
+          IP or hostname used to launch server, if none given a primary network interface is being used.
+        </description>
       </parameter>
       <parameter name="port" type="integer" required="false">
         <label>Server port</label>
-        <description></description>
+        <description>
+          Port number used to communicate with server.
+        </description>
         <default>4840</default>
       </parameter>
       <parameter name="username" type="text" required="false">
@@ -45,7 +53,6 @@
         <description>
           Username used to identify client session.
         </description>
-        <default></default>
       </parameter>
       <parameter name="password" type="text" required="false">
         <label>Password</label>
@@ -64,6 +71,11 @@
         <default>10000</default>
         <unitLabel>ms</unitLabel>
       </parameter>
+      <parameter name="publishInterval" type="integer">
+        <label>Publish interval</label>
+        <description>Default publish interval for all subscriptions made through this connection.</description>
+        <default>1000</default>
+      </parameter>
     </config-description>
   </bridge-type>
 
@@ -73,35 +85,9 @@
     </supported-bridge-type-refs>
 
     <label>Node</label>
-    <description>Instance of object.</description>
+    <description>Instance of an OPC-UA node object.</description>
 
-    <config-description>
-      <parameter name="ns" type="integer" required="true" min="0">
-        <label>Namespace</label>
-        <description>
-          Number which identify namespace.
-        </description>
-      </parameter>
-      <parameter name="identifierType" type="text" required="true">
-        <label>Identifier type</label>
-        <description>
-          Type of identifier (string, number, guid or binary).
-        </description>
-        <options>
-          <option value="i">Integer</option>
-          <option value="s">String</option>
-          <option value="g">GUID</option>
-          <option value="b">Binary</option>
-        </options>
-        <limitToOptions>true</limitToOptions>
-      </parameter>
-      <parameter name="identifier" type="text" required="true">
-        <label>Identifier</label>
-        <description>
-          Node identifier - value interpretation depends on identifier type.
-        </description>
-      </parameter>
-    </config-description>
+    <config-description uri="thing-type:co7io-opcua:node-config" />
   </thing-type>
 
 </thing:thing-descriptions>

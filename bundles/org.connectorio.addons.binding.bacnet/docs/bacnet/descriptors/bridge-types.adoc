@@ -1,0 +1,83 @@
+
+= Bridge types
+
+[width="100%",cols="1,1,2"]
+|===
+|Bridge | Label ^|Description
+
+| co7io-bacnet:ip-device
+| BACnet/IP device
+| BACnet device.
+
+<<>>
+
+| co7io-bacnet:mstp-device
+| BACnet/MSTP device
+| BACnet device.
+
+<<>>
+
+| co7io-bacnet:ipv4
+| BACnet/IP bridge
+| The BACnet/IP bridge allows to connect devices supporting communication over BACnet/IP.
+
+<<>>
+
+| co7io-bacnet:mstp
+| BACnet/MSTP Bridge
+| The BACnet mstp bridge allows to connect devices communicating over serial interface (RS485).
+
+<<>>
+
+|===
+
+
+[[co7io-bacnet:ip-device]]
+== Bridge `co7io-bacnet:ip-device`
+
+Below table contains complete configuration of `co7io-bacnet:ip-device`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:ipv4[co7io-bacnet:ipv4]
+
+
+
+
+
+
+[[co7io-bacnet:mstp-device]]
+== Bridge `co7io-bacnet:mstp-device`
+
+Below table contains complete configuration of `co7io-bacnet:mstp-device`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-bacnet:mstp[co7io-bacnet:mstp]
+
+* xref:./bridge-types.adoc#co7io-bacnet:ipv4[co7io-bacnet:ipv4]
+
+
+
+
+
+
+[[co7io-bacnet:ipv4]]
+== Bridge `co7io-bacnet:ipv4`
+
+Below table contains complete configuration of `co7io-bacnet:ipv4`.
+
+
+
+
+
+[[co7io-bacnet:mstp]]
+== Bridge `co7io-bacnet:mstp`
+
+Below table contains complete configuration of `co7io-bacnet:mstp`.
+
+
+
+
+
+

@@ -1,0 +1,30 @@
+
+= Thing types
+
+[width="100%",cols="1,1,2"]
+|===
+|Thing | Label ^|Description
+
+| co7io-s7:s7
+| S7 device
+| A PLC with S7 communication capabilities which can be polled for data.
+
+<<co7io-s7:s7>>
+
+|===
+
+
+[[co7io-s7:s7]]
+== Thing `co7io-s7:s7`
+
+Below table contains complete configuration of `co7io-s7:s7`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-s7:network[co7io-s7:network]
+
+
+
+
+
+

@@ -1,0 +1,90 @@
+= OPC UA - Open Platform Communications Unified Architecture
+
+The Open Platform Communications Unified Architecture binding provides integration with OPC UA-enabled devices and servers.
+From network connectivity point of view binding acts as a TCP client.
+The authentication can follow several ways defined in the specification.
+Default mode, supported out of the box, is username/password authentication.
+
+.OPC-UA binding capability table
+|===
+|Device discovery| Channel discovery |Read | Write | Subscribe
+
+|No
+|Yes
+|Yes
+|Yes
+|Yes
+|===
+
+The OPC-UA core protocol defines common services which are utilized by this binding and described below.
+
+== Device discovery
+Currently, device discovery (network level discovery) is not supported.
+Connection to device must be defined manually.
+
+== Thing and Channel discovery
+Binding use OPC UA browse service to list tags defined on the server.
+Based on the browse output binding will first create nodes which can be accepted through "inbox" functionality within software.
+Only when nodes are accepted binding will perform second browse request to fetch channels.
+
+This is default behavior.
+The discovery process assumes basic mapping between Thing - these are created from OPC UA Nodes.
+Channels are created from scalar properties which can be mapped to atomic/primitive types.
+
+Binding currently skip variable size structures such as arrays.
+
+== Readout principles
+The subscription specification is part of official OPC UA document.
+Binding makes uses this protocol feature to track data.
+By default, binding open subscription for each *linked* channel to save bandwidth on busy/big servers.
+
+The `publishInterval` parameter defines subscription publishing cycle.
+The default value is assumed to be `1000` (ms).
+It can be overridden at - _Bridge_ and _Thing_ and _Channel_ level in fashion similar to `refreshInterval` used by other bindings.
+
+=== Channel definitions
+Binding ships several channel definitions which reflect OPC UA scalar types.
+Because read and write procedure is general (it is the same for various data types), configuration of channels remains fairly simple and maps 1:1 to OPC UA nodes.
+
+Example channel definition:
+[source,indent=0,subs="verbatim,attributes",role="primary"]
+.dsl
+----
+Thing co7io-opcua:node:... "Test OPC UA Node" [...] { // <1>
+  Channels:
+    Type byte : // <2>
+        byte-value-from-opc  // <3>
+        "Byte value retrieved from OPC UA"  // <4>
+        [ns=3, identifierType="i", identifier="1010"] // <5>
+}
+----
+<1> All channels belong to things, hence they are wrapped in Thing section.
+<2> Declaration of channel type `byte` is a valid channel kind in context of OPC UA binding.
+<3> Unique channel identifier within thing definition (this is technical identifier).
+<4> Human readable label for channel.
+<5> Channel configuration parameters equal to `ns3;i=1010` in OPC UA addressing scheme.
+
+As you can see above, the channel does not have anything beyond type (byte) and node identifier.
+Channels can be created manually, only for selected OPC UA nodes, or through discovery process.
+
+== Textual configuration
+Below example is a high level description of an OPC UA enabled server with single node and single channel.
+Please note that both _Thing_ and _Channel_ config use same configuration parameters which point OPC UA node.
+
+[source,indent=0,subs="verbatim,attributes",role="primary"]
+.dsl
+----
+include::{examplesdir}/opcua/opcua.things[]
+----
+
+[source,xml,indent=0,subs="verbatim,attributes",role="secondary"]
+.co7io
+----
+include::{examplesdir}/opcua/opcua.xml[]
+----
+
+[source,yaml,indent=0,subs="verbatim,attributes",role="secondary"]
+.yaml
+----
+include::{examplesdir}/opcua/opcua.yaml[]
+----

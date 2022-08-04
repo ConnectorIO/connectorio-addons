@@ -1,0 +1,32 @@
+
+= Thing types
+
+[width="100%",cols="1,1,2"]
+|===
+|Thing | Label ^|Description
+
+| co7io-mbus:device
+| M-Bus Device
+| Device communicating according to M-Bus standard.
+
+<<co7io-mbus:device>>
+
+|===
+
+
+[[co7io-mbus:device]]
+== Thing `co7io-mbus:device`
+
+Below table contains complete configuration of `co7io-mbus:device`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-mbus:serial[co7io-mbus:serial]
+
+* xref:./bridge-types.adoc#co7io-mbus:tcp[co7io-mbus:tcp]
+
+
+
+
+
+

@@ -1,0 +1,24 @@
+---
+things:
+- kind: "Bridge"
+  UID: "co7io-opcua:client:test-device"
+  label: "OPC UA Client connection"
+  configuration:
+    host: "10.10.10.2"
+    port: 4840
+  things:
+  - id: "node1"
+    type: "co7io-opcua:node"
+    label: "Test OPC UA Node"
+    configuration:
+      identifier: "1000"
+      identifierType: "i"
+      ns: 3
+    channels:
+    - id: "byte-value-from-opc"
+      type: "byte"
+      label: "Byte value retrieved from OPC UA"
+      configuration:
+        identifier: "1010"
+        identifierType: "i"
+        ns: 3

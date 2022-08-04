@@ -30,7 +30,11 @@
   <packaging>bundle</packaging>
 
   <name>ConnectorIO - Addons - Binding - WM-Bus</name>
-  <description>CAN bus integration.</description>
+  <description>Wireless M-Bus integration.</description>
+
+  <properties>
+    <documentation.reference>wmbus</documentation.reference>
+  </properties>
 
   <dependencies>
     <dependency>

@@ -1,0 +1,17 @@
+Bridge co7io-bacnet:ipv4:local "BACnet Network" [ broadcastAddress="10.10.10.255", localBindAddress="10.10.10.10", localDeviceId=1010, localNetworkNumber=0 ] {
+
+  Bridge ip-device dev1 "Exhaust temperature" [ address="10.10.10.20", instance=1, network=0 ] {
+    Thing analog-input ai1 [ refreshInterval=500 ] {
+      Type readableNumber : value "Temperature reading" [ instance=1 ]
+    }
+    Thing analog-input ai2 "Supply temperature" [ refreshInterval=500 ] {
+      Type readableNumber : value "Temperature reading" [ instance=2 ]
+    }
+  }
+
+  Bridge ip-device dev2 "Compact definition" [ address="10.10.10.20", instance=1, network=0 ] {
+    Type deviceReadableNumber : ai1 "Exhaust temperature" [ type="ANALOG_INPUT", instance=1, refreshInterval=500 ]
+    Type deviceReadableNumber : ai2 "Supply temperature" [ type="ANALOG_INPUT", instance=2, refreshInterval=500 ]
+  }
+
+}

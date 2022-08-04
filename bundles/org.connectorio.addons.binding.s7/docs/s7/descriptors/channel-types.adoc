@@ -1,0 +1,95 @@
+
+= Channel types
+
+[cols="1,2,4"]
+|===
+|Channel type | Label ^|Description
+
+| co7io-s7:switch
+| On/Off Switch
+| 
+
+<<co7io-s7:switch>>
+
+| co7io-s7:contact
+| Open/Closed contact
+| 
+
+<<co7io-s7:contact>>
+
+| co7io-s7:number
+| Numeric value
+| 
+
+<<co7io-s7:number>>
+
+|===
+
+
+[[co7io-s7:switch]]
+== Configuration of `co7io-s7:switch`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-s7:switch`.
+
+[width="100%",caption="Channel type switch configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| field
+| TEXT
+| Field
+| Field to be read from PLC. Supported format of field: %I0.1:BOOL %Q0.4:BOOL %M9.0:BOOL %DB1.DBX38.1:BOOL Where %I stand for input, %Q for output, %M for memory and %DB for store.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-s7:contact]]
+== Configuration of `co7io-s7:contact`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-s7:contact`.
+
+[width="100%",caption="Channel type contact configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| field
+| TEXT
+| Field
+| Field to be read from PLC. Supported format of field: %I0.1:BOOL %Q0.4:BOOL %M9.0:BOOL %DB1.DBX38.1:BOOL Where %I stand for input, %Q for output, %M for memory and %DB for store.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-s7:number]]
+== Configuration of `co7io-s7:number`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-s7:number`.
+
+[width="100%",caption="Channel type number configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| field
+| TEXT
+| Field
+| Field to be read from PLC. Supported format of field: %MW0:SINT Where %I stand for input, %Q for output, %M for memory and %DB for store. Instead of SINT you can use: USINT UINT DINT UDINT LWORD LINT ULINT REAL LREAL
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+

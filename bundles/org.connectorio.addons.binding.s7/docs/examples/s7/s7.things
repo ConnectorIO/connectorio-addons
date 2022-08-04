@@ -1,0 +1,18 @@
+Bridge co7io-s7:network:test-device "S7-1200 vYXZ" [ host="10.10.10.10", rack=0, slot=0 ] {
+
+  Thing s7 device_inputs "Inputs" [ refreshInterval="500" ] {
+    Type switch: Input001 "Input 001" [ field="I0.1:BOOL" ]
+    Type switch: Input002 "Input 002" [ field="I0.2:BOOL" ]
+    Type switch: Input003 "Input 003" [ field="I0.3:BOOL" ]
+    Type switch: Input004 "Input 004" [ field="I0.4:BOOL" ]
+    Type switch: Input005 "Input 005" [ field="I0.5:BOOL" ]
+  }
+
+  Thing s7 device_outputs "Outputs" [ refreshInterval="500" ] {
+    Type switch: Output001 "Output 001" [ field="Q0.1:BOOL" ]
+    Type switch: Output002 "Output 002" [ field="Q0.2:BOOL" ]
+    Type switch: Output003 "Output 003" [ field="Q0.3:BOOL" ]
+    Type switch: Output004 "Output 004" [ field="Q0.3:BOOL" ]
+    Type switch: Output005 "Output 005" [ field="Q0.5:BOOL" ]
+  }
+}

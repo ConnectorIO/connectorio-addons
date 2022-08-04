@@ -1,0 +1,56 @@
+
+= Bridge types
+
+[width="100%",cols="1,1,2"]
+|===
+|Bridge | Label ^|Description
+
+| co7io-wmbus:serial
+| Serial Bridge (experimental)
+| The WM-Bus Serial bridge allows to receive data using compatible radio interfaces. This bridge implementation uses standard serial port stack.
+
+<<>>
+
+| co7io-wmbus:serial-jrxtx
+| Serial Bridge (jrxtx)
+| The WM-Bus Serial bridge based on customized serial port library. This bridge implementation is recommended to start with as it relies on serial port stack provided by WM-Bus library.
+
+<<>>
+
+| co7io-wmbus:tcp
+| TCP Bridge
+| The WM-Bus bridge based on TCP connection
+
+<<>>
+
+|===
+
+
+[[co7io-wmbus:serial]]
+== Bridge `co7io-wmbus:serial`
+
+Below table contains complete configuration of `co7io-wmbus:serial`.
+
+
+
+
+
+[[co7io-wmbus:serial-jrxtx]]
+== Bridge `co7io-wmbus:serial-jrxtx`
+
+Below table contains complete configuration of `co7io-wmbus:serial-jrxtx`.
+
+
+
+
+
+[[co7io-wmbus:tcp]]
+== Bridge `co7io-wmbus:tcp`
+
+Below table contains complete configuration of `co7io-wmbus:tcp`.
+
+
+
+
+
+

@@ -1,0 +1,72 @@
+= Installation and upgrade within {openHAB}
+
+This page describes installation and update procedure for extension which is installed with {openHAB}.
+Each ConnectorIO addon or binding comes packaged as a separate archive.
+These archives have a `.kar` extension and contain extension and all dependencies needed for offline installation.
+If you need to use multiple protocols you will need to repeat below procedure for each of them.
+
+== Step-by-step guide
+
+First of all you need working installation of {openHAB}.
+Please follow official https://www.openhab.org/docs/installation/[openHAB documentation] and find instructions for your hardware platform.
+
+Once your openHAB is up and running you can proceed to installation of bindings.
+
+1. Download selected addon.
+2. Locate your {openHAB} installation.
+3. Find `addons/` folder.
+For linux based installations it is `/usr/share/openhab/addons`.
+4. Copy KAR to this folder.
+5. Launch browser.
+6. Navigate to {openHAB} main user interface.
+7. In left menu pick Administration > Settings.
+8. Navigate to Add-ons > Bindings.
+9. Find integration you plan to install by typing protocol or brand name in search box.
+10. Click install and wait for operation to complete.
+
+=== Upgrade procedure
+
+Because there is no guarantee which version of binding will start first you need to uninstall earlier version manually.
+The procedure for uninstalling is following:
+
+1. Launch browser.
+2. Navigate to {openHAB} main user interface.
+3. In left menu pick Administration > Settings.
+4. Navigate to Addons > Bindings.
+5. Find integration you plan to update.
+6. Click it or uninstall icon next to it.
+7. Go to addons directory and remove selected `.kar` file.
+8. Restart {openHAB}.
+
+Do not worry about things which you created before.
+Their definitions and configurations will be kept in {openHAB} database.
+During upgrade, you will just lose ability to read their state.
+After successful installation of new version, they should automatically be back to "online" state.
+
+== Testing development snapshots
+
+Testing of non released extensions is possible through manual obtaining of addon from artifact repository.
+All {page-component-title} are available in "snapshot" (development) version built automatically for main versions which are maintained.
+
+In order to download addon you need to navigate to https://repository.connectorio.cloud.
+
+1. In left menu select "Browse".
+2. Choose `co7io-public-snapshots` repository.
+3. In displayed tree navigate to `org/connectorio/addons/` node.
+4. Click `+` to expand node and scroll down to `org.connectorio.addons.kar....` elements.
+5. Expand extension you are interested in and pick necessary version.
+6. Select element with the highest number after first dash - this is build date, value after second dash is build number.
+7. Mark file with `.kar` extension at the end.
+8. In opened right panel click on link displayed in `Path` section marked in red on below snapshot.
+
+Copy downloaded `kar` file and proceed with installation procedure.
+
+image::installation_nexus_download.png[Download scree from repository.connectorio.cloud]
+
+[NOTE]
+====
+Snapshot versions are generated and can change at any time.
+Retention period of artifacts might depend on many conditions.
+Versions which contain `-pr-NN-SNAPSHOT` are builds for specific pull requests.
+These versions might contain experimental functionality which might never arrive even in development version.
+====

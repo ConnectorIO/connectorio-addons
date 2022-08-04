@@ -23,7 +23,7 @@
 
   <bridge-type id="ams">
     <label>AMS/ADS Network</label>
-    <description>Defines AMS network identifier for this instance.</description>
+    <description>Defines AMS network identifier for connection attempts made by child elements.</description>
 
     <config-description>
       <parameter name="sourceAmsId" type="text" required="false">

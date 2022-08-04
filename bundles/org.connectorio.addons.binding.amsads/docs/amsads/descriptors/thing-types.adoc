@@ -1,0 +1,49 @@
+
+= Thing types
+
+[width="100%",cols="1,1,2"]
+|===
+|Thing | Label ^|Description
+
+| co7io-amsads:network
+| AMS/ADS Device (TCP)
+| AMS/ADS enabled device communicating over network socket.
+
+<<co7io-amsads:network>>
+
+| co7io-amsads:serial
+| AMS/ADS Device (serial)
+| Device communicating over serial port connection using AMS/ADS protocol.
+
+<<co7io-amsads:serial>>
+
+|===
+
+
+[[co7io-amsads:network]]
+== Thing `co7io-amsads:network`
+
+Below table contains complete configuration of `co7io-amsads:network`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-amsads:ams[co7io-amsads:ams]
+
+
+
+
+
+[[co7io-amsads:serial]]
+== Thing `co7io-amsads:serial`
+
+Below table contains complete configuration of `co7io-amsads:serial`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-amsads:ams[co7io-amsads:ams]
+
+
+
+
+
+

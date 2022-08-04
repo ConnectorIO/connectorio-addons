@@ -1,0 +1,22 @@
+
+[TIP]
+====
+Polling based on `refreshInterval` parameter can be cascaded to limit amount of places where it is defined.
+Most of our bindings provide this parameter at multiple levels - from `Bridge`, through `Thing` down to individual `Channel`.
+Value for refresh interval is always defined in milliseconds providing fine-grained control over cycle time.
+The refresh time is minimum time between poll cycles.
+Please be aware that it is not guaranteed that cycle time will always be the same.
+
+Read-outs are grouped by refresh interval and, if possible, conducted in groups.
+Each refresh interval value will result in spinning of a separate polling task.
+
+For example, by defining `refreshInterval` of `60000` (ms) at the `Bridge` and leaving it at `0` (ms) at `Thing` and `Channel` you will have single task.
+This task, if possible, will attempt to read the largest possible set of data, unless it is not permitted by configuration.
+Channels which do not fit into single request will be split and conducted in follow-up requests after response for earlier call arrives.
+All these are assumed to be executed in the same readout cycle, even if their request is generated after specified `refreshInterval`.
+
+If you define a `refreshInterval` of `1000` (ms) at the `Channel` instance, next to above bridge you will end up with two tasks.
+First which will fire every minute and second which will trigger every second which will poll single channel.
+
+Optimization of readouts is always specific to protocol.
+====

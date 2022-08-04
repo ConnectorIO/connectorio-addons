@@ -1,0 +1,26 @@
+
+= Bridge types
+
+[width="100%",cols="1,1,2"]
+|===
+|Bridge | Label ^|Description
+
+| co7io-s7:network
+| S7 TCP/IP Bridge
+| TCP/IP Connection to S7 PLC.
+
+<<>>
+
+|===
+
+
+[[co7io-s7:network]]
+== Bridge `co7io-s7:network`
+
+Below table contains complete configuration of `co7io-s7:network`.
+
+
+
+
+
+

@@ -1,0 +1,32 @@
+
+= Thing types
+
+[width="100%",cols="1,1,2"]
+|===
+|Thing | Label ^|Description
+
+| co7io-wmbus:device
+| WM-Bus Device
+| Device communicating according to WM-Bus standard.
+
+<<co7io-wmbus:device>>
+
+|===
+
+
+[[co7io-wmbus:device]]
+== Thing `co7io-wmbus:device`
+
+Below table contains complete configuration of `co7io-wmbus:device`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-wmbus:serial[co7io-wmbus:serial]
+
+* xref:./bridge-types.adoc#co7io-wmbus:serial-jrxtx[co7io-wmbus:serial-jrxtx]
+
+
+
+
+
+

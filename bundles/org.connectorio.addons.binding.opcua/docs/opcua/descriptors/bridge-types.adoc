@@ -1,0 +1,26 @@
+
+= Bridge types
+
+[width="100%",cols="1,1,2"]
+|===
+|Bridge | Label ^|Description
+
+| co7io-opcua:client
+| OPC UA Client Connection
+| Defines a connection to OPC UA server for read and write purposes. Connection negotiation currently assumes username/password authentication. Additional security settings such as certificates require certificate management addon.
+
+<<>>
+
+|===
+
+
+[[co7io-opcua:client]]
+== Bridge `co7io-opcua:client`
+
+Below table contains complete configuration of `co7io-opcua:client`.
+
+
+
+
+
+

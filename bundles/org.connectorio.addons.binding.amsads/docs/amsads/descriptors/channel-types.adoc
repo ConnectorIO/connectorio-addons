@@ -1,0 +1,511 @@
+
+= Channel types
+
+[cols="1,2,4"]
+|===
+|Channel type | Label ^|Description
+
+| co7io-amsads:switch-symbol
+| Switchable value (symbol)
+| Toggle retrieved through symbol name/symbolic field.
+
+<<co7io-amsads:switch-symbol>>
+
+| co7io-amsads:switch-direct-dec
+| Switchable value (index group+offset in dec.)
+| Toggle retrieved through direct retrieval from pointed registry using decimal notation.
+
+<<co7io-amsads:switch-direct-dec>>
+
+| co7io-amsads:switch-direct-hex
+| Switchable value (index group+offset in hex)
+| Toggle retrieved through direct retrieval from pointed registry using hexadecimal notation.
+
+<<co7io-amsads:switch-direct-hex>>
+
+| co7io-amsads:contact-symbol
+| Read only contact (symbol)
+| Toggle retrieved through symbol name/symbolic field.
+
+<<co7io-amsads:contact-symbol>>
+
+| co7io-amsads:contact-direct-dec
+| Read only contact (index group+offset in dec.)
+| Toggle retrieved through direct retrieval from pointed registry using decimal notation.
+
+<<co7io-amsads:contact-direct-dec>>
+
+| co7io-amsads:contact-direct-hex
+| Read only contact (index group+offset in hex)
+| Toggle retrieved through direct retrieval from pointed registry using hexadecimal notation.
+
+<<co7io-amsads:contact-direct-hex>>
+
+| co7io-amsads:number-symbol
+| Numeric value (symbol)
+| Numeric value retrieved through symbol name/symbolic field.
+
+<<co7io-amsads:number-symbol>>
+
+| co7io-amsads:number-direct-dec
+| Numeric value (index group+offset in dec.)
+| Numeric value retrieved through direct retrieval from pointed registry using decimal notation.
+
+<<co7io-amsads:number-direct-dec>>
+
+| co7io-amsads:number-direct-hex
+| Numeric value (index group+offset in hex)
+| Numeric value retrieved through direct retrieval from pointed registry using hexadecimal notation.
+
+<<co7io-amsads:number-direct-hex>>
+
+| co7io-amsads:datetime-symbol
+| Date time value (symbol)
+| Date, time or date time value retrieved through symbol name/symbolic field.
+
+<<co7io-amsads:datetime-symbol>>
+
+| co7io-amsads:datetime-direct-dec
+| Date time value (index group+offset in dec.)
+| Date, time or date time value retrieved through direct retrieval from pointed registry using decimal notation.
+
+<<co7io-amsads:datetime-direct-dec>>
+
+| co7io-amsads:datetime-direct-hex
+| Date time value (index group+offset in hex)
+| Date, time or date time value retrieved through direct retrieval from pointed registry using hexadecimal notation.
+
+<<co7io-amsads:datetime-direct-hex>>
+
+| co7io-amsads:text-symbol
+| Text value (symbol)
+| Text value retrieved through symbol name/symbolic field.
+
+<<co7io-amsads:text-symbol>>
+
+| co7io-amsads:text-direct-dec
+| Text value (index group+offset in dec.)
+| Text value retrieved through direct retrieval from pointed registry using decimal notation.
+
+<<co7io-amsads:text-direct-dec>>
+
+| co7io-amsads:text-direct-hex
+| Text value (index group+offset in hex)
+| Text value retrieved through direct retrieval from pointed registry using hexadecimal notation.
+
+<<co7io-amsads:text-direct-hex>>
+
+|===
+
+
+[[co7io-amsads:switch-symbol]]
+== Configuration of `co7io-amsads:switch-symbol`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-amsads:switch-symbol`.
+
+[width="100%",caption="Channel type switch-symbol configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| symbol
+| TEXT
+| Field symbol
+| Name of field be read from device. For TwinCAT 2 use names such .symbol, for TwinCAT 3 use Task.Name.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OFF. Any other value is assumed to represent ON.
+
+| inverse
+| BOOLEAN
+| Inverse conversion logic
+| Inverse logical representation of FALSE/TRUE values.
+
+|===
+
+
+[[co7io-amsads:switch-direct-dec]]
+== Configuration of `co7io-amsads:switch-direct-dec`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-amsads:switch-direct-dec`.
+
+[width="100%",caption="Channel type switch-direct-dec configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| indexGroup
+| INTEGER
+| Index Group (decimal)
+| Index group in decimal format (excluding 0x prefix). For example F00F.
+
+| indexOffset
+| INTEGER
+| Index Offset (decimal)
+| Offset in given decimal in hex format (excluding 0x prefix). For example 01.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OFF. Any other value is assumed to represent ON.
+
+| inverse
+| BOOLEAN
+| Inverse conversion logic
+| Inverse logical representation of FALSE/TRUE values.
+
+|===
+
+
+[[co7io-amsads:switch-direct-hex]]
+== Configuration of `co7io-amsads:switch-direct-hex`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-amsads:switch-direct-hex`.
+
+[width="100%",caption="Channel type switch-direct-hex configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| indexGroup
+| TEXT
+| Index Group (hex)
+| Index group in hex format (excluding 0x prefix). For example F00F.
+
+| indexOffset
+| INTEGER
+| Index Offset (hex)
+| Offset in given group in hex format (excluding 0x prefix). For example 01.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OFF. Any other value is assumed to represent ON.
+
+| inverse
+| BOOLEAN
+| Inverse conversion logic
+| Inverse logical representation of FALSE/TRUE values.
+
+|===
+
+
+[[co7io-amsads:contact-symbol]]
+== Configuration of `co7io-amsads:contact-symbol`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-amsads:contact-symbol`.
+
+[width="100%",caption="Channel type contact-symbol configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| symbol
+| TEXT
+| Field symbol
+| Name of field be read from device. For TwinCAT 2 use names such .symbol, for TwinCAT 3 use Task.Name.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+
+| inverse
+| BOOLEAN
+| Inverse conversion logic
+| Inverse logical representation of FALSE/TRUE values.
+
+|===
+
+
+[[co7io-amsads:contact-direct-dec]]
+== Configuration of `co7io-amsads:contact-direct-dec`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-amsads:contact-direct-dec`.
+
+[width="100%",caption="Channel type contact-direct-dec configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| indexGroup
+| INTEGER
+| Index Group (decimal)
+| Index group in decimal format (excluding 0x prefix). For example F00F.
+
+| indexOffset
+| INTEGER
+| Index Offset (decimal)
+| Offset in given decimal in hex format (excluding 0x prefix). For example 01.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+
+| inverse
+| BOOLEAN
+| Inverse conversion logic
+| Inverse logical representation of FALSE/TRUE values.
+
+|===
+
+
+[[co7io-amsads:contact-direct-hex]]
+== Configuration of `co7io-amsads:contact-direct-hex`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-amsads:contact-direct-hex`.
+
+[width="100%",caption="Channel type contact-direct-hex configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| indexGroup
+| TEXT
+| Index Group (hex)
+| Index group in hex format (excluding 0x prefix). For example F00F.
+
+| indexOffset
+| INTEGER
+| Index Offset (hex)
+| Offset in given group in hex format (excluding 0x prefix). For example 01.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+
+| inverse
+| BOOLEAN
+| Inverse conversion logic
+| Inverse logical representation of FALSE/TRUE values.
+
+|===
+
+
+[[co7io-amsads:number-symbol]]
+== Configuration of `co7io-amsads:number-symbol`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-amsads:number-symbol`.
+
+[width="100%",caption="Channel type number-symbol configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| symbol
+| TEXT
+| Field symbol
+| Name of field be read from device. For TwinCAT 2 use names such .symbol, for TwinCAT 3 use Task.Name.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes.
+
+|===
+
+
+[[co7io-amsads:number-direct-dec]]
+== Configuration of `co7io-amsads:number-direct-dec`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-amsads:number-direct-dec`.
+
+[width="100%",caption="Channel type number-direct-dec configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| indexGroup
+| INTEGER
+| Index Group (decimal)
+| Index group in decimal format (excluding 0x prefix). For example F00F.
+
+| indexOffset
+| INTEGER
+| Index Offset (decimal)
+| Offset in given decimal in hex format (excluding 0x prefix). For example 01.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes.
+
+|===
+
+
+[[co7io-amsads:number-direct-hex]]
+== Configuration of `co7io-amsads:number-direct-hex`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-amsads:number-direct-hex`.
+
+[width="100%",caption="Channel type number-direct-hex configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| indexGroup
+| TEXT
+| Index Group (hex)
+| Index group in hex format (excluding 0x prefix). For example F00F.
+
+| indexOffset
+| INTEGER
+| Index Offset (hex)
+| Offset in given group in hex format (excluding 0x prefix). For example 01.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes.
+
+|===
+
+
+[[co7io-amsads:datetime-symbol]]
+== Configuration of `co7io-amsads:datetime-symbol`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-amsads:datetime-symbol`.
+
+[width="100%",caption="Channel type datetime-symbol configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| symbol
+| TEXT
+| Field symbol
+| Name of field be read from device. For TwinCAT 2 use names such .symbol, for TwinCAT 3 use Task.Name.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+
+|===
+
+
+[[co7io-amsads:datetime-direct-dec]]
+== Configuration of `co7io-amsads:datetime-direct-dec`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-amsads:datetime-direct-dec`.
+
+[width="100%",caption="Channel type datetime-direct-dec configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| indexGroup
+| INTEGER
+| Index Group (decimal)
+| Index group in decimal format (excluding 0x prefix). For example F00F.
+
+| indexOffset
+| INTEGER
+| Index Offset (decimal)
+| Offset in given decimal in hex format (excluding 0x prefix). For example 01.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+
+|===
+
+
+[[co7io-amsads:datetime-direct-hex]]
+== Configuration of `co7io-amsads:datetime-direct-hex`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-amsads:datetime-direct-hex`.
+
+[width="100%",caption="Channel type datetime-direct-hex configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| indexGroup
+| TEXT
+| Index Group (hex)
+| Index group in hex format (excluding 0x prefix). For example F00F.
+
+| indexOffset
+| INTEGER
+| Index Offset (hex)
+| Offset in given group in hex format (excluding 0x prefix). For example 01.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+
+|===
+
+
+[[co7io-amsads:text-symbol]]
+== Configuration of `co7io-amsads:text-symbol`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-amsads:text-symbol`.
+
+[width="100%",caption="Channel type text-symbol configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| symbol
+| TEXT
+| Field symbol
+| Name of field be read from device. For TwinCAT 2 use names such .symbol, for TwinCAT 3 use Task.Name.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+
+|===
+
+
+[[co7io-amsads:text-direct-dec]]
+== Configuration of `co7io-amsads:text-direct-dec`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-amsads:text-direct-dec`.
+
+[width="100%",caption="Channel type text-direct-dec configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| indexGroup
+| INTEGER
+| Index Group (decimal)
+| Index group in decimal format (excluding 0x prefix). For example F00F.
+
+| indexOffset
+| INTEGER
+| Index Offset (decimal)
+| Offset in given decimal in hex format (excluding 0x prefix). For example 01.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+
+|===
+
+
+[[co7io-amsads:text-direct-hex]]
+== Configuration of `co7io-amsads:text-direct-hex`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-amsads:text-direct-hex`.
+
+[width="100%",caption="Channel type text-direct-hex configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| indexGroup
+| TEXT
+| Index Group (hex)
+| Index group in hex format (excluding 0x prefix). For example F00F.
+
+| indexOffset
+| INTEGER
+| Index Offset (hex)
+| Offset in given group in hex format (excluding 0x prefix). For example 01.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+
+|===
+
+
+

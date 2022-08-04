@@ -32,6 +32,10 @@
   <name>ConnectorIO - Addons - Binding - PLC4X - S7</name>
   <description>S7 PLC integration.</description>
 
+  <properties>
+    <documentation.reference>s7</documentation.reference>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.connectorio.addons</groupId>

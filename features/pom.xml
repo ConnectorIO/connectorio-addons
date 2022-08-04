@@ -59,4 +59,41 @@
     <module>org.connectorio.feature.chrono</module>
   </modules>
 
+  <profiles>
+    <profile>
+      <id>feature</id>
+      <activation>
+        <file>
+          <exists>src/main/feature/feature.xml</exists>
+        </file>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-feature-xml</id>
+                <goals>
+                  <goal>attach-artifact</goal>
+                </goals>
+                <configuration>
+                  <artifacts>
+                    <artifact>
+                      <file>${feature.file}</file>
+                      <classifier>features</classifier>
+                      <type>xml</type>
+                    </artifact>
+                  </artifacts>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>

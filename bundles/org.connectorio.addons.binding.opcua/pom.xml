@@ -32,6 +32,10 @@
   <name>ConnectorIO - Addons - Binding - OPC UA</name>
   <description>OPC UA binding.</description>
 
+  <properties>
+    <documentation.reference>opcua</documentation.reference>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.connectorio.addons</groupId>

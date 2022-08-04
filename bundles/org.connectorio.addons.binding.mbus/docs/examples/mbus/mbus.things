@@ -1,0 +1,13 @@
+Bridge co7io-mbus:openhab-serial:port2 "Serial Interface " [ serialPort="/dev/ttyS2", baudRate=2400, dataBits="DATABITS_5" ] { // <1>
+
+  Thing device heatMeter1 "Kamstrup Multical" [ address=1, refreshInterval=60000 ] { // <2>
+    Type number : power "Heat power" [ dib="AO", vib="10" ] // <3>
+    Type number : flowRate "Flow rate" [ dib="AO", vib="11" ]
+  }
+
+  Thing device heatMeter2 "Techem ultra" [ address=2, refreshInterval=360000 ] {
+    Type number : power "Heat power" [ dib="1D", vib="F0" ]
+    Type number : flowRate "Flow rate" [ dib="3D", vib="FB" ]
+  }
+
+}

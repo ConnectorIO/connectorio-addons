@@ -1,0 +1,51 @@
+---
+things:
+- kind: "Bridge"
+  UID: "co7io-wmbus:serial-jrxtx:radio1"
+  label: "Serial Interface"
+  configuration:
+    serialPort: "/dev/ttyS3"
+    manufacturer: "AMBER"
+  things:
+  - id: "heatMeter1"
+    type: "co7io-wmbus:device"
+    label: "Kamstrup Multical"
+    configuration:
+      deviceType: "HEAT_METER"
+      serialNumber: "01234"
+      version: "3"
+      manufacturer: "KAM"
+    channels:
+    - id: "power"
+      type: "number"
+      label: "Heat power"
+      configuration:
+        dib: "AO"
+        vib: "10"
+    - id: "flowRate"
+      type: "number"
+      label: "Flow rate"
+      configuration:
+        dib: "AO"
+        vib: "11"
+  - id: "heatMeter2"
+    type: "co7io-wmbus:device"
+    label: "Techem ultra"
+    configuration:
+      deviceType: "HEAT_METER"
+      serialNumber: "43210"
+      version: "23"
+      manufacturer: "TCH"
+    channels:
+    - id: "power"
+      type: "number"
+      label: "Heat power"
+      configuration:
+        dib: "1D"
+        vib: "F0"
+    - id: "flowRate"
+      type: "number"
+      label: "Flow rate"
+      configuration:
+        dib: "3D"
+        vib: "FB"

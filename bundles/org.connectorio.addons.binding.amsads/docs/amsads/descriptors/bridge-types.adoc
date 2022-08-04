@@ -1,0 +1,26 @@
+
+= Bridge types
+
+[width="100%",cols="1,1,2"]
+|===
+|Bridge | Label ^|Description
+
+| co7io-amsads:ams
+| AMS/ADS Network
+| Defines AMS network identifier for this instance.
+
+<<>>
+
+|===
+
+
+[[co7io-amsads:ams]]
+== Bridge `co7io-amsads:ams`
+
+Below table contains complete configuration of `co7io-amsads:ams`.
+
+
+
+
+
+

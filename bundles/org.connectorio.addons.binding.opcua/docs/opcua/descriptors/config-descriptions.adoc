@@ -1,0 +1,33 @@
+
+= Config descriptions
+
+
+[[thing-type:co7io-opcua:node-config]]
+== Config `thing-type:co7io-opcua:node-config`
+[width="100%",caption="thing-type:co7io-opcua:node-config configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+

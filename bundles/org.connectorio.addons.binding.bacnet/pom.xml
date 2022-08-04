@@ -45,6 +45,10 @@
     </license>
   </licenses>
 
+  <properties>
+    <documentation.reference>bacnet</documentation.reference>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.connectorio.addons</groupId>

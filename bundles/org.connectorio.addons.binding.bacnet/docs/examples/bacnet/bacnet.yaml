@@ -1,0 +1,64 @@
+---
+things:
+- kind: "Bridge"
+  UID: "co7io-bacnet:ipv4:local"
+  label: "BACnet Network"
+  configuration:
+    localDeviceId: 1010
+    localNetworkNumber: 0
+    localBindAddress: "10.10.10.10"
+    broadcastAddress: "10.10.10.255"
+  things:
+  - kind: "Bridge"
+    id: "dev1"
+    type: "co7io-bacnet:ip-device"
+    label: "Exhaust temperature"
+    configuration:
+      address: "10.10.10.20"
+      instance: 1
+      network: 0
+    things:
+    - id: "ai1"
+      type: "co7io-bacnet:analog-input"
+      configuration:
+        refreshInterval: 500
+      channels:
+      - id: "value"
+        type: "readableNumber"
+        label: "Temperature reading"
+        configuration:
+          instance: 1
+    - id: "ai2"
+      type: "co7io-bacnet:analog-input"
+      label: "Supply temperature"
+      configuration:
+        refreshInterval: 500
+      channels:
+      - id: "value"
+        type: "readableNumber"
+        label: "Temperature reading"
+        configuration:
+          instance: 2
+  - kind: "Bridge"
+    id: "dev2"
+    type: "co7io-bacnet:ip-device"
+    label: "Compact definition"
+    configuration:
+      address: "10.10.10.20"
+      instance: 1
+      network: 0
+    channels:
+    - id: "ai1"
+      type: "deviceReadableNumber"
+      label: "Exhaust temperature"
+      configuration:
+        instance: 1
+        type: "ANALOG_INPUT"
+        refreshInterval: 500
+    - id: "ai2"
+      type: "deviceReadableNumber"
+      label: "Supply temperature"
+      configuration:
+        instance: 2
+        type: "ANALOG_INPUT"
+        refreshInterval: 500

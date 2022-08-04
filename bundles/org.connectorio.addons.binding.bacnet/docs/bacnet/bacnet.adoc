@@ -1,0 +1,122 @@
+= BACnet
+
+BACnet is shortcut of "Building Automation and Control Networks".
+As name suggests this protocol is very popular in building automation and control applications.
+Its primary use is HVAC but also other elements in infrastructure.
+BACnet is an open standard both in North America (ASHARE) and worldwide (ISO).
+
+The protocol initially defined 23 standard object types, kinds of inputs/outputs and their role in automation systems.
+However, this number of supported objects and properties grew up significantly since 1990's.
+
+The binding allows to read values from the BACnet network as well as write (command) compatible devices.
+
+.BACnet binding capability table
+|===
+|Device discovery| Channel discovery |Read | Write | Subscribe
+
+|Yes
+|Yes
+|Yes
+|Yes
+|No
+|===
+
+[WARNING]
+====
+Binding does not support Change of Value (COV) notifications yet.
+
+While it is defined at protocol level we currently to not support this feature.
+====
+
+[NOTE]
+====
+Currently, this binding uses library licensed under GPL license.
+Consider that if you plan to use related code commercially.
+====
+
+== Supported hardware
+
+All devices capable of communication BACnet/IP and BACnet/MSTP.
+Other transport kinds and BACnet/SC is unsupported.
+
+== Device discovery
+Full discovery of BACnet devices is supported.
+By default, binding supply unbounded whois request.
+This request will cause burst traffic in large networks.
+Also for larger networks it might be necessary to fire discovery several times to detect all nodes.
+
+== Thing and Channel discovery
+Binding use BACnet protocol features to retrieve device objects.
+Thanks to it, it is able to enumerate all supported objects and automatically create appropriate channel definitions.
+
+While each BACnet object can be seen and created as a separate _Thing_, by default binding does not discover objects.
+This is due to fact that some BACnet controllers can hold hundreds of objects leading ot situation that discovery results are extremely hard to navigate.
+You can always create _Thing_ representing given input or output object manually.
+
+The discovery process provide basic mapping between Thing and BACnet device.
+Channels created by binding will represent present values of device objects (inputs, outputs etc).
+
+== Readout principles
+All reading is done through cyclic polling.
+By default, binding polls only *linked* channels.
+It allows to save bandwidth on busy/big servers.
+
+The `refreshInterval` parameter defines polling cycle.
+The default value is assumed to be `1000` (ms).
+It can be defined and overridden at - _Bridge_ and _Thing_ and _Channel_ level.
+
+include::partial$001_refresh_interval.adoc[]
+
+Binding always polls *only* 3 channels at the time.
+This allows to avoid getting into troubles with segmentation.
+
+=== Channel definitions
+
+Binding ships several channel definitions which reflect OPC UA scalar types.
+Because read and write procedure is general (it is the same for various data types), configuration of channels remains fairly simple and maps 1:1 to OPC UA nodes.
+
+Example channel definition:
+[source,indent=0,subs="verbatim,attributes",role="primary"]
+.dsl
+----
+Bridge co7io-bacnet:ip-device:... "Test device" [...] { // <1>
+  Channels:
+    Type device-read-write : // <2>
+        analog-input-1  // <3>
+        "Analog Input 1"  // <4>
+        [type="ANALOG_INPUT", propertyIdentifier="present-value", instance=1, refreshInterval=30000] // <5>
+}
+----
+<1> All channels belong to thing or bridge, hence they are wrapped in Bridge section.
+<2> Declaration of channel type `device-read-write`, it is a valid channel kind in context of BACnet binding.
+<3> Unique channel identifier within bridge definition (this is technical identifier).
+<4> Human-readable label for channel and its role.
+<5> Channel configuration parameters which result in reading present value of 1st Analog Input object within device.
+
+=== Priorities
+Binding does support setting priority for write commands as well as resetting value set with priority.
+Currently, this option is available only at the object level.
+
+Resetting prioritized value is possible through special profile.
+Profile is configured at item level, beyond channel definition.
+Once item which have reset profile attached, the triggered profile will cause NULL value to be sent to controller at configured priority.
+
+=== Schedule objects
+Schedule objects are supported, however they are not manageable through regular user interface.
+
+== Textual configuration
+
+Below is example of a text configuration which reflect relations within BACnet network.
+The ip bridge defines broadcast address used for communication, device contains node address, and channel points to actual device object.
+
+[source,indent=0,subs="verbatim,attributes",role="primary"]
+.dsl
+----
+include::{examplesdir}/bacnet/bacnet.things[]
+----
+
+[source,yaml,indent=0,subs="verbatim,attributes",role="secondary"]
+.yaml
+----
+include::{examplesdir}/bacnet/bacnet.yaml[]
+----

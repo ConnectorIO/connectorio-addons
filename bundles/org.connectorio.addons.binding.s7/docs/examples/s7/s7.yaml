@@ -1,0 +1,72 @@
+---
+things:
+- kind: "Bridge"
+  UID: "co7io-s7:network:test-device"
+  label: "S7-1200 vYXZ"
+  configuration:
+    host: "10.10.10.10"
+    rack: 0
+    slot: 0
+  things:
+  - id: "device_inputs"
+    type: "co7io-s7:s7"
+    label: "Inputs"
+    configuration:
+      refreshInterval: "500"
+    channels:
+    - id: "Input001"
+      type: "switch"
+      label: "Input 001"
+      configuration:
+        field: "I0.1:BOOL"
+    - id: "Input002"
+      type: "switch"
+      label: "Input 002"
+      configuration:
+        field: "I0.2:BOOL"
+    - id: "Input003"
+      type: "switch"
+      label: "Input 003"
+      configuration:
+        field: "I0.3:BOOL"
+    - id: "Input004"
+      type: "switch"
+      label: "Input 004"
+      configuration:
+        field: "I0.4:BOOL"
+    - id: "Input005"
+      type: "switch"
+      label: "Input 005"
+      configuration:
+        field: "I0.5:BOOL"
+  - id: "device_outputs"
+    type: "co7io-s7:s7"
+    label: "Outputs"
+    configuration:
+      refreshInterval: "500"
+    channels:
+    - id: "Output001"
+      type: "switch"
+      label: "Output 001"
+      configuration:
+        field: "Q0.1:BOOL"
+    - id: "Output002"
+      type: "switch"
+      label: "Output 002"
+      configuration:
+        field: "Q0.2:BOOL"
+    - id: "Output003"
+      type: "switch"
+      label: "Output 003"
+      configuration:
+        field: "Q0.3:BOOL"
+    - id: "Output004"
+      type: "switch"
+      label: "Output 004"
+      configuration:
+        field: "Q0.3:BOOL"
+    - id: "Output005"
+      type: "switch"
+      label: "Output 005"
+      configuration:
+        field: "Q0.5:BOOL"

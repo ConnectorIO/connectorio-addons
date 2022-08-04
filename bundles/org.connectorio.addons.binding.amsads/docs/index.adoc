@@ -1,0 +1,8 @@
+:examplesdir: ../examples/
+
+include::amsads/amsads.adoc[]
+
+include::descriptors/bridge-types.adoc[]
+include::descriptors/thing-types.adoc[]
+include::descriptors/channel-types.adoc[]
+include::descriptors/config-descriptions.adoc[]

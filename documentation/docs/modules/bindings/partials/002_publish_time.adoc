@@ -1,0 +1,29 @@
+
+[TIP]
+====
+Polling based on `refreshInterval` parameter can result in miss-alignment of acquired publish time.
+For that reason it is possible to set `publishTime` parameter which can specify behavior and assumed value.
+Once `publishTime` parameter is provided, each value retrieved through polling will contain time marker.
+The time marker can be used while storing data as well as for re-publishing of data.
+
+Possible values for `publishTime` parameter:
+
+ * None (default) - do not populate time information with retrieved data.
+ * Refresh time - time of readout start.
+ * Reply time - the time of successful answer.
+
+Values available for operations which rely on chunked/segmented payloads and requests:
+
+ * First refresh time - time of first request.
+ * First reply time - time of first answer.
+ * Last refresh time - time of last refresh time - be aware, this value will hold publishing of results until last group of requests is started.
+ * Last reply time - time of last reply time - be aware, this value will hold publishing of results until last reply is received.
+====
+
+[WARNING]
+====
+For large request group, when multiple packets are being generated and multiple answers must be collected, the "last time" will cause burst traffic in internal event bus.
+Because event bus is used to dispatch events for further processing, you might observe CPU spikes.
+
+Please optimize your `refreshInterval` values accordingly to hardware capabilities you use.
+====

@@ -1,0 +1,36 @@
+---
+things:
+- kind: "Bridge"
+  UID: "co7io-amsads:ams:my-ams-network"
+  label: "My test AMS Network"
+  configuration:
+    ipAddress: "10.10.10.2"
+    sourceAmsId: "10.10.10.2.1.1"
+    sourceAmsPort: "32768"
+    broadcastAddress: "10.10.10.255"
+  things:
+  - id: "nw1"
+    type: "co7io-amsads:network"
+    label: "Test Connection 2"
+    configuration:
+      host: "10.10.10.2"
+      targetAmsPort: "801"
+      targetAmsId: "10.10.10.3.1.1"
+    channels:
+    - id: "energy"
+      type: "number-symbol"
+      configuration:
+        type: "UDINT"
+        symbol: "Main.Power"
+    - id: "power"
+      type: "number-direct-hex"
+      configuration:
+        indexGroup: "F0FF"
+        indexOffset: "0"
+        type: "UINT16"
+    - id: "current"
+      type: "number-direct-dec"
+      configuration:
+        indexGroup: 61455
+        indexOffset: 4
+        type: "UINT16"

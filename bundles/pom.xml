@@ -102,4 +102,69 @@
     <module>org.connectorio.units.si</module>
   </modules>
 
+  <profiles>
+    <profile>
+      <id>generate-documentation</id>
+      <activation>
+        <file>
+          <exists>${basedir}/docs/index.adoc</exists>
+        </file>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.thing4.tools</groupId>
+            <artifactId>thing4-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>parse-descriptors</id>
+                <goals>
+                  <goal>parse-descriptors</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>process-descriptors</id>
+                <goals>
+                  <goal>process-descriptors</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${project.basedir}/docs/${documentation.reference}/descriptors/</outputDirectory>
+                  <outputExtension>adoc</outputExtension>
+                </configuration>
+              </execution>
+              <execution>
+                <id>parse-openhab-write-yaml</id>
+                <goals>
+                  <goal>parse-write</goal>
+                </goals>
+                <configuration>
+                  <includes>
+                    <include>docs/examples/**/*.things</include>
+                  </includes>
+                  <parser>openhab</parser>
+                  <writer>yaml</writer>
+                  <type>org.openhab.core.thing.Thing</type>
+                </configuration>
+              </execution>
+              <execution>
+                <id>parse-thing4</id>
+                <goals>
+                  <goal>parse-write</goal>
+                </goals>
+                <configuration>
+                  <includes>
+                    <include>docs/examples/**/*.things</include>
+                  </includes>
+                  <parser>thing4</parser>
+                  <type>org.openhab.core.thing.Thing</type>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>

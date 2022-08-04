@@ -24,6 +24,7 @@ public class NodeConfig implements Configuration {
   public int ns;
   public IdentifierType identifierType;
   public String identifier;
+  public long publishInterval = 0L;
 
   public enum IdentifierType {
     i, s, g, b;

@@ -1,0 +1,124 @@
+= M-Bus - Meter-Bus
+
+The M-Bus is serial line protocol popular within SCADA and metering deployments within Europe.
+The underlying norms are EN 13757-3 for application and EN 13757-2 for physical and data link layers.
+Since M-Bus is primarily serial protocol, which can be also bridged over TCP, there is single encoding scheme.
+Backing serial port might be of any type - RS232 (more common) or RS485.
+
+.M-Bus binding capability table
+|===
+|Device discovery| Channel discovery |Read | Write | Subscribe
+
+|Yes
+|Yes
+|Yes
+|No
+|No
+|===
+
+While binding does not discover compatible interfaces out of the box.
+This is due to fact that any serial interface might be used as M-Bus interface.
+Binding does discover devices through bus scanning procedure, if conducted.
+It can also detect channels from received frames.
+
+== Device discovery
+Each M-Bus device nowadays can be identified through primary or secondary address.
+The primary address is a serial bus identifier which is a number from 1 up to 250.
+Secondary scan procedure is much longer as it iterates over possible combinations of secondary address which is composed of 8 bytes.
+
+The secondary address is constructed from several fields:
+
+ * manufacturer - a three char manufacturer code.
+ * device - device identifier, its serial number.
+ * version - number which indicate hardware revision or model.
+ * type - number which translates to pre-defined device types (oil meter, electricity meter, gas meter etc).
+
+Based on above it is possible to construct a scanning mask which will limit address range.
+Once device is discovered it is being reported as a _Thing_ which can be accepted through "inbox" functionality.
+
+== Thing and Channel discovery
+As mentioned above - each meter which properly answers for primary or secondary address call is identified as a separate _Thing_.
+Once _Thing_ is accepted through inbox functionality, additional configuration can be supplied.
+
+Binding by default will create a new channel for each properly encoded data record within frame.
+The protocol defines several encoding schemes for data:
+
+* Empty data block
+* INT8
+* INT16
+* INT24
+* INT32
+* INT48
+* INT64
+* Real (32 bit)
+* BCD2
+* BCD4
+* BCD6
+* BCD8
+* BCD12
+* Date
+* String
+
+Types are simplified at binding level to top-level primitive kinds - Long, Double, Date, String, BCD and None.
+From that point of view linked items do not need to worry about exact encoding of data record.
+
+== Readout principles
+The readout specification rely on cyclic polling (refresh interval).
+In case of M-Bus all values (data records) are available at single poll attempt.
+This means that there is no support for refresh interval at channel level, because all channels are fetched at one call.
+
+include::partial$001_refresh_interval.adoc[]
+
+== Write principles
+There is no write support within this binding.
+There are no specific remarks for writing.
+
+=== Channel definitions
+Each channel is configured with `div` and `vib` parameters which uniquely identify each record within frame.
+The `dib` stands for Data Information Block and `vib` represents Value Information Block.
+Both blocks deliver together information of how its value should be interpreted.
+The information which comes from these two places are:
+
+DIB ships:
+
+* Storage - a present (0), or historical data value register.
+* Function
+** Instant value
+** Max value
+** Min value
+** Error value
+* Sub unit
+* Tariff
+* Storage number
+
+VIB delivers:
+
+* Measurement kind
+* Multiplier
+* Measurement unit
+
+All above information by default is placed in detected channel label / description, if available.
+It does not trigger any specific behavior when it comes to data acquisition.
+
+== Configuration example
+
+[source,indent=0,subs="verbatim,attributes",role="primary"]
+.dsl
+----
+include::{examplesdir}/mbus/mbus.things[]
+----
+<1> The serial bridge which points to serial port and transmission settings.
+<2> Device with defined primary address to poll.
+<3> Channel associated with device, it does rely on *hex* notation for DIB and VIB parameters.
+
+[source,xml,indent=0,subs="verbatim,attributes",role="secondary"]
+.co7io
+----
+include::{examplesdir}/mbus/mbus.xml[]
+----
+
+[source,yaml,indent=0,subs="verbatim,attributes",role="secondary"]
+.yaml
+----
+include::{examplesdir}/mbus/mbus.yaml[]
+----

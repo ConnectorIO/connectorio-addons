@@ -1,0 +1,23 @@
+
+= Config descriptions
+
+
+[[thing-type:co7io-mbus:channel]]
+== Config `thing-type:co7io-mbus:channel`
+[width="100%",caption="thing-type:co7io-mbus:channel configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| dib
+| TEXT
+| Data Information Block (DIB)
+| Data identification block in hex format - allows to determine data encoding.
+
+| vib
+| TEXT
+| Value Information Block (VIB)
+| Value identification block allows to interpret value.
+
+|===
+
+

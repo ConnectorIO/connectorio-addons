@@ -1,0 +1,70 @@
+= S7
+
+The "S7" shortcut stands for "Step 7", depending on context, in other publications they might be also referred as s7comm.
+
+Devices which speak by this protocol are mostly Siemens PLCs from Simatic product family.
+This protocol can be used for PLC-to-PLC but also for HMI-to-PLC communication.
+The binding allows to read values from the PLC as well as write.
+Depending on actual PLC model subscriptions might be supported.
+Subscriptions are notifications sent by PLC when change-of-value or specific time interval passes.
+As a rule of thumb you can expect that subscriptions are supported in higher end models (S7-400, S7-1500).
+Lower models of Simatic family are more restrictive.
+
+.S7 binding capability table
+|===
+|Device discovery| Channel discovery |Read | Write | Subscribe
+
+|No
+|No
+|Yes
+|Yes
+|No
+|===
+
+While upper class of S7 device family supports subscriptions, they are not supported by this binding.
+
+== Supported hardware
+
+PLC models supported by this integration are S7-300, 400, 1200, 1500 and Siemens Logo.
+All these devices use under the hood the same protocol.
+
+== Supported things and bridges
+
+|===
+|Thing |Type |Name |Description
+
+|network
+|bridge
+|Siemens S7 TCP/IP Bridge
+|TCP/IP Connection to Siemens PLC
+
+|s7
+|thing
+|Siemens S7 device
+|A PLC with S7 communication capabilities which can be polled for data.
+
+|===
+
+In order to start reading data you need to create at least one `network` bridge with `s7` device.
+Be aware that there might be multiple `s7` devices for a single connection allowing to group PLC inputs and outputs.
+If your PLC controls multiple motors then each of them can be created as a `s7` thing with separate state.
+
+Because it is possible to configure polling (sampling) interval for each of above elements you can also group I/O by frequency of updates.
+
+== Textual configuration
+
+Below is example of a text configuration which you can upload to your openhab.
+It allows to use a regular version control system to track changes over time.
+The same can be done via user interface.
+
+[source,indent=0,subs="verbatim,attributes",role="primary"]
+.dsl
+----
+include::{examplesdir}/s7/s7.things[]
+----
+
+[source,yaml,indent=0,subs="verbatim,attributes",role="secondary"]
+.yaml
+----
+include::{examplesdir}/s7/s7.yaml[]
+----

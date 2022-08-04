@@ -1,0 +1,581 @@
+
+= Channel types
+
+[cols="1,2,4"]
+|===
+|Channel type | Label ^|Description
+
+| co7io-opcua:boolean
+| Boolean
+| 
+
+<<co7io-opcua:boolean>>
+
+| co7io-opcua:signed-byte
+| Signed byte
+| 
+
+<<co7io-opcua:signed-byte>>
+
+| co7io-opcua:byte
+| Byte
+| 
+
+<<co7io-opcua:byte>>
+
+| co7io-opcua:int16
+| Int16
+| 
+
+<<co7io-opcua:int16>>
+
+| co7io-opcua:uint16
+| UInt16
+| 
+
+<<co7io-opcua:uint16>>
+
+| co7io-opcua:int32
+| Int32
+| 
+
+<<co7io-opcua:int32>>
+
+| co7io-opcua:uint32
+| UInt32
+| 
+
+<<co7io-opcua:uint32>>
+
+| co7io-opcua:int64
+| Int64
+| 
+
+<<co7io-opcua:int64>>
+
+| co7io-opcua:uint64
+| UInt64
+| 
+
+<<co7io-opcua:uint64>>
+
+| co7io-opcua:float
+| Float
+| 
+
+<<co7io-opcua:float>>
+
+| co7io-opcua:double
+| Double
+| 
+
+<<co7io-opcua:double>>
+
+| co7io-opcua:string
+| String
+| 
+
+<<co7io-opcua:string>>
+
+| co7io-opcua:datetime
+| Date time
+| 
+
+<<co7io-opcua:datetime>>
+
+| co7io-opcua:guid
+| Guid
+| 
+
+<<co7io-opcua:guid>>
+
+| co7io-opcua:byte-string
+| Byte String
+| 
+
+<<co7io-opcua:byte-string>>
+
+|===
+
+
+[[co7io-opcua:boolean]]
+== Configuration of `co7io-opcua:boolean`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-opcua:boolean`.
+
+[width="100%",caption="Channel type boolean configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+
+[[co7io-opcua:signed-byte]]
+== Configuration of `co7io-opcua:signed-byte`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-opcua:signed-byte`.
+
+[width="100%",caption="Channel type signed-byte configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+
+[[co7io-opcua:byte]]
+== Configuration of `co7io-opcua:byte`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-opcua:byte`.
+
+[width="100%",caption="Channel type byte configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+
+[[co7io-opcua:int16]]
+== Configuration of `co7io-opcua:int16`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-opcua:int16`.
+
+[width="100%",caption="Channel type int16 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+
+[[co7io-opcua:uint16]]
+== Configuration of `co7io-opcua:uint16`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-opcua:uint16`.
+
+[width="100%",caption="Channel type uint16 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+
+[[co7io-opcua:int32]]
+== Configuration of `co7io-opcua:int32`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-opcua:int32`.
+
+[width="100%",caption="Channel type int32 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+
+[[co7io-opcua:uint32]]
+== Configuration of `co7io-opcua:uint32`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-opcua:uint32`.
+
+[width="100%",caption="Channel type uint32 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+
+[[co7io-opcua:int64]]
+== Configuration of `co7io-opcua:int64`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-opcua:int64`.
+
+[width="100%",caption="Channel type int64 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+
+[[co7io-opcua:uint64]]
+== Configuration of `co7io-opcua:uint64`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-opcua:uint64`.
+
+[width="100%",caption="Channel type uint64 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+
+[[co7io-opcua:float]]
+== Configuration of `co7io-opcua:float`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-opcua:float`.
+
+[width="100%",caption="Channel type float configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+
+[[co7io-opcua:double]]
+== Configuration of `co7io-opcua:double`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-opcua:double`.
+
+[width="100%",caption="Channel type double configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+
+[[co7io-opcua:string]]
+== Configuration of `co7io-opcua:string`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-opcua:string`.
+
+[width="100%",caption="Channel type string configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+
+[[co7io-opcua:datetime]]
+== Configuration of `co7io-opcua:datetime`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-opcua:datetime`.
+
+[width="100%",caption="Channel type datetime configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+
+[[co7io-opcua:guid]]
+== Configuration of `co7io-opcua:guid`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-opcua:guid`.
+
+[width="100%",caption="Channel type guid configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+
+[[co7io-opcua:byte-string]]
+== Configuration of `co7io-opcua:byte-string`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-opcua:byte-string`.
+
+[width="100%",caption="Channel type byte-string configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+
+

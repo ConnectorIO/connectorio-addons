@@ -1,0 +1,9 @@
+= Industrial Integration made easy: ConnectorIO openhab bindings
+
+<<<
+
+This document describes installation and configuration procedure of ConnectorIO bindings in openHAB.
+openHAB is popular home automation software, however its architecture is flexible and allows connectivity with various hardware.
+From our point of view the HAB part of that name is "Hardware Abstraction Bus", and it is used in such a way by us.
+Vanilla openHAB connect devices such as heating boilers, multimedia systems down to small sensors or smart meters.
+It has also support for Modbus, solar inverters, energy meters some PLC kinds and other serial based communications.

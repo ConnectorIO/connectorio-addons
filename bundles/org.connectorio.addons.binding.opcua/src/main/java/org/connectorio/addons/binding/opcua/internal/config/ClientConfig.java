@@ -30,4 +30,6 @@ public class ClientConfig implements Configuration {
   public int requestTimeout = 10_000;
   public int connectTimeout = 10_000;
 
+  public long publishInterval = 1000L;
+
 }

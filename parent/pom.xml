@@ -41,6 +41,7 @@
     <bacnet4j-wrapper.version>1.3.0-alpha3</bacnet4j-wrapper.version>
 
     <openhab.version>3.0.4</openhab.version>
+    <thing4.version>3.0.0-alpha-2</thing4.version>
     <thing4-bom.version>${openhab.version}</thing4-bom.version>
     <openhab-distro.version>${openhab.version}</openhab-distro.version>
     <karaf.version>4.3.9</karaf.version>
@@ -915,24 +916,6 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
           <version>3.3.0</version>
-          <inherited>true</inherited>
-          <executions>
-            <execution>
-              <id>attach-feature-xml</id>
-              <goals>
-                <goal>attach-artifact</goal>
-              </goals>
-              <configuration>
-                <artifacts>
-                  <artifact>
-                    <file>${feature.file}</file>
-                    <classifier>features</classifier>
-                    <type>xml</type>
-                  </artifact>
-                </artifacts>
-              </configuration>
-            </execution>
-          </executions>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -1027,6 +1010,28 @@
               <groupId>org.connectorio.openapi.generators</groupId>
               <artifactId>java-basic-native</artifactId>
               <version>${connectorio-openapi-generators.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <plugin>
+          <groupId>org.thing4.tools</groupId>
+          <artifactId>thing4-maven-plugin</artifactId>
+          <version>${thing4.version}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.thing4</groupId>
+              <artifactId>org.thing4.core.parser.thing</artifactId>
+              <version>${thing4.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.thing4</groupId>
+              <artifactId>org.thing4.core.parser.thing.yaml</artifactId>
+              <version>${thing4.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.thing4</groupId>
+              <artifactId>org.thing4.core.model.facade</artifactId>
+              <version>${thing4.version}</version>
             </dependency>
           </dependencies>
         </plugin>

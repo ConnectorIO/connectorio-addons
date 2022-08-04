@@ -32,6 +32,10 @@
   <name>ConnectorIO - Addons - Binding - PLC4X - AMS/ADS</name>
   <description>AMS/ADS PLC integration.</description>
 
+  <properties>
+    <documentation.reference>amsads</documentation.reference>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.connectorio.addons</groupId>

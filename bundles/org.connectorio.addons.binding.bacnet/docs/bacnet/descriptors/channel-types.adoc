@@ -1,0 +1,760 @@
+
+= Channel types
+
+[cols="1,2,4"]
+|===
+|Channel type | Label ^|Description
+
+| co7io-bacnet:eventState
+| Event State
+| 
+
+<<co7io-bacnet:eventState>>
+
+| co7io-bacnet:reliability
+| Reliability
+| 
+
+<<co7io-bacnet:reliability>>
+
+| co7io-bacnet:writeableBoolean
+| Writeable boolean
+| 
+
+<<co7io-bacnet:writeableBoolean>>
+
+| co7io-bacnet:writeableBinary
+| Present value
+| 
+
+<<co7io-bacnet:writeableBinary>>
+
+| co7io-bacnet:readableBinary
+| Present value
+| 
+
+<<co7io-bacnet:readableBinary>>
+
+| co7io-bacnet:writeableNumber
+| Present value
+| 
+
+<<co7io-bacnet:writeableNumber>>
+
+| co7io-bacnet:readableNumber
+| Present value
+| 
+
+<<co7io-bacnet:readableNumber>>
+
+| co7io-bacnet:writeableDateTime
+| Present value
+| 
+
+<<co7io-bacnet:writeableDateTime>>
+
+| co7io-bacnet:readableDateTime
+| Present value
+| 
+
+<<co7io-bacnet:readableDateTime>>
+
+| co7io-bacnet:writeableText
+| Present value
+| 
+
+<<co7io-bacnet:writeableText>>
+
+| co7io-bacnet:readableText
+| Present value
+| 
+
+<<co7io-bacnet:readableText>>
+
+| co7io-bacnet:deviceWriteableBoolean
+| Writeable boolean
+| 
+
+<<co7io-bacnet:deviceWriteableBoolean>>
+
+| co7io-bacnet:deviceWriteableBinary
+| Present value
+| 
+
+<<co7io-bacnet:deviceWriteableBinary>>
+
+| co7io-bacnet:deviceReadableBinary
+| Present value
+| 
+
+<<co7io-bacnet:deviceReadableBinary>>
+
+| co7io-bacnet:deviceWriteableNumber
+| Present value
+| 
+
+<<co7io-bacnet:deviceWriteableNumber>>
+
+| co7io-bacnet:deviceReadableNumber
+| Present value
+| 
+
+<<co7io-bacnet:deviceReadableNumber>>
+
+| co7io-bacnet:deviceWriteableDateTime
+| Present value
+| 
+
+<<co7io-bacnet:deviceWriteableDateTime>>
+
+| co7io-bacnet:deviceReadableDateTime
+| Present value
+| 
+
+<<co7io-bacnet:deviceReadableDateTime>>
+
+| co7io-bacnet:deviceWriteableText
+| Present value
+| 
+
+<<co7io-bacnet:deviceWriteableText>>
+
+| co7io-bacnet:deviceReadableText
+| Present value
+| 
+
+<<co7io-bacnet:deviceReadableText>>
+
+| co7io-bacnet:deviceWriteableCalendar
+| Calendar with series of entries
+| 
+
+<<co7io-bacnet:deviceWriteableCalendar>>
+
+| co7io-bacnet:deviceWriteableWeekSchedule
+| A week spanning schedule
+| 
+
+<<co7io-bacnet:deviceWriteableWeekSchedule>>
+
+|===
+
+
+[[co7io-bacnet:eventState]]
+== Configuration of `co7io-bacnet:eventState`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:eventState`.
+
+
+[[co7io-bacnet:reliability]]
+== Configuration of `co7io-bacnet:reliability`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:reliability`.
+
+
+[[co7io-bacnet:writeableBoolean]]
+== Configuration of `co7io-bacnet:writeableBoolean`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:writeableBoolean`.
+
+[width="100%",caption="Channel type writeableBoolean configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:writeableBinary]]
+== Configuration of `co7io-bacnet:writeableBinary`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:writeableBinary`.
+
+[width="100%",caption="Channel type writeableBinary configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:readableBinary]]
+== Configuration of `co7io-bacnet:readableBinary`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:readableBinary`.
+
+[width="100%",caption="Channel type readableBinary configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:writeableNumber]]
+== Configuration of `co7io-bacnet:writeableNumber`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:writeableNumber`.
+
+[width="100%",caption="Channel type writeableNumber configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:readableNumber]]
+== Configuration of `co7io-bacnet:readableNumber`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:readableNumber`.
+
+[width="100%",caption="Channel type readableNumber configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:writeableDateTime]]
+== Configuration of `co7io-bacnet:writeableDateTime`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:writeableDateTime`.
+
+[width="100%",caption="Channel type writeableDateTime configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:readableDateTime]]
+== Configuration of `co7io-bacnet:readableDateTime`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:readableDateTime`.
+
+[width="100%",caption="Channel type readableDateTime configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:writeableText]]
+== Configuration of `co7io-bacnet:writeableText`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:writeableText`.
+
+[width="100%",caption="Channel type writeableText configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:readableText]]
+== Configuration of `co7io-bacnet:readableText`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:readableText`.
+
+[width="100%",caption="Channel type readableText configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:deviceWriteableBoolean]]
+== Configuration of `co7io-bacnet:deviceWriteableBoolean`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:deviceWriteableBoolean`.
+
+[width="100%",caption="Channel type deviceWriteableBoolean configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance number
+| Object instance
+
+| type
+| TEXT
+| Object type
+| Object kind
+
+| propertyIdentifier
+| TEXT
+| Property identifier
+| Object property identifier to be retrieved.
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:deviceWriteableBinary]]
+== Configuration of `co7io-bacnet:deviceWriteableBinary`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:deviceWriteableBinary`.
+
+[width="100%",caption="Channel type deviceWriteableBinary configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance number
+| Object instance
+
+| type
+| TEXT
+| Object type
+| Object kind
+
+| propertyIdentifier
+| TEXT
+| Property identifier
+| Object property identifier to be retrieved.
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:deviceReadableBinary]]
+== Configuration of `co7io-bacnet:deviceReadableBinary`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:deviceReadableBinary`.
+
+[width="100%",caption="Channel type deviceReadableBinary configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance number
+| Object instance
+
+| type
+| TEXT
+| Object type
+| Object kind
+
+| propertyIdentifier
+| TEXT
+| Property identifier
+| Object property identifier to be retrieved.
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:deviceWriteableNumber]]
+== Configuration of `co7io-bacnet:deviceWriteableNumber`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:deviceWriteableNumber`.
+
+[width="100%",caption="Channel type deviceWriteableNumber configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance number
+| Object instance
+
+| type
+| TEXT
+| Object type
+| Object kind
+
+| propertyIdentifier
+| TEXT
+| Property identifier
+| Object property identifier to be retrieved.
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:deviceReadableNumber]]
+== Configuration of `co7io-bacnet:deviceReadableNumber`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:deviceReadableNumber`.
+
+[width="100%",caption="Channel type deviceReadableNumber configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance number
+| Object instance
+
+| type
+| TEXT
+| Object type
+| Object kind
+
+| propertyIdentifier
+| TEXT
+| Property identifier
+| Object property identifier to be retrieved.
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:deviceWriteableDateTime]]
+== Configuration of `co7io-bacnet:deviceWriteableDateTime`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:deviceWriteableDateTime`.
+
+[width="100%",caption="Channel type deviceWriteableDateTime configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance number
+| Object instance
+
+| type
+| TEXT
+| Object type
+| Object kind
+
+| propertyIdentifier
+| TEXT
+| Property identifier
+| Object property identifier to be retrieved.
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:deviceReadableDateTime]]
+== Configuration of `co7io-bacnet:deviceReadableDateTime`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:deviceReadableDateTime`.
+
+[width="100%",caption="Channel type deviceReadableDateTime configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance number
+| Object instance
+
+| type
+| TEXT
+| Object type
+| Object kind
+
+| propertyIdentifier
+| TEXT
+| Property identifier
+| Object property identifier to be retrieved.
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:deviceWriteableText]]
+== Configuration of `co7io-bacnet:deviceWriteableText`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:deviceWriteableText`.
+
+[width="100%",caption="Channel type deviceWriteableText configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance number
+| Object instance
+
+| type
+| TEXT
+| Object type
+| Object kind
+
+| propertyIdentifier
+| TEXT
+| Property identifier
+| Object property identifier to be retrieved.
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:deviceReadableText]]
+== Configuration of `co7io-bacnet:deviceReadableText`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:deviceReadableText`.
+
+[width="100%",caption="Channel type deviceReadableText configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance number
+| Object instance
+
+| type
+| TEXT
+| Object type
+| Object kind
+
+| propertyIdentifier
+| TEXT
+| Property identifier
+| Object property identifier to be retrieved.
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:deviceWriteableCalendar]]
+== Configuration of `co7io-bacnet:deviceWriteableCalendar`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:deviceWriteableCalendar`.
+
+[width="100%",caption="Channel type deviceWriteableCalendar configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance number
+| Object instance
+
+| type
+| TEXT
+| Object type
+| Object kind
+
+| propertyIdentifier
+| TEXT
+| Property identifier
+| Object property identifier to be retrieved.
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+[[co7io-bacnet:deviceWriteableWeekSchedule]]
+== Configuration of `co7io-bacnet:deviceWriteableWeekSchedule`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-bacnet:deviceWriteableWeekSchedule`.
+
+[width="100%",caption="Channel type deviceWriteableWeekSchedule configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance number
+| Object instance
+
+| type
+| TEXT
+| Object type
+| Object kind
+
+| propertyIdentifier
+| TEXT
+| Property identifier
+| Object property identifier to be retrieved.
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+
+

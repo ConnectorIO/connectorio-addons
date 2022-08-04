@@ -110,6 +110,13 @@
         <description>Address mask (in hex format) used to scan secondary addresses on the bus. Used only if 'Secondary address' scan is enabled.</description>
         <default>ffffffff</default>
       </parameter>
+
+      <parameter name="refreshInterval" type="integer" required="false">
+        <label>Refresh interval</label>
+        <description>Time between poll cycles.</description>
+        <default>1000</default>
+        <unitLabel>ms</unitLabel>
+      </parameter>
     </config-description>
   </bridge-type>
 

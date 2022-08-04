@@ -1,0 +1,88 @@
+= AMSADS
+
+This binding integrates popular PLC brand which is adopted in industrial, marine and building automation scenarios.
+The name is composed of two parts **AMS** and **ADS**.
+The "ADS" part is shortcut which stands for "Automation Device Specification".
+ADS is communication protocol which describes behavior of devices.
+Earlier part of combined name, the "AMS" means "Automation Message Specification".
+AMS is a routing and virtual networking layer and ADS is data exchange layer built on top of it.
+In practice ADS is adaptable to various transports, i.e. ADS over CAN.
+
+We do distinguish these terms because they have different role.
+Binding do reflect both protocol and configuration logic behind these two technologies.
+Devices which are compatible with this protocol are primarily Windows based PLCs, but not only.
+Recently Beckhoff Automation released a TcBSD which rely on BSD system family.
+
+.AMSADS binding capability table
+|===
+|Device discovery| Channel discovery |Read | Write | Subscribe
+
+|Yes
+|Yes
+|Yes
+|Yes
+|Yes
+|===
+
+Subscriptions are based on change of value at the PLC end.
+
+== Device discovery
+Binding supports an undocumented discovery feature of the protocol.
+It is able to detect all compatible devices within IP network through broadcasts.
+
+== Thing and Channel discovery
+Binding by default will attempt to scan symbols and create channel definitions unless configured otherwise.
+The _Thing_ `discoverChannels` option controls whether symbol reading should be attempted or not.
+All discovered channels contain symbol name and with encoding.
+
+Currently binding does not support string and date-time related types, hence symbols of this type are ignored.
+
+== Supported hardware
+
+All devices capable of communication AMS/ADS.
+This includes Beckhoff IPC as well as I/O modules which can be reached through AMS/ADS layer.
+
+In order to start reading data you need to create at least one `ams` bridge with `network` or `serial` connection.
+The `network` thing represents TCP connection at port 48898.
+Please note that TCP port is fixed and unrelated to AMS port.
+It is common misconception that AMS port is port on which a TCP connection is being made.
+AMS port is application level concept and does not influence TCP port in use.
+
+It is possible to configure polling (sampling) interval for individual channels in case when device does not support change of state.
+
+== Textual configuration
+
+Below is example of a text configuration which you can upload to your openhab.
+It allows to use a regular version control system to track changes over time.
+The same can be done via user interface.
+
+[source]
+----
+include::{examplesdir}/amsads/amsads.things[]
+----
+
+include::partial$000_tip_mutiple_things.adoc[]
+
+== Debugging and troubleshooting
+
+Code have been tested with TwinCAT 2 and TwinCAT 3 - both do work, however symbolic fields within TwinCAT 2 seem to have troubles.
+Also, depending on device class symbolic fields might not be available.
+This is a case for older bus couplers (BC, BX devices).
+In case if given thing does not come online disable channel discovery and use direct addresses (hex or decimal format).
+
+Because of additional layer of complexity imposed by AMS by this binding is extremely sensitive to network setup.
+Binding attempts to set up AMS routing from {openHAB} host to device.
+Attempt is made if both - username and password fields are provided, otherwise binding will assume routing is in place and attempt to make connection.
+If routing setup fails, connection attempts to PLC will be still made.
+This is simply due to fact that adding the same AMS route to PLC second time often does not result in any answer or in a failed answer.
+
+Beckhoff devices accept *only one* connection with specified AMS net id at specified ams port.
+Second connection will be accepted and valid at TCP level, but will not report any data.
+In such case ADS communication will not work.
+Primary symptom for that are timeout errors reported for configured data points.
+
+[NOTE]
+====
+It is recommended to restart process after AMS parameter change.
+AMS routing at the PLC end might get stuck if AMS net id is changed but origin IP remains the same.
+====

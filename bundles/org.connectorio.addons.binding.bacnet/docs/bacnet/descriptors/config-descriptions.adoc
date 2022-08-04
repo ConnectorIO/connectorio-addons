@@ -1,0 +1,156 @@
+
+= Config descriptions
+
+
+[[thing-type:co7io-bacnet:object]]
+== Config `thing-type:co7io-bacnet:object`
+[width="100%",caption="thing-type:co7io-bacnet:object configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance
+| Instance number of object.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on Device or Network.
+
+| writePriority
+| INTEGER
+| Write priority
+| Write priority to be set when value must be set on controller. Defaults to no priority
+
+|===
+
+[[profile:co7io-bacnet:priority]]
+== Config `profile:co7io-bacnet:priority`
+[width="100%",caption="profile:co7io-bacnet:priority configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| priority
+| INTEGER
+| Priority
+| Priority of reset command (null value sent to device). When no value is specified default channel priority is used. If no priority is set on channel then device will receive just a null.
+
+|===
+
+[[thing-type:co7io-bacnet:read-only]]
+== Config `thing-type:co7io-bacnet:read-only`
+[width="100%",caption="thing-type:co7io-bacnet:read-only configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+[[thing-type:co7io-bacnet:read-write]]
+== Config `thing-type:co7io-bacnet:read-write`
+[width="100%",caption="thing-type:co7io-bacnet:read-write configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+[[thing-type:co7io-bacnet:device-read-only]]
+== Config `thing-type:co7io-bacnet:device-read-only`
+[width="100%",caption="thing-type:co7io-bacnet:device-read-only configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance number
+| Object instance
+
+| type
+| TEXT
+| Object type
+| Object kind
+
+| propertyIdentifier
+| TEXT
+| Property identifier
+| Object property identifier to be retrieved.
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+[[thing-type:co7io-bacnet:device-read-write]]
+== Config `thing-type:co7io-bacnet:device-read-write`
+[width="100%",caption="thing-type:co7io-bacnet:device-read-write configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance number
+| Object instance
+
+| type
+| TEXT
+| Object type
+| Object kind
+
+| propertyIdentifier
+| TEXT
+| Property identifier
+| Object property identifier to be retrieved.
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+[[profile:co7io-bacnet:reset]]
+== Config `profile:co7io-bacnet:reset`
+[width="100%",caption="profile:co7io-bacnet:reset configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| priority
+| INTEGER
+| Priority
+| Priority of reset command (null value sent to device). When no value is specified default channel priority is used. If no priority is set on channel then device will receive just a null.
+
+|===
+
+

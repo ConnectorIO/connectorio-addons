@@ -30,7 +30,11 @@
   <packaging>bundle</packaging>
 
   <name>ConnectorIO - Addons - Binding - M-Bus</name>
-  <description>CAN bus integration.</description>
+  <description>M-Bus integration.</description>
+
+  <properties>
+    <documentation.reference>mbus</documentation.reference>
+  </properties>
 
   <dependencies>
     <dependency>

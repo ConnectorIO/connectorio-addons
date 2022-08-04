@@ -1,0 +1,70 @@
+= Modbus
+
+The modbus binding allows to integrate various equipment in range of applications.
+Primary goal of modbus binding is data acquisition as well as synchronization (writing) of it back to linked devices.
+
+Because modbus devices have no standard descriptor, binding provides generic functions and channels needed to map end device channels.
+Based on technical and documentation supplied by manufacturer you will need to prepare configuration which will reflect manufacturer intent.
+
+.Modbus binding capability table
+|===
+|Device discovery| Channel discovery |Read | Write | Subscribe
+
+|No
+|No
+|Yes
+|Yes
+|No
+|===
+
+== Device discovery
+The device discovery is unsupported.
+All connections need to be declared manually.
+
+== Thing and Channel discovery
+Due to limitations coming form Modbus protocol, channel discovery is not supported.
+Customization of connection handling, is possible through further software extensions.
+
+Software extension might provide out-of-the box mapping of predefined Modbus registers or readout procedure.
+
+== Readout principles
+Various flavors of Modbus devices have different approach towards readout.
+Some of these approaches are intended to optimize bandwidth, some are kept very close to end device philosophy instead of aligning with protocol functions.
+Regular data retrieval from Modbus device involves definition of connection, unit identifier, retrieval cycle, register kind, register address as well as its mapping (encoding).
+Some of the registers might be read frequently (i.e. power), some other less (i.e. energy counter).
+You have to adjust these based on `refreshInterval` parameter.
+
+include::partial$001_refresh_interval.adoc[]
+
+In principle - all registers which are continuous (i.e. coils with next indexes), and have same read function will be read using single readout.
+For example two coils with index 1, 2 and 3 which have same `refreshInterval` will result in a single read coils (FC01) call starting from register 1 of length 3 (up to register 3).
+Same paradigm applies to other register kinds.
+
+Some devices might require readout in blocks with arbitrary start and length.
+If you are interested only in subset of block, you still need to define block start, however you can map i.e. it's beginning and its remaining part to channel of `raw` type.
+This kind of channel accepts raw data without mapping it to specific values.
+It is simply a holder for chunk of payload.
+
+Other strategy could be transformation of entire byte array retrieved through raw channel.
+Be reminded that it will require processing above binding itself.
+
+=== Channel definitions
+Provided channel definitions do reflect protocol level communication and operations.
+This means that reading of registers is always conducted using specific function code (mentioned in channel type description).
+Writing of values can be executed using either single or multiple (many) variant of read function.
+Binding will not aggregate writes, meaning that they will always be conducted atomically (one channel at the time).
+
+== Configuration example
+Below example is a high level description of an TCP to RS-485 gateway with two devices behind it.
+Please note that it overrides encoding to RTU and links two units (1 and 2) using single connection.
+
+[source,indent=0,subs="verbatim,attributes",role="primary"]
+.dsl
+----
+include::{examplesdir}/modbus/test.things[]
+----
+[source,xml,indent=0,subs="verbatim,attributes",role="secondary"]
+.co7io
+----
+include::{examplesdir}/modbus/things.xml[]
+----

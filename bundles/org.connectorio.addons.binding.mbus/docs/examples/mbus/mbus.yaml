@@ -1,0 +1,48 @@
+---
+things:
+- kind: "Bridge"
+  UID: "co7io-mbus:openhab-serial:port2"
+  label: "Serial Interface "
+  configuration:
+    baudRate: 2400
+    serialPort: "/dev/ttyS2"
+    dataBits: "DATABITS_5"
+  things:
+  - id: "heatMeter1"
+    type: "co7io-mbus:device"
+    label: "Kamstrup Multical"
+    configuration:
+      refreshInterval: 60000
+      address: 1
+    channels:
+    - id: "power"
+      type: "number"
+      label: "Heat power"
+      configuration:
+        dib: "AO"
+        vib: "10"
+    - id: "flowRate"
+      type: "number"
+      label: "Flow rate"
+      configuration:
+        dib: "AO"
+        vib: "11"
+  - id: "heatMeter2"
+    type: "co7io-mbus:device"
+    label: "Techem ultra"
+    configuration:
+      refreshInterval: 360000
+      address: 2
+    channels:
+    - id: "power"
+      type: "number"
+      label: "Heat power"
+      configuration:
+        dib: "1D"
+        vib: "F0"
+    - id: "flowRate"
+      type: "number"
+      label: "Flow rate"
+      configuration:
+        dib: "3D"
+        vib: "FB"

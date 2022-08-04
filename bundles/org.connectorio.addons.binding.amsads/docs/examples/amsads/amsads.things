@@ -1,0 +1,19 @@
+Bridge co7io-amsads:ams:my-ams-network "My test AMS Network" [
+    sourceAmsId="10.10.10.2.1.1",
+    sourceAmsPort="32768",
+    ipAddress="10.10.10.2",
+    broadcastAddress="10.10.10.255"
+  ] {
+
+  Thing network nw1 "Test Connection 2" [
+    targetAmsId="10.10.10.3.1.1",
+    targetAmsPort="801",
+    host="10.10.10.2"
+  ] {
+    Channels:
+      Type number-symbol : energy [ symbol="Main.Power", type="UDINT" ]
+      Type number-direct-hex : power [ indexGroup="F0FF", indexOffset="0", type="UINT16" ]
+      Type number-direct-dec : current [ indexGroup=61455, indexOffset=4, type="UINT16" ]
+  }
+
+}

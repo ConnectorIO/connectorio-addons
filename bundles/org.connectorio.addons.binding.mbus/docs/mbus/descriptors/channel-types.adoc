@@ -1,0 +1,95 @@
+
+= Channel types
+
+[cols="1,2,4"]
+|===
+|Channel type | Label ^|Description
+
+| co7io-mbus:number
+| Number value
+| 
+
+<<co7io-mbus:number>>
+
+| co7io-mbus:datetime
+| Date Time value
+| 
+
+<<co7io-mbus:datetime>>
+
+| co7io-mbus:string
+| String value
+| 
+
+<<co7io-mbus:string>>
+
+|===
+
+
+[[co7io-mbus:number]]
+== Configuration of `co7io-mbus:number`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-mbus:number`.
+
+[width="100%",caption="Channel type number configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| dib
+| TEXT
+| Data Information Block (DIB)
+| Data identification block in hex format - allows to determine data encoding.
+
+| vib
+| TEXT
+| Value Information Block (VIB)
+| Value identification block allows to interpret value.
+
+|===
+
+
+[[co7io-mbus:datetime]]
+== Configuration of `co7io-mbus:datetime`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-mbus:datetime`.
+
+[width="100%",caption="Channel type datetime configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| dib
+| TEXT
+| Data Information Block (DIB)
+| Data identification block in hex format - allows to determine data encoding.
+
+| vib
+| TEXT
+| Value Information Block (VIB)
+| Value identification block allows to interpret value.
+
+|===
+
+
+[[co7io-mbus:string]]
+== Configuration of `co7io-mbus:string`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-mbus:string`.
+
+[width="100%",caption="Channel type string configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| dib
+| TEXT
+| Data Information Block (DIB)
+| Data identification block in hex format - allows to determine data encoding.
+
+| vib
+| TEXT
+| Value Information Block (VIB)
+| Value identification block allows to interpret value.
+
+|===
+
+
+

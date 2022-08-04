@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<things xmlns="http://connectorio.com/xmlns/managed/things">
+
+  <bridge type="co7io-opcua:client" label="OPC UA Client connection">
+    <id>test-device</id>
+    <config>
+      <host>10.10.10.2</host>
+      <port>4840</port>
+    </config>
+  </bridge>
+
+  <thing type="co7io-opcua:device" label="Test OPC UA Node">
+    <id>node1</id>
+    <bridge>co7io-opcua:client:test-device</bridge>
+    <config>
+      <ns>3</ns>
+      <identifierType>i</identifierType>
+      <idenifier>1000</idenifier>
+    </config>
+    <channel>
+      <id>co7io-opcua:device:client1:node1:byte-value-from-opc</id>
+      <type>byte</type>
+      <label>Byte value retrieved from OPC UA</label>
+      <config>
+        <ns>3</ns>
+        <identifierType>i</identifierType>
+        <idenifier>1010</idenifier>
+      </config>
+    </channel>
+  </thing>
+</things>

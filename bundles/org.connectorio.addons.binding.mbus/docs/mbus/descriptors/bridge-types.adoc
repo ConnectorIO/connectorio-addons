@@ -1,0 +1,26 @@
+
+= Bridge types
+
+[width="100%",cols="1,1,2"]
+|===
+|Bridge | Label ^|Description
+
+| co7io-mbus:openhab-serial
+| Serial Bridge
+| The M-Bus Serial bridge allows to poll data using compatible serial interfaces.
+
+<<>>
+
+|===
+
+
+[[co7io-mbus:openhab-serial]]
+== Bridge `co7io-mbus:openhab-serial`
+
+Below table contains complete configuration of `co7io-mbus:openhab-serial`.
+
+
+
+
+
+

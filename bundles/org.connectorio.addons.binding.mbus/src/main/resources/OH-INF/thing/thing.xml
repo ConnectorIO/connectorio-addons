@@ -39,7 +39,7 @@
       </parameter-group>
       <parameter-group name="secondaryAddress">
         <label>Secondary address</label>
-        <description>Secondary address allows.</description>
+        <description>Secondary address allows to poll more than 250 devices in large networks.</description>
       </parameter-group>
 
       <parameter name="address" type="integer" min="1" max="250" required="false" groupName="primaryAddress">
@@ -102,6 +102,13 @@
           <option value="RADIO_CONVERTER_SYSTEM_SIDE">RADIO_CONVERTER_SYSTEM_SIDE</option>
           <option value="RADIO_CONVERTER_METER_SIDE">RADIO_CONVERTER_METER_SIDE</option>
         </options>
+      </parameter>
+
+      <parameter name="refreshInterval" type="integer" required="false">
+        <label>Refresh interval</label>
+        <description>Time between poll cycles.</description>
+        <default>1000</default>
+        <unitLabel>ms</unitLabel>
       </parameter>
     </config-description>
   </thing-type>

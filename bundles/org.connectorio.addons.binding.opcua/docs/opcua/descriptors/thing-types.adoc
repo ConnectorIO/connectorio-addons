@@ -1,0 +1,70 @@
+
+= Thing types
+
+[width="100%",cols="1,1,2"]
+|===
+|Thing | Label ^|Description
+
+| co7io-opcua:server
+| OPC UA Server
+| Launches a OPC UA server based on information collected by this system instance (experimental).
+
+<<co7io-opcua:server>>
+
+| co7io-opcua:node
+| Node
+| Instance of an OPC-UA node object.
+
+<<co7io-opcua:node>>
+
+|===
+
+
+[[co7io-opcua:server]]
+== Thing `co7io-opcua:server`
+
+Below table contains complete configuration of `co7io-opcua:server`.
+
+
+
+
+[[co7io-opcua:node]]
+== Thing `co7io-opcua:node`
+
+Below table contains complete configuration of `co7io-opcua:node`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-opcua:client[co7io-opcua:client]
+
+
+
+
+[width="100%",caption="Thing Node configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| ns
+| INTEGER
+| Namespace
+| Number which identify namespace.
+
+| identifierType
+| TEXT
+| Identifier type
+| Type of identifier (string, number, guid or binary).
+
+| identifier
+| TEXT
+| Identifier
+| Node identifier - value interpretation depends on identifier type.
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
+
+|===
+
+
+
