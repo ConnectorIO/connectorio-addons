@@ -18,6 +18,11 @@
 package org.connectorio.addons.norule.internal.executor;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -35,10 +40,9 @@ import org.slf4j.LoggerFactory;
 @Component
 public class DefaultRuleExecutor implements RuleExecutor {
 
-
   private final Logger logger = LoggerFactory.getLogger(DefaultRuleExecutor.class);
   private final AtomicInteger threadId = new AtomicInteger();
-  private final AtomicInteger counter = new AtomicInteger();
+  private final Set<String> active = Collections.synchronizedSet(new LinkedHashSet<>());
   private final AtomicLong executions = new AtomicLong();
   private final AtomicLong failures = new AtomicLong();
 
@@ -59,8 +63,8 @@ public class DefaultRuleExecutor implements RuleExecutor {
   }
 
   @Override
-  public int getActivateExecutions() {
-    return counter.get();
+  public int getActivateCount() {
+    return active.size();
   }
 
   @Override
@@ -74,23 +78,28 @@ public class DefaultRuleExecutor implements RuleExecutor {
   }
 
   @Override
+  public List<String> getActivateExecutions() {
+    return new ArrayList<>(active);
+  }
+
+  @Override
   public void shutdown() {
     executor.shutdown();
   }
 
   @Override
   public void execute(Runnable runnable) {
-    executor.execute(new ExecutionWrapper(runnable, executions, counter));
+    executor.execute(new ExecutionWrapper(runnable, executions, active));
   }
 
   @Override
   public void submit(Runnable runnable) {
-    executor.submit(new ExecutionWrapper(runnable, executions, counter));
+    executor.submit(new ExecutionWrapper(runnable, executions, active));
   }
 
   @Override
   public ScheduledFuture<?> scheduleAtFixedRate(Runnable runnable, long initialDelay, long period, TimeUnit delayUnit) {
-    return executor.scheduleAtFixedRate(new ExecutionWrapper(runnable, executions, counter), initialDelay, period, delayUnit);
+    return executor.scheduleAtFixedRate(new ExecutionWrapper(runnable, executions, active), initialDelay, period, delayUnit);
   }
 
   private static int calculatePoolSize() {

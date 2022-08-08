@@ -19,15 +19,10 @@ package org.connectorio.addons.norule.shell.internal;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import org.connectorio.addons.norule.Rule;
 import org.connectorio.addons.norule.RuleExecutor;
-import org.connectorio.addons.norule.Trigger;
 import org.openhab.core.io.console.Console;
 import org.openhab.core.io.console.extensions.AbstractConsoleCommandExtension;
-import org.openhab.core.io.console.extensions.ConsoleCommandExtension;
 import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -46,9 +41,15 @@ public class RuleStatsCommand extends AbstractConsoleCommandExtension {
   @Override
   public void execute(String[] args, Console console) {
     console.println("Rule statistics:");
-    console.println("  Active: " + ruleExecutor.getActivateExecutions());
+    int activateExecutions = ruleExecutor.getActivateCount();
+    console.println("  Active: " + activateExecutions);
     console.println("   Total: " + ruleExecutor.getExecutionsCounter());
     console.println("Failures: " + ruleExecutor.getFailuresCounter());
+    console.println("Active:");
+    List<String> executions = ruleExecutor.getActivateExecutions();
+    for (String active : executions) {
+      console.println("  " + active);
+    }
   }
 
   @Override

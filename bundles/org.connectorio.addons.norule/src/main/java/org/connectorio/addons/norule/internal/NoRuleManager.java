@@ -447,6 +447,10 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
         logger.error("Rule {} execution failed.", rule, e);
       }
     }
+
+    public String toString() {
+      return rule.getUID().toString();
+    }
   }
 
   static class ScheduledRunnable implements Runnable {
@@ -488,6 +492,10 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
       } finally {
         previousRun = System.currentTimeMillis();
       }
+    }
+
+    public String toString() {
+      return rule.getUID().toString();
     }
   }
 

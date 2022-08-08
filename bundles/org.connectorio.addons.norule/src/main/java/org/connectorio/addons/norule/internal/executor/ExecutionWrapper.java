@@ -17,6 +17,8 @@
  */
 package org.connectorio.addons.norule.internal.executor;
 
+import java.util.Set;
+import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -27,24 +29,25 @@ class ExecutionWrapper implements Runnable {
 
   private final Runnable delegate;
   private final AtomicLong executions;
-  private final AtomicInteger counter;
+  private final Set<String> active;
 
-  ExecutionWrapper(Runnable delegate, AtomicLong executions, AtomicInteger counter) {
+  ExecutionWrapper(Runnable delegate, AtomicLong executions, Set<String> active) {
     this.delegate = delegate;
     this.executions = executions;
-    this.counter = counter;
+    this.active = active;
   }
 
   @Override
   public void run() {
     ClassLoader loader = Thread.currentThread().getContextClassLoader();
+    String rule = delegate.toString();
     try {
       Thread.currentThread().setContextClassLoader(delegate.getClass().getClassLoader());
-      counter.incrementAndGet();
+      active.add(rule);
       delegate.run();
     } finally {
+      active.remove(rule);
       executions.incrementAndGet();
-      counter.decrementAndGet();
       Thread.currentThread().setContextClassLoader(loader);
     }
   }

@@ -17,14 +17,16 @@
  */
 package org.connectorio.addons.norule;
 
+import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public interface RuleExecutor {
 
-  int getActivateExecutions();
+  int getActivateCount();
   long getExecutionsCounter();
   long getFailuresCounter();
+  List<String> getActivateExecutions();
 
   void shutdown();
 
