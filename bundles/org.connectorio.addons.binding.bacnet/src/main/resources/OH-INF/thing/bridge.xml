@@ -28,7 +28,7 @@
   ">
 
   <!-- Device is a bridge for remaining properties (inputs/outputs) -->
-  <bridge-type id="ip-device">
+  <bridge-type id="ip-device" extensible="deviceWriteableBoolean,deviceWriteableBinary,deviceReadableBinary,deviceWriteableNumber,deviceReadableNumber,deviceWriteableDateTime,deviceReadableDateTime,deviceWriteableText,deviceReadableText">
     <supported-bridge-type-refs>
       <bridge-type-ref id="ipv4"/>
     </supported-bridge-type-refs>
@@ -79,7 +79,7 @@
     </config-description>
   </bridge-type>
 
-  <bridge-type id="mstp-device">
+  <bridge-type id="mstp-device" extensible="deviceWriteableBoolean,deviceWriteableBinary,deviceReadableBinary,deviceWriteableNumber,deviceReadableNumber,deviceWriteableDateTime,deviceReadableDateTime,deviceWriteableText,deviceReadableText">
     <supported-bridge-type-refs>
       <bridge-type-ref id="mstp"/>
     </supported-bridge-type-refs>
@@ -126,26 +126,35 @@
     <description>The BACnet/IP bridge allows to connect devices supporting communication over BACnet/IP.</description>
 
     <config-description>
-      <parameter name="localNetworkNumber" type="integer" required="true" groupName="BACnet network">
+      <parameter-group name="network">
+        <label>BACnet network</label>
+        <description>Configuration of network layer managed by BACnet.</description>
+      </parameter-group>
+      <parameter-group name="ip">
+        <label>IP settings</label>
+        <description>Settings related to IP network.</description>
+      </parameter-group>
+
+      <parameter name="localNetworkNumber" type="integer" required="true" groupName="network">
         <description>Identifier of network to which by default this bridge is bound.</description>
         <label>Local network number</label>
         <default>0</default>
       </parameter>
-      <parameter name="localDeviceId" type="integer" required="true" groupName="BACnet network">
+      <parameter name="localDeviceId" type="integer" required="true" groupName="network">
         <description>Identifier of local device which is visible in BACnet network.</description>
         <label>Device identifier</label>
         <default>1339</default>
       </parameter>
-      <parameter name="localBindAddress" type="text" required="false" groupName="IP Network">
+      <parameter name="localBindAddress" type="text" required="false" groupName="ip">
         <description>IP address on which communications to system are expected to take place.</description>
         <label>Local address</label>
       </parameter>
-      <parameter name="port" type="integer" required="true" groupName="IP Network">
+      <parameter name="port" type="integer" required="true" groupName="ip">
         <description>Port number on which to expect communication. By default 47808 (hex 0xBAC0).</description>
         <label>Port number</label>
         <default>47808</default>
       </parameter>
-      <parameter name="broadcastAddress" type="text" required="true" groupName="IP Network">
+      <parameter name="broadcastAddress" type="text" required="true" groupName="ip">
         <description>Address used for sending BACnet broadcast messages.</description>
         <label>Broadcast address</label>
       </parameter>
@@ -166,23 +175,32 @@
     <description>The BACnet mstp bridge allows to connect devices communicating over serial interface (RS485).</description>
 
     <config-description>
-      <parameter name="localNetworkNumber" type="integer" required="true" groupName="BACnet network">
+      <parameter-group name="network">
+        <label>BACnet network</label>
+        <description>Configuration of network layer managed by BACnet.</description>
+      </parameter-group>
+      <parameter-group name="serial">
+        <label>Serial port settings</label>
+        <description>Settings related to physical layer of MSTP communication.</description>
+      </parameter-group>
+
+      <parameter name="localNetworkNumber" type="integer" required="true" groupName="network">
         <description>Identifier of network to which by default this bridge is bound.</description>
         <label>Local network number</label>
         <default>0</default>
       </parameter>
 
-      <parameter name="serialPort" type="text" required="true" groupName="Serial interface">
+      <parameter name="serialPort" type="text" required="true" groupName="serial">
         <label>Serial port</label>
         <description>Serial interface port.</description>
         <context>serial-port</context>
       </parameter>
-      <parameter name="baudRate" type="integer" required="true" groupName="Serial interface">
+      <parameter name="baudRate" type="integer" required="true" groupName="serial">
         <label>Baud rate</label>
         <description>Baud rate for serial connection.</description>
         <default>9600</default>
       </parameter>
-      <parameter name="parity" type="text" required="true" groupName="Serial interface">
+      <parameter name="parity" type="text" required="true" groupName="serial">
         <description>Parity settings determine detection of frames and communication over serial port.</description>
         <label>Parity setting</label>
         <default>P8N1</default>

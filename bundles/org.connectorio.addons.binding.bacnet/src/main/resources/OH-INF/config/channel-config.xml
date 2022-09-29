@@ -67,4 +67,118 @@
     </parameter>
   </config-description>
 
+  <config-description uri="thing-type:co7io-bacnet:device-read-only">
+    <parameter-group name="object">
+      <label>Object configuration</label>
+      <description>Information about object which is required to populate channel.</description>
+    </parameter-group>
+    <parameter-group name="basic">
+      <label>Required configuration</label>
+      <description>Below fields are required in order to read/write data from PLC.</description>
+    </parameter-group>
+
+    <parameter name="instance" type="integer" required="true" groupName="object" min="0">
+      <label>Instance number</label>
+      <description>Object instance</description>
+    </parameter>
+    <parameter name="type" type="text" required="true" groupName="object">
+      <label>Object type</label>
+      <description>Object kind</description>
+      <limitToOptions>true</limitToOptions>
+      <options>
+        <option value="analogInput">ANALOG_INPUT</option>
+        <option value="analogOutput">ANALOG_OUTPUT</option>
+        <option value="analogValue">ANALOG_VALUE</option>
+        <option value="binaryInput">BINARY_INPUT</option>
+        <option value="binaryOutput">BINARY_OUTPUT</option>
+        <option value="binaryValue">BINARY_VALUE</option>
+        <option value="multiStateInput">MULTISTATE_INPUT</option>
+        <option value="multiStateOutput">MULTISTATE_OUTPUT</option>
+        <option value="multiStateValue">MULTISTATE_VALUE</option>
+        <option value="characterstringValue">CHARACTER_STRING</option>
+        <option value="dateTimeValue">DATE_TIME</option>
+        <option value="largeAnalogValue">LARGE_ANALOG</option>
+        <option value="octetstringValue">OCTET_STRING</option>
+        <option value="timeValue">TIME</option>
+        <option value="dateValue">DATE_VALUE</option>
+        <option value="integerValue">INTEGER</option>
+        <option value="positiveIntegerValue">POSITIVE_INTEGER</option>
+        <option value="datetimePatternValue">DATE_TIME_PATTERN</option>
+        <option value="timePatternValue">TIME_PATTERN</option>
+        <option value="datePatternValue">DATE_PATTERN</option>
+      </options>
+    </parameter>
+
+    <parameter name="readOnly" type="boolean" readOnly="true" required="true">
+      <label>Read only</label>
+      <description>Determine if channel is commendable or just read only.</description>
+      <default>true</default>
+    </parameter>
+    <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+      <label>Refresh interval</label>
+      <description>
+        Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+      </description>
+      <unitLabel>ms</unitLabel>
+      <default>0</default>
+    </parameter>
+  </config-description>
+
+  <config-description uri="thing-type:co7io-bacnet:device-read-write">
+    <parameter-group name="object">
+      <label>Object configuration</label>
+      <description>Information about object which is required to populate channel.</description>
+    </parameter-group>
+    <parameter-group name="basic">
+      <label>Required configuration</label>
+      <description>Below fields are required in order to read/write data from PLC.</description>
+    </parameter-group>
+
+    <parameter name="instance" type="integer" required="true" groupName="object" min="0">
+      <label>Instance number</label>
+      <description>Object instance</description>
+    </parameter>
+    <parameter name="type" type="text" required="true" groupName="object">
+      <label>Object type</label>
+      <description>Object kind</description>
+      <limitToOptions>true</limitToOptions>
+      <options>
+        <option value="analogInput">ANALOG_INPUT</option>
+        <option value="analogOutput">ANALOG_OUTPUT</option>
+        <option value="analogValue">ANALOG_VALUE</option>
+        <option value="binaryInput">BINARY_INPUT</option>
+        <option value="binaryOutput">BINARY_OUTPUT</option>
+        <option value="binaryValue">BINARY_VALUE</option>
+        <option value="multiStateInput">MULTISTATE_INPUT</option>
+        <option value="multiStateOutput">MULTISTATE_OUTPUT</option>
+        <option value="multiStateValue">MULTISTATE_VALUE</option>
+        <option value="characterstringValue">CHARACTER_STRING</option>
+        <option value="dateTimeValue">DATE_TIME</option>
+        <option value="largeAnalogValue">LARGE_ANALOG</option>
+        <option value="octetstringValue">OCTET_STRING</option>
+        <option value="timeValue">TIME</option>
+        <option value="dateValue">DATE_VALUE</option>
+        <option value="integerValue">INTEGER</option>
+        <option value="positiveIntegerValue">POSITIVE_INTEGER</option>
+        <option value="datetimePatternValue">DATE_TIME_PATTERN</option>
+        <option value="timePatternValue">TIME_PATTERN</option>
+        <option value="datePatternValue">DATE_PATTERN</option>
+      </options>
+    </parameter>
+
+    <parameter name="readOnly" type="boolean" readOnly="true" required="true">
+      <label>Read only</label>
+      <description>Determine if channel is commendable or just read only.</description>
+      <default>false</default>
+    </parameter>
+    <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+      <label>Refresh interval</label>
+      <description>
+        Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+      </description>
+      <unitLabel>ms</unitLabel>
+      <default>0</default>
+    </parameter>
+  </config-description>
+
 </config-description:config-descriptions>
