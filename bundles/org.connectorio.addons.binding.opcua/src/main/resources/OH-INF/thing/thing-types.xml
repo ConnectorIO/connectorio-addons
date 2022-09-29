@@ -56,7 +56,7 @@
     </config-description>
   </bridge-type>
 
-  <thing-type id="node">
+  <thing-type id="node" extensible="boolean,signed-byte,byte,int16,uint16,int32,uint32,int64,uint64,float,double,string,datetime,guid,byte-string">
     <supported-bridge-type-refs>
       <bridge-type-ref id="client"/>
     </supported-bridge-type-refs>
