@@ -37,6 +37,11 @@
     <description>BACnet device.</description>
 
     <config-description>
+      <parameter-group name="discovery">
+        <label>Discovery</label>
+        <description>Configuration of discovery mechanism which bring known identifiable BACnet elements into system.</description>
+      </parameter-group>
+
       <parameter name="address" type="text" required="true">
         <context>network-address</context>
         <label>Device IP Address</label>
@@ -67,7 +72,7 @@
         <default>0</default>
       </parameter>
 
-      <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+      <parameter name="refreshInterval" type="integer" required="false">
         <label>Refresh interval</label>
         <description>
           Time between next poll cycles. If no value is given polling is based on value set on network.
@@ -76,6 +81,24 @@
         <default>0</default>
       </parameter>
 
+      <parameter name="discoverChannels" type="boolean" groupName="discovery" required="false">
+        <label>Discover channels</label>
+        <description>
+          Because each BACnet object is linked to a BACnet device, device will know associated objects.
+          Thanks to this setting it is possible to aggregate all objects states (present values) in one place.
+          Please note this is experimental feature and works only if device channel list is empty.
+        </description>
+        <default>true</default>
+      </parameter>
+      <parameter name="discoverObjects" type="boolean" groupName="discovery" required="false">
+        <label>Discover objects</label>
+        <description>
+          Enabling this feature will look for BACnet objects which can be mapped to Thing instances.
+          For each supported BACnet object there will be one Thing instance.
+          Please be aware that it most of the situations it will lead to multiplication of things.
+        </description>
+        <default>false</default>
+      </parameter>
     </config-description>
   </bridge-type>
 
@@ -88,6 +111,11 @@
     <description>BACnet device.</description>
 
     <config-description>
+      <parameter-group name="discovery">
+        <label>Discovery</label>
+        <description>Configuration of discovery mechanism which bring known identifiable BACnet elements into system.</description>
+      </parameter-group>
+
       <parameter name="address" type="integer" required="true">
         <label>Device address (node id)</label>
         <description>
@@ -109,7 +137,7 @@
         <default>0</default>
       </parameter>
 
-      <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
+      <parameter name="refreshInterval" type="integer" required="false">
         <label>Refresh interval</label>
         <description>
           Time between next poll cycles. If no value is given polling is based on value set on network.
@@ -118,6 +146,24 @@
         <default>0</default>
       </parameter>
 
+      <parameter name="discoverChannels" type="boolean" groupName="discovery" required="false">
+        <label>Discover channels</label>
+        <description>
+          Because each BACnet object is linked to a BACnet device, device will know associated objects.
+          Thanks to this setting it is possible to aggregate all objects states (present values) in one place.
+          Please note this is experimental feature and works only if device channel list is empty.
+        </description>
+        <default>true</default>
+      </parameter>
+      <parameter name="discoverObjects" type="boolean" groupName="discovery" required="false">
+        <label>Discover objects</label>
+        <description>
+          Enabling this feature will look for BACnet objects which can be mapped to Thing instances.
+          For each supported BACnet object there will be one Thing instance.
+          Please be aware that it most of the situations it will lead to multiplication of things.
+        </description>
+        <default>false</default>
+      </parameter>
     </config-description>
   </bridge-type>
 

@@ -67,6 +67,7 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
   private Device device;
   private CompletableFuture<BacNetClient> clientFuture = new CompletableFuture<>();
   private Map<Long, ScheduledFuture<?>> pollers = new LinkedHashMap<>();
+  private boolean discoverObjects;
 
   /**
    * Creates a new instance of this class for the {@link Thing}.
@@ -102,7 +103,9 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
           return;
         }
 
-        if (thing.getChannels().isEmpty()) {
+        DeviceConfig deviceConfig = getConfigAs(DeviceConfig.class);
+        discoverObjects = deviceConfig.discoverObjects;
+        if (deviceConfig.discoverChannels && thing.getChannels().isEmpty()) {
           updateChannels(client);
         }
 
@@ -242,11 +245,11 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
         return new ChannelTypeUID(BACnetBindingConstants.BINDING_ID, "deviceWriteableDateTime");
       case INTEGER:
       case POSITIVE_INTEGER:
-        return new ChannelTypeUID(BACnetBindingConstants.BINDING_ID, "deviceWrriteableNumber");
+        return new ChannelTypeUID(BACnetBindingConstants.BINDING_ID, "deviceWriteableNumber");
       case DATE_TIME_PATTERN:
       case DATE_PATTERN:
       case TIME_PATTERN:
-        return new ChannelTypeUID(BACnetBindingConstants.BINDING_ID, "deviceWrriteableText");
+        return new ChannelTypeUID(BACnetBindingConstants.BINDING_ID, "deviceWriteableText");
     }
     return null;
   }
@@ -260,7 +263,10 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
 
   @Override
   public Collection<Class<? extends ThingHandlerService>> getServices() {
-    return Collections.singleton(BACnetPropertyDiscoveryService.class);
+    if (discoverObjects) {
+      return Collections.singleton(BACnetPropertyDiscoveryService.class);
+    }
+    return Collections.emptySet();
   }
 
   @Override

@@ -26,4 +26,7 @@ public class DeviceConfig extends BACnetConfig {
   public int instance;
   public Integer network;
 
+  public boolean discoverObjects = false;
+  public boolean discoverChannels = true;
+
 }
