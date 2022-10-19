@@ -75,6 +75,7 @@
     <module>org.connectorio.addons.startlevel.shell</module>
     <module>org.connectorio.addons.test</module>
     <module>org.connectorio.addons.transformation.inverse</module>
+    <module>org.connectorio.logtail</module>
     <module>org.connectorio.chrono</module>
     <module>org.connectorio.openapi</module>
     <module>org.connectorio.units</module>
