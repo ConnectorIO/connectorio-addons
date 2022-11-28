@@ -17,9 +17,6 @@
  */
 package org.connectorio.addons.itest.s7;
 
-import static org.ops4j.pax.exam.CoreOptions.maven;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -47,7 +44,6 @@ public class S7OfflineKarInstallationTest extends OfflineKarInstallationTest {
   @Override
   protected Set<Option> customize() {
     return new LinkedHashSet<>(Arrays.asList(
-      mavenBundle(maven("org.connectorio.addons", "org.connectorio.addons.itest.base").versionAsInProject()),
       new OpenHABDistributionKitOption().unpackDirectory(new File("target/distro")),
       new CustomOptions()
     ));

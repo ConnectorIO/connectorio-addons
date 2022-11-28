@@ -37,7 +37,7 @@
     <compiler.source>11</compiler.source>
     <compiler.target>11</compiler.target>
 
-    <plc4x-extras.version>0.8.0</plc4x-extras.version>
+    <plc4x-extras.version>0.8.1-SNAPSHOT</plc4x-extras.version>
     <bacnet4j-wrapper.version>1.3.0-alpha2</bacnet4j-wrapper.version>
 
     <openhab.version>3.0.4-connectorio-1</openhab.version>
@@ -1057,6 +1057,12 @@
         <artifactId>pax-exam-container-karaf</artifactId>
         <version>${pax-exam.version}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-features</artifactId>
+        <version>${pax-exam.version}</version>
+        <type>xml</type>
       </dependency>
 
       <dependency>

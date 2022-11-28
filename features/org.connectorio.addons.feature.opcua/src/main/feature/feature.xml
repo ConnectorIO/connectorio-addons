@@ -27,7 +27,7 @@
 
     <bundle>wrap:mvn:com.digitalpetri.fsm/strict-machine/0.6</bundle>
     <bundle>wrap:mvn:com.digitalpetri.netty/netty-channel-fsm/0.8</bundle>
-    <bundle dependency="true">mvn:com.google.guava/guava/31.0.1-jre</bundle>
+    <bundle>mvn:com.google.guava/guava/31.0.1-jre</bundle>
     <bundle>mvn:org.eclipse.milo/sdk-client/${milo.version}</bundle>
 
     <bundle>mvn:org.eclipse.milo/sdk-core/${milo.version}</bundle>

@@ -17,21 +17,39 @@
  */
 package org.connectorio.addons.itests.exam.openhab.container;
 
+import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 
+import java.io.File;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.CompositeOption;
+import org.ops4j.pax.exam.options.TimeoutOption;
 import org.ops4j.pax.exam.options.extra.WorkingDirectoryOption;
 
 public class CustomOptions implements CompositeOption {
+
+  private final String version;
+
+  public CustomOptions() {
+    String itestBaseReference = maven("org.connectorio.addons", "org.connectorio.addons.itest.base")
+      .versionAsInProject().getURL();
+    this.version = itestBaseReference.substring(itestBaseReference.lastIndexOf("/") + 1);
+  }
 
   @Override
   public Option[] getOptions() {
     return new Option[] {
         keepRuntimeFolder(),
+        mavenBundle("org.connectorio.addons", "org.connectorio.addons.itest.base").versionAsInProject(),
+        new TimeoutOption(60_000),
         new WorkingDirectoryOption("target/karaf"),
-        editConfigurationFilePut("etc/org.ops4j.pax.url.mvn.cfg", "org.ops4j.pax.url.mvn.localRepository", ""),
+        logLevel(LogLevel.DEBUG),
+        editConfigurationFilePut("etc/org.ops4j.pax.url.mvn.cfg", "org.ops4j.pax.url.mvn.localRepository",
+          new File("target/pax-exam").toPath().toAbsolutePath().toString()),
     };
   }
 }

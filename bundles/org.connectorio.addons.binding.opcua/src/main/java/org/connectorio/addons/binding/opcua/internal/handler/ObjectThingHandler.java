@@ -63,7 +63,6 @@ import org.eclipse.milo.opcua.stack.core.types.structured.MonitoredItemCreateReq
 import org.eclipse.milo.opcua.stack.core.types.structured.MonitoringParameters;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
 import org.openhab.core.config.core.Configuration;
-import org.openhab.core.config.core.internal.ConfigMapper;
 import org.openhab.core.library.CoreItemFactory;
 import org.openhab.core.library.types.DateTimeType;
 import org.openhab.core.library.types.DecimalType;
