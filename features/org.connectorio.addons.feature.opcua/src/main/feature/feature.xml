@@ -33,9 +33,9 @@
     <bundle>mvn:org.eclipse.milo/sdk-core/${milo.version}</bundle>
     <bundle>mvn:org.eclipse.milo/stack-client/${milo.version}</bundle>
     <bundle>wrap:mvn:org.eclipse.milo/stack-core/${milo.version}$overwrite=merge&amp;Import-Package=sun.security*;resolution:=optional,*</bundle>
-    <bundle dependency="true">mvn:org.bouncycastle/bcprov-jdk15on/1.69</bundle>
-    <bundle dependency="true">mvn:org.bouncycastle/bcpkix-jdk15on/1.69</bundle>
-    <bundle dependency="true">mvn:org.bouncycastle/bcutil-jdk15on/1.69</bundle>
+    <bundle>mvn:org.bouncycastle/bcprov-jdk15on/1.69</bundle>
+    <bundle>mvn:org.bouncycastle/bcpkix-jdk15on/1.69</bundle>
+    <bundle>mvn:org.bouncycastle/bcutil-jdk15on/1.69</bundle>
   </feature>
 
   <feature name="openhab-binding-opcua" description="OPC UA Binding" version="${project.version}">

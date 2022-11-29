@@ -34,11 +34,14 @@
   <description>Integration tests.</description>
 
   <modules>
-    <module>org.connectorio.addons.itest.base</module>
-    <module>org.connectorio.addons.itest.exam</module>
     <module>org.connectorio.addons.itest.amsads</module>
     <module>org.connectorio.addons.itest.bacnet</module>
+    <module>org.connectorio.addons.itest.base</module>
     <module>org.connectorio.addons.itest.canopen</module>
+    <module>org.connectorio.addons.itest.exam</module>
+    <module>org.connectorio.addons.itest.managed</module>
+    <module>org.connectorio.addons.itest.norule</module>
+    <module>org.connectorio.addons.itest.ocpp</module>
     <module>org.connectorio.addons.itest.opcua</module>
     <module>org.connectorio.addons.itest.s7</module>
   </modules>

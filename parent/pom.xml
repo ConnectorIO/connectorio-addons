@@ -128,6 +128,7 @@
         <artifactId>org.connectorio.addons.binding.can</artifactId>
         <version>${project.version}</version>
       </dependency>
+
       <dependency>
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.binding.ocpp</artifactId>
@@ -135,9 +136,37 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.feature.ocpp</artifactId>
+        <version>${project.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.kar.ocpp</artifactId>
+        <version>${project.version}</version>
+        <type>kar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.binding.opcua</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.feature.opcua</artifactId>
+        <version>${project.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.kar.opcua</artifactId>
+        <version>${project.version}</version>
+        <type>kar</type>
+      </dependency>
+
       <dependency>
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.binding.test</artifactId>
@@ -384,11 +413,6 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.managed.widget</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.managed.xstream</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -398,6 +422,12 @@
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.kar.managed</artifactId>
+        <version>${project.version}</version>
+        <type>kar</type>
       </dependency>
 
       <dependency>
@@ -410,6 +440,20 @@
         <artifactId>org.connectorio.addons.norule.shell</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.feature.norule</artifactId>
+        <version>${project.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.kar.norule</artifactId>
+        <version>${project.version}</version>
+        <type>kar</type>
+      </dependency>
+
       <dependency>
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.test</artifactId>

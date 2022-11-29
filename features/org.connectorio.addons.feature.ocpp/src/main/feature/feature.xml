@@ -27,7 +27,7 @@
     <feature>openhab-runtime-base</feature>
     <feature>co7io-binding-base</feature>
 
-    <bundle dependency="true">mvn:org.java-websocket/Java-WebSocket/1.5.1</bundle>
+    <bundle>mvn:org.java-websocket/Java-WebSocket/1.5.1</bundle>
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.binding.ocpp/${project.version}</bundle>
   </feature>
 

@@ -45,10 +45,6 @@
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.managed.thing</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.managed.widget</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>org.openhab.core.features.karaf</groupId>
