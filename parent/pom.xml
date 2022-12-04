@@ -87,6 +87,12 @@
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.type.temporal</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.binding</artifactId>
         <version>${project.version}</version>
       </dependency>

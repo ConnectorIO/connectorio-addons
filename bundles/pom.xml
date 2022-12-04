@@ -78,6 +78,7 @@
     <module>org.connectorio.logtail</module>
     <module>org.connectorio.chrono</module>
     <module>org.connectorio.openapi</module>
+    <module>org.connectorio.type.temporal</module>
     <module>org.connectorio.units</module>
     <module>org.connectorio.units.si</module>
   </modules>
