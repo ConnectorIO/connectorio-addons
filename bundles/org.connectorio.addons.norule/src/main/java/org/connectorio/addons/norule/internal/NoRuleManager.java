@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -111,6 +112,7 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
   private static final ReadyMarker PERSISTENCE_RESTORE = new ReadyMarker("persistence", "restore");
 
   private final Logger logger = LoggerFactory.getLogger(NoRuleRegistry.class);
+  private final Set<Rule> activeRules = new CopyOnWriteArraySet<>();
   private final Map<Trigger, Future<?>> scheduledRules = new ConcurrentHashMap<>();
   private final Map<ReadyMarker, List<Rule>> readyMarkerRules = new ConcurrentHashMap<>();
   private final RuleRegistry ruleRegistry;
@@ -153,6 +155,10 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
     this.stateDispatcher = stateDispatcher;
     readyService.registerTracker(this, new ReadyMarkerFilter());
     ruleRegistry.addRegistryChangeListener(this);
+
+    for (Rule rule : ruleRegistry.getAll()) {
+      added(rule);
+    }
   }
 
   @Deactivate
@@ -293,6 +299,10 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
 
   @Override
   public void added(Rule element) throws IllegalArgumentException {
+    if (activate(element)) { // avoid duplicate registration of rules
+      return;
+    }
+
     for (Trigger trigger : element.getTriggers()) {
       if (trigger instanceof Scheduled) {
         Scheduled schedule = (Scheduled) trigger;
@@ -335,6 +345,8 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
 
   @Override
   public void removed(Rule element) {
+    deactivate(element);
+
     for (Trigger trigger : element.getTriggers()) {
       if (trigger instanceof Scheduled || trigger instanceof Periodic) {
         Future<?> future = scheduledRules.get(trigger);
@@ -361,6 +373,14 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
   public void updated(Rule oldElement, Rule element) {
     removed(oldElement);
     added(element);
+  }
+
+  private boolean activate(Rule element) {
+    return activeRules.contains(element);
+  }
+
+  private boolean deactivate(Rule element) {
+    return activeRules.remove(element);
   }
 
   private long delay(Periodic period) {
