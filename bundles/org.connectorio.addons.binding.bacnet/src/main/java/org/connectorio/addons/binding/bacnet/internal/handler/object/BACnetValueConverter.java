@@ -22,16 +22,29 @@
 package org.connectorio.addons.binding.bacnet.internal.handler.object;
 
 import com.serotonin.bacnet4j.type.Encodable;
+import com.serotonin.bacnet4j.type.constructed.BACnetArray;
+import com.serotonin.bacnet4j.type.constructed.DailySchedule;
+import com.serotonin.bacnet4j.type.constructed.SequenceOf;
+import com.serotonin.bacnet4j.type.constructed.TimeValue;
 import com.serotonin.bacnet4j.type.enumerated.BinaryPV;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.primitive.Null;
+import com.serotonin.bacnet4j.type.primitive.Primitive;
 import com.serotonin.bacnet4j.type.primitive.Real;
+import com.serotonin.bacnet4j.type.primitive.Time;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Map.Entry;
+import org.connectorio.addons.temporal.DayScheduleType;
+import org.connectorio.addons.temporal.LocalTimeType;
+import org.connectorio.addons.temporal.WeeklyScheduleType;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.OpenClosedType;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.types.StringType;
+import org.openhab.core.types.State;
 import org.openhab.core.types.Type;
 import org.openhab.core.types.UnDefType;
 
@@ -118,11 +131,51 @@ public class BACnetValueConverter {
     } else if (type.equals(ObjectType.multiStateValue) || type.equals(ObjectType.multiStateOutput)
       || type.equals(ObjectType.multiStateInput)) {
       return encodeUnsigned(value);
+    } else if (value instanceof WeeklyScheduleType) {
+      return encodeSchedule((WeeklyScheduleType) value);
+
     }
     throw new IllegalArgumentException("BacNet object type " + type + " is not implemented");
   }
 
-  private static Encodable encodeBoolean(Type type) {
+
+  public static Primitive openHabTypeToBacNetPrimitive(Type value) {
+    if (UnDefType.NULL == value) {
+      // In case of NULL value sent from openhab end we propagate it to bacnet.
+      return Null.instance;
+    }
+    if (value instanceof OnOffType || value instanceof OpenClosedType) {
+      return encodeBoolean(value);
+    } else if (value instanceof DecimalType) {
+      return encodeFloat(value);
+    }
+    throw new IllegalArgumentException("BacNet mapping for type " + value.getClass().getName() + " is not implemented");
+  }
+
+  private static Encodable encodeSchedule(WeeklyScheduleType value) {
+    BACnetArray<DailySchedule> array = new BACnetArray<>();
+    array.add(encodeDailySchedule(value.getMondaySchedule()));
+    array.add(encodeDailySchedule(value.getTuesdaySchedule()));
+    array.add(encodeDailySchedule(value.getWednesdaySchedule()));
+    array.add(encodeDailySchedule(value.getThursdaySchedule()));
+    array.add(encodeDailySchedule(value.getFridaySchedule()));
+    array.add(encodeDailySchedule(value.getSaturdaySchedule()));
+    array.add(encodeDailySchedule(value.getSundaySchedule()));
+    return array;
+  }
+
+  private static DailySchedule encodeDailySchedule(DayScheduleType daySchedule) {
+    ArrayList<TimeValue> slots = new ArrayList<>();
+    for (Entry<LocalTimeType, State> entry : daySchedule.getDaySchedule().entrySet()) {
+      LocalTime time = entry.getKey().getTime();
+      slots.add(new TimeValue(new Time(time.getHour(), time.getMinute(), time.getSecond(), time.getNano()),
+        openHabTypeToBacNetPrimitive(entry.getValue())
+      ));
+    }
+    return new DailySchedule(new SequenceOf<>(slots));
+  }
+
+  private static Primitive encodeBoolean(Type type) {
     if (type instanceof OnOffType) {
       return type.equals(OnOffType.ON) ? BinaryPV.active : BinaryPV.inactive;
     }
@@ -132,7 +185,7 @@ public class BACnetValueConverter {
     throw new IllegalArgumentException("Cannot convert openHAB type " + type + " " + type.getClass() + " to boolean");
   }
 
-  private static Encodable encodeFloat(Type type) {
+  private static Primitive encodeFloat(Type type) {
     if (type instanceof DecimalType) {
       return new Real(((DecimalType) type).floatValue());
     } else if (type instanceof QuantityType) {
@@ -148,7 +201,7 @@ public class BACnetValueConverter {
     throw new IllegalArgumentException("Cannot convert openHAB type " + type + " " + type.getClass() + " to bacnet real");
   }
 
-  private static Encodable encodeUnsigned(Type type) {
+  private static Primitive encodeUnsigned(Type type) {
     if (type instanceof DecimalType) {
       return new UnsignedInteger(((DecimalType) type).intValue());
     } else if (type instanceof QuantityType) {

@@ -87,7 +87,22 @@
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.type.temporal</artifactId>
+        <artifactId>org.connectorio.addons.temporal</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.temporal.item</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.temporal.openhab</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.temporal.osh</artifactId>
         <version>${project.version}</version>
       </dependency>
 

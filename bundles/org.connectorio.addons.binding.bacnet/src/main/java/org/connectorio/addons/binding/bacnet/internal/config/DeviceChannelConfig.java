@@ -28,6 +28,7 @@ public class DeviceChannelConfig extends PollingConfiguration {
 
   public int instance;
   public Type type;
+  public String propertyIdentifier;
 
   public Integer writePriority;
   public boolean readOnly;

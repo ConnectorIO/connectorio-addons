@@ -28,7 +28,7 @@
   ">
 
   <!-- Device is a bridge for remaining properties (inputs/outputs) -->
-  <bridge-type id="ip-device" extensible="deviceWriteableBoolean,deviceWriteableBinary,deviceReadableBinary,deviceWriteableNumber,deviceReadableNumber,deviceWriteableDateTime,deviceReadableDateTime,deviceWriteableText,deviceReadableText">
+  <bridge-type id="ip-device" extensible="deviceWriteableBoolean,deviceWriteableBinary,deviceReadableBinary,deviceWriteableNumber,deviceReadableNumber,deviceWriteableDateTime,deviceReadableDateTime,deviceWriteableText,deviceReadableText,deviceWriteableCalendar,deviceWriteableWeekSchedule">
     <supported-bridge-type-refs>
       <bridge-type-ref id="ipv4"/>
     </supported-bridge-type-refs>
@@ -102,7 +102,7 @@
     </config-description>
   </bridge-type>
 
-  <bridge-type id="mstp-device" extensible="deviceWriteableBoolean,deviceWriteableBinary,deviceReadableBinary,deviceWriteableNumber,deviceReadableNumber,deviceWriteableDateTime,deviceReadableDateTime,deviceWriteableText,deviceReadableText">
+  <bridge-type id="mstp-device" extensible="deviceWriteableBoolean,deviceWriteableBinary,deviceReadableBinary,deviceWriteableNumber,deviceReadableNumber,deviceWriteableDateTime,deviceReadableDateTime,deviceWriteableText,deviceReadableText,deviceWriteableCalendar,deviceWriteableWeekSchedule">
     <supported-bridge-type-refs>
       <bridge-type-ref id="mstp"/>
     </supported-bridge-type-refs>

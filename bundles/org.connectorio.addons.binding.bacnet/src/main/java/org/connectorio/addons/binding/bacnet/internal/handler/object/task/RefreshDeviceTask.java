@@ -22,21 +22,12 @@
 package org.connectorio.addons.binding.bacnet.internal.handler.object.task;
 
 import com.serotonin.bacnet4j.type.Encodable;
-import com.serotonin.bacnet4j.type.enumerated.BinaryPV;
-import com.serotonin.bacnet4j.type.enumerated.Polarity;
-import com.serotonin.bacnet4j.type.primitive.Boolean;
-import com.serotonin.bacnet4j.type.primitive.Date;
-import com.serotonin.bacnet4j.type.primitive.Enumerated;
-import com.serotonin.bacnet4j.type.primitive.Null;
-import com.serotonin.bacnet4j.type.primitive.Real;
-import com.serotonin.bacnet4j.type.primitive.SignedInteger;
-import com.serotonin.bacnet4j.type.primitive.Time;
-import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
+import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
@@ -44,35 +35,46 @@ import java.util.stream.Collectors;
 import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.api.BacNetClientException;
 import org.code_house.bacnet4j.wrapper.api.BacNetObject;
-import org.code_house.bacnet4j.wrapper.api.BacNetToJavaConverter;
 import org.code_house.bacnet4j.wrapper.api.Device;
-import org.openhab.core.library.types.DateTimeType;
-import org.openhab.core.library.types.DecimalType;
-import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.openhab.core.types.State;
-import org.openhab.core.types.UnDefType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RefreshDeviceTask implements Runnable, BacNetToJavaConverter<State> {
+public class RefreshDeviceTask extends AbstractTask {
 
   private final Logger logger = LoggerFactory.getLogger(RefreshDeviceTask.class);
   private final Supplier<CompletableFuture<BacNetClient>> client;
   private final ThingHandlerCallback callback;
   private final Device device;
-  private final Map<ChannelUID, BacNetObject> channels;
-  private final Map<BacNetObject, ChannelUID> lookup;
+  //private final Map<BacNetObject, List<Readout>> channels;
 
-  public RefreshDeviceTask(Supplier<CompletableFuture<BacNetClient>> client, ThingHandlerCallback callback, Device device, Map<ChannelUID, BacNetObject> channels) {
+  private final Map<BacNetObject, ChannelUID> presentValueReadouts;
+  private final List<ChannelUID> presentValueChannels;
+  private final Map<BacNetObject, List<String>> customReadouts;
+  private final Map<BacNetObject, List<ChannelUID>> customReadoutChannels;
+
+  public RefreshDeviceTask(Supplier<CompletableFuture<BacNetClient>> client, ThingHandlerCallback callback, Device device, Map<BacNetObject, List<Readout>> channels) {
     this.client = client;
     this.callback = callback;
     this.device = device;
-    this.channels = channels;
-    this.lookup = channels.entrySet().stream().collect(
-      Collectors.toMap(Entry::getValue, Entry::getKey)
-    );
+
+    // calculate readouts which are interested only in present values
+    presentValueReadouts = new LinkedHashMap<>();
+    presentValueChannels = new ArrayList<>();
+    customReadouts = new LinkedHashMap<>();
+    customReadoutChannels = new LinkedHashMap<>();
+    for (Entry<BacNetObject, List<Readout>> entry : channels.entrySet()) {
+      List<Readout> readouts = entry.getValue();
+      if (readouts.size() == 1 && PropertyIdentifier.presentValue.toString().equals(readouts.get(0).property)) {
+        presentValueReadouts.put(readouts.get(0).object, readouts.get(0).channel);
+        presentValueChannels.add(readouts.get(0).channel);
+      } else {
+        customReadouts.put(entry.getKey(), readouts.stream().map(r -> r.property).collect(Collectors.toList()));
+        customReadoutChannels.put(entry.getKey(), readouts.stream().map(r -> r.channel).collect(Collectors.toList()));
+      }
+    }
   }
 
   @Override
@@ -85,56 +87,39 @@ public class RefreshDeviceTask implements Runnable, BacNetToJavaConverter<State>
           return;
         }
 
-        List<BacNetObject> objects = new ArrayList<>(channels.values());
-        List<Object> values = bacNetClient.getPresentValues(objects);
-        for (int index = 0; index < values.size(); index++) {
-          Object value = values.get(index);
-          if (value instanceof Encodable) {
-            State state = fromBacNet((Encodable) value);
-
-            ChannelUID channel = lookup.get(objects.get(index));
-            logger.debug("Retrieved state for property {} attribute {}: {}", device, channel, state);
-            callback.stateUpdated(channel, state);
-          }
+        for (BacNetObject object : customReadouts.keySet()) {
+          List<String> properties = customReadouts.get(object);
+          List<Object> values = bacNetClient.getObjectAttributeValues(object, properties);
+          processAnswers(values, customReadoutChannels.get(object));
         }
+
+        fetchPresentValues(bacNetClient);
       } catch (BacNetClientException e) {
         logger.warn("Could not read property {} value. Client reported an error", device, e);
       } catch (InterruptedException | ExecutionException e) {
         logger.debug("Could not complete operation", e);
+      } catch (Exception e) {
+        logger.debug("Unexpected error while retrieving values from network", e);
       }
     }
   }
 
-  @Override
-  public State fromBacNet(Encodable encodable) {
-    if (encodable instanceof Null) {
-      return UnDefType.NULL;
-    } else if (encodable instanceof Real) {
-      return new DecimalType(((Real) encodable).floatValue());
-    } else if (encodable instanceof BinaryPV) {
-      return BinaryPV.active.equals(encodable) ? OnOffType.ON : OnOffType.OFF;
-    } else if (encodable instanceof Polarity) {
-      return Polarity.normal.equals(encodable) ? OnOffType.ON : OnOffType.OFF;
-    } else if (encodable instanceof UnsignedInteger) {
-      return new DecimalType(((UnsignedInteger) encodable).intValue());
-    } else if (encodable instanceof SignedInteger) {
-      return new DecimalType(((SignedInteger) encodable).intValue());
-    } else if (encodable instanceof Boolean) {
-      return Boolean.TRUE == encodable ? OnOffType.ON : OnOffType.OFF;
-    } else if (encodable instanceof Time) {
-      Time time = (Time) encodable;
-      // HH:mm:ss.SSSZ
-      String millis = time.getHundredth() != 0 ? "." + time.getHundredth() : "";
-      return new DateTimeType(time.getHour() + ":" + time.getMinute() + ":" + time.getSecond() + millis);
-    } else if (encodable instanceof Date) {
-      Date date = (Date) encodable;
-      return new DateTimeType(date.calculateGC().toZonedDateTime());
-    } else if (encodable instanceof Enumerated) {
-      return new DecimalType(((Enumerated) encodable).intValue());
-    }
+  private void fetchPresentValues(BacNetClient bacNetClient) {
+    List<Object> values = bacNetClient.getPresentValues(new ArrayList<>(presentValueReadouts.keySet()));
+    processAnswers(values, presentValueChannels);
+  }
 
-    logger.info("Received property value is currently not supported");
-    return UnDefType.UNDEF;
+  private void processAnswers(List<Object> values, List<ChannelUID> channels) {
+    for (int index = 0; index < values.size(); index++) {
+      Object value = values.get(index);
+      if (value instanceof Encodable) {
+        State state = fromBacNet((Encodable) value);
+
+        ChannelUID channel = channels.get(index);
+        logger.debug("Retrieved state for property {} attribute {}: {}", device, channel, state);
+        callback.stateUpdated(channel, state);
+      }
+    }
   }
 
 }

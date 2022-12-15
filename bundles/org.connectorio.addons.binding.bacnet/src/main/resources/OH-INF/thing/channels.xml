@@ -183,4 +183,16 @@
     <config-description-ref uri="thing-type:co7io-bacnet:device-read-only"></config-description-ref>
   </channel-type>
 
+  <channel-type id="deviceWriteableCalendar">
+    <item-type>Calendar</item-type>
+    <label>Calendar with series of entries</label>
+    <config-description-ref uri="thing-type:co7io-bacnet:device-read-write"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="deviceWriteableWeekSchedule">
+    <item-type>WeeklySchedule</item-type>
+    <label>A week spanning schedule</label>
+    <config-description-ref uri="thing-type:co7io-bacnet:device-read-write"></config-description-ref>
+  </channel-type>
+
 </thing:thing-descriptions>

@@ -25,6 +25,7 @@
   <repository>mvn:org.connectorio.addons/org.connectorio.addons.feature/${project.version}/xml/features</repository>
 
   <feature name="openhab-binding-bacnet" description="BACnet Binding" version="${project.version}">
+    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.temporal.openhab/${project.version}</bundle>
     <feature>co7io-binding-bacnet</feature>
   </feature>
 
@@ -41,8 +42,15 @@
     <feature>co7io-binding-base</feature>
     <feature>bacnet4j-wrapper</feature>
     <bundle start-level="80">mvn:com.j2html/j2html/1.5.0</bundle>
-
+    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.temporal/${project.version}</bundle>
+    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.temporal.item/${project.version}</bundle>
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.binding.bacnet/${project.version}</bundle>
+  </feature>
+
+
+  <feature name="osh-binding-bacnet" description="BACnet Binding" version="${project.version}">
+    <feature>co7io-binding-bacnet</feature>
+    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.temporal.osh/${project.version}</bundle>
   </feature>
 
 </features>

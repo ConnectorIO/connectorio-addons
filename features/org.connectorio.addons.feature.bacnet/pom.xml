@@ -49,6 +49,22 @@
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.binding.bacnet</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.temporal</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.temporal.item</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.temporal.openhab</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.temporal.osh</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.connectorio.addons</groupId>

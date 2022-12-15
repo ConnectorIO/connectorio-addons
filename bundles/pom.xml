@@ -73,12 +73,15 @@
     <module>org.connectorio.addons.profile.sma</module>
     <module>org.connectorio.addons.profile.timer</module>
     <module>org.connectorio.addons.startlevel.shell</module>
+    <module>org.connectorio.addons.temporal</module>
+    <module>org.connectorio.addons.temporal.item</module>
+    <module>org.connectorio.addons.temporal.openhab</module>
+    <module>org.connectorio.addons.temporal.osh</module>
     <module>org.connectorio.addons.test</module>
     <module>org.connectorio.addons.transformation.inverse</module>
     <module>org.connectorio.logtail</module>
     <module>org.connectorio.chrono</module>
     <module>org.connectorio.openapi</module>
-    <module>org.connectorio.type.temporal</module>
     <module>org.connectorio.units</module>
     <module>org.connectorio.units.si</module>
   </modules>

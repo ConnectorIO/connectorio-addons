@@ -106,6 +106,19 @@
         <option value="datetimePatternValue">DATE_TIME_PATTERN</option>
         <option value="timePatternValue">TIME_PATTERN</option>
         <option value="datePatternValue">DATE_PATTERN</option>
+        <option value="schedule">SCHEDULE</option>
+        <option value="calendar">CALENDAR</option>
+      </options>
+    </parameter>
+    <parameter name="propertyIdentifier" type="text" required="true" groupName="object">
+      <label>Property identifier</label>
+      <description>Object property identifier to be retrieved.</description>
+      <limitToOptions>true</limitToOptions>
+      <default>presentValue</default>
+      <options>
+        <option value="presentValue">Present value</option>
+        <option value="weeklySchedule">Weekly schedule (only schedules)</option>
+        <option value="exceptionSchedule">Exception schedule (only schedules)</option>
       </options>
     </parameter>
 
@@ -163,6 +176,17 @@
         <option value="datetimePatternValue">DATE_TIME_PATTERN</option>
         <option value="timePatternValue">TIME_PATTERN</option>
         <option value="datePatternValue">DATE_PATTERN</option>
+      </options>
+    </parameter>
+    <parameter name="propertyIdentifier" type="text" required="true" groupName="object">
+      <label>Property identifier</label>
+      <description>Object property identifier to be retrieved.</description>
+      <limitToOptions>true</limitToOptions>
+      <default>presentValue</default>
+      <options>
+        <option value="presentValue">Present value</option>
+        <option value="weeklySchedule">Weekly schedule (only schedules)</option>
+        <option value="exceptionSchedule">Exception schedule (only schedules)</option>
       </options>
     </parameter>
 
