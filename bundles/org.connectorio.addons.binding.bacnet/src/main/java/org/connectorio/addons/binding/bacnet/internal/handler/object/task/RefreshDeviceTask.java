@@ -67,11 +67,11 @@ public class RefreshDeviceTask extends AbstractTask {
     customReadoutChannels = new LinkedHashMap<>();
     for (Entry<BacNetObject, List<Readout>> entry : channels.entrySet()) {
       List<Readout> readouts = entry.getValue();
-      if (readouts.size() == 1 && PropertyIdentifier.presentValue.toString().equals(readouts.get(0).property)) {
+      if (readouts.size() == 1 && PropertyIdentifier.presentValue.equals(readouts.get(0).propertyIdentifier)) {
         presentValueReadouts.put(readouts.get(0).object, readouts.get(0).channel);
         presentValueChannels.add(readouts.get(0).channel);
       } else {
-        customReadouts.put(entry.getKey(), readouts.stream().map(r -> r.property).collect(Collectors.toList()));
+        customReadouts.put(entry.getKey(), readouts.stream().map(r -> r.propertyIdentifier.toString()).collect(Collectors.toList()));
         customReadoutChannels.put(entry.getKey(), readouts.stream().map(r -> r.channel).collect(Collectors.toList()));
       }
     }

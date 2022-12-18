@@ -21,6 +21,7 @@
  */
 package org.connectorio.addons.binding.bacnet.internal.handler.object.task;
 
+import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import org.code_house.bacnet4j.wrapper.api.BacNetObject;
 import org.openhab.core.thing.ChannelUID;
 
@@ -28,11 +29,11 @@ public class Readout {
 
   public final ChannelUID channel;
   public final BacNetObject object;
-  public final String property;
+  public final PropertyIdentifier propertyIdentifier;
 
-  public Readout(ChannelUID channel, BacNetObject object, String property) {
+  public Readout(ChannelUID channel, BacNetObject object, PropertyIdentifier propertyIdentifier) {
     this.channel = channel;
     this.object = object;
-    this.property = property;
+    this.propertyIdentifier = propertyIdentifier;
   }
 }

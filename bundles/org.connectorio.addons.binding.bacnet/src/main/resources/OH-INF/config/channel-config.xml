@@ -86,39 +86,39 @@
       <description>Object kind</description>
       <limitToOptions>true</limitToOptions>
       <options>
-        <option value="analogInput">ANALOG_INPUT</option>
-        <option value="analogOutput">ANALOG_OUTPUT</option>
-        <option value="analogValue">ANALOG_VALUE</option>
-        <option value="binaryInput">BINARY_INPUT</option>
-        <option value="binaryOutput">BINARY_OUTPUT</option>
-        <option value="binaryValue">BINARY_VALUE</option>
-        <option value="multiStateInput">MULTISTATE_INPUT</option>
-        <option value="multiStateOutput">MULTISTATE_OUTPUT</option>
-        <option value="multiStateValue">MULTISTATE_VALUE</option>
-        <option value="characterstringValue">CHARACTER_STRING</option>
-        <option value="dateTimeValue">DATE_TIME</option>
-        <option value="largeAnalogValue">LARGE_ANALOG</option>
-        <option value="octetstringValue">OCTET_STRING</option>
-        <option value="timeValue">TIME</option>
-        <option value="dateValue">DATE_VALUE</option>
-        <option value="integerValue">INTEGER</option>
-        <option value="positiveIntegerValue">POSITIVE_INTEGER</option>
-        <option value="datetimePatternValue">DATE_TIME_PATTERN</option>
-        <option value="timePatternValue">TIME_PATTERN</option>
-        <option value="datePatternValue">DATE_PATTERN</option>
-        <option value="schedule">SCHEDULE</option>
-        <option value="calendar">CALENDAR</option>
+        <option value="ANALOG_INPUT">analog input</option>
+        <option value="ANALOG_OUTPUT">analog output</option>
+        <option value="ANALOG_VALUE">analog value</option>
+        <option value="BINARY_INPUT">binary input</option>
+        <option value="BINARY_OUTPUT">binary output</option>
+        <option value="BINARY_VALUE">binary value</option>
+        <option value="MULTISTATE_INPUT">multistate input</option>
+        <option value="MULTISTATE_OUTPUT">multistate output</option>
+        <option value="MULTISTATE_VALUE">multistate value</option>
+        <option value="CHARACTER_STRING">character string value</option>
+        <option value="DATE_TIME">date time value</option>
+        <option value="LARGE_ANALOG">large analog value</option>
+        <option value="OCTET_STRING">octet string value</option>
+        <option value="TIME">time value</option>
+        <option value="DATE_VALUE">date value</option>
+        <option value="INTEGER">integer value</option>
+        <option value="POSITIVE_INTEGER">positive integer value</option>
+        <option value="DATE_TIME_PATTERN">datetime pattern value</option>
+        <option value="TIME_PATTERN">time pattern value</option>
+        <option value="DATE_PATTERN">date pattern value</option>
+        <option value="SCHEDULE">schedule</option>
+        <option value="CALENDAR">calendar</option>
       </options>
     </parameter>
     <parameter name="propertyIdentifier" type="text" required="true" groupName="object">
       <label>Property identifier</label>
       <description>Object property identifier to be retrieved.</description>
       <limitToOptions>true</limitToOptions>
-      <default>presentValue</default>
+      <default>present-value</default>
       <options>
-        <option value="presentValue">Present value</option>
-        <option value="weeklySchedule">Weekly schedule (only schedules)</option>
-        <option value="exceptionSchedule">Exception schedule (only schedules)</option>
+        <option value="present-value">Present value</option>
+        <option value="weekly-schedule">Weekly schedule (only schedules)</option>
+        <option value="exception-schedule">Exception schedule (only schedules)</option>
       </options>
     </parameter>
 
@@ -156,37 +156,39 @@
       <description>Object kind</description>
       <limitToOptions>true</limitToOptions>
       <options>
-        <option value="analogInput">ANALOG_INPUT</option>
-        <option value="analogOutput">ANALOG_OUTPUT</option>
-        <option value="analogValue">ANALOG_VALUE</option>
-        <option value="binaryInput">BINARY_INPUT</option>
-        <option value="binaryOutput">BINARY_OUTPUT</option>
-        <option value="binaryValue">BINARY_VALUE</option>
-        <option value="multiStateInput">MULTISTATE_INPUT</option>
-        <option value="multiStateOutput">MULTISTATE_OUTPUT</option>
-        <option value="multiStateValue">MULTISTATE_VALUE</option>
-        <option value="characterstringValue">CHARACTER_STRING</option>
-        <option value="dateTimeValue">DATE_TIME</option>
-        <option value="largeAnalogValue">LARGE_ANALOG</option>
-        <option value="octetstringValue">OCTET_STRING</option>
-        <option value="timeValue">TIME</option>
-        <option value="dateValue">DATE_VALUE</option>
-        <option value="integerValue">INTEGER</option>
-        <option value="positiveIntegerValue">POSITIVE_INTEGER</option>
-        <option value="datetimePatternValue">DATE_TIME_PATTERN</option>
-        <option value="timePatternValue">TIME_PATTERN</option>
-        <option value="datePatternValue">DATE_PATTERN</option>
+        <option value="ANALOG_INPUT">analog input</option>
+        <option value="ANALOG_OUTPUT">analog output</option>
+        <option value="ANALOG_VALUE">analog value</option>
+        <option value="BINARY_INPUT">binary input</option>
+        <option value="BINARY_OUTPUT">binary output</option>
+        <option value="BINARY_VALUE">binary value</option>
+        <option value="MULTISTATE_INPUT">multistate input</option>
+        <option value="MULTISTATE_OUTPUT">multistate output</option>
+        <option value="MULTISTATE_VALUE">multistate value</option>
+        <option value="CHARACTER_STRING">character string value</option>
+        <option value="DATE_TIME">date time value</option>
+        <option value="LARGE_ANALOG">large analog value</option>
+        <option value="OCTET_STRING">octet string value</option>
+        <option value="TIME">time value</option>
+        <option value="DATE_VALUE">date value</option>
+        <option value="INTEGER">integer value</option>
+        <option value="POSITIVE_INTEGER">positive integer value</option>
+        <option value="DATE_TIME_PATTERN">datetime pattern value</option>
+        <option value="TIME_PATTERN">time pattern value</option>
+        <option value="DATE_PATTERN">date pattern value</option>
+        <option value="SCHEDULE">schedule</option>
+        <option value="CALENDAR">calendar</option>
       </options>
     </parameter>
     <parameter name="propertyIdentifier" type="text" required="true" groupName="object">
       <label>Property identifier</label>
       <description>Object property identifier to be retrieved.</description>
       <limitToOptions>true</limitToOptions>
-      <default>presentValue</default>
+      <default>present-value</default>
       <options>
-        <option value="presentValue">Present value</option>
-        <option value="weeklySchedule">Weekly schedule (only schedules)</option>
-        <option value="exceptionSchedule">Exception schedule (only schedules)</option>
+        <option value="present-value">Present value</option>
+        <option value="weekly-schedule">Weekly schedule (only schedules)</option>
+        <option value="exception-schedule">Exception schedule (only schedules)</option>
       </options>
     </parameter>
 

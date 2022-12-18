@@ -138,7 +138,8 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
             pollingMap.put(refreshInterval, new LinkedHashSet<>());
           }
           BacNetObject object = new BacNetObject(device, deviceChannelConfig.instance, deviceChannelConfig.type);
-          Readout readout = new Readout(channel.getUID(), object, deviceChannelConfig.propertyIdentifier);
+          PropertyIdentifier propertyIdentifier = PropertyIdentifier.forName(deviceChannelConfig.propertyIdentifier);
+          Readout readout = new Readout(channel.getUID(), object, propertyIdentifier);
           pollingMap.get(refreshInterval).add(readout);
         }
 
