@@ -21,13 +21,16 @@
  */
 package org.connectorio.addons.binding.bacnet.internal.handler.object.task;
 
+import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
@@ -48,33 +51,30 @@ public class RefreshDeviceTask extends AbstractTask {
   private final Supplier<CompletableFuture<BacNetClient>> client;
   private final ThingHandlerCallback callback;
   private final Device device;
-  //private final Map<BacNetObject, List<Readout>> channels;
+  private Set<Readout> channels;
+  private Set<ChannelUID> linkedChannels;
 
-  private final Map<BacNetObject, ChannelUID> presentValueReadouts;
-  private final List<ChannelUID> presentValueChannels;
-  private final Map<BacNetObject, List<String>> customReadouts;
-  private final Map<BacNetObject, List<ChannelUID>> customReadoutChannels;
-
-  public RefreshDeviceTask(Supplier<CompletableFuture<BacNetClient>> client, ThingHandlerCallback callback, Device device, Map<BacNetObject, List<Readout>> channels) {
+  public RefreshDeviceTask(Supplier<CompletableFuture<BacNetClient>> client, ThingHandlerCallback callback, Device device, Set<Readout> channels, Set<ChannelUID> linkedChannels) {
     this.client = client;
     this.callback = callback;
     this.device = device;
+    this.channels = channels;
+    this.linkedChannels = linkedChannels;
+  }
 
-    // calculate readouts which are interested only in present values
-    presentValueReadouts = new LinkedHashMap<>();
-    presentValueChannels = new ArrayList<>();
-    customReadouts = new LinkedHashMap<>();
-    customReadoutChannels = new LinkedHashMap<>();
-    for (Entry<BacNetObject, List<Readout>> entry : channels.entrySet()) {
-      List<Readout> readouts = entry.getValue();
-      if (readouts.size() == 1 && PropertyIdentifier.presentValue.equals(readouts.get(0).propertyIdentifier)) {
-        presentValueReadouts.put(readouts.get(0).object, readouts.get(0).channel);
-        presentValueChannels.add(readouts.get(0).channel);
-      } else {
-        customReadouts.put(entry.getKey(), readouts.stream().map(r -> r.propertyIdentifier.toString()).collect(Collectors.toList()));
-        customReadoutChannels.put(entry.getKey(), readouts.stream().map(r -> r.channel).collect(Collectors.toList()));
+  private Map<BacNetObject, Set<Readout>> getReadouts() {
+    Map<BacNetObject, Set<Readout>> readouts = new LinkedHashMap<>();
+    for (Readout readout : channels) {
+      if (!linkedChannels.contains(readout.channel)) {
+        continue;
       }
+
+      if (!readouts.containsKey(readout.object)) {
+        readouts.put(readout.object, new LinkedHashSet<>());
+      }
+      readouts.get(readout.object).add(readout);
     }
+    return readouts;
   }
 
   @Override
@@ -87,13 +87,26 @@ public class RefreshDeviceTask extends AbstractTask {
           return;
         }
 
-        for (BacNetObject object : customReadouts.keySet()) {
-          List<String> properties = customReadouts.get(object);
-          List<Object> values = bacNetClient.getObjectAttributeValues(object, properties);
-          processAnswers(values, customReadoutChannels.get(object));
+        Map<BacNetObject, Set<Readout>> readouts = getReadouts();
+        Map<BacNetObject, ChannelUID> presentValueReadouts = new LinkedHashMap<>();
+        for (Entry<BacNetObject, Set<Readout>> entry : readouts.entrySet()) {
+          Readout readout;
+          if (entry.getValue().size() == 1 && (readout = entry.getValue().iterator().next()).propertyIdentifier == PropertyIdentifier.presentValue) {
+            presentValueReadouts.put(readout.object, readout.channel);
+          } else {
+            List<String> propertyIdentifiers = entry.getValue().stream()
+              .map(r -> r.propertyIdentifier.toString())
+              .collect(Collectors.toList());
+            List<ChannelUID> channelIds = entry.getValue().stream()
+              .map(r -> r.channel)
+              .collect(Collectors.toList());
+            List<Object> answers = bacNetClient.getObjectAttributeValues(entry.getKey(), propertyIdentifiers);
+            processAnswers(answers, channelIds);
+          }
         }
 
-        fetchPresentValues(bacNetClient);
+        List<Object> values = bacNetClient.getPresentValues(new ArrayList<>(presentValueReadouts.keySet()));
+        processAnswers(values, new ArrayList<>(presentValueReadouts.values()));
       } catch (BacNetClientException e) {
         logger.warn("Could not read property {} value. Client reported an error", device, e);
       } catch (InterruptedException | ExecutionException e) {
@@ -102,11 +115,6 @@ public class RefreshDeviceTask extends AbstractTask {
         logger.debug("Unexpected error while retrieving values from network", e);
       }
     }
-  }
-
-  private void fetchPresentValues(BacNetClient bacNetClient) {
-    List<Object> values = bacNetClient.getPresentValues(new ArrayList<>(presentValueReadouts.keySet()));
-    processAnswers(values, presentValueChannels);
   }
 
   private void processAnswers(List<Object> values, List<ChannelUID> channels) {

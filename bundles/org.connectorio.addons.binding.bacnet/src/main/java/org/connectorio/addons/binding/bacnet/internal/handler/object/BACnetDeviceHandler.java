@@ -38,6 +38,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -56,7 +57,6 @@ import org.connectorio.addons.binding.bacnet.internal.discovery.BACnetPropertyDi
 import org.connectorio.addons.binding.bacnet.internal.config.DeviceConfig;
 import org.connectorio.addons.binding.bacnet.internal.handler.BACnetObjectBridgeHandler;
 import org.connectorio.addons.binding.bacnet.internal.handler.network.BACnetNetworkBridgeHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.object.task.Names;
 import org.connectorio.addons.binding.bacnet.internal.handler.object.task.ReadObjectTask;
 import org.connectorio.addons.binding.bacnet.internal.handler.object.task.Readout;
 import org.connectorio.addons.binding.bacnet.internal.handler.object.task.RefreshDeviceTask;
@@ -82,6 +82,8 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
   implements BACnetDeviceBridgeHandler<BACnetNetworkBridgeHandler<?>, C> {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
+
+  private final Set<ChannelUID> linkedChannels = new CopyOnWriteArraySet<>();
 
   private Device device;
   private CompletableFuture<BacNetClient> clientFuture = new CompletableFuture<>();
@@ -144,8 +146,7 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
         }
 
         for (Entry<Long, Set<Readout>> entry : pollingMap.entrySet()) {
-          Map<BacNetObject, List<Readout>> readoutMap = entry.getValue().stream().collect(Collectors.groupingBy(e -> e.object));
-          ScheduledFuture<?> poller = scheduler.scheduleAtFixedRate(new RefreshDeviceTask(() -> clientFuture, getCallback(), device, readoutMap),
+          ScheduledFuture<?> poller = scheduler.scheduleAtFixedRate(new RefreshDeviceTask(() -> clientFuture, getCallback(), device, entry.getValue(), linkedChannels),
             0, entry.getKey(), TimeUnit.MILLISECONDS);
           pollers.put(entry.getKey(), poller);
         }
@@ -377,6 +378,18 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
       }
       logger.debug("Command {} for property {} executed successfully", command, object);
     }
+  }
+
+  @Override
+  public void channelLinked(ChannelUID channelUID) {
+    linkedChannels.add(channelUID);
+    super.channelLinked(channelUID);
+  }
+
+  @Override
+  public void channelUnlinked(ChannelUID channelUID) {
+    linkedChannels.remove(channelUID);
+    super.channelUnlinked(channelUID);
   }
 
   @Override
