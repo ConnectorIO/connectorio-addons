@@ -42,6 +42,7 @@ import org.openhab.core.thing.binding.BaseThingHandlerFactory;
 import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.binding.ThingHandlerFactory;
 import org.openhab.core.io.transport.serial.SerialPortManager;
+import org.openhab.core.thing.link.ItemChannelLinkRegistry;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -54,10 +55,12 @@ public class BACnetThingHandlerFactory extends BaseThingHandlerFactory implement
   private final Logger logger = LoggerFactory.getLogger(BACnetThingHandlerFactory.class);
 
   private final SerialPortManager serialPortManager;
+  private ItemChannelLinkRegistry itemChannelLinkRegistry;
 
   @Activate
-  public BACnetThingHandlerFactory(@Reference  SerialPortManager serialPortManager) {
+  public BACnetThingHandlerFactory(@Reference SerialPortManager serialPortManager, @Reference ItemChannelLinkRegistry itemChannelLinkRegistry) {
     this.serialPortManager = serialPortManager;
+    this.itemChannelLinkRegistry = itemChannelLinkRegistry;
   }
 
   @Override
@@ -66,9 +69,9 @@ public class BACnetThingHandlerFactory extends BaseThingHandlerFactory implement
 
     if (thing instanceof Bridge) {
       if (IP_DEVICE_THING_TYPE.equals(thingTypeUID)) {
-        return new BACnetIpDeviceHandler((Bridge) thing);
+        return new BACnetIpDeviceHandler((Bridge) thing, itemChannelLinkRegistry);
       } else if (MSTP_DEVICE_THING_TYPE.equals(thingTypeUID)) {
-          return new BACnetMstpDeviceHandler((Bridge) thing);
+          return new BACnetMstpDeviceHandler((Bridge) thing, itemChannelLinkRegistry);
       } else if (IPV4_BRIDGE_THING_TYPE.equals(thingTypeUID)) {
         return new BACnetIpv4BridgeHandler((Bridge) thing);
 //      } else if (IPV6_BRIDGE_THING_TYPE.equals(thingTypeUID)) {

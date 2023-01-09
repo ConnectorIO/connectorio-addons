@@ -24,12 +24,13 @@ package org.connectorio.addons.binding.bacnet.internal.discovery;
 import static org.connectorio.addons.binding.bacnet.internal.BACnetBindingConstants.MSTP_DEVICE_THING_TYPE;
 
 import java.util.Collections;
-import org.code_house.bacnet4j.wrapper.mstp.MstpDevice;
+import org.code_house.bacnet4j.wrapper.device.mstp.MstpDevice;
 import org.connectorio.addons.binding.bacnet.internal.handler.network.BACnetNetworkBridgeHandler;
 import org.openhab.core.config.discovery.DiscoveryResultBuilder;
 import org.openhab.core.config.discovery.DiscoveryService;
 import org.openhab.core.thing.ThingUID;
 
+@Deprecated
 public class BACnetMstpDeviceDiscoveryService extends BACnetDeviceDiscoveryService<MstpDevice> implements DiscoveryService {
 
   private BACnetNetworkBridgeHandler<?> handler;

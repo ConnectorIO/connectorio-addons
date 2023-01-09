@@ -28,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
 import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.mstp.BacNetMstpClient;
 import org.code_house.bacnet4j.wrapper.mstp.MstpNetworkBuilder;
-import org.connectorio.addons.binding.bacnet.internal.discovery.BACnetMstpDeviceDiscoveryService;
+import org.connectorio.addons.binding.bacnet.internal.discovery.BACnetDeviceDiscoveryService;
 import org.connectorio.addons.binding.bacnet.internal.handler.network.mstp.ManagedMstpNetworkBuilder;
 import org.connectorio.addons.binding.bacnet.internal.BACnetBindingConstants;
 import org.connectorio.addons.binding.bacnet.internal.config.MstpConfig;
@@ -130,7 +130,7 @@ public class BACnetMstpBridgeHandler extends BasePollingBridgeHandler<MstpConfig
 
   @Override
   public Collection<Class<? extends ThingHandlerService>> getServices() {
-    return Collections.singleton(BACnetMstpDeviceDiscoveryService.class);
+    return Collections.singleton(BACnetDeviceDiscoveryService.class);
   }
 
   @Override

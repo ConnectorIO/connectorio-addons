@@ -22,10 +22,11 @@
 package org.connectorio.addons.binding.bacnet.internal.handler.object;
 
 import org.code_house.bacnet4j.wrapper.api.Device;
-import org.code_house.bacnet4j.wrapper.ip.IpDevice;
+import org.code_house.bacnet4j.wrapper.device.ip.IpDevice;
 import org.connectorio.addons.binding.bacnet.internal.config.IpDeviceConfig;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.link.ItemChannelLinkRegistry;
 
 public class BACnetIpDeviceHandler extends BACnetDeviceHandler<IpDeviceConfig> {
 
@@ -34,8 +35,8 @@ public class BACnetIpDeviceHandler extends BACnetDeviceHandler<IpDeviceConfig> {
    *
    * @param bridge the thing that should be handled, not null
    */
-  public BACnetIpDeviceHandler(Bridge bridge) {
-    super(bridge);
+  public BACnetIpDeviceHandler(Bridge bridge, ItemChannelLinkRegistry channelLinkRegistry) {
+    super(bridge, channelLinkRegistry);
   }
 
   @Override

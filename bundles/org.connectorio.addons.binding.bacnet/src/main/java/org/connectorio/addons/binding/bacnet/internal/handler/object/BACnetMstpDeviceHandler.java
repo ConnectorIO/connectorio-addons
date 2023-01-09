@@ -22,10 +22,11 @@
 package org.connectorio.addons.binding.bacnet.internal.handler.object;
 
 import org.code_house.bacnet4j.wrapper.api.Device;
-import org.code_house.bacnet4j.wrapper.mstp.MstpDevice;
+import org.code_house.bacnet4j.wrapper.device.mstp.MstpDevice;
 import org.connectorio.addons.binding.bacnet.internal.config.MstpDeviceConfig;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.link.ItemChannelLinkRegistry;
 
 public class BACnetMstpDeviceHandler extends BACnetDeviceHandler<MstpDeviceConfig> {
 
@@ -34,8 +35,8 @@ public class BACnetMstpDeviceHandler extends BACnetDeviceHandler<MstpDeviceConfi
    *
    * @param bridge the thing that should be handled, not null
    */
-  public BACnetMstpDeviceHandler(Bridge bridge) {
-    super(bridge);
+  public BACnetMstpDeviceHandler(Bridge bridge, ItemChannelLinkRegistry itemChannelLinkRegistry) {
+    super(bridge, itemChannelLinkRegistry);
   }
 
   @Override

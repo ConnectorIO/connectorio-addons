@@ -21,11 +21,18 @@
  */
 package org.connectorio.addons.binding.bacnet.internal.discovery;
 
+import static org.connectorio.addons.binding.bacnet.internal.BACnetBindingConstants.IP_DEVICE_THING_TYPE;
+import static org.connectorio.addons.binding.bacnet.internal.BACnetBindingConstants.MSTP_DEVICE_THING_TYPE;
+
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.code_house.bacnet4j.wrapper.api.Device;
+import org.code_house.bacnet4j.wrapper.device.ip.IpDevice;
+import org.code_house.bacnet4j.wrapper.device.mstp.MstpDevice;
 import org.connectorio.addons.binding.bacnet.internal.handler.network.BACnetNetworkBridgeHandler;
 import org.connectorio.addons.binding.GenericTypeUtil;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
@@ -36,15 +43,21 @@ import org.openhab.core.thing.ThingUID;
 import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.binding.ThingHandlerService;
 
-public abstract class BACnetDeviceDiscoveryService<T extends Device> extends AbstractDiscoveryService implements ThingHandlerService, DiscoveryService {
+public class BACnetDeviceDiscoveryService<T extends Device> extends AbstractDiscoveryService implements ThingHandlerService, DiscoveryService {
 
-  private BACnetNetworkBridgeHandler<?> handler;
   private final Class<T> type;
+  private BACnetNetworkBridgeHandler<?> handler;
 
+  @Deprecated
   public BACnetDeviceDiscoveryService(Set<ThingTypeUID> supportedThingsTypes, int timeout) throws IllegalArgumentException {
     super(supportedThingsTypes, timeout);
     this.type = GenericTypeUtil.<T>resolveTypeVariable("T", getClass())
       .orElseThrow(() -> new IllegalArgumentException("Could not resolve discovery device type"));
+  }
+
+  public BACnetDeviceDiscoveryService() {
+    super(new HashSet<>(Arrays.asList(IP_DEVICE_THING_TYPE, MSTP_DEVICE_THING_TYPE)), 60);
+    this.type = (Class<T>) Device.class;
   }
 
   @Override
@@ -66,26 +79,39 @@ public abstract class BACnetDeviceDiscoveryService<T extends Device> extends Abs
   }
 
   private void toDiscoveryResult(Device device) {
-    if (!type.isAssignableFrom(device.getClass())) {
+    if (!type.isInstance(device)) {
       return;
     }
 
-    T discoveredDevice = (T) device;
-
-    DiscoveryResultBuilder discoveryResult = DiscoveryResultBuilder.create(createThingId(discoveredDevice))
+    DiscoveryResultBuilder discoveryResult = DiscoveryResultBuilder.create(createThingId((T) device))
       .withLabel(device.getModelName() + ", " + device.getName() + " (" + device.getVendorName() + ")" + device.getModelName())
       .withBridge(handler.getThing().getUID())
       .withProperty("instance", device.getInstanceNumber())
       .withProperty("network", device.getBacNet4jAddress().getNetworkNumber().intValue())
       .withRepresentationProperty("address");
 
-    enrich(discoveryResult, discoveredDevice);
+    enrich(discoveryResult, (T) device);
     thingDiscovered(discoveryResult.build());
   }
 
-  protected abstract void enrich(DiscoveryResultBuilder discoveryResult, T device);
+  protected void enrich(DiscoveryResultBuilder discoveryResult, T device) {
+    if (device instanceof IpDevice) {
+      IpDevice ipDevice = (IpDevice) device;
+      discoveryResult.withProperty("address", ipDevice.getHostAddress())
+        .withProperty("port", ipDevice.getPort());
+    }
+    if (device instanceof MstpDevice) {
+      discoveryResult.withProperty("address", (int) device.getAddress()[0]);
+    }
+  }
 
-  protected abstract ThingUID createThingId(T device);
+  protected ThingUID createThingId(T device) {
+    final ThingUID bridgeUID = getThingHandler().getThing().getUID();
+    if (device instanceof MstpDevice) {
+      return new ThingUID(MSTP_DEVICE_THING_TYPE, bridgeUID, device.getNetworkNumber() + "_" + device.getInstanceNumber());
+    }
+    return new ThingUID(IP_DEVICE_THING_TYPE, bridgeUID, device.getNetworkNumber() + "_" + device.getInstanceNumber());
+  }
 
   @Override
   public void setThingHandler(ThingHandler handler) {

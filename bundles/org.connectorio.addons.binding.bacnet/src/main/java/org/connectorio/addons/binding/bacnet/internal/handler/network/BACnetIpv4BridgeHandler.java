@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.ip.BacNetIpClient;
-import org.connectorio.addons.binding.bacnet.internal.discovery.BACnetIpDeviceDiscoveryService;
+import org.connectorio.addons.binding.bacnet.internal.discovery.BACnetDeviceDiscoveryService;
 import org.connectorio.addons.binding.bacnet.internal.BACnetBindingConstants;
 import org.connectorio.addons.binding.bacnet.internal.config.Ipv4Config;
 import org.connectorio.addons.binding.handler.polling.common.BasePollingBridgeHandler;
@@ -111,7 +111,7 @@ public class BACnetIpv4BridgeHandler extends BasePollingBridgeHandler<Ipv4Config
 
   @Override
   public Collection<Class<? extends ThingHandlerService>> getServices() {
-    return Collections.singleton(BACnetIpDeviceDiscoveryService.class);
+    return Collections.singleton(BACnetDeviceDiscoveryService.class);
   }
 
   @Override

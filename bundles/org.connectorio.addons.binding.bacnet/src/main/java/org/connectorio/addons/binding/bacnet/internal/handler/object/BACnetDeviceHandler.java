@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -41,7 +40,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.api.BacNetObject;
 import org.code_house.bacnet4j.wrapper.api.Device;
@@ -72,6 +70,7 @@ import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.thing.binding.ThingHandlerService;
 import org.openhab.core.thing.binding.builder.BridgeBuilder;
 import org.openhab.core.thing.binding.builder.ChannelBuilder;
+import org.openhab.core.thing.link.ItemChannelLinkRegistry;
 import org.openhab.core.thing.type.ChannelTypeUID;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.RefreshType;
@@ -84,19 +83,22 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
   private final Set<ChannelUID> linkedChannels = new CopyOnWriteArraySet<>();
+  private final ItemChannelLinkRegistry channelLinkRegistry;
 
   private Device device;
   private CompletableFuture<BacNetClient> clientFuture = new CompletableFuture<>();
   private Map<Long, ScheduledFuture<?>> pollers = new LinkedHashMap<>();
   private boolean discoverObjects;
+  private ScheduledFuture<?> linkSynchronizer;
 
   /**
    * Creates a new instance of this class for the {@link Thing}.
    *
    * @param bridge the thing that should be handled, not null
    */
-  public BACnetDeviceHandler(Bridge bridge) {
+  public BACnetDeviceHandler(Bridge bridge, ItemChannelLinkRegistry channelLinkRegistry) {
     super(bridge);
+    this.channelLinkRegistry = channelLinkRegistry;
   }
 
   @Override
@@ -145,6 +147,17 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
           pollingMap.get(refreshInterval).add(readout);
         }
 
+        linkSynchronizer = scheduler.scheduleAtFixedRate(new Runnable() {
+          @Override
+          public void run() {
+            for (Channel channel : getThing().getChannels()) {
+              if (channelLinkRegistry.isLinked(channel.getUID())) {
+                linkedChannels.add(channel.getUID());
+              }
+            }
+          }
+        }, 0, 30, TimeUnit.SECONDS);
+
         for (Entry<Long, Set<Readout>> entry : pollingMap.entrySet()) {
           ScheduledFuture<?> poller = scheduler.scheduleAtFixedRate(new RefreshDeviceTask(() -> clientFuture, getCallback(), device, entry.getValue(), linkedChannels),
             0, entry.getKey(), TimeUnit.MILLISECONDS);
@@ -160,6 +173,10 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
 
   @Override
   public void dispose() {
+    if (linkSynchronizer != null) {
+      linkSynchronizer.cancel(false);
+    }
+
     if (pollers != null) {
       for (Entry<Long, ScheduledFuture<?>> entry : pollers.entrySet()) {
         try {

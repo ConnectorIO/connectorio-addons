@@ -105,6 +105,8 @@
   <bridge-type id="mstp-device" extensible="deviceWriteableBoolean,deviceWriteableBinary,deviceReadableBinary,deviceWriteableNumber,deviceReadableNumber,deviceWriteableDateTime,deviceReadableDateTime,deviceWriteableText,deviceReadableText,deviceWriteableCalendar,deviceWriteableWeekSchedule">
     <supported-bridge-type-refs>
       <bridge-type-ref id="mstp"/>
+      <!-- enable support for mstp devices behind bacnet router -->
+      <bridge-type-ref id="ipv4"/>
     </supported-bridge-type-refs>
 
     <label>BACnet/MSTP device</label>
