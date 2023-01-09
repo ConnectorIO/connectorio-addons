@@ -26,61 +26,45 @@
     <version>3.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>org.connectorio.addons.itest.base</artifactId>
-  <packaging>bundle</packaging>
+  <artifactId>org.connectorio.addons.itest</artifactId>
 
-  <name>ConnectorIO - Addons - ITests - Base</name>
+  <name>ConnectorIO - Addons - ITests</name>
   <description>Base classes for integration tests.</description>
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.karaf.features</groupId>
-      <artifactId>org.apache.karaf.features.core</artifactId>
+      <groupId>org.connectorio.bddhab</groupId>
+      <artifactId>org.connectorio.bddhab.rest</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.karaf.kar</groupId>
-      <artifactId>org.apache.karaf.kar.core</artifactId>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.openhab.core.bundles</groupId>
-      <artifactId>org.openhab.core</artifactId>
+      <groupId>org.connectorio.testcontainers</groupId>
+      <artifactId>openhab</artifactId>
     </dependency>
-
     <dependency>
-      <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.itest.exam</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-atinject_1.0_spec</artifactId>
-      <scope>compile</scope>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>junit-jupiter</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam-junit4</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam-container-karaf</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>compile</scope>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.karaf.tooling</groupId>
-        <artifactId>karaf-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>features-add-to-repo</id>
-            <phase>none</phase>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>

@@ -18,6 +18,11 @@
  -->
 <features name="co7io-norule-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.6.0">
 
+  <feature name="openhab-automation-co7io-norule" description="Norule." version="${project.version}" hidden="true">
+    <feature>co7io-automation-norule</feature>
+    <feature>co7io-automation-norule-shell</feature>
+  </feature>
+
   <feature name="co7io-automation-norule" description="Norule." version="${project.version}">
     <feature>openhab-runtime-base</feature>
     <feature>co7io-chrono</feature>

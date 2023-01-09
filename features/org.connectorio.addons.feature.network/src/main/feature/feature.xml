@@ -17,6 +17,10 @@
   -->
 <features name="co7io-network-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.6.0">
 
+  <feature name="openhab-misc-co7io-network" description="ConnectorIO Network management layer" version="${project.version}" hidden="true">
+    <feature>co7io-network</feature>
+  </feature>
+
   <feature name="co7io-network-api" description="ConnectorIO Network API" version="${project.version}">
     <feature>openhab-runtime-base</feature>
 

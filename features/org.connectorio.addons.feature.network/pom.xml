@@ -58,6 +58,13 @@
       <artifactId>org.connectorio.addons.network.transmitter.ip</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.openhab.core.features.karaf</groupId>
+      <artifactId>org.openhab.core.features.karaf.openhab-core</artifactId>
+      <classifier>features</classifier>
+      <type>xml</type>
+      <scope>runtime</scope>
+    </dependency>
     <!-- remove after KARAF-7316 is fixed -->
     <dependency>
       <groupId>org.apache.karaf.features</groupId>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright (C) 2022-2022 ConnectorIO Sp. z o.o.
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -
+ - SPDX-License-Identifier: Apache-2.0
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.connectorio.addons</groupId>
+    <artifactId>bddhab</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.connectorio.bddhab</groupId>
+  <artifactId>org.connectorio.bddhab.rest</artifactId>
+
+  <name>ConnectorIO - BDD HAB - REST</name>
+  <description>Client for openHAB REST Api.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>2.10.3</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.10.3</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>2.10.3</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <inputSpec>${project.basedir}/src/main/openapi/openhab-openapi-3.1.x.json</inputSpec>
+          <apiPackage>org.connectorio.bddhab.rest.client.v31</apiPackage>
+          <modelPackage>org.connectorio.bddhab.rest.client.v31.model</modelPackage>
+          <additionalProperties>
+            <additionalProperty>openApiNullable=false</additionalProperty>
+          </additionalProperties>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.connectorio.openapi.generators</groupId>
+            <artifactId>java-basic-native</artifactId>
+            <version>${connectorio-openapi-generators.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-feature-xml</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>attach-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <sources>
+            <source>${project.build.directory}/openapi/src/main/java</source>
+          </sources>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

@@ -37,6 +37,7 @@
 
   <modules>
     <module>parent</module>
+    <module>bddhab</module>
     <module>bundles</module>
     <module>features</module>
     <module>kars</module>

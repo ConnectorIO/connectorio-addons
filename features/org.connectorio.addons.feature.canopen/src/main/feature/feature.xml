@@ -26,7 +26,7 @@
 
   <feature name="dbus" description="DBus transport" version="${project.version}">
     <feature prerequisite="true">wrap</feature>
-    <bundle>mvn:org.ow2.asm/asm/7.3.1</bundle>
+    <bundle dependency="true">mvn:org.ow2.asm/asm/(7.1,]</bundle>
 
     <bundle>mvn:com.github.jnr/jnr-unixsocket/0.33</bundle>
     <bundle>mvn:com.github.jnr/jnr-constants/0.9.15</bundle>

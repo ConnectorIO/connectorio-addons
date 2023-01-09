@@ -34,11 +34,10 @@
   <description>Integration tests.</description>
 
   <modules>
+    <module>org.connectorio.addons.itest</module>
     <module>org.connectorio.addons.itest.amsads</module>
     <module>org.connectorio.addons.itest.bacnet</module>
-    <module>org.connectorio.addons.itest.base</module>
     <module>org.connectorio.addons.itest.canopen</module>
-    <module>org.connectorio.addons.itest.exam</module>
     <module>org.connectorio.addons.itest.fatek</module>
     <module>org.connectorio.addons.itest.managed</module>
     <module>org.connectorio.addons.itest.mbus</module>
@@ -55,46 +54,6 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.apache.servicemix.tooling</groupId>
-          <artifactId>depends-maven-plugin</artifactId>
-          <version>1.4.0</version>
-          <executions>
-            <execution>
-              <id>generate-depends-file</id>
-              <goals>
-                <goal>generate-depends-file</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <!-- selectively copy pax-exam and test+kar file -->
-        <plugin>
-          <groupId>org.apache.karaf.tooling</groupId>
-          <artifactId>karaf-maven-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>features-add-to-repo</id>
-              <phase>generate-resources</phase>
-              <goals>
-                <goal>features-add-to-repository</goal>
-              </goals>
-              <configuration>
-                <descriptors>
-                  <descriptor>mvn:org.ops4j.pax.exam/pax-exam-features/${pax-exam.version}/xml</descriptor>
-                </descriptors>
-                <features>
-                  <feature>exam</feature>
-                </features>
-                <repository>target/pax-exam</repository>
-              </configuration>
-            </execution>
-            <execution>
-              <id>karaf-verification</id>
-              <phase>none</phase>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
           <executions>
@@ -105,8 +64,7 @@
                 <goal>copy-dependencies</goal>
               </goals>
               <configuration>
-                <outputDirectory>${project.build.directory}/pax-exam</outputDirectory>
-                <useRepositoryLayout>true</useRepositoryLayout>
+                <outputDirectory>${project.build.directory}/additional-resources</outputDirectory>
               </configuration>
             </execution>
           </executions>

@@ -61,9 +61,12 @@
     <milo.version>0.6.7</milo.version>
     <pax-exam.version>4.13.5</pax-exam.version>
 
-    <connectorio-openapi-generators.version>5.4.0</connectorio-openapi-generators.version>
+    <openapi-generator.version>5.4.0</openapi-generator.version>
+    <connectorio-openapi-generators.version>${openapi-generator.version}</connectorio-openapi-generators.version>
+    <connectorio-testcontainers.version>0.1.0</connectorio-testcontainers.version>
     <jmbus.version>3.2.1</jmbus.version>
     <jfatek.version>3.0.1</jfatek.version>
+    <testcontainers.version>1.17.6</testcontainers.version>
   </properties>
 
   <dependencyManagement>
@@ -1104,6 +1107,20 @@
       </dependency>
 
       <dependency>
+        <groupId>org.openhab.core.features.karaf</groupId>
+        <artifactId>org.openhab.core.features.karaf.openhab-core</artifactId>
+        <version>${openhab.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+        <exclusions>
+          <exclusion>
+            <groupId>org.openhab.core.bundles</groupId>
+            <artifactId>org.openhab.core.test</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
         <groupId>org.openhab.distro</groupId>
         <artifactId>openhab</artifactId>
         <version>${openhab-distro.version}</version>
@@ -1213,13 +1230,7 @@
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.itest.base</artifactId>
-        <version>${project.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.itest.exam</artifactId>
+        <artifactId>org.connectorio.addons.itest</artifactId>
         <version>${project.version}</version>
         <scope>test</scope>
       </dependency>
@@ -1284,6 +1295,17 @@
         <groupId>org.simplify4u</groupId>
         <artifactId>jfatek</artifactId>
         <version>${jfatek.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>${testcontainers.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.testcontainers</groupId>
+        <artifactId>openhab</artifactId>
+        <version>${connectorio-testcontainers.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -1372,6 +1394,31 @@
             </execution>
           </executions>
         </plugin>
+        <plugin>
+          <groupId>org.openapitools</groupId>
+          <artifactId>openapi-generator-maven-plugin</artifactId>
+          <version>${openapi-generator.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>generate</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <generatorName>connectorio-java-basic-native</generatorName>
+            <output>${project.build.directory}/openapi</output>
+            <strictSpec>false</strictSpec>
+            <skipValidateSpec>true</skipValidateSpec>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.connectorio.openapi.generators</groupId>
+              <artifactId>java-basic-native</artifactId>
+              <version>${connectorio-openapi-generators.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -1384,6 +1431,25 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
         <version>3.0.0-M1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.10</version>
+        <executions>
+          <execution>
+            <id>default-prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>default-report</id>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

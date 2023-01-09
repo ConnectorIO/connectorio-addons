@@ -17,36 +17,15 @@
  */
 package org.connectorio.addons.itest.amsads;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import org.connectorio.addons.itest.base.OfflineKarInstallationTest;
-import org.connectorio.addons.itests.exam.openhab.OpenHABDistributionKitOption;
-import org.connectorio.addons.itests.exam.openhab.container.CustomOptions;
-import org.connectorio.addons.itests.exam.openhab.container.OpenHABTestContainerFactory;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.ExamFactory;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerClass;
 
-@RunWith(PaxExam.class)
-@ExamFactory(OpenHABTestContainerFactory.class)
-@ExamReactorStrategy(PerClass.class)
+import org.connectorio.addons.itest.base.OfflineKarInstallationTest;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+@Testcontainers
 public class AmsAdsOfflineKarInstallationTest extends OfflineKarInstallationTest {
 
   public AmsAdsOfflineKarInstallationTest() {
-    super("org.connectorio.addons", "org.connectorio.addons.kar.amsads", "openhab-binding-amsads");
-  }
-
-  @Override
-  protected Set<Option> customize() {
-    return new LinkedHashSet<>(Arrays.asList(
-      new OpenHABDistributionKitOption().unpackDirectory(new File("target/distro")),
-      new CustomOptions()
-    ));
+    super("amsads");
   }
 
 }

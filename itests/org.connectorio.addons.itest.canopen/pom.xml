@@ -37,37 +37,20 @@
       <artifactId>org.connectorio.addons.kar.canopen</artifactId>
       <type>kar</type>
     </dependency>
-    <dependency>
-      <groupId>org.openhab.distro</groupId>
-      <artifactId>openhab</artifactId>
-      <type>zip</type>
-    </dependency>
 
     <dependency>
       <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.itest.base</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.itest.exam</artifactId>
+      <artifactId>org.connectorio.addons.itest</artifactId>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.servicemix.tooling</groupId>
-        <artifactId>depends-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.karaf.tooling</groupId>
-        <artifactId>karaf-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <configuration>
-          <includeArtifactIds>org.connectorio.addons.itest.base,org.connectorio.addons.kar.canopen</includeArtifactIds>
+          <includeArtifactIds>org.connectorio.addons.kar.canopen</includeArtifactIds>
         </configuration>
       </plugin>
     </plugins>
