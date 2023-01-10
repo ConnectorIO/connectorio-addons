@@ -30,7 +30,7 @@ import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.thing.profiles.ProfileContext;
-import tech.units.indriya.unit.Units;
+import tec.uom.se.unit.Units;
 
 @ExtendWith(MockitoExtension.class)
 public class LimitTopQuantityProfileTest {

@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.profile.internal;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -65,7 +66,8 @@ class ConnectorioProfile implements StateProfile {
       throw new IllegalArgumentException("Invalid configuration");
     }
 
-    StackedProfileCallback chainedCallback = new StackedProfileCallback(callback.getItemChannelLink());
+    ItemChannelLink link = determnineLink(callback);
+    StackedProfileCallback chainedCallback = new StackedProfileCallback(link);
     for (Entry<String, Object> entry : config.entrySet()) {
       if ("profile".equals(entry.getKey())) {
         continue;
@@ -93,6 +95,36 @@ class ConnectorioProfile implements StateProfile {
     }
   }
 
+  private ItemChannelLink determnineLink(ProfileCallback callback) {
+    Class<?> clazz = callback.getClass();
+
+    Field linkField = null;
+    do {
+      try {
+        linkField = clazz.getDeclaredField("link");
+      } catch (NoSuchFieldException e) {
+        clazz = clazz.getSuperclass();
+      }
+    } while (linkField == null && clazz != Object.class);
+
+    if (linkField == null) {
+      return null;
+    }
+
+    if (ItemChannelLink.class.equals(linkField.getType())) {
+      try {
+        linkField.setAccessible(true);
+        ItemChannelLink link = (ItemChannelLink) linkField.get(callback);
+        if (link != null && link.getItemName() != null) {
+          return link;
+        }
+      } catch (IllegalAccessException e) {
+        logger.warn("Could not extract link information from profile callback {}.", callback, e);
+      }
+    }
+    return null;
+  }
+
   @Override
   public ProfileTypeUID getProfileTypeUID() {
     return ConnectorioProfiles.PROFILE;
@@ -101,34 +133,34 @@ class ConnectorioProfile implements StateProfile {
   @Override
   public void onStateUpdateFromItem(State state) {
     logger.trace("Chaining state from item to handler {}", state);
-    handleReading(false, state, callback.getItemChannelLink(), (profile) -> profile.onStateUpdateFromItem(state));
+    handleReading(false, state, (profile) -> profile.onStateUpdateFromItem(state));
   }
 
   @Override
   public void onCommandFromItem(Command command) {
     logger.trace("Chaining command from item to handler {}", command);
-    handleReading(false, command, callback.getItemChannelLink(), (profile) -> profile.onCommandFromItem(command));
+    handleReading(false, command, (profile) -> profile.onCommandFromItem(command));
   }
 
   @Override
   public void onCommandFromHandler(Command command) {
     logger.trace("Chaining command from handler to item {}", command);
-    handleReading(true, command, callback.getItemChannelLink(), (profile) -> profile.onCommandFromHandler(command));
+    handleReading(true, command, (profile) -> profile.onCommandFromHandler(command));
   }
 
   @Override
   public void onStateUpdateFromHandler(State state) {
     logger.trace("Chaining state from handler to item {}", state);
-    handleReading(true, state, callback.getItemChannelLink(), (profile) -> profile.onStateUpdateFromHandler(state));
+    handleReading(true, state, (profile) -> profile.onStateUpdateFromHandler(state));
   }
 
-  private void handleReading(boolean incoming, Type type, ItemChannelLink itemChannelLink, Consumer<StateProfile> head) {
+  private void handleReading(boolean incoming, Type type, Consumer<StateProfile> head) {
     context.getExecutorService().execute(new Runnable() {
       @Override
       public void run() {
         try {
           Iterator<StateProfile> delegate = incoming ? profileChain.iterator() : profileChain.descendingIterator();
-          Iterator<StateProfile> iterator = new Iterator<>() {
+          Iterator<StateProfile> iterator = new Iterator<StateProfile>() {
             int pos = 0;
             @Override
             public boolean hasNext() {
@@ -145,7 +177,7 @@ class ConnectorioProfile implements StateProfile {
               return "Iterator [" + pos + ", " + profileChain + "]";
             }
           };
-          ChainedProfileCallback callback = new ChainedProfileCallback(itemChannelLink, iterator, ConnectorioProfile.this.callback);
+          ChainedProfileCallback callback = new ChainedProfileCallback(iterator, ConnectorioProfile.this.callback);
           logger.trace("Setting chained callback for {} to {}", type, callback);
           StackedProfileCallback.set(callback);
           head.accept(iterator.next());

@@ -40,6 +40,7 @@
     <module>bddhab</module>
     <module>bundles</module>
     <module>features</module>
+    <module>xsd</module>
     <module>kars</module>
     <module>itests</module>
   </modules>

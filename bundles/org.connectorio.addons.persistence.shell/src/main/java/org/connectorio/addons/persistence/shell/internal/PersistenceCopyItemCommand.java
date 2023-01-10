@@ -114,7 +114,7 @@ public class PersistenceCopyItemCommand extends AbstractConsoleCommandExtension 
         HistoricItem historicItem = result.get(result.size() - 1);
         latest = historicItem.getTimestamp();
         for (HistoricItem item : result) {
-          persistence.store(createStub(to, item.getState()), item.getTimestamp(), item.getState());
+          persistence.store(createStub(to, item.getState()), Date.from(item.getTimestamp().toInstant()), item.getState());
         }
         sum += result.size();
       } while (result.size() == pageSize);
