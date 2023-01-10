@@ -1348,7 +1348,32 @@
             </execution>
           </executions>
         </plugin>
-
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>xml-maven-plugin</artifactId>
+          <version>1.1.0</version>
+          <configuration>
+            <validationSets>
+              <validationSet>
+                <dir>src/main/resources/OH-INF/</dir>
+                <includes>
+                  <include>**/*.xml</include>
+                </includes>
+                <validating>true</validating>
+              </validationSet>
+            </validationSets>
+            <catalogHadling>strict</catalogHadling>
+            <catalogs>
+              <catalog>file:${project.basedir}/../../xsd/org.connectorio.xsd.openhab/src/main/resources/openhab-catalog.xml</catalog>
+            </catalogs>
+          </configuration>
+          <executions>
+            <execution>
+              <id>default</id>
+              <phase>none</phase>
+            </execution>
+          </executions>
+        </plugin>
         <plugin>
           <groupId>org.apache.karaf.tooling</groupId>
           <artifactId>karaf-maven-plugin</artifactId>
