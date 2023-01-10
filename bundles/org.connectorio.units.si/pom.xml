@@ -37,8 +37,8 @@
       <artifactId>org.connectorio.units</artifactId>
     </dependency>
     <dependency>
-      <groupId>si.uom</groupId>
-      <artifactId>si-units</artifactId>
+      <groupId>tec.uom</groupId>
+      <artifactId>uom-se</artifactId>
     </dependency>
   </dependencies>
 

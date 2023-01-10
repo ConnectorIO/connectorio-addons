@@ -16,11 +16,9 @@
  -
  - SPDX-License-Identifier: Apache-2.0
  -->
-<thing-descriptions bindingId="co7io-mbus" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="
-    https://openhab.org/schemas/thing-description/v1.0.0
-    https://openhab.org/schemas/thing-description-1.0.0.xsd
-  ">
+<thing:thing-descriptions bindingId="co7io-mbus" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
   <bridge-type id="openhab-serial">
     <label>Serial Bridge</label>
@@ -99,7 +97,7 @@
         <default>-1</default>
         <unitLabel>m</unitLabel>
       </parameter>
-      <parameter name="discoveryMethod" type="string" groupName="discovery" multiple="true">
+      <parameter name="discoveryMethod" type="text" groupName="discovery" multiple="true">
         <label>Discovery method</label>
         <description>Scan method used for discovery of devices connected to this M-Bus bridge.</description>
         <options>
@@ -107,7 +105,7 @@
           <option value="SECONDARY">Scan secondary (long)</option>
         </options>
       </parameter>
-      <parameter name="wildcardMask" groupName="discovery">
+      <parameter name="wildcardMask" type="text" groupName="discovery">
         <label>Wildcard mask</label>
         <description>Address mask (in hex format) used to scan secondary addresses on the bus. Used only if 'Secondary address' scan is enabled.</description>
         <default>ffffffff</default>
@@ -115,4 +113,4 @@
     </config-description>
   </bridge-type>
 
-</thing-descriptions>
+</thing:thing-descriptions>
