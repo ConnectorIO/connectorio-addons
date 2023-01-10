@@ -20,8 +20,9 @@
  -
  - SPDX-License-Identifier: GPL-3.0-or-later
 -->
-<config-descriptions
+<config-description:config-descriptions
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:config-description="https://openhab.org/schemas/config-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
 
   <config-description uri="profile:co7io-bacnet:reset">
@@ -53,4 +54,4 @@
     </parameter>
   </config-description>
 
-</config-descriptions>
+</config-description:config-descriptions>
