@@ -20,12 +20,10 @@
  -
  - SPDX-License-Identifier: GPL-3.0-or-later
 -->
-<thing:thing-descriptions bindingId="co7io-bacnet" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
-  xsi:schemaLocation="
-    http://eclipse.org/smarthome/schemas/thing-description/v1.0.0
-    http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd
-  ">
+<thing:thing-descriptions bindingId="co7io-bacnet"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
   <!-- Device is a bridge for remaining properties (inputs/outputs) -->
   <bridge-type id="ip-device" extensible="deviceWriteableBoolean,deviceWriteableBinary,deviceReadableBinary,deviceWriteableNumber,deviceReadableNumber,deviceWriteableDateTime,deviceReadableDateTime,deviceWriteableText,deviceReadableText,deviceWriteableCalendar,deviceWriteableWeekSchedule">
