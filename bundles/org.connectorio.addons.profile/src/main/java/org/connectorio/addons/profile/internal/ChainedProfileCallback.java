@@ -18,7 +18,6 @@
 package org.connectorio.addons.profile.internal;
 
 import java.util.Iterator;
-import org.openhab.core.thing.link.ItemChannelLink;
 import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.thing.profiles.StateProfile;
 import org.openhab.core.types.Command;
@@ -29,19 +28,12 @@ import org.slf4j.LoggerFactory;
 public class ChainedProfileCallback implements ProfileCallback {
 
   private final Logger logger = LoggerFactory.getLogger(ChainedProfileCallback.class);
-  private final ItemChannelLink itemChannelLink;
   private final Iterator<StateProfile> profiles;
   private final ProfileCallback delegate;
 
-  public ChainedProfileCallback(ItemChannelLink itemChannelLink, Iterator<StateProfile> profiles, ProfileCallback delegate) {
-    this.itemChannelLink = itemChannelLink;
+  public ChainedProfileCallback(Iterator<StateProfile> profiles, ProfileCallback delegate) {
     this.profiles = profiles;
     this.delegate = delegate;
-  }
-
-  @Override
-  public ItemChannelLink getItemChannelLink() {
-    return itemChannelLink;
   }
 
   @Override

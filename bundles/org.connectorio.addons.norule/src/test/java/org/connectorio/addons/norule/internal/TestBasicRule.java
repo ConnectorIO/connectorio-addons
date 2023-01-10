@@ -33,7 +33,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openhab.core.internal.service.ReadyServiceImpl;
 import org.openhab.core.library.items.NumberItem;
-import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.unit.Units;
 import org.openhab.core.thing.ThingRegistry;
@@ -67,7 +66,7 @@ public class TestBasicRule {
     ).build(launcher).fire();
 
     rule.getLatch().await();
-    assertThat(efficiency.getState()).isEqualTo(new DecimalType(5));
+    assertThat(efficiency.getState()).isEqualTo(new QuantityType<>(5, Units.ONE));
   }
 
 }

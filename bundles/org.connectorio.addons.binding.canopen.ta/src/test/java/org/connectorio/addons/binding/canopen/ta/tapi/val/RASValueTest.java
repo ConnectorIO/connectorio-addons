@@ -27,8 +27,8 @@ import org.assertj.core.data.Percentage;
 import org.connectorio.addons.binding.canopen.ta.internal.config.AnalogUnit;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.openhab.core.library.unit.SIUnits;
-import tech.units.indriya.quantity.Quantities;
+import tec.uom.se.quantity.Quantities;
+import tec.uom.se.unit.Units;
 
 class RASValueTest {
 
@@ -37,7 +37,7 @@ class RASValueTest {
   void verifyRasValue(Argument argument) {
     RASValue rasValue = new RASValue(argument.raw, AnalogUnit.TEMPERATURE_REGULATOR);
 
-    Quantity<Temperature> quantity = Quantities.getQuantity(argument.temperature, SIUnits.CELSIUS);
+    Quantity<Temperature> quantity = Quantities.getQuantity(argument.temperature, Units.CELSIUS);
     assertThat(rasValue.getValue().getValue().doubleValue())
       .isCloseTo(quantity.getValue().doubleValue(), Percentage.withPercentage(1));
     assertThat(rasValue.getMode()).isEqualTo(argument.mode);
