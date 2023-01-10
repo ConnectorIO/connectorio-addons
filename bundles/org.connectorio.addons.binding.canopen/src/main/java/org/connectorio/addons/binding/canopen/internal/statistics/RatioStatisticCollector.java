@@ -21,8 +21,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import javax.measure.Quantity;
 import javax.measure.quantity.Dimensionless;
-import tech.units.indriya.AbstractUnit;
-import tech.units.indriya.quantity.Quantities;
+import tec.uom.se.AbstractUnit;
+import tec.uom.se.quantity.Quantities;
 
 /**
  * Ratio calculation.

@@ -16,11 +16,10 @@
  -
  - SPDX-License-Identifier: Apache-2.0
  -->
-<thing-descriptions bindingId="co7io-fatek" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="
-    https://openhab.org/schemas/thing-description/v1.0.0
-    https://openhab.org/schemas/thing-description-1.0.0.xsd
-  ">
+<thing:thing-descriptions bindingId="co7io-fatek"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
   <bridge-type id="tcp">
     <label>TCP Bridge</label>
@@ -97,4 +96,4 @@
     </config-description>
   </bridge-type>
 
-</thing-descriptions>
+</thing:thing-descriptions>

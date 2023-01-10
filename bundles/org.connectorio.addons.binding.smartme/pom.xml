@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.connectorio.addons</groupId>
     <artifactId>bundles</artifactId>
-    <version>3.2.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>org.connectorio.addons.binding.smartme</artifactId>
@@ -207,6 +207,18 @@
             <source>${project.build.directory}/openapi/src/gen/java</source>
           </sources>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>xml-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>validate</id>
+            <goals>
+              <goal>validate</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
