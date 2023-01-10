@@ -21,7 +21,7 @@ import java.util.Objects;
 import javax.measure.Quantity;
 import org.connectorio.addons.binding.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.canopen.ta.internal.type.TAUnit;
-import tech.units.indriya.quantity.Quantities;
+import tec.uom.se.quantity.Quantities;
 
 public abstract class BaseAnalogValue<T extends Number> implements AnalogValue {
 

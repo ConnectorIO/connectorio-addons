@@ -40,9 +40,9 @@
     <plc4x-extras.version>0.8.1</plc4x-extras.version>
     <bacnet4j-wrapper.version>1.3.0-alpha3</bacnet4j-wrapper.version>
 
-    <openhab.version>3.2.0</openhab.version>
-    <openhab-distro.version>3.2.0</openhab-distro.version>
-    <karaf.version>4.3.2</karaf.version>
+    <openhab.version>3.0.4-connectorio-1</openhab.version>
+    <openhab-distro.version>3.0.4</openhab-distro.version>
+    <karaf.version>4.2.7</karaf.version>
 
     <slf4j.version>1.7.21</slf4j.version>
     <fasterxml-classmate.version>1.5.1</fasterxml-classmate.version>
@@ -53,10 +53,9 @@
 
     <!-- various build related variables -->
     <feature.file>${project.basedir}/target/feature/feature.xml</feature.file>
-    <osgi.version>7.0.0</osgi.version>
-    <units-api.version>2.1.2</units-api.version>
-    <indriya.version>2.1.2</indriya.version>
-    <si-units.version>2.1</si-units.version>
+    <osgi.version>6.0.0</osgi.version>
+    <unit-api.version>1.0</unit-api.version>
+    <unit-se.version>1.0.10</unit-se.version>
     <ocpp-16.version>1.0.1</ocpp-16.version>
     <ocpp-common.version>1.0</ocpp-common.version>
     <milo.version>0.6.7</milo.version>
@@ -1153,17 +1152,12 @@
       <dependency>
         <groupId>javax.measure</groupId>
         <artifactId>unit-api</artifactId>
-        <version>${units-api.version}</version>
+        <version>${unit-api.version}</version>
       </dependency>
       <dependency>
-        <groupId>tech.units</groupId>
-        <artifactId>indriya</artifactId>
-        <version>${indriya.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>si.uom</groupId>
-        <artifactId>si-units</artifactId>
-        <version>${si-units.version}</version>
+        <groupId>tec.uom</groupId>
+        <artifactId>uom-se</artifactId>
+        <version>${unit-se.version}</version>
       </dependency>
 
 
@@ -1354,7 +1348,32 @@
             </execution>
           </executions>
         </plugin>
-
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>xml-maven-plugin</artifactId>
+          <version>1.1.0</version>
+          <configuration>
+            <validationSets>
+              <validationSet>
+                <dir>src/main/resources/OH-INF/</dir>
+                <includes>
+                  <include>**/*.xml</include>
+                </includes>
+                <validating>true</validating>
+              </validationSet>
+            </validationSets>
+            <catalogHadling>strict</catalogHadling>
+            <catalogs>
+              <catalog>file:${project.basedir}/../../xsd/org.connectorio.xsd.openhab/src/main/resources/openhab-catalog.xml</catalog>
+            </catalogs>
+          </configuration>
+          <executions>
+            <execution>
+              <id>default</id>
+              <phase>none</phase>
+            </execution>
+          </executions>
+        </plugin>
         <plugin>
           <groupId>org.apache.karaf.tooling</groupId>
           <artifactId>karaf-maven-plugin</artifactId>

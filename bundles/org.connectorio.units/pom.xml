@@ -37,8 +37,8 @@
       <artifactId>unit-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>tech.units</groupId>
-      <artifactId>indriya</artifactId>
+      <groupId>tec.uom</groupId>
+      <artifactId>uom-se</artifactId>
     </dependency>
   </dependencies>
 

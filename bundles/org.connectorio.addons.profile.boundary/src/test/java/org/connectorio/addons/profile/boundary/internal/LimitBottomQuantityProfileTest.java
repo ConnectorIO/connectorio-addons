@@ -20,7 +20,6 @@ package org.connectorio.addons.profile.boundary.internal;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
-import javax.measure.MetricPrefix;
 import javax.measure.Unit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,9 +31,8 @@ import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.thing.profiles.ProfileContext;
-import tech.units.indriya.unit.Units;
-import javax.measure.MetricPrefix;
-import javax.measure.Unit;
+import tec.uom.se.unit.MetricPrefix;
+import tec.uom.se.unit.Units;
 
 @ExtendWith(MockitoExtension.class)
 public class LimitBottomQuantityProfileTest {

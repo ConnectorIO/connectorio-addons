@@ -53,7 +53,6 @@ import org.openhab.core.library.types.DateTimeType;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.unit.MetricPrefix;
-import org.openhab.core.library.unit.SIUnits;
 import org.openhab.core.library.unit.Units;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
@@ -79,11 +78,11 @@ abstract class AbstractMeterThingHandler<B extends WeblogBridgeHandler, C extend
     .toFormatter();
 
   private final static Map<String, MappingEntry> MAPPING = Map.of(
-    "kW", new MappingEntry(Power.class, MetricPrefix.KILO(Units.WATT)),
+    "kW", new MappingEntry(Power.class, MetricPrefix.KILO(tec.uom.se.unit.Units.WATT)),
     "kWh", new MappingEntry(Energy.class, Units.KILOWATT_HOUR),
-    "m^3", new MappingEntry(Volume.class, SIUnits.CUBIC_METRE),
+    "m^3", new MappingEntry(Volume.class, tec.uom.se.unit.Units.CUBIC_METRE),
     "m^3/h", new MappingEntry(VolumetricFlowRate.class, Units.CUBICMETRE_PER_HOUR),
-    "C", new MappingEntry(Temperature.class, SIUnits.CELSIUS),
+    "C", new MappingEntry(Temperature.class, tec.uom.se.unit.Units.CELSIUS),
     "h", new MappingEntry(Time.class, Units.HOUR),
     "s", new MappingEntry(Time.class, Units.SECOND)
   );
