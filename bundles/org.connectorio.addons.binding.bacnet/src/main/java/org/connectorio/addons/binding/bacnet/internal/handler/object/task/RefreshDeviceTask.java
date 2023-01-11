@@ -79,6 +79,11 @@ public class RefreshDeviceTask extends AbstractTask {
 
   @Override
   public void run() {
+    if (linkedChannels.isEmpty()) {
+      logger.trace("Ignore device {} readout, no linked channels found.", device);
+      return;
+    }
+
     CompletableFuture<BacNetClient> clientFuture = client.get();
     if (clientFuture.isDone() && !clientFuture.isCancelled() && !clientFuture.isCompletedExceptionally()) {
       try {
