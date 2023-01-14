@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import org.code_house.bacnet4j.wrapper.api.Device;
 import org.code_house.bacnet4j.wrapper.device.ip.IpDevice;
@@ -47,6 +48,7 @@ public class BACnetDeviceDiscoveryService<T extends Device> extends AbstractDisc
 
   private final Class<T> type;
   private BACnetNetworkBridgeHandler<?> handler;
+  private CompletableFuture<Void> discoveryFuture;
 
   @Deprecated
   public BACnetDeviceDiscoveryService(Set<ThingTypeUID> supportedThingsTypes, int timeout) throws IllegalArgumentException {
@@ -67,7 +69,16 @@ public class BACnetDeviceDiscoveryService<T extends Device> extends AbstractDisc
 
   @Override
   protected void startBackgroundDiscovery() {
-    startScan();
+    discoveryFuture = handler.getClient().thenAccept(cli -> {
+      cli.listenForDevices(this::toDiscoveryResult);
+    });
+  }
+
+  @Override
+  protected void stopBackgroundDiscovery() {
+    if (discoveryFuture != null && !discoveryFuture.isDone()) {
+      discoveryFuture.cancel(true);
+    }
   }
 
   @Override

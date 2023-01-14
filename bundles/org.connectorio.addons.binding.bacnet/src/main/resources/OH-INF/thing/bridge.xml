@@ -215,6 +215,16 @@
         <unitLabel>ms</unitLabel>
         <default>0</default>
       </parameter>
+
+      <parameter name="networkRouter" type="text" required="false" multiple="true">
+        <label>Network router</label>
+        <description>
+          This parameter allows to pre-register a network router to BACnet client.
+          Please note that configuration must be entered in specific format: network=ipaddress:port.
+          Binding will work only with IP addresses and will not attempt to resolve hosts.
+        </description>
+        <advanced>true</advanced>
+      </parameter>
     </config-description>
   </bridge-type>
 

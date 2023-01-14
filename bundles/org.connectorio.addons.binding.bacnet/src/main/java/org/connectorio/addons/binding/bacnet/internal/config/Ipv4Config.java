@@ -21,11 +21,15 @@
  */
 package org.connectorio.addons.binding.bacnet.internal.config;
 
+import java.util.List;
+
 public class Ipv4Config extends BACnetConfig {
 
   public String localBindAddress;
   public int port;
   public String broadcastAddress;
   public int localDeviceId;
+
+  public List<String> networkRouter;
 
 }

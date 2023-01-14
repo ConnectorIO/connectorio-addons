@@ -22,10 +22,14 @@
 package org.connectorio.addons.binding.bacnet.internal.handler.network;
 
 import com.serotonin.bacnet4j.npdu.ip.IpNetworkBuilder;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.ip.BacNetIpClient;
 import org.connectorio.addons.binding.bacnet.internal.discovery.BACnetDeviceDiscoveryService;
@@ -41,6 +45,7 @@ import org.openhab.core.types.Command;
 
 public class BACnetIpv4BridgeHandler extends BasePollingBridgeHandler<Ipv4Config> implements BACnetNetworkBridgeHandler<Ipv4Config> {
 
+  private final Pattern ROUTER_PATTERN = Pattern.compile("^(?<network>\\d+)=(?<ip>\\d+\\.\\d+\\.\\d+\\.\\d+)(?::(?<port>\\d+))$");
   private CompletableFuture<BacNetClient> clientFuture = new CompletableFuture<>();
   private BacNetClient client;
 
@@ -77,6 +82,22 @@ public class BACnetIpv4BridgeHandler extends BasePollingBridgeHandler<Ipv4Config
 
     scheduler.submit(() -> {
       BacNetIpClient cli = new BacNetIpClient(builder.build(), getLocalDeviceId().orElse(1339));
+
+      // configure network routers
+      List<String> routers = getBridgeConfig().map(f -> f.networkRouter)
+        .orElse(Collections.emptyList());
+      for (String router : routers) {
+        Matcher matcher = ROUTER_PATTERN.matcher(router);
+        if (matcher.matches()) {
+          int network = Integer.parseInt(matcher.group("network"));
+          String ip = matcher.group("ip");
+          int port = Optional.ofNullable(matcher.group("port"))
+            .filter(String::isEmpty)
+            .map(Integer::parseInt)
+            .orElse(47808);
+          cli.addNetworkRouter(network, ip, port);
+        }
+      }
       cli.start();
       clientFuture.complete(cli);
     });

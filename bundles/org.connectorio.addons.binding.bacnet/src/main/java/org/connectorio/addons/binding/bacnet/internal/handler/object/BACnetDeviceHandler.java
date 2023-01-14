@@ -281,6 +281,7 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
     properties.put("type", object.getType().name());
     properties.put("readOnly", false);
     properties.put("propertyIdentifier", propertyIdentifier.toString());
+    properties.put("refreshInterval", 0); // stick to device refresh interval
     return new Configuration(properties);
   }
 
