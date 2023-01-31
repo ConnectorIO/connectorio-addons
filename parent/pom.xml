@@ -84,6 +84,11 @@
         <classifier>features</classifier>
         <type>xml</type>
       </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.communication.watchdog</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>

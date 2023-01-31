@@ -37,6 +37,10 @@
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.binding</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.communication.watchdog</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.openhab.core.features.karaf</groupId>

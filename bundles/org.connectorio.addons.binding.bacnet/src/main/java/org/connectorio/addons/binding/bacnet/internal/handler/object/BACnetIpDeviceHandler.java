@@ -24,6 +24,7 @@ package org.connectorio.addons.binding.bacnet.internal.handler.object;
 import org.code_house.bacnet4j.wrapper.api.Device;
 import org.code_house.bacnet4j.wrapper.device.ip.IpDevice;
 import org.connectorio.addons.binding.bacnet.internal.config.IpDeviceConfig;
+import org.connectorio.addons.communication.watchdog.WatchdogManager;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.link.ItemChannelLinkRegistry;
@@ -34,9 +35,11 @@ public class BACnetIpDeviceHandler extends BACnetDeviceHandler<IpDeviceConfig> {
    * Creates a new instance of this class for the {@link Thing}.
    *
    * @param bridge the thing that should be handled, not null
+   * @param channelLinkRegistry registry used to assure channel linking
+   * @param watchdogManager communication watchdog
    */
-  public BACnetIpDeviceHandler(Bridge bridge, ItemChannelLinkRegistry channelLinkRegistry) {
-    super(bridge, channelLinkRegistry);
+  public BACnetIpDeviceHandler(Bridge bridge, ItemChannelLinkRegistry channelLinkRegistry, WatchdogManager watchdogManager) {
+    super(bridge, channelLinkRegistry, watchdogManager);
   }
 
   @Override

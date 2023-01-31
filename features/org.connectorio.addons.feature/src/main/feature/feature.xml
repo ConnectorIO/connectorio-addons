@@ -26,4 +26,11 @@
     <bundle>mvn:org.connectorio.addons/org.connectorio.addons.binding/${project.version}</bundle>
   </feature>
 
+  <feature name="co7io-communication-watchdog" description="ConnectorIO Communication Watchdog" version="${project.version}">
+    <details>Communication watchdog to monitor incoming data.</details>
+    <feature>openhab-core-base</feature>
+
+    <bundle>mvn:org.connectorio.addons/org.connectorio.addons.communication.watchdog/${project.version}</bundle>
+  </feature>
+
 </features>

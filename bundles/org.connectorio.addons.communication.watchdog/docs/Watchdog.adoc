@@ -1,0 +1,49 @@
+:category: development
+
+= Communication Watchdog
+
+The Communication Watchdog API is a companion extension which allows various addons to confirm communication satisfy defined conditions.
+This is especially useful for cases where data retrieval is based on predictable time window.
+Time window might also come from broadcasting nature of _Thing_.
+
+== Watchdog Usage
+The Watchdog is usable as a library.
+It is divided into below types:
+
+* `Watchdog` - represents a communication watchdog instance.
+* `WatchdogManager` - manager which controls execution of watchdog logic.
+* `WatchdogBuilder` - basic mechanism used to specify watchdog conditions.
+* `WatchdogListener` - API used to report watchdog state changes.
+
+Additionally, there are helper elements:
+
+* `WtchdogClock` - internal time tracking.
+* `WatchdogCondition` - abstraction of actual communication condition.
+
+== Integration in bindings
+Bindings must list compile and runtime dependency on watchdog library.
+
+There are few basic steps to make it work:
+
+Inject watchdog manager to `ThingHandler`:
+[source,java]
+----
+include::src/test/java/org/connectorio/addons/communication/watchdog/internal/CyclicThingHandler.java[tag=injection]
+----
+
+Make sure you construct a proper `Watchdog` and feed it through below sequence of actions:
+[source,java]
+----
+include::src/test/java/org/connectorio/addons/communication/watchdog/internal/CyclicThingHandler.java[tag=initialization]
+----
+<1> Make sure you bring in conditions <1>, each channel is evaluated independently.
+<2> And construct a watchdog <2>
+<3> Watchdog will need `ThingHandlerCallback` <3>, to construct its decorator (wiretap).
+<4> You can specify listener, or use predefined one <4>, the `ThingStatusWatchdogListener` will update thing status on recovery and failures.
+<5> Remember to use decorated `ThingHandlerCallback` in your handler logic <5>.
+
+Ensure each constructed `Watchdog` is closed together with handler:
+[source,java]
+----
+include::src/test/java/org/connectorio/addons/communication/watchdog/internal/CyclicThingHandler.java[tag=close]
+----

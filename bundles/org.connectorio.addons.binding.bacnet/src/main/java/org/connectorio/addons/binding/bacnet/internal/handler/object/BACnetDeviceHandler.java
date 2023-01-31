@@ -58,6 +58,10 @@ import org.connectorio.addons.binding.bacnet.internal.handler.network.BACnetNetw
 import org.connectorio.addons.binding.bacnet.internal.handler.object.task.ReadObjectTask;
 import org.connectorio.addons.binding.bacnet.internal.handler.object.task.Readout;
 import org.connectorio.addons.binding.bacnet.internal.handler.object.task.RefreshDeviceTask;
+import org.connectorio.addons.communication.watchdog.Watchdog;
+import org.connectorio.addons.communication.watchdog.contrib.ThingStatusWatchdogListener;
+import org.connectorio.addons.communication.watchdog.WatchdogBuilder;
+import org.connectorio.addons.communication.watchdog.WatchdogManager;
 import org.connectorio.addons.temporal.item.TemporalItemFactory;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.library.CoreItemFactory;
@@ -84,21 +88,24 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
 
   private final Set<ChannelUID> linkedChannels = new CopyOnWriteArraySet<>();
   private final ItemChannelLinkRegistry channelLinkRegistry;
+  private WatchdogManager watchdogManager;
 
   private Device device;
   private CompletableFuture<BacNetClient> clientFuture = new CompletableFuture<>();
   private Map<Long, ScheduledFuture<?>> pollers = new LinkedHashMap<>();
   private boolean discoverObjects;
   private ScheduledFuture<?> linkSynchronizer;
+  private Watchdog watchdog;
 
   /**
    * Creates a new instance of this class for the {@link Thing}.
    *
    * @param bridge the thing that should be handled, not null
    */
-  public BACnetDeviceHandler(Bridge bridge, ItemChannelLinkRegistry channelLinkRegistry) {
+  public BACnetDeviceHandler(Bridge bridge, ItemChannelLinkRegistry channelLinkRegistry, WatchdogManager watchdogManager) {
     super(bridge);
     this.channelLinkRegistry = channelLinkRegistry;
+    this.watchdogManager = watchdogManager;
   }
 
   @Override
@@ -120,59 +127,68 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
       }).orElse(null);
 
     if (device != null) {
-      getBridgeHandler().get().getClient().whenComplete((client, error) -> {
+      getBridgeHandler().get().getClient().thenAccept(this::initializeChannels).whenComplete((client, error) -> {
         if (error != null) {
           logger.warn("Initialization of BACnet device handler failed, could not establish client connection", error);
-          return;
         }
-
-        DeviceConfig deviceConfig = getConfigAs(DeviceConfig.class);
-        discoverObjects = deviceConfig.discoverObjects;
-        if (deviceConfig.discoverChannels && thing.getChannels().isEmpty()) {
-          updateChannels(client);
-        }
-
-        Map<Long, Set<Readout>> pollingMap = new LinkedHashMap<>();
-        for (Channel channel : thing.getChannels()) {
-          DeviceChannelConfig deviceChannelConfig = channel.getConfiguration().as(DeviceChannelConfig.class);
-          Long refreshInterval = Optional.ofNullable(deviceChannelConfig.refreshInterval)
-            .filter(value -> value != 0)
-            .orElse(getRefreshInterval());
-          if (!pollingMap.containsKey(refreshInterval)) {
-            pollingMap.put(refreshInterval, new LinkedHashSet<>());
-          }
-          BacNetObject object = new BacNetObject(device, deviceChannelConfig.instance, deviceChannelConfig.type);
-          PropertyIdentifier propertyIdentifier = PropertyIdentifier.forName(deviceChannelConfig.propertyIdentifier);
-          Readout readout = new Readout(channel.getUID(), object, propertyIdentifier);
-          pollingMap.get(refreshInterval).add(readout);
-        }
-
-        linkSynchronizer = scheduler.scheduleAtFixedRate(new Runnable() {
-          @Override
-          public void run() {
-            for (Channel channel : getThing().getChannels()) {
-              if (channelLinkRegistry.isLinked(channel.getUID())) {
-                linkedChannels.add(channel.getUID());
-              }
-            }
-          }
-        }, 0, 30, TimeUnit.SECONDS);
-
-        for (Entry<Long, Set<Readout>> entry : pollingMap.entrySet()) {
-          ScheduledFuture<?> poller = scheduler.scheduleAtFixedRate(new RefreshDeviceTask(() -> clientFuture, getCallback(), device, entry.getValue(), linkedChannels),
-            0, entry.getKey(), TimeUnit.MILLISECONDS);
-          pollers.put(entry.getKey(), poller);
-        }
-        updateStatus(ThingStatus.ONLINE);
-        clientFuture.complete(client);
       });
     } else {
       updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Missing device configuration");
     }
   }
 
+  protected void initializeChannels(BacNetClient client) {
+    WatchdogBuilder watchdogBuilder = watchdogManager.builder(getThing());
+
+    DeviceConfig deviceConfig = getConfigAs(DeviceConfig.class);
+    discoverObjects = deviceConfig.discoverObjects;
+    if (deviceConfig.discoverChannels && thing.getChannels().isEmpty()) {
+      updateChannels(client);
+    }
+
+    Map<Long, Set<Readout>> pollingMap = new LinkedHashMap<>();
+    for (Channel channel : thing.getChannels()) {
+      DeviceChannelConfig deviceChannelConfig = channel.getConfiguration().as(DeviceChannelConfig.class);
+      Long refreshInterval = Optional.ofNullable(deviceChannelConfig.refreshInterval)
+          .filter(value -> value != 0)
+          .orElse(getRefreshInterval());
+      watchdogBuilder.withChannel(channel.getUID(), refreshInterval);
+      if (!pollingMap.containsKey(refreshInterval)) {
+        pollingMap.put(refreshInterval, new LinkedHashSet<>());
+      }
+      BacNetObject object = new BacNetObject(device, deviceChannelConfig.instance, deviceChannelConfig.type);
+      PropertyIdentifier propertyIdentifier = PropertyIdentifier.forName(deviceChannelConfig.propertyIdentifier);
+      Readout readout = new Readout(channel.getUID(), object, propertyIdentifier);
+      pollingMap.get(refreshInterval).add(readout);
+    }
+
+    linkSynchronizer = scheduler.scheduleAtFixedRate(new Runnable() {
+      @Override
+      public void run() {
+        for (Channel channel : getThing().getChannels()) {
+          if (channelLinkRegistry.isLinked(channel.getUID())) {
+            linkedChannels.add(channel.getUID());
+          }
+        }
+      }
+    }, 0, 30, TimeUnit.SECONDS);
+
+    this.watchdog = watchdogBuilder.build(getCallback(), new ThingStatusWatchdogListener(getThing(), getCallback()));
+    for (Entry<Long, Set<Readout>> entry : pollingMap.entrySet()) {
+      ScheduledFuture<?> poller = scheduler.scheduleAtFixedRate(new RefreshDeviceTask(() -> clientFuture, watchdog.getCallbackWrapper(), device, entry.getValue(), linkedChannels),
+          0, entry.getKey(), TimeUnit.MILLISECONDS);
+      pollers.put(entry.getKey(), poller);
+    }
+    updateStatus(ThingStatus.ONLINE);
+    clientFuture.complete(client);
+  }
+
   @Override
   public void dispose() {
+    if (watchdog != null) {
+      watchdog.close();
+    }
+
     if (linkSynchronizer != null) {
       linkSynchronizer.cancel(false);
     }
