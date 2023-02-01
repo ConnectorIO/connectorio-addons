@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package org.connectorio.addons.communication.watchdog.internal;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -35,10 +52,10 @@ public class TimeoutCondition implements WatchdogCondition {
     if (this.lastUpdate == null) {
       // assume we haven't seen anything for last window
       this.lastUpdate = updateWindow;
-      return State.INITIALIZATION;
+      return State.INITIALIZED;
     }
     logger.debug("Last update time {} should be higher than {}", lastUpdate, updateWindow);
-    State currentState = lastUpdate > updateWindow ? State.OK : State.FAILURE;
+    State currentState = lastUpdate > updateWindow ? State.OK : State.FAILED;
     state.set(currentState);
     return currentState;
   }

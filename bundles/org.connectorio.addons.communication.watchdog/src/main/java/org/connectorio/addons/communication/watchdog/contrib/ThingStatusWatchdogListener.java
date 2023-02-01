@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package org.connectorio.addons.communication.watchdog.contrib;
 
 import java.util.HashSet;
@@ -21,7 +38,7 @@ import org.openhab.core.thing.binding.ThingHandlerCallback;
 public class ThingStatusWatchdogListener implements WatchdogListener {
 
   private final Set<ChannelUID> channels = new HashSet<>();
-  private Thing thing;
+  private final Thing thing;
   private final ThingHandlerCallback callback;
   private final int limit;
 
@@ -38,9 +55,9 @@ public class ThingStatusWatchdogListener implements WatchdogListener {
   @Override
   public void timeout(WatchdogTimeoutEvent event) {
     channels.add(event.getChannel());
-    if (channels.size() > limit) {
+    if (channels.size() >= limit) {
       String description = createDescription(channels);
-      ThingStatusInfo info = new ThingStatusInfo(ThingStatus.ONLINE, ThingStatusDetail.COMMUNICATION_ERROR, description);
+      ThingStatusInfo info = new ThingStatusInfo(ThingStatus.OFFLINE, ThingStatusDetail.OFFLINE.COMMUNICATION_ERROR, description);
       callback.statusUpdated(thing, info);
     }
   }
@@ -49,7 +66,7 @@ public class ThingStatusWatchdogListener implements WatchdogListener {
   public void initialized(WatchdogInitializedEvent event) {
     channels.clear();
 
-    ThingStatusInfo info = new ThingStatusInfo(ThingStatus.INITIALIZING, null, null);
+    ThingStatusInfo info = new ThingStatusInfo(ThingStatus.ONLINE, ThingStatusDetail.ONLINE.CONFIGURATION_PENDING, "Awaiting for communication");
     callback.statusUpdated(thing, info);
   }
 
