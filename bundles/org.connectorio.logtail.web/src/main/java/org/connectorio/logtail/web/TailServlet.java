@@ -15,21 +15,19 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.logtail.internal;
+package org.connectorio.logtail.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Deque;
-import java.util.LinkedList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.ops4j.pax.logging.spi.PaxAppender;
-import org.ops4j.pax.logging.spi.PaxLoggingEvent;
+import org.connectorio.logtail.Collector;
+import org.connectorio.logtail.LogEntry;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -37,15 +35,19 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 
-@Component(immediate = true, property = "org.ops4j.pax.logging.appender.name=co7io-web")
-public class TailServlet extends HttpServlet implements PaxAppender {
+/**
+ * Servlet to retrieve log statements.
+ */
+@Component
+public class TailServlet extends HttpServlet {
 
   private final HttpService httpService;
-  private final Deque<PaxLoggingEvent> events = new LinkedList<>();
+  private final Collector collector;
 
   @Activate
-  public TailServlet(@Reference HttpService httpService) throws ServletException, NamespaceException {
+  public TailServlet(@Reference HttpService httpService, @Reference Collector collector) throws ServletException, NamespaceException {
     this.httpService = httpService;
+    this.collector = collector;
     this.httpService.registerServlet("/logs", this, null, httpService.createDefaultHttpContext());
   }
 
@@ -65,23 +67,15 @@ public class TailServlet extends HttpServlet implements PaxAppender {
     writer.println("<pre>");
 
     int count = 0;
-    for (PaxLoggingEvent event : events) {
+    for (LogEntry event : collector.getLogEntries()) {
       LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getTimeStamp()), ZoneId.systemDefault());
-      writer.println(dateTime + " | " + event.getLevel() + " | " + event.getLoggerName() + " | " + event.getRenderedMessage());
+      writer.println(dateTime + " | " + event.getLevel() + " | " + event.getCategory() + " | " + event.getMessage());
       if ((++count % 10) == 0) {
         writer.flush();
       }
     }
 
     writer.println("</pre>");
-  }
-
-  @Override
-  public void doAppend(PaxLoggingEvent paxLoggingEvent) {
-    events.addFirst(paxLoggingEvent);
-    if (events.size() > 2000) {
-      events.removeLast();
-    }
   }
 
 }
