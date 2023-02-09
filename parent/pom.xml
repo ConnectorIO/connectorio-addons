@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.connectorio</groupId>
     <artifactId>addons</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>4.1.0-SNAPSHOT</version>
   </parent>
 
   <groupId>org.connectorio.addons</groupId>
@@ -34,17 +34,17 @@
   <description>Parent for ConnectorIO supplied bindings and extensions.</description>
 
   <properties>
-    <compiler.source>11</compiler.source>
-    <compiler.target>11</compiler.target>
+    <compiler.source>17</compiler.source>
+    <compiler.target>17</compiler.target>
 
     <plc4x-extras.version>0.12.0</plc4x-extras.version>
     <bacnet4j-wrapper.version>1.3.0-beta1</bacnet4j-wrapper.version>
 
-    <openhab.version>3.0.4</openhab.version>
-    <thing4.version>3.0.0-alpha-4</thing4.version>
+    <openhab.version>4.1.1</openhab.version>
+    <thing4.version>4.0.0-alpha-2</thing4.version>
     <thing4-bom.version>${openhab.version}</thing4-bom.version>
     <openhab-distro.version>${openhab.version}</openhab-distro.version>
-    <karaf.version>4.3.9</karaf.version>
+    <karaf.version>4.4.4</karaf.version>
 
     <slf4j.version>1.7.36</slf4j.version>
     <fasterxml-classmate.version>1.5.1</fasterxml-classmate.version>
@@ -60,7 +60,7 @@
     <ocpp-common.version>1.0</ocpp-common.version>
     <milo.version>0.6.7</milo.version>
     <pax-exam.version>4.13.5</pax-exam.version>
-    <xstream.version>1.4.13</xstream.version>
+    <xstream.version>1.4.20</xstream.version>
 
     <openapi-generator.version>5.4.0</openapi-generator.version>
     <connectorio-openapi-generators.version>${openapi-generator.version}</connectorio-openapi-generators.version>
@@ -712,6 +712,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.service.component.annotations</artifactId>
         <version>1.4.0</version>
@@ -994,6 +1000,7 @@
             <failOnDependencyChange>false</failOnDependencyChange>
             <logDependencyChanges>false</logDependencyChanges>
             <overwriteChangedDependencies>false</overwriteChangedDependencies>
+            <javase>${compiler.target}</javase>
           </configuration>
           <executions>
             <execution>
@@ -1011,7 +1018,6 @@
                   <descriptor>file:${feature.file}</descriptor>
                 </descriptors>
                 <distribution>org.apache.karaf.features:framework</distribution>
-                <javase>11</javase>
                 <framework>
                   <feature>framework</feature>
                 </framework>
