@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.connectorio</groupId>
     <artifactId>addons</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
   </parent>
 
   <groupId>org.connectorio.addons</groupId>
@@ -40,8 +40,8 @@
     <plc4x-extras.version>0.11.1-connectorio-1</plc4x-extras.version>
     <bacnet4j-wrapper.version>1.3.0-alpha3</bacnet4j-wrapper.version>
 
-    <openhab.version>3.0.4-connectorio-1</openhab.version>
-    <openhab-distro.version>3.0.4</openhab-distro.version>
+    <openhab.version>3.4.0</openhab.version>
+    <openhab-distro.version>3.4.0</openhab-distro.version>
     <karaf.version>4.3.9</karaf.version>
 
     <slf4j.version>1.7.36</slf4j.version>
@@ -53,14 +53,15 @@
 
     <!-- various build related variables -->
     <feature.file>${project.basedir}/target/feature/feature.xml</feature.file>
-    <osgi.version>6.0.0</osgi.version>
-    <unit-api.version>1.0</unit-api.version>
-    <unit-se.version>1.0.10</unit-se.version>
+    <osgi.version>7.0.0</osgi.version>
+    <units-api.version>2.1.2</units-api.version>
+    <indriya.version>2.1.2</indriya.version>
+    <si-units.version>2.1</si-units.version>
     <ocpp-16.version>1.0.1</ocpp-16.version>
     <ocpp-common.version>1.0</ocpp-common.version>
     <milo.version>0.6.7</milo.version>
     <pax-exam.version>4.13.5</pax-exam.version>
-    <xstream.version>1.4.13</xstream.version>
+    <xstream.version>1.4.20</xstream.version>
 
     <openapi-generator.version>5.4.0</openapi-generator.version>
     <connectorio-openapi-generators.version>${openapi-generator.version}</connectorio-openapi-generators.version>
@@ -1153,12 +1154,17 @@
       <dependency>
         <groupId>javax.measure</groupId>
         <artifactId>unit-api</artifactId>
-        <version>${unit-api.version}</version>
+        <version>${units-api.version}</version>
       </dependency>
       <dependency>
-        <groupId>tec.uom</groupId>
-        <artifactId>uom-se</artifactId>
-        <version>${unit-se.version}</version>
+        <groupId>tech.units</groupId>
+        <artifactId>indriya</artifactId>
+        <version>${indriya.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>si.uom</groupId>
+        <artifactId>si-units</artifactId>
+        <version>${si-units.version}</version>
       </dependency>
 
       <dependency>
