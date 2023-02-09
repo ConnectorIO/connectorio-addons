@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.connectorio</groupId>
     <artifactId>addons</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.1.0-SNAPSHOT</version>
   </parent>
 
   <groupId>org.connectorio.addons</groupId>
@@ -40,7 +40,7 @@
     <plc4x-extras.version>0.12.0</plc4x-extras.version>
     <bacnet4j-wrapper.version>1.3.0-beta1</bacnet4j-wrapper.version>
 
-    <openhab.version>3.0.4</openhab.version>
+    <openhab.version>3.1.0</openhab.version>
     <thing4.version>3.0.0-alpha-4</thing4.version>
     <thing4-bom.version>${openhab.version}</thing4-bom.version>
     <openhab-distro.version>${openhab.version}</openhab-distro.version>
@@ -55,12 +55,11 @@
 
     <!-- various build related variables -->
     <feature.file>${project.basedir}/target/feature/feature.xml</feature.file>
-
     <ocpp-16.version>1.0.1</ocpp-16.version>
     <ocpp-common.version>1.0</ocpp-common.version>
     <milo.version>0.6.7</milo.version>
     <pax-exam.version>4.13.5</pax-exam.version>
-    <xstream.version>1.4.13</xstream.version>
+    <xstream.version>1.4.15</xstream.version>
 
     <openapi-generator.version>5.4.0</openapi-generator.version>
     <connectorio-openapi-generators.version>${openapi-generator.version}</connectorio-openapi-generators.version>
