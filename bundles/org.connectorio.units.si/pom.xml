@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.connectorio.addons</groupId>
     <artifactId>bundles</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>4.1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>org.connectorio.units.si</artifactId>
@@ -37,8 +37,8 @@
       <artifactId>org.connectorio.units</artifactId>
     </dependency>
     <dependency>
-      <groupId>tec.uom</groupId>
-      <artifactId>uom-se</artifactId>
+      <groupId>si.uom</groupId>
+      <artifactId>si-units</artifactId>
     </dependency>
   </dependencies>
 
