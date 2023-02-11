@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public class IconifyIconProvider extends AbstractResourceIconProvider {
 
   public static final String ICONS_LOCATION = "/icons";
-  public static final String ICONSET_ID = "monos";
+  public static final String DEFAULT_ICONSET_ID = "classic";
 
   private final Logger logger = LoggerFactory.getLogger(IconifyIconProvider.class);
 
@@ -60,6 +60,11 @@ public class IconifyIconProvider extends AbstractResourceIconProvider {
   @Activate
   public IconifyIconProvider(@Reference TranslationProvider i18nProvider, BundleContext context) {
     super(i18nProvider);
+
+    // register classic iconset to feed iconics also as default icons!
+    Map<String, URL> classicOverrides = new HashMap<>();
+    iconSets.add(new IconSet(DEFAULT_ICONSET_ID, "Classic overrides", "", Collections.singleton(Format.SVG)));
+    icons.put(DEFAULT_ICONSET_ID, classicOverrides);
 
     try {
       Enumeration<String> resources = context.getBundle().getEntryPaths(ICONS_LOCATION);
@@ -83,6 +88,7 @@ public class IconifyIconProvider extends AbstractResourceIconProvider {
           icon = icon.substring(iconSetPath.length());
           logger.debug("Found icon {}", icon);
           assets.put(icon.toLowerCase(), resource);
+          classicOverrides.put(id + "-" + icon.toLowerCase(), resource);
         }
         icons.put(id, assets);
       }
