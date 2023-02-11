@@ -1,0 +1,16 @@
+= Iconify Icon Provider
+
+If you ever wonder how to get iconify icons out of the box.. in openHAB.
+This is the proof of concept answer.
+
+[NOTE]
+====
+Because openHAB icon handling uses `-` to separate optional state description not all icon sets would work.
+This is simply due to fact that iconify and many iconsets use dash as a sparator.
+For that reason this icon provider accepts `_` in place of `-`.
+====
+
+Example use:
+
+- Request path: `icon/baseline_1k.svg?iconset=ic`
+- Iconify iconset 'ic', icon `baseline-1k`
