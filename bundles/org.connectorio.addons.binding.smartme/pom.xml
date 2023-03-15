@@ -134,7 +134,7 @@
         <configuration>
           <inputSpec>${project.basedir}/src/main/openapi/v1/openapi.yaml</inputSpec>
           <templateDirectory>${project.basedir}/src/main/openapi/</templateDirectory>
-          <generatorName>java-native-basic</generatorName>
+          <generatorName>connectorio-java-basic-native</generatorName>
           <output>${project.build.directory}/openapi</output>
           <strictSpec>false</strictSpec>
           <skipValidateSpec>true</skipValidateSpec>
@@ -146,9 +146,9 @@
         </configuration>
         <dependencies>
           <dependency>
-            <groupId>org.connectorio.addons</groupId>
-            <artifactId>org.connectorio.openapi</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.connectorio.openapi.generators</groupId>
+            <artifactId>java-basic-native</artifactId>
+            <version>${connectorio-openapi-generators.version}</version>
           </dependency>
         </dependencies>
       </plugin>

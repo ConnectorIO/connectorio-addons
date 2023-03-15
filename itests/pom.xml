@@ -44,6 +44,7 @@
     <module>org.connectorio.addons.itest.ocpp</module>
     <module>org.connectorio.addons.itest.opcua</module>
     <module>org.connectorio.addons.itest.s7</module>
+    <module>org.connectorio.addons.itest.smartme</module>
   </modules>
 
   <build>

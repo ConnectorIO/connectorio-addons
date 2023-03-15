@@ -60,6 +60,8 @@
     <ocpp-common.version>1.0</ocpp-common.version>
     <milo.version>0.6.7</milo.version>
     <pax-exam.version>4.13.5</pax-exam.version>
+
+    <connectorio-openapi-generators.version>5.4.0</connectorio-openapi-generators.version>
   </properties>
 
   <dependencyManagement>
@@ -303,6 +305,12 @@
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.kar.smartme</artifactId>
+        <version>${project.version}</version>
+        <type>kar</type>
       </dependency>
 
       <dependency>

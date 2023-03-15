@@ -42,6 +42,7 @@
     <module>org.connectorio.addons.kar.ocpp</module>
     <module>org.connectorio.addons.kar.opcua</module>
     <module>org.connectorio.addons.kar.s7</module>
+    <module>org.connectorio.addons.kar.smartme</module>
   </modules>
 
   <build>
