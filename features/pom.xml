@@ -40,6 +40,7 @@
     <module>org.connectorio.addons.feature.bacnet</module>
     <module>org.connectorio.addons.feature.canopen</module>
     <module>org.connectorio.addons.feature.io</module>
+    <module>org.connectorio.addons.feature.io.transport.mbus</module>
     <module>org.connectorio.addons.feature.io.transport.serial</module>
     <module>org.connectorio.addons.feature.managed</module>
     <module>org.connectorio.addons.feature.norule</module>
@@ -51,6 +52,7 @@
     <module>org.connectorio.addons.feature.relayweblog</module>
     <module>org.connectorio.addons.feature.s7</module>
     <module>org.connectorio.addons.feature.smartme</module>
+    <module>org.connectorio.addons.feature.wmbus</module>
     <module>org.connectorio.feature.chrono</module>
   </modules>
 

@@ -45,6 +45,7 @@
     <module>org.connectorio.addons.itest.opcua</module>
     <module>org.connectorio.addons.itest.s7</module>
     <module>org.connectorio.addons.itest.smartme</module>
+    <module>org.connectorio.addons.itest.wmbus</module>
   </modules>
 
   <build>
