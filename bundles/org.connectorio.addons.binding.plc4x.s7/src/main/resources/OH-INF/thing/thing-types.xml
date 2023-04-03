@@ -57,7 +57,7 @@
         </description>
         <default>1024</default>
       </parameter>
-      <parameter name="controllerType" type="integer" required="false">
+      <parameter name="controllerType" type="text" required="false">
         <label>PDU size</label>
         <description>
           Type of remote unit. Please use it if automatic identification during bootstrap fails.
