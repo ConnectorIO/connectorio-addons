@@ -19,8 +19,10 @@ package org.connectorio.addons.communication.watchdog.internal;
 
 import java.util.List;
 import java.util.Map;
+import org.openhab.core.config.core.ConfigDescription;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelGroupUID;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
@@ -72,6 +74,21 @@ public class ThingCallbackWrapper implements ThingHandlerCallback {
   @Override
   public void configurationUpdated(Thing thing) {
     callback.configurationUpdated(thing);
+  }
+
+  // OH 3.3+
+  public void validateConfigurationParameters(Channel channel, Map<String, Object> map) {
+
+  }
+
+  // OH 3.3+
+  public ConfigDescription getConfigDescription(ChannelTypeUID channelTypeUID) {
+    return null;
+  }
+
+  // OH 3.3+
+  public ConfigDescription getConfigDescription(ThingTypeUID thingTypeUID) {
+    return null;
   }
 
   @Override
