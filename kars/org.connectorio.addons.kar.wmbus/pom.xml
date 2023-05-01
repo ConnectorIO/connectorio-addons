@@ -47,6 +47,12 @@
     </dependency>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.feature.io.transport.serial</artifactId>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.feature.io.transport.mbus</artifactId>
       <classifier>features</classifier>
       <type>xml</type>

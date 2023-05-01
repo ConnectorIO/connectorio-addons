@@ -30,13 +30,13 @@ public interface WMBusBindingConstants extends BaseBindingConstants {
 
   ThingTypeUID DEVICE_THING_TYPE = new ThingTypeUID(BINDING_ID, "device");
 
-  ThingTypeUID JRXTX_SERIAL_BRIDGE_TYPE = new ThingTypeUID(BINDING_ID, "jrxtx-serial");
-  ThingTypeUID OPENHAB_SERIAL_BRIDGE_TYPE = new ThingTypeUID(BINDING_ID, "openhab-serial");
+  ThingTypeUID TCP_BRIDGE_TYPE = new ThingTypeUID(BINDING_ID, "tcp");
+  ThingTypeUID SERIAL_BRIDGE_TYPE = new ThingTypeUID(BINDING_ID, "serial");
 
   Set<ThingTypeUID> SUPPORTED_THING_TYPES = new HashSet<>(Arrays.asList(
     DEVICE_THING_TYPE,
-    JRXTX_SERIAL_BRIDGE_TYPE,
-    OPENHAB_SERIAL_BRIDGE_TYPE
+    TCP_BRIDGE_TYPE,
+    SERIAL_BRIDGE_TYPE
   ));
 
   // static channels
@@ -46,7 +46,6 @@ public interface WMBusBindingConstants extends BaseBindingConstants {
   ChannelTypeUID CHANNEL_TYPE_NUMBER = new ChannelTypeUID(BINDING_ID, "number");
   ChannelTypeUID CHANNEL_TYPE_DATETIME = new ChannelTypeUID(BINDING_ID, "datetime");
   ChannelTypeUID CHANNEL_TYPE_STRING = new ChannelTypeUID(BINDING_ID, "string");
-
 
   // known thing properties
   String THING_PROPERTY_ENCRYPTED = "encrypted";

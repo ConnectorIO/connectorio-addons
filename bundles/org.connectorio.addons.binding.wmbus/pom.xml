@@ -44,11 +44,6 @@
     <dependency>
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.io.transport.mbus</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openmuc</groupId>
-      <artifactId>jmbus</artifactId>
     </dependency>
 
     <dependency>

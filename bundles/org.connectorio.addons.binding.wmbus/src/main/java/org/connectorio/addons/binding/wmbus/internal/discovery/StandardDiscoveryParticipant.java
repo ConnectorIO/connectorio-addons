@@ -45,7 +45,7 @@ public class StandardDiscoveryParticipant implements WMBusDiscoveryParticipant {
     DeviceType deviceType = secondaryAddress.getDeviceType();
 
     // We did not find a thing type for this device, so let's treat it as a generic one
-    String label = "WMBus device: " + deviceType.name().toLowerCase().replace("_", " ") +
+    String label = "Wireless M-Bus device " + deviceType.name().toLowerCase().replace("_", " ") +
       " #" + deviceId + " (" + deviceType + ")";
 
     Map<String, Object> properties = new HashMap<>();

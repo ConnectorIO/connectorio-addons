@@ -22,9 +22,10 @@ import org.connectorio.addons.binding.config.Configuration;
 import org.connectorio.addons.binding.handler.GenericBridgeHandler;
 import org.connectorio.addons.binding.wmbus.dispatch.WMBusMessageDispatcher;
 import org.connectorio.addons.binding.wmbus.internal.KeyStore;
+import org.connectorio.addons.binding.wmbus.internal.config.BridgeConfig;
 import org.connectorio.addons.binding.wmbus.internal.discovery.DiscoveryCoordinator;
 
-public interface WMBusBridgeHandler<T extends Configuration> extends GenericBridgeHandler<T> {
+public interface WMBusBridgeHandler<T extends BridgeConfig> extends GenericBridgeHandler<T> {
 
   CompletableFuture<WMBusMessageDispatcher> getDispatcher();
 

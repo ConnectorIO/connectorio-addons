@@ -25,7 +25,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.TimeUnit;
 import org.connectorio.addons.binding.wmbus.WMBusBindingConstants;
 import org.connectorio.addons.binding.wmbus.dispatch.WMBusMessageListener;
-import org.connectorio.addons.binding.wmbus.internal.config.OpenHABSerialBridgeConfig;
+import org.connectorio.addons.binding.wmbus.internal.config.BridgeConfig;
+import org.connectorio.addons.binding.wmbus.internal.config.SerialBridgeConfig;
 import org.connectorio.addons.binding.wmbus.internal.handler.WMBusBridgeHandler;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
@@ -37,7 +38,7 @@ import org.openmuc.jmbus.wireless.WMBusMessage;
 public class WMBusDiscoveryService extends AbstractDiscoveryService implements ThingHandlerService, WMBusMessageListener {
 
   private final Set<SecondaryAddress> addresses = new CopyOnWriteArraySet<>();
-  private WMBusBridgeHandler<OpenHABSerialBridgeConfig> handler;
+  private WMBusBridgeHandler<BridgeConfig> handler;
   private long timeToLive;
 
   public WMBusDiscoveryService() {
@@ -48,7 +49,7 @@ public class WMBusDiscoveryService extends AbstractDiscoveryService implements T
 
   @Override
   public void setThingHandler(ThingHandler handler) {
-    this.handler = (WMBusBridgeHandler<OpenHABSerialBridgeConfig>) handler;
+    this.handler = (WMBusBridgeHandler<BridgeConfig>) handler;
     this.handler.getDispatcher().thenAccept(dsp -> dsp.attach(this));
     this.timeToLive = this.handler.getBridgeConfig()
       .map(cfg -> cfg.discoveryTimeToLive)

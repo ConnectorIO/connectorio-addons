@@ -40,6 +40,7 @@
     <module>org.connectorio.addons.itest.canopen</module>
     <module>org.connectorio.addons.itest.exam</module>
     <module>org.connectorio.addons.itest.managed</module>
+    <module>org.connectorio.addons.itest.mbus</module>
     <module>org.connectorio.addons.itest.norule</module>
     <module>org.connectorio.addons.itest.ocpp</module>
     <module>org.connectorio.addons.itest.opcua</module>

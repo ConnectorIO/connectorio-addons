@@ -39,6 +39,7 @@
     <module>org.connectorio.addons.binding.askoheat</module>
     <module>org.connectorio.addons.binding.bacnet</module>
     <module>org.connectorio.addons.binding.can</module>
+    <module>org.connectorio.addons.binding.mbus</module>
     <module>org.connectorio.addons.binding.ocpp</module>
     <module>org.connectorio.addons.binding.opcua</module>
     <module>org.connectorio.addons.binding.plc4x</module>
@@ -53,6 +54,7 @@
     <module>org.connectorio.addons.communication.watchdog</module>
     <module>org.connectorio.addons.io.proxy.http</module>
     <module>org.connectorio.addons.io.transport.mbus</module>
+    <module>org.connectorio.addons.io.transport.serial</module>
     <module>org.connectorio.addons.io.transport.serial.persistent</module>
     <module>org.connectorio.addons.io.transport.serial.purejavacomm</module>
     <module>org.connectorio.addons.io.transport.serial.shell</module>

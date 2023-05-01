@@ -37,6 +37,12 @@
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.io.transport.mbus</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.feature.io.transport.serial</artifactId>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
 
     <dependency>
       <groupId>org.openhab.core.features.karaf</groupId>
@@ -88,6 +94,7 @@
             <configuration>
               <descriptors>
                 <descriptor>mvn:org.openhab.core.features.karaf/org.openhab.core.features.karaf.openhab-core/${openhab.version}/xml/features</descriptor>
+                <descriptor>mvn:org.connectorio.addons/org.connectorio.addons.feature.io.transport.serial/${project.version}/xml/features</descriptor>
               </descriptors>
               <features>
                 <feature>co7io-*</feature>

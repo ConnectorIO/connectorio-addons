@@ -160,6 +160,25 @@
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.binding.mbus</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.feature.mbus</artifactId>
+        <version>${project.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.kar.mbus</artifactId>
+        <version>${project.version}</version>
+        <type>kar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.binding.ocpp</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -365,6 +384,11 @@
         <type>kar</type>
       </dependency>
 
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.io.transport.serial</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.io.transport.serial.persistent</artifactId>

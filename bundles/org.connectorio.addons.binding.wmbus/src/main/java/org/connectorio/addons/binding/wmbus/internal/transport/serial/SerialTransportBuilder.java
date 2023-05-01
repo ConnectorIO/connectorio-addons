@@ -18,10 +18,7 @@
 package org.connectorio.addons.binding.wmbus.internal.transport.serial;
 
 import java.io.IOException;
-import org.connectorio.addons.io.transport.mbus.config.SerialPortConfig.DataBits;
-import org.connectorio.addons.io.transport.mbus.config.SerialPortConfig.FlowControl;
-import org.connectorio.addons.io.transport.mbus.config.SerialPortConfig.Parity;
-import org.connectorio.addons.io.transport.mbus.config.SerialPortConfig.StopBits;
+import org.connectorio.addons.io.transport.serial.config.SerialPortConfig;
 import org.openhab.core.io.transport.serial.SerialPortIdentifier;
 import org.openhab.core.io.transport.serial.SerialPortManager;
 import org.openmuc.jmbus.transportlayer.TransportLayer;
@@ -44,53 +41,22 @@ public class SerialTransportBuilder {
   private final SerialPortManager serialPortProvider;
   private final WMBusAdapterConnectionBuilder builder;
   private String serialPortName;
-  private int baudRate;
-  private int dataBits;
-  private int stopBits;
-  private int parity;
-  private int flowControl;
-  private boolean rts;
+  private SerialPortConfig serialPortConfig;
   private int timeout;
 
-  public SerialTransportBuilder(SerialPortManager serialPortProvider, WMBusManufacturer wmBusManufacturer, WMBusListener listener, String serialPortName) {
-    builder = new WMBusAdapterConnectionBuilder(wmBusManufacturer, listener);
 
+  public SerialTransportBuilder(SerialPortManager serialPortProvider, String serialPortName, WMBusAdapterConnectionBuilder builder) {
+    this.builder = builder;
     this.serialPortProvider = serialPortProvider;
     this.serialPortName = serialPortName;
   }
 
+  public SerialTransportBuilder(SerialPortManager serialPortProvider, WMBusManufacturer wmBusManufacturer, WMBusListener listener, String serialPortName) {
+    this(serialPortProvider, serialPortName, new WMBusAdapterConnectionBuilder(wmBusManufacturer, listener));
+  }
+
   public SerialTransportBuilder setMode(WMBusMode mode) {
     builder.setMode(mode);
-    return self();
-  }
-
-  public SerialTransportBuilder setBaudRate(int baudRate) {
-    this.baudRate = baudRate;
-    return self();
-  }
-
-  public SerialTransportBuilder setDataBits(DataBits dataBits) {
-    this.dataBits = dataBits.getDataBits();
-    return self();
-  }
-
-  public SerialTransportBuilder setStopBits(StopBits stopBits) {
-    this.stopBits = stopBits.getStopBits();
-    return self();
-  }
-
-  public SerialTransportBuilder setParity(Parity parity) {
-    this.parity = parity.getParity();
-    return self();
-  }
-
-  public SerialTransportBuilder setFlowControl(FlowControl flowControl) {
-    this.flowControl = flowControl.getFlowControl();
-    return self();
-  }
-
-  public SerialTransportBuilder setRts(boolean rts) {
-    this.rts = rts;
     return self();
   }
 
@@ -99,6 +65,10 @@ public class SerialTransportBuilder {
     return self();
   }
 
+  public SerialTransportBuilder setSerialPortConfig(SerialPortConfig serialPortConfig) {
+    this.serialPortConfig = serialPortConfig;
+    return self();
+  }
 
   public WMBusConnection build() throws IOException {
     return builder.build(buildTransportLayer());
@@ -113,10 +83,7 @@ public class SerialTransportBuilder {
     if (portIdentifier == null) {
       throw new IOException("Port " + serialPortName + " not found");
     }
-    SerialTransportLayer transportLayer = new SerialTransportLayer(
-      portIdentifier, serialPortProvider, baudRate, dataBits, stopBits, parity,
-      flowControl, rts
-    );
+    SerialTransportLayer transportLayer = new SerialTransportLayer(portIdentifier, serialPortProvider, serialPortConfig);
     transportLayer.setTimeout(timeout);
     return transportLayer;
   }

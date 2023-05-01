@@ -32,12 +32,11 @@ import org.osgi.service.component.annotations.Reference;
 @Component(service = ThingHandlerFactory.class)
 public class WMBusThingHandlerFactory extends BaseThingHandlerFactory {
 
-  private SerialPortManager serialPortManager;
+  private final SerialPortManager serialPortManager;
   private final DiscoveryCoordinator discoveryCoordinator;
 
   @Activate
-  public WMBusThingHandlerFactory(@Reference SerialPortManager serialPortManager,
-    @Reference DiscoveryCoordinator discoveryCoordinator) {
+  public WMBusThingHandlerFactory(@Reference SerialPortManager serialPortManager, @Reference DiscoveryCoordinator discoveryCoordinator) {
     super(WMBusBindingConstants.SUPPORTED_THING_TYPES);
     this.serialPortManager = serialPortManager;
     this.discoveryCoordinator = discoveryCoordinator;
@@ -46,11 +45,11 @@ public class WMBusThingHandlerFactory extends BaseThingHandlerFactory {
   @Override
   protected ThingHandler createHandler(Thing thing) {
     if (thing instanceof Bridge) {
-      if (WMBusBindingConstants.OPENHAB_SERIAL_BRIDGE_TYPE.equals(thing.getThingTypeUID())) {
-        return new WMBusOpenHABSerialBridgeBaseHandler((Bridge) thing, serialPortManager, discoveryCoordinator);
+      if (WMBusBindingConstants.TCP_BRIDGE_TYPE.equals(thing.getThingTypeUID())) {
+        return new WMBusTcpBridgeHandler((Bridge) thing, discoveryCoordinator);
       }
-      if (WMBusBindingConstants.JRXTX_SERIAL_BRIDGE_TYPE.equals(thing.getThingTypeUID())) {
-        return new WMBusJrxtxSerialBridgeHandler((Bridge) thing, serialPortManager, discoveryCoordinator);
+      if (WMBusBindingConstants.SERIAL_BRIDGE_TYPE.equals(thing.getThingTypeUID())) {
+        return new WMBusSerialBridgeHandler((Bridge) thing, serialPortManager, discoveryCoordinator);
       }
     }
 

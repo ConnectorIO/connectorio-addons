@@ -22,7 +22,7 @@
     https://openhab.org/schemas/thing-description-1.0.0.xsd
   ">
 
-  <bridge-type id="openhab-serial">
+  <bridge-type id="serial">
     <label>Serial Bridge</label>
     <description>The WM-Bus Serial bridge allows to receive data using compatible radio interfaces.</description>
 
@@ -74,7 +74,7 @@
       </parameter>
       <parameter name="dataBits" type="text" required="true" groupName="serial">
         <label>Baud rate</label>
-        <description>Baud rate for serial connection.</description>
+        <description>Data bits in each serial transmission.</description>
         <default>DATABITS_8</default>
         <options>
           <option value="DATABITS_5">5</option>
@@ -85,7 +85,7 @@
       </parameter>
       <parameter name="stopBits" type="text" required="true" groupName="serial">
         <label>Baud rate</label>
-        <description>Baud rate for serial connection.</description>
+        <description>Stop bits after transmission.</description>
         <default>STOPBITS_1</default>
         <options>
           <option value="STOPBITS_1">1</option>
@@ -95,7 +95,7 @@
       </parameter>
       <parameter name="parity" type="text" required="true" groupName="serial">
         <label>Parity</label>
-        <description>Baud rate for serial connection.</description>
+        <description>Parity of serial transmission.</description>
         <default>PARITY_NONE</default>
         <options>
           <option value="PARITY_NONE">NONE</option>
@@ -126,21 +126,23 @@
     </config-description>
   </bridge-type>
 
-  <!--
-  <bridge-type id="jrxtx-serial">
-    <label>Serial Bridge (jRXTX)</label>
-    <description>The WM-Bus Serial bridge based on jrxtx library (unsupported!).</description>
+  <bridge-type id="tcp">
+    <label>TCP Bridge</label>
+    <description>The WM-Bus bridge based on TCP connection</description>
 
     <config-description>
       <parameter-group name="network">
         <label>WM-Bus network</label>
         <description>Configuration of network layer.</description>
       </parameter-group>
-      <parameter-group name="serial">
-        <label>Serial port settings</label>
-        <description>Settings related to hardware adapter communication.</description>
+      <parameter-group name="tcp">
+        <label>TCP connection settings</label>
+        <description>Settings related to TCP transport.</description>
       </parameter-group>
 
+      <!--
+      Physical layer is beyond our control, its server which opens a port and determines how data
+      is encoded.
       <parameter name="mode" type="text" required="true" groupName="network">
         <label>WM-Bus receiver mode</label>
         <description>Frequency and encoding of radio signal from devices.</description>
@@ -151,6 +153,7 @@
           <option value="S">S - stationary</option>
         </options>
       </parameter>
+      -->
       <parameter name="manufacturer" type="text" required="true" groupName="network">
         <label>Manufacturer</label>
         <description>Manufacturer of radio interface.</description>
@@ -161,13 +164,23 @@
         </options>
       </parameter>
 
-      <parameter name="serialPort" type="text" required="true" groupName="serial">
-        <label>Serial port</label>
-        <description>Serial interface port.</description>
-        <context>serial-port</context>
+      <parameter name="hostAddress" type="text" required="true" groupName="tcp">
+        <label>Hot address</label>
+        <description>Server address to which binding should connect to receive data.</description>
+        <context>network</context>
+      </parameter>
+      <parameter name="port" type="integer" required="true" groupName="tcp">
+        <label>Port</label>
+        <description>Port number</description>
+        <context>network</context>
+      </parameter>
+      <parameter name="connectionTimeout" type="integer" required="true" groupName="tcp">
+        <label>Connection timeout</label>
+        <default>10</default>
+        <unitLabel>s</unitLabel>
+        <description>Maximum time required to establish connection with host</description>
       </parameter>
     </config-description>
   </bridge-type>
-  -->
 
 </thing-descriptions>

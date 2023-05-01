@@ -20,6 +20,8 @@ package org.connectorio.addons.binding.wmbus.internal.transport.serial;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import org.connectorio.addons.io.transport.serial.SerialPortConfigurator;
+import org.connectorio.addons.io.transport.serial.config.SerialPortConfig;
 import org.openhab.core.io.transport.serial.PortInUseException;
 import org.openhab.core.io.transport.serial.SerialPort;
 import org.openhab.core.io.transport.serial.SerialPortIdentifier;
@@ -31,33 +33,21 @@ public class SerialTransportLayer implements TransportLayer {
 
   private final SerialPortIdentifier portIdentifier;
   private final SerialPortManager serialPortManager;
-  private final int baudRate;
-  private final int dataBits;
-  private final int stopBits;
-  private final int parity;
-  private final int flowControl;
-  private final boolean rts;
+  private final SerialPortConfig serialPortConfig;
   private SerialPort serialPort;
-  private int timeout;
+  private int timeout = 1000;
 
-  public SerialTransportLayer(SerialPortIdentifier portIdentifier, SerialPortManager serialPortManager, int baudRate, int dataBits, int stopBits, int parity, int flowControl, boolean rts) {
+  public SerialTransportLayer(SerialPortIdentifier portIdentifier, SerialPortManager serialPortManager, SerialPortConfig serialPortConfig) {
     this.portIdentifier = portIdentifier;
     this.serialPortManager = serialPortManager;
-    this.baudRate = baudRate;
-    this.dataBits = dataBits;
-    this.stopBits = stopBits;
-    this.parity = parity;
-    this.flowControl = flowControl;
-    this.rts = rts;
+    this.serialPortConfig = serialPortConfig;
   }
 
   @Override
   public void open() throws IOException {
     try {
       serialPort = portIdentifier.open("connectorio-wmbus", timeout);
-      serialPort.setFlowControlMode(flowControl);
-      serialPort.setRTS(rts);
-      serialPort.setSerialPortParams(baudRate, dataBits, stopBits, parity);
+      new SerialPortConfigurator(serialPort).configure(serialPortConfig);
     } catch (PortInUseException | UnsupportedCommOperationException e) {
       throw new IOException(e);
     }

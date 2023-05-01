@@ -31,9 +31,9 @@ import java.util.stream.Collectors;
 import org.connectorio.addons.binding.handler.GenericThingHandlerBase;
 import org.connectorio.addons.binding.wmbus.WMBusBindingConstants;
 import org.connectorio.addons.binding.wmbus.dispatch.WMBusMessageListener;
+import org.connectorio.addons.binding.wmbus.internal.config.BridgeConfig;
 import org.connectorio.addons.binding.wmbus.internal.config.ChannelConfig;
 import org.connectorio.addons.binding.wmbus.internal.config.DeviceConfig;
-import org.connectorio.addons.binding.wmbus.internal.config.OpenHABSerialBridgeConfig;
 import org.openhab.core.library.types.DateTimeType;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.QuantityType;
@@ -58,7 +58,7 @@ import org.openmuc.jmbus.SecondaryAddress;
 import org.openmuc.jmbus.VariableDataStructure;
 import org.openmuc.jmbus.wireless.WMBusMessage;
 
-public class WMBusDeviceThingHandler<B extends WMBusBridgeHandler<OpenHABSerialBridgeConfig>>
+public class WMBusDeviceThingHandler<B extends WMBusBridgeHandler<BridgeConfig>>
   extends GenericThingHandlerBase<B, DeviceConfig> implements WMBusMessageListener {
 
   private int serialNumber;
@@ -121,6 +121,14 @@ public class WMBusDeviceThingHandler<B extends WMBusBridgeHandler<OpenHABSerialB
       channelMap.get(channelKey).add(channel.getUID());
     }
     updateStatus(ThingStatus.ONLINE);
+  }
+
+  @Override
+  public void dispose() {
+    getBridgeHandler().map(WMBusBridgeHandler::getKeyStore).orElse(CompletableFuture.failedFuture(new IllegalArgumentException()))
+      .thenAccept(keyStore -> keyStore.removeKey(address));
+
+    super.dispose();
   }
 
   @Override
