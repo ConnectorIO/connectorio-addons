@@ -557,33 +557,6 @@
         <version>${project.version}</version>
         <scope>test</scope>
       </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.feature.norule</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.feature.ocpp</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.feature.opcua</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.kar.opcua</artifactId>
-        <version>${project.version}</version>
-        <type>kar</type>
-      </dependency>
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
