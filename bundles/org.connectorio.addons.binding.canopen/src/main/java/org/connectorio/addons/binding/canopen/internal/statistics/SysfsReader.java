@@ -25,7 +25,7 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tec.uom.se.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 public class SysfsReader<Q extends Quantity<Q>> {
 
