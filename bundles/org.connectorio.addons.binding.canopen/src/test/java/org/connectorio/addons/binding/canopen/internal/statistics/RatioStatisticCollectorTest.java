@@ -28,8 +28,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import tec.uom.se.AbstractUnit;
-import tec.uom.se.quantity.Quantities;
+import tech.units.indriya.AbstractUnit;
+import tech.units.indriya.quantity.Quantities;
 
 @ExtendWith(MockitoExtension.class)
 class RatioStatisticCollectorTest {
