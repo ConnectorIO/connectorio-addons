@@ -30,7 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.openhab.core.library.dimension.DataAmount;
 import org.openhab.core.library.dimension.DataTransferRate;
 import org.openhab.core.library.unit.Units;
-import tec.uom.se.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 @ExtendWith(MockitoExtension.class)
 class BandwidthStatisticCollectorTest {
@@ -52,7 +52,7 @@ class BandwidthStatisticCollectorTest {
     statistic.set(Quantities.getQuantity(0, Units.BYTE));
     assertThat(collector.getStatistic())
       .extracting(Quantity::getValue)
-      .isEqualTo(0.0);
+      .isEqualTo(0);
 
     // one second and one byte later we expect 8 bit/s ratio.
     when(clock.get()).thenReturn(2000L);

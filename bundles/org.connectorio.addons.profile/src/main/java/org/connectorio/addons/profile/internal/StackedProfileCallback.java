@@ -36,6 +36,11 @@ public class StackedProfileCallback implements ProfileCallback {
   }
 
   @Override
+  public ItemChannelLink getItemChannelLink() {
+    return link;
+  }
+
+  @Override
   public void handleCommand(Command command) {
     logger.trace("Passing command {} to profile chain", command);
     getDelegate().handleCommand(command);
