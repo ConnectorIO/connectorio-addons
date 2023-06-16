@@ -2,6 +2,7 @@ package org.connectorio.addons.test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -61,7 +62,9 @@ public class StubEventBuilder<T extends Event> {
     return new StubEventBuilder<>(new EventCreator<>(ItemStateChangedEvent.class, TOPIC, PAYLOAD,
       Argument.of("itemName", String.class, item.getName()),
       Argument.of("newItemState", State.class, newItemState),
-      Argument.of("oldItemState", State.class, oldItemState)
+      Argument.of("oldItemState", State.class, oldItemState),
+      Argument.of("lastStateUpdate", ZonedDateTime.class, null),
+      Argument.of("lastStateChange", ZonedDateTime.class, null)
     ));
   }
 

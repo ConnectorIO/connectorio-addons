@@ -22,10 +22,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.File;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.Builder;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -37,13 +34,12 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.connectorio.bddhab.rest.client.ApiException;
-import org.connectorio.bddhab.rest.client.v31.AddonsApi;
-import org.connectorio.bddhab.rest.client.v31.model.Addon;
+import org.connectorio.bddhab.rest.client.v40.AddonsApi;
+import org.connectorio.bddhab.rest.client.v40.model.Addon;
 import org.connectorio.testcontainers.openhab.std.UserAccountCustomization;
 import org.connectorio.testcontainers.openhab.std.UserApiTokenCustomization;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
@@ -138,12 +134,12 @@ public abstract class OfflineKarInstallationTest {
   public void testOfflineFeatureInstallation() throws Exception {
     AddonsApi addonsApi = new AddonsApi(client);
     // OH 3.0 has malformed API descriptor without schema for Addon types
-    addonsApi.installAddonById(feature);
+    addonsApi.installAddonById(feature, null);
 
     Set<Addon> availableAddons = new LinkedHashSet<>();
     Awaitility.await("addon " + addon + " is installed").pollDelay(Duration.ofSeconds(5)).atMost(Duration.ofMinutes(2))
       .ignoreException(ApiException.class).until(() -> {
-        boolean newAddonsFound = availableAddons.addAll(addonsApi.getAddons(null));
+        boolean newAddonsFound = availableAddons.addAll(addonsApi.getAddons(null, "karaf"));
 
         Optional<Addon> available = availableAddons.stream()
           .filter(info -> info.getId().contains(addon) && info.getInstalled())

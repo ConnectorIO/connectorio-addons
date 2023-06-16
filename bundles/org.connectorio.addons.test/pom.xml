@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.connectorio.addons</groupId>
     <artifactId>bundles</artifactId>
-    <version>4.3.0-SNAPSHOT</version>
+    <version>5.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>org.connectorio.addons.test</artifactId>
@@ -44,6 +44,11 @@
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
       <artifactId>org.openhab.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openhab</groupId>
+      <artifactId>base-fixes</artifactId>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
