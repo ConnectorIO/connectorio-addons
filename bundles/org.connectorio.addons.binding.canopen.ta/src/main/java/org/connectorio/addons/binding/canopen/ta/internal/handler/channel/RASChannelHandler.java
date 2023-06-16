@@ -36,7 +36,7 @@ import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tec.uom.se.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 public class RASChannelHandler extends BaseChannelHandler<RASValue, AnalogUnit, AnalogObjectConfig> {
 
