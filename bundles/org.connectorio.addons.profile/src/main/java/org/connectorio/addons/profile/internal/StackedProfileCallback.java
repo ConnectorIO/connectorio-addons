@@ -26,6 +26,7 @@ import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.thing.profiles.StateProfile;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
+import org.openhab.core.types.TimeSeries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,11 @@ public class StackedProfileCallback {
     }
     logger.trace("Sending command {} toi profile chain", command);
     chain.get(index).onCommandFromHandler(command);
+  }
+
+  public void sendTimeSeries(int index, TimeSeries timeSeries) {
+    logger.trace("Sending time series {} to system profile callback", timeSeries);
+    callback.sendTimeSeries(timeSeries);
   }
 
   public void sendUpdate(int index, State state) {
