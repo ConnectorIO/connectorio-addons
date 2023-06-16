@@ -63,6 +63,7 @@
 
     <connectorio-openapi-generators.version>5.4.0</connectorio-openapi-generators.version>
     <jmbus.version>3.2.1</jmbus.version>
+    <jfatek.version>3.0.1</jfatek.version>
   </properties>
 
   <dependencyManagement>
@@ -90,6 +91,12 @@
       <dependency>
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.communication.watchdog</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.config</artifactId>
         <version>${project.version}</version>
       </dependency>
 
@@ -156,6 +163,25 @@
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.binding.can</artifactId>
         <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.binding.fatek</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.feature.fatek</artifactId>
+        <version>${project.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.kar.fatek</artifactId>
+        <version>${project.version}</version>
+        <type>kar</type>
       </dependency>
 
       <dependency>
@@ -1253,6 +1279,11 @@
         <groupId>org.openmuc</groupId>
         <artifactId>jmbus</artifactId>
         <version>${jmbus.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.simplify4u</groupId>
+        <artifactId>jfatek</artifactId>
+        <version>${jfatek.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

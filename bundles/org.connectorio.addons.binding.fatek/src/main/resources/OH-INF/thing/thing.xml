@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -
+ - SPDX-License-Identifier: Apache-2.0
+ -->
+<thing:thing-descriptions bindingId="co7io-fatek" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="
+    https://openhab.org/schemas/thing-description/v1.0.0
+    https://openhab.org/schemas/thing-description-1.0.0.xsd
+  ">
+
+  <thing-type id="plc" extensible="number,datetime,string">
+    <supported-bridge-type-refs>
+      <bridge-type-ref id="serial" />
+      <bridge-type-ref id="tcp" />
+    </supported-bridge-type-refs>
+
+    <label>Fatek PLC (FBs)</label>
+    <description>Fatek PLC communicating using facon protocol.</description>
+
+    <config-description>
+      <parameter name="stationNumber" type="integer" min="1" max="255" required="true">
+        <label>Station number</label>
+        <default>1</default>
+      </parameter>
+    </config-description>
+  </thing-type>
+
+</thing:thing-descriptions>

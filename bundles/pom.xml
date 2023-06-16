@@ -39,6 +39,7 @@
     <module>org.connectorio.addons.binding.askoheat</module>
     <module>org.connectorio.addons.binding.bacnet</module>
     <module>org.connectorio.addons.binding.can</module>
+    <module>org.connectorio.addons.binding.fatek</module>
     <module>org.connectorio.addons.binding.mbus</module>
     <module>org.connectorio.addons.binding.ocpp</module>
     <module>org.connectorio.addons.binding.opcua</module>
@@ -52,6 +53,7 @@
     <module>org.connectorio.addons.binding.test</module>
     <module>org.connectorio.addons.binding.wmbus</module>
     <module>org.connectorio.addons.communication.watchdog</module>
+    <module>org.connectorio.addons.config</module>
     <module>org.connectorio.addons.io.proxy.http</module>
     <module>org.connectorio.addons.io.transport.mbus</module>
     <module>org.connectorio.addons.io.transport.serial</module>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -
+ - SPDX-License-Identifier: Apache-2.0
+ -->
+<thing-descriptions bindingId="co7io-fatek" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+    https://openhab.org/schemas/thing-description/v1.0.0
+    https://openhab.org/schemas/thing-description-1.0.0.xsd
+  ">
+
+  <bridge-type id="tcp">
+    <label>TCP Bridge</label>
+    <description>Connection to PLC via network socket.</description>
+
+    <config-description>
+      <parameter name="hostAddress" type="text" required="true">
+        <label>Hot address</label>
+        <description>Server address to which binding should connect to receive data.</description>
+        <context>network</context>
+      </parameter>
+      <parameter name="port" type="integer" required="true">
+        <label>Port</label>
+        <description>Port number</description>
+        <context>network</context>
+      </parameter>
+      <parameter name="connectionTimeout" type="integer" required="true">
+        <label>Connection timeout</label>
+        <default>5</default>
+        <unitLabel>s</unitLabel>
+        <description>Maximum time required to establish connection with host</description>
+      </parameter>
+    </config-description>
+  </bridge-type>
+
+  <bridge-type id="serial">
+    <label>Serial Bridge</label>
+    <description>Connection through RS232/RS485 or USB interfaces.</description>
+
+    <config-description>
+      <parameter name="serialPort" type="text" required="true">
+        <label>Serial port</label>
+        <description>Serial interface port.</description>
+        <context>serial-port</context>
+      </parameter>
+      <parameter name="baudRate" type="integer" required="true">
+        <label>Baud rate</label>
+        <description>Baud rate for serial connection.</description>
+        <default>9600</default>
+      </parameter>
+      <parameter name="dataBits" type="text" required="true">
+        <label>Baud rate</label>
+        <description>Data bits in each serial transmission.</description>
+        <default>DATABITS_7</default>
+        <options>
+          <option value="DATABITS_5">5</option>
+          <option value="DATABITS_6">6</option>
+          <option value="DATABITS_7">7</option>
+          <option value="DATABITS_8">8</option>
+        </options>
+      </parameter>
+      <parameter name="stopBits" type="text" required="true">
+        <label>Baud rate</label>
+        <description>Stop bits after transmission.</description>
+        <default>STOPBITS_1</default>
+        <options>
+          <option value="STOPBITS_1">1</option>
+          <option value="STOPBITS_2">2</option>
+          <option value="STOPBITS_1_5">1.5</option>
+        </options>
+      </parameter>
+      <parameter name="parity" type="text" required="true">
+        <label>Parity</label>
+        <description>Parity of serial transmission.</description>
+        <default>PARITY_EVEN</default>
+        <options>
+          <option value="PARITY_NONE">NONE</option>
+          <option value="PARITY_ODD">ODD</option>
+          <option value="PARITY_EVEN">EVEN</option>
+          <option value="PARITY_MARK">MARK</option>
+          <option value="PARITY_SPACE">SPACE</option>
+        </options>
+      </parameter>
+    </config-description>
+  </bridge-type>
+
+</thing-descriptions>

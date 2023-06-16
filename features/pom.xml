@@ -39,6 +39,7 @@
     <module>org.connectorio.addons.feature.askoheat</module>
     <module>org.connectorio.addons.feature.bacnet</module>
     <module>org.connectorio.addons.feature.canopen</module>
+    <module>org.connectorio.addons.feature.fatek</module>
     <module>org.connectorio.addons.feature.io</module>
     <module>org.connectorio.addons.feature.io.transport.mbus</module>
     <module>org.connectorio.addons.feature.io.transport.serial</module>
