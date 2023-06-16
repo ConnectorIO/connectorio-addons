@@ -138,7 +138,7 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
   }
 
   protected void initializeChannels(BacNetClient client) {
-    WatchdogBuilder watchdogBuilder = watchdogManager.builder(getThing());
+    //WatchdogBuilder watchdogBuilder = watchdogManager.builder(getThing());
 
     DeviceConfig deviceConfig = getConfigAs(DeviceConfig.class);
     discoverObjects = deviceConfig.discoverObjects;
@@ -152,7 +152,7 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
       Long refreshInterval = Optional.ofNullable(deviceChannelConfig.refreshInterval)
           .filter(value -> value != 0)
           .orElse(getRefreshInterval());
-      watchdogBuilder.withChannel(channel.getUID(), refreshInterval);
+      //watchdogBuilder.withChannel(channel.getUID(), refreshInterval);
       if (!pollingMap.containsKey(refreshInterval)) {
         pollingMap.put(refreshInterval, new LinkedHashSet<>());
       }
@@ -173,7 +173,7 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
       }
     }, 0, 30, TimeUnit.SECONDS);
 
-    this.watchdog = watchdogBuilder.build(getCallback(), new ThingStatusWatchdogListener(getThing(), getCallback()));
+    //this.watchdog = watchdogBuilder.build(getCallback(), new ThingStatusWatchdogListener(getThing(), getCallback()));
     for (Entry<Long, Set<Readout>> entry : pollingMap.entrySet()) {
       ScheduledFuture<?> poller = scheduler.scheduleAtFixedRate(new RefreshDeviceTask(() -> clientFuture, watchdog.getCallbackWrapper(), device, entry.getValue(), linkedChannels),
           0, entry.getKey(), TimeUnit.MILLISECONDS);
