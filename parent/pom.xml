@@ -44,7 +44,7 @@
     <thing4.version>4.0.0-alpha-2</thing4.version>
     <thing4-bom.version>${openhab.version}</thing4-bom.version>
     <openhab-distro.version>${openhab.version}</openhab-distro.version>
-    <karaf.version>4.4.4</karaf.version>
+    <karaf.version>4.4.5</karaf.version>
 
     <slf4j.version>1.7.36</slf4j.version>
     <fasterxml-classmate.version>1.5.1</fasterxml-classmate.version>
@@ -977,6 +977,7 @@
                   <!-- Apache Karaf -->
                   <descriptor>mvn:org.apache.karaf.features/framework/${karaf.version}/xml/features</descriptor>
                   <descriptor>mvn:org.apache.karaf.features/standard/${karaf.version}/xml/features</descriptor>
+                  <descriptor>mvn:org.apache.karaf.features/specs/${karaf.version}/xml/features</descriptor>
                   <!-- Current feature under verification -->
                   <descriptor>file:${feature.file}</descriptor>
                 </descriptors>
