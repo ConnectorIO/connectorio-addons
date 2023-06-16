@@ -144,8 +144,7 @@ public class MemoryPersistenceService implements ModifiablePersistenceService {
   }
 
   @Override
-  public void store(Item item, Date date, State state) {
-    ZonedDateTime time = ZonedDateTime.ofInstant(date.toInstant(), timeZoneProvider.getTimeZone());
+  public void store(Item item, ZonedDateTime time, State state) {
     memorize(item.getName(), time, state);
   }
 
