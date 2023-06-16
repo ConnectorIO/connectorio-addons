@@ -28,8 +28,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import tec.uom.se.AbstractUnit;
-import tec.uom.se.quantity.Quantities;
+import tech.units.indriya.AbstractUnit;
+import tech.units.indriya.quantity.Quantities;
 
 @ExtendWith(MockitoExtension.class)
 class RatioStatisticCollectorTest {
@@ -52,14 +52,14 @@ class RatioStatisticCollectorTest {
     Quantity<?> collectorStatistic = collector.getStatistic();
     assertThat(collectorStatistic)
       .extracting(Quantity::getValue)
-      .isEqualTo(0.0);
+      .isEqualTo(0);
 
     when(clock.get()).thenReturn(2000L);
     this.statistic.set(Quantities.getQuantity(1001, AbstractUnit.ONE));
     collectorStatistic = collector.getStatistic();
     assertThat(collectorStatistic)
       .extracting(Quantity::getValue)
-      .isEqualTo(1.0);
+      .isEqualTo(1);
   }
 
 }

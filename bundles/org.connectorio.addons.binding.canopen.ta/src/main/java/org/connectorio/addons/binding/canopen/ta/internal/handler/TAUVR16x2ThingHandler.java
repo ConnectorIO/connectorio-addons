@@ -57,7 +57,7 @@ import org.openhab.core.types.State;
 import org.openhab.core.types.UnDefType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tec.uom.se.AbstractUnit;
+import tech.units.indriya.AbstractUnit;
 
 @Deprecated
 public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnection, CoBridgeHandler<?>, CoNodeConfig>

@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 import org.connectorio.addons.binding.canopen.ta.internal.type.TAUnit;
 import tec.uom.se.quantity.Quantities;
 import tec.uom.se.unit.Units;
+import org.openhab.core.library.unit.SIUnits;
+import tech.units.indriya.quantity.Quantities;
 
 /**
  * Compound units whcih require additional parsing. Result of computation is list and not single value.
@@ -38,7 +40,7 @@ public enum ComplexUnit implements TAUnit {
 
     double value = 0.1 * (raw & 0x1FF) * (negative ? -1 : 1);
     return Arrays.asList(
-      Quantities.getQuantity(value, Units.CELSIUS),
+      Quantities.getQuantity(value, SIUnits.CELSIUS),
       (raw & 0x600) >> 9
     );
   });
