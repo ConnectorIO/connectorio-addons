@@ -25,7 +25,6 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -149,8 +148,8 @@ class MemoryPersistenceServiceTest {
   void testWriteSameDate() {
     ZonedDateTime dateTime = createInstant(2024, 2, 22, 19, 7, 30);
     MemoryPersistenceService service = new MemoryPersistenceService(tz);
-    service.store(item2, Date.from(dateTime.toInstant()), new DecimalType(10));
-    service.store(item2, Date.from(dateTime.toInstant()), new DecimalType(20));
+    service.store(item2, dateTime, new DecimalType(10));
+    service.store(item2, dateTime, new DecimalType(20));
 
     assertThat(service.getItemInfo())
       .hasSize(1)
@@ -175,8 +174,8 @@ class MemoryPersistenceServiceTest {
     Integer firstValue, Integer secondValue
   ) {
     MemoryPersistenceService service = new MemoryPersistenceService(tz);
-    service.store(item2, Date.from(firstTimestamp.toInstant()), new DecimalType(10));
-    service.store(item2, Date.from(secondTimestamp.toInstant()), new DecimalType(20));
+    service.store(item2, firstTimestamp, new DecimalType(10));
+    service.store(item2, secondTimestamp, new DecimalType(20));
 
     assertThat(service.getItemInfo())
       .hasSize(1)

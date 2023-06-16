@@ -31,8 +31,8 @@ import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.thing.profiles.ProfileContext;
-import tec.uom.se.unit.MetricPrefix;
-import tec.uom.se.unit.Units;
+import javax.measure.MetricPrefix;
+import tech.units.indriya.unit.Units;
 
 @ExtendWith(MockitoExtension.class)
 public class LimitRangeQuantityProfileTest {
