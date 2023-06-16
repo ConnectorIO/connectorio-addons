@@ -20,7 +20,7 @@ package org.connectorio.addons.binding.canopen.ta.internal.type;
 import org.connectorio.addons.binding.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.canopen.ta.internal.config.ComplexUnit;
 import org.connectorio.addons.binding.canopen.ta.internal.config.DigitalUnit;
-import tec.uom.se.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 public class TAValue {
 
