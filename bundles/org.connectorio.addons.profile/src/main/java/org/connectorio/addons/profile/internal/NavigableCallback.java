@@ -21,6 +21,7 @@ import org.openhab.core.thing.link.ItemChannelLink;
 import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
+import org.openhab.core.types.TimeSeries;
 
 /**
  * Callback implementation which is aware of its position in chain.
@@ -55,6 +56,16 @@ public class NavigableCallback implements ProfileCallback {
   @Override
   public void sendUpdate(State state) {
     stack.sendUpdate(index + 1, state);
+  }
+
+  @Override
+  public void sendTimeSeries(TimeSeries timeSeries) {
+    stack.sendTimeSeries(index + 1, timeSeries);
+  }
+
+  @Override
+  public ItemChannelLink getItemChannelLink() {
+    return link;
   }
 
   @Override
