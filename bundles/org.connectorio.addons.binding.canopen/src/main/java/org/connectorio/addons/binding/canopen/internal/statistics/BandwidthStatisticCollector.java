@@ -24,7 +24,7 @@ import org.connectorio.addons.binding.can.statistic.CANStatisticCollector;
 import org.openhab.core.library.dimension.DataAmount;
 import org.openhab.core.library.dimension.DataTransferRate;
 import org.openhab.core.library.unit.Units;
-import tec.uom.se.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 /**
  * Bit ratio calculation.
