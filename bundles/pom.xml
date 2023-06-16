@@ -93,6 +93,7 @@
     <module>org.connectorio.addons.test</module>
     <module>org.connectorio.addons.transformation.inverse</module>
     <module>org.connectorio.addons.ui.iconify</module>
+    <module>org.connectorio.addons.usb</module>
     <module>org.connectorio.chrono</module>
     <module>org.connectorio.logtail</module>
     <module>org.connectorio.logtail.web</module>
