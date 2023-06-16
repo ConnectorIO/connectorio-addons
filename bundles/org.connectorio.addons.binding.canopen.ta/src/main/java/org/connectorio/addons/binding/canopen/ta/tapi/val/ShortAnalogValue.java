@@ -20,7 +20,6 @@ package org.connectorio.addons.binding.canopen.ta.tapi.val;
 import javax.measure.Quantity;
 import org.connectorio.addons.binding.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.canopen.ta.internal.type.TAUnit;
-import tec.uom.se.quantity.Quantities;
 
 public class ShortAnalogValue extends BaseAnalogValue<Short> {
 
