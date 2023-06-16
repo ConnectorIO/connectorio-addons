@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.openhab.core.binding.BindingInfoRegistry;
+import org.openhab.core.addon.AddonInfoRegistry;
 import org.openhab.core.internal.service.ReadyServiceImpl;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.unit.Units;
@@ -54,7 +54,7 @@ public class TestConditionalRule {
   private ReadyService readyService;
 
   @Mock
-  private BindingInfoRegistry bindingInfoRegistry;
+  private AddonInfoRegistry bindingInfoRegistry;
 
   @Test
   void checkBasicRule() throws InterruptedException {
