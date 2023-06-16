@@ -20,14 +20,25 @@ package org.connectorio.addons.persistence.manager;
 import java.util.Objects;
 import java.util.function.Predicate;
 import org.openhab.core.items.Item;
-import org.openhab.core.persistence.PersistenceFilter;
+import org.openhab.core.persistence.filter.PersistenceFilter;
 
 public class HasTagPersistenceFilter extends PersistenceFilter implements Predicate<Item> {
 
   private final String name;
 
   public HasTagPersistenceFilter(String name) {
+    super(name);
     this.name = name;
+  }
+
+  @Override
+  public boolean apply(Item item) {
+    return test(item);
+  }
+
+  @Override
+  public void persisted(Item item) {
+
   }
 
   @Override

@@ -25,8 +25,8 @@ import org.assertj.core.data.Percentage;
 import org.connectorio.addons.binding.canopen.ta.internal.config.AnalogUnit;
 import org.junit.jupiter.api.Test;
 import org.openhab.core.library.unit.Units;
-import tec.uom.se.ComparableQuantity;
-import tec.uom.se.quantity.Quantities;
+import tech.units.indriya.ComparableQuantity;
+import tech.units.indriya.quantity.Quantities;
 
 class AnalogValueTest {
 

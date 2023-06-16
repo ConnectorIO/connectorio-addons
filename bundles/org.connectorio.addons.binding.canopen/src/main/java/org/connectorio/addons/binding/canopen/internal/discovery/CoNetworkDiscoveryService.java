@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.canopen.internal.discovery;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -123,7 +124,7 @@ public class CoNetworkDiscoveryService extends AbstractDiscoveryService implemen
   }
 
   @Override
-  protected void removeOlderResults(long timestamp, Collection<ThingTypeUID> thingTypeUIDs, ThingUID bridgeUID) {
+  protected void removeOlderResults(Instant timestamp, Collection<ThingTypeUID> thingTypeUIDs, ThingUID bridgeUID) {
     discoveredNodes.clear();
 
     super.removeOlderResults(timestamp, thingTypeUIDs, bridgeUID);
