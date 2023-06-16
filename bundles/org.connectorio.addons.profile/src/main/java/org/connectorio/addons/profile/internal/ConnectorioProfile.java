@@ -17,7 +17,6 @@
  */
 package org.connectorio.addons.profile.internal;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -25,7 +24,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import org.connectorio.addons.profile.ProfileFactoryRegistry;
 import org.connectorio.addons.profile.internal.util.NestedMapCreator;
