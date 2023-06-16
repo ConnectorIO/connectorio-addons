@@ -43,9 +43,7 @@ public class PureJavaCommSerialPortIdentifier implements SerialPortIdentifier {
     try {
       return new PureJavaCommSerialPort((purejavacomm.SerialPort) identifier.open(owner, timeout));
     } catch (purejavacomm.PortInUseException e) {
-      PortInUseException exception = new PortInUseException();
-      exception.initCause(e);
-      throw exception;
+      throw new PortInUseException(e);
     }
   }
 
