@@ -22,10 +22,10 @@ import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Length;
 import org.openhab.core.library.unit.MetricPrefix;
 import org.openhab.core.library.unit.SIUnits;
-import tec.uom.se.AbstractConverter;
-import tec.uom.se.AbstractUnit;
-import tec.uom.se.format.SimpleUnitFormat;
-import tec.uom.se.unit.TransformedUnit;
+import tech.units.indriya.AbstractUnit;
+import tech.units.indriya.format.SimpleUnitFormat;
+import tech.units.indriya.function.AbstractConverter;
+import tech.units.indriya.unit.TransformedUnit;
 
 public class TAUnits {
 
