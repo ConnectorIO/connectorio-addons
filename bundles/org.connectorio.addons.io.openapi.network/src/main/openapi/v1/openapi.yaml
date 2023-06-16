@@ -1,0 +1,82 @@
+openapi: 3.0.0
+info:
+  version: 'v1'
+  title: Network Management
+  description: >
+    Network related api.
+
+tags:
+  - name: network
+    description: >
+      Root resources related to network management.
+
+components:
+  schemas:
+    Network:
+      type: object
+      title: Network information.
+      discriminator:
+        propertyName: type
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of asset.
+        label:
+          type: string
+          maxLength: 255
+          description: Name of the asset.
+    Networks:
+      type: array
+      title: List of networks.
+      items:
+        $ref: '#/components/schemas/Network'
+
+    NetworkInterface:
+      type: object
+      title: Network information.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of asset.
+        label:
+          type: string
+          maxLength: 255
+          description: Name of the card.
+        card:
+          type: string
+          nullable: true
+          maxLength: 255
+          description: Name or location of SVG card used to draw the "sitemap" in cloud panel.
+
+  parameters:
+    aid:
+      name: netId
+      description: "Network identifier"
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    cid:
+      name: nicId
+      description: "Network interface card identifier"
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+paths:
+  /networks:
+    get:
+      operationId: "networks"
+      summary: "Retrieve networks available to calling user."
+      responses:
+        '200':
+          description: "Successful read of data"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Networks"

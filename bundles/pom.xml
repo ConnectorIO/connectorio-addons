@@ -54,7 +54,9 @@
     <module>org.connectorio.addons.binding.wmbus</module>
     <module>org.connectorio.addons.communication.watchdog</module>
     <module>org.connectorio.addons.config</module>
+    <module>org.connectorio.addons.io.openapi.network</module>
     <module>org.connectorio.addons.io.proxy.http</module>
+    <module>org.connectorio.addons.io.rest.network</module>
     <module>org.connectorio.addons.io.transport.mbus</module>
     <module>org.connectorio.addons.io.transport.serial</module>
     <module>org.connectorio.addons.io.transport.serial.persistent</module>
