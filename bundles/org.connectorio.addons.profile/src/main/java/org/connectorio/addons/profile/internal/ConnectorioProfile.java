@@ -17,7 +17,6 @@
  */
 package org.connectorio.addons.profile.internal;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -69,7 +68,7 @@ class ConnectorioProfile implements StateProfile {
       throw new IllegalArgumentException("Invalid configuration");
     }
 
-    ItemChannelLink link = determnineLink(callback);
+    ItemChannelLink link = callback.getItemChannelLink();
 
     this.callback = new StackedProfileCallback(callback, callbackChain);
     for (Entry<String, Object> entry : config.entrySet()) {
@@ -97,36 +96,6 @@ class ConnectorioProfile implements StateProfile {
       }
       callbackChain.add((StateProfile) createdProfile);
     }
-  }
-
-  private ItemChannelLink determnineLink(ProfileCallback callback) {
-    Class<?> clazz = callback.getClass();
-
-    Field linkField = null;
-    do {
-      try {
-        linkField = clazz.getDeclaredField("link");
-      } catch (NoSuchFieldException e) {
-        clazz = clazz.getSuperclass();
-      }
-    } while (linkField == null && clazz != Object.class);
-
-    if (linkField == null) {
-      return null;
-    }
-
-    if (ItemChannelLink.class.equals(linkField.getType())) {
-      try {
-        linkField.setAccessible(true);
-        ItemChannelLink link = (ItemChannelLink) linkField.get(callback);
-        if (link != null && link.getItemName() != null) {
-          return link;
-        }
-      } catch (IllegalAccessException e) {
-        logger.warn("Could not extract link information from profile callback {}.", callback, e);
-      }
-    }
-    return null;
   }
 
   @Override
