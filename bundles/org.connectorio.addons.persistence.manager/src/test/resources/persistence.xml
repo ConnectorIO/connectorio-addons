@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<service>
-  <config alias="">
+<service id="test">
+  <aliases>
+    <Sample_Item>itemCfg</Sample_Item>
+    <Sample_Group>groupCfg</Sample_Group>
+  </aliases>
+  <config>
     <items>
       <all/>
     </items>
@@ -16,7 +20,7 @@
       <hasName pattern=".*?_([^Current]*)$" />
     </filters>
   </config>
-  <config alias="itemCfg">
+  <config>
     <items>
       <item name="Sample_Item"/>
     </items>
@@ -25,7 +29,7 @@
       <strategy name="everyUpdate"/>
     </strategies>
   </config>
-  <config alias="groupCfg">
+  <config>
     <items>
       <group name="Sample_Group"/>
     </items>

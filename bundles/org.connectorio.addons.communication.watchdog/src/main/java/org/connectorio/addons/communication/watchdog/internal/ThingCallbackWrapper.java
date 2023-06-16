@@ -35,6 +35,7 @@ import org.openhab.core.thing.type.ChannelGroupTypeUID;
 import org.openhab.core.thing.type.ChannelTypeUID;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
+import org.openhab.core.types.TimeSeries;
 
 public class ThingCallbackWrapper implements ThingHandlerCallback {
 
@@ -54,6 +55,11 @@ public class ThingCallbackWrapper implements ThingHandlerCallback {
   @Override
   public void postCommand(ChannelUID channelUID, Command command) {
     callback.postCommand(channelUID, command);
+  }
+
+  @Override
+  public void sendTimeSeries(ChannelUID channelUID, TimeSeries timeSeries) {
+    callback.sendTimeSeries(channelUID, timeSeries);
   }
 
   @Override
@@ -92,8 +98,7 @@ public class ThingCallbackWrapper implements ThingHandlerCallback {
   }
 
   @Override
-  public void migrateThingType(Thing thing, ThingTypeUID thingTypeUID,
-      Configuration configuration) {
+  public void migrateThingType(Thing thing, ThingTypeUID thingTypeUID, Configuration configuration) {
     callback.migrateThingType(thing, thingTypeUID, configuration);
   }
 

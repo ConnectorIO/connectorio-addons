@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.persistence.shell.internal.item;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -115,4 +116,20 @@ public class StubItem implements Item {
     public String getUID() {
       return item.getUID();
     }
+
+  @Override
+  public State getLastState() {
+    return item.getLastState();
   }
+
+  @Override
+  public ZonedDateTime getLastStateChange() {
+    return item.getLastStateChange();
+  }
+
+  @Override
+  public ZonedDateTime getLastStateUpdate() {
+    return item.getLastStateUpdate();
+  }
+
+}
