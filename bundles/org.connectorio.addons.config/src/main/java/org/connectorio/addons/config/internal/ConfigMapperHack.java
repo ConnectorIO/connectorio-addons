@@ -20,7 +20,7 @@ public class ConfigMapperHack<T> implements ConfigMapper<T> {
 
   @Override
   public T map(Map<String, Object> configuration) {
-    return org.openhab.core.config.core.internal.ConfigMapper.as(cleanup(configuration), type);
+    return org.openhab.core.config.core.ConfigParser.configurationAs(cleanup(configuration), type);
   }
 
   @Override
