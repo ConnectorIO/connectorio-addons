@@ -19,7 +19,6 @@ import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.items.ItemNotUniqueException;
 import org.openhab.core.items.ItemProvider;
 import org.openhab.core.items.ItemRegistry;
-import org.openhab.core.items.RegistryHook;
 
 public class TestingItemRegistry implements ItemRegistry {
 
@@ -121,16 +120,6 @@ public class TestingItemRegistry implements ItemRegistry {
 
   @Override
   public Item remove(String itemName, boolean recursive) {
-    throw new UnsupportedOperationException("Operation is not implemented");
-  }
-
-  @Override
-  public void addRegistryHook(RegistryHook<Item> hook) {
-    throw new UnsupportedOperationException("Operation is not implemented");
-  }
-
-  @Override
-  public void removeRegistryHook(RegistryHook<Item> hook) {
     throw new UnsupportedOperationException("Operation is not implemented");
   }
 

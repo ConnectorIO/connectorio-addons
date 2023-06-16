@@ -24,7 +24,7 @@ import org.apache.plc4x.java.spi.generation.ReadBuffer;
 import org.apache.plc4x.java.spi.generation.WriteBuffer;
 import org.connectorio.addons.binding.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.canopen.ta.internal.type.TAUnit;
-import tec.uom.se.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 public class RASValue extends ShortAnalogValue {
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- - Copyright (C) 2019-2021 ConnectorIO Sp. z o.o.
+ - Copyright (C) 2022-2022 ConnectorIO Sp. z o.o.
  -
  - Licensed under the Apache License, Version 2.0 (the "License");
  - you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
  -
  - SPDX-License-Identifier: Apache-2.0
  -->
-<binding:binding id="co7io-relayweblog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:binding="https://openhab.org/schemas/binding/v1.0.0"
-  xsi:schemaLocation="https://openhab.org/schemas/binding/v1.0.0 https://openhab.org/schemas/binding-1.0.0.xsd">
+<addon:addon id="co7io-smartme" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:addon="https://openhab.org/schemas/addon/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/addon/v1.0.0 https://openhab.org/schemas/addon-1.0.0.xsd">
 
-  <name>Relay Weblog Binding</name>
-  <description>This binding scrap data from Relay Weblog devices allowing to collect MBus readings through ethernet/http link.</description>
-  <author>Łukasz Dywicki</author>
+  <type>binding</type>
+  <name>Smart-Me.com Binding</name>
+  <description>Binding to scrap data from smart-me.com API.</description>
+  <connection>local</connection>
 
-</binding:binding>
+</addon:addon>
