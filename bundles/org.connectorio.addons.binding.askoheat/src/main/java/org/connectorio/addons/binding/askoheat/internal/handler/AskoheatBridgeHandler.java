@@ -108,9 +108,9 @@ public class AskoheatBridgeHandler extends BasePollingBridgeHandler<AskoheatConf
         ValueBlock params = client.getValueBlock();
         getCallback().stateUpdated(new ChannelUID(getThing().getUID(), "status"), new DecimalType(params.getStatus()));
         getCallback().stateUpdated(new ChannelUID(getThing().getUID(), "load"), QuantityType.valueOf(params.getLoad(), Units.WATT));
-        getCallback().stateUpdated(new ChannelUID(getThing().getUID(), "temperatureLimit"), QuantityType.valueOf(params.getTemperatureLimit(), tec.uom.se.unit.Units.CELSIUS));
-        getCallback().stateUpdated(new ChannelUID(getThing().getUID(), "temperatureSensor0"), QuantityType.valueOf(params.getTemperatureSensor0(), tec.uom.se.unit.Units.CELSIUS));
-        getCallback().stateUpdated(new ChannelUID(getThing().getUID(), "maximumTemperature"), QuantityType.valueOf(params.getMaximumTemperature(), tec.uom.se.unit.Units.CELSIUS));
+        getCallback().stateUpdated(new ChannelUID(getThing().getUID(), "temperatureLimit"), QuantityType.valueOf(params.getTemperatureLimit(), tech.units.indriya.unit.Units.CELSIUS));
+        getCallback().stateUpdated(new ChannelUID(getThing().getUID(), "temperatureSensor0"), QuantityType.valueOf(params.getTemperatureSensor0(), tech.units.indriya.unit.Units.CELSIUS));
+        getCallback().stateUpdated(new ChannelUID(getThing().getUID(), "maximumTemperature"), QuantityType.valueOf(params.getMaximumTemperature(), tech.units.indriya.unit.Units.CELSIUS));
       }
     }, 1000L, getRefreshInterval(), TimeUnit.MILLISECONDS));
     tasks.add(scheduler.scheduleAtFixedRate(new Runnable() {
