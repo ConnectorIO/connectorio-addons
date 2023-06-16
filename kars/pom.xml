@@ -39,6 +39,7 @@
     <module>org.connectorio.addons.kar.canopen</module>
     <module>org.connectorio.addons.kar.managed</module>
     <module>org.connectorio.addons.kar.mbus</module>
+    <module>org.connectorio.addons.kar.network</module>
     <module>org.connectorio.addons.kar.norule</module>
     <module>org.connectorio.addons.kar.ocpp</module>
     <module>org.connectorio.addons.kar.opcua</module>
