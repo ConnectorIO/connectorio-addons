@@ -92,8 +92,7 @@ public class ThingCallbackWrapper implements ThingHandlerCallback {
   }
 
   @Override
-  public void migrateThingType(Thing thing, ThingTypeUID thingTypeUID,
-      Configuration configuration) {
+  public void migrateThingType(Thing thing, ThingTypeUID thingTypeUID, Configuration configuration) {
     callback.migrateThingType(thing, thingTypeUID, configuration);
   }
 

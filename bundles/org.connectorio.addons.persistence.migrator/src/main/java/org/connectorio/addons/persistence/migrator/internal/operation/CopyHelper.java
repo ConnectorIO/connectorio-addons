@@ -36,7 +36,7 @@ class CopyHelper {
           continue;
         }
         ZonedDateTime timestamp = historic.getTimestamp();
-        targetService.store(new StubItem(targetItem, state), Date.from(timestamp.toInstant()), state);
+        targetService.store(new StubItem(targetItem, state), timestamp, state);
         amount++;
         if (amount == pageSize) {
           page++;
