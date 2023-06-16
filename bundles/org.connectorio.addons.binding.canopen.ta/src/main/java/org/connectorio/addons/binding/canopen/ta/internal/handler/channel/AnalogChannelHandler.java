@@ -32,7 +32,7 @@ import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
-import tec.uom.se.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 public class AnalogChannelHandler extends BaseChannelHandler<AnalogValue, AnalogUnit, AnalogObjectConfig> {
 

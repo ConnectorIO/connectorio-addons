@@ -30,7 +30,7 @@ import org.connectorio.addons.binding.canopen.ta.tapi.val.ShortAnalogValue;
 import org.openhab.core.library.unit.MetricPrefix;
 import org.openhab.core.library.unit.SIUnits;
 import org.openhab.core.library.unit.Units;
-import tec.uom.se.AbstractUnit;
+import tech.units.indriya.AbstractUnit;
 
 public enum AnalogUnit implements TAUnit {
 
@@ -58,14 +58,14 @@ public enum AnalogUnit implements TAUnit {
   /* 22 analog  */ LITRE_PER_MINUTE  (22, Units.LITRE_PER_MINUTE, 1),
   /* 23 analog  */ BAR  (23, Units.BAR, 0.01),
   /* 24 analog  */ POWER_FACTOR(24, AbstractUnit.ONE, 0.01),
-  /* 25 analog  */ KILO_METRE (25, MetricPrefix.KILO(tec.uom.se.unit.Units.METRE), 1),
-  /* 26 analog  */ METRE (26, tec.uom.se.unit.Units.METRE, 1),
-  /* 27 analog  */ MILLIMETER  (27, MetricPrefix.MILLI(tec.uom.se.unit.Units.METRE), 1),
-  /* 28 analog  */ CUBIC_METRE  (28, tec.uom.se.unit.Units.CUBIC_METRE, 1),
-  /* 29 analog  */ HERTZ_KM_HOUR  (29, Units.HERTZ.divide(MetricPrefix.KILO(tec.uom.se.unit.Units.METRE).divide(Units.HOUR)), 1),
-  /* 30 analog  */ HERTZ_M_SECOND  (30, Units.HERTZ.divide(tec.uom.se.unit.Units.METRE.divide(Units.SECOND)), 1),
+  /* 25 analog  */ KILO_METRE (25, MetricPrefix.KILO(SIUnits.METRE), 1),
+  /* 26 analog  */ METRE (26, SIUnits.METRE, 1),
+  /* 27 analog  */ MILLIMETER  (27, MetricPrefix.MILLI(SIUnits.METRE), 1),
+  /* 28 analog  */ CUBIC_METRE  (28, SIUnits.CUBIC_METRE, 1),
+  /* 29 analog  */ HERTZ_KM_HOUR  (29, Units.HERTZ.divide(MetricPrefix.KILO(SIUnits.METRE).divide(Units.HOUR)), 1),
+  /* 30 analog  */ HERTZ_M_SECOND  (30, Units.HERTZ.divide(SIUnits.METRE.divide(Units.SECOND)), 1),
   /* 31 analog  */ KILOWATT_PER_IMPULSE  (31, Units.KILOWATT_HOUR.divide(TAUnits.IMPULSE), 1),
-  /* 32 analog  */ CUBICMETRE_PER_IMPULSE  (32, tec.uom.se.unit.Units.CUBIC_METRE.divide(TAUnits.IMPULSE), 1),
+  /* 32 analog  */ CUBICMETRE_PER_IMPULSE  (32, SIUnits.CUBIC_METRE.divide(TAUnits.IMPULSE), 1),
   /* 33 analog  */ MILLIMETRE_PER_IMPULSE(33, TAUnits.MILLIMETRE.divide(TAUnits.IMPULSE), 1),
   /* 34 analog  */ LITER_PER_IMPULSE  (34, Units.LITRE.divide(TAUnits.IMPULSE), 1),
   /* 35 analog  */ LITER_PER_DAY  (35, Units.LITRE.divide(Units.DAY), 1),
