@@ -50,6 +50,26 @@ public class PureJavaCommSerialPort implements SerialPort {
   }
 
   @Override
+  public int getBaudRate() {
+    return port.getBaudRate();
+  }
+
+  @Override
+  public int getDataBits() {
+    return port.getDataBits();
+  }
+
+  @Override
+  public int getStopBits() {
+    return port.getStopBits();
+  }
+
+  @Override
+  public int getParity() {
+    return port.getParity();
+  }
+
+  @Override
   public InputStream getInputStream() throws IOException {
     return port.getInputStream();
   }
@@ -115,6 +135,31 @@ public class PureJavaCommSerialPort implements SerialPort {
   }
 
   @Override
+  public void notifyOnOutputEmpty(boolean enable) {
+    port.notifyOnOutputEmpty(enable);
+  }
+
+  @Override
+  public void notifyOnCTS(boolean enable) {
+    port.notifyOnCTS(enable);
+  }
+
+  @Override
+  public void notifyOnDSR(boolean enable) {
+    port.notifyOnDSR(enable);
+  }
+
+  @Override
+  public void notifyOnRingIndicator(boolean enable) {
+    port.notifyOnRingIndicator(enable);
+  }
+
+  @Override
+  public void notifyOnCarrierDetect(boolean enable) {
+    port.notifyOnCarrierDetect(enable);
+  }
+
+  @Override
   public void enableReceiveTimeout(int timeout) throws UnsupportedCommOperationException, IllegalArgumentException {
     try {
       port.enableReceiveTimeout(timeout);
@@ -138,6 +183,11 @@ public class PureJavaCommSerialPort implements SerialPort {
   }
 
   @Override
+  public int getFlowControlMode() {
+    return port.getFlowControlMode();
+  }
+
+  @Override
   public void enableReceiveThreshold(int i) throws UnsupportedCommOperationException {
     try {
       port.enableReceiveThreshold(i);
@@ -149,6 +199,46 @@ public class PureJavaCommSerialPort implements SerialPort {
   @Override
   public void setRTS(boolean rts) {
     port.setRTS(rts);
+  }
+
+  @Override
+  public boolean isRTS() {
+    return port.isRTS();
+  }
+
+  @Override
+  public void setDTR(boolean enable) {
+    port.setDTR(enable);
+  }
+
+  @Override
+  public boolean isDTR() {
+    return port.isDTR();
+  }
+
+  @Override
+  public boolean isCTS() {
+    return port.isCTS();
+  }
+
+  @Override
+  public boolean isDSR() {
+    return port.isDSR();
+  }
+
+  @Override
+  public boolean isCD() {
+    return port.isCD();
+  }
+
+  @Override
+  public boolean isRI() {
+    return port.isRI();
+  }
+
+  @Override
+  public void sendBreak(int duration) {
+    port.sendBreak(duration);
   }
 
 }
