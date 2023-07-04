@@ -10,16 +10,16 @@ public class WMBusAdapterConnectionBuilder {
 
   private final Builder builder;
 
-  public WMBusAdapterConnectionBuilder(WMBusListener listener, WMBusMode mode) {
-    builder = new Builder(null, listener) {
-      @Override
-      WMBusConnection build(TransportLayer transportLayer) throws IOException {
-        WMBusConnectionCUL connectionCUL = new WMBusConnectionCUL(mode, listener, transportLayer);
-        connectionCUL.open();
-        return connectionCUL;
-      }
-    };
-  }
+//  public WMBusAdapterConnectionBuilder(WMBusListener listener, WMBusMode mode) {
+//    builder = new Builder(null, listener) {
+//      @Override
+//      WMBusConnection build(TransportLayer transportLayer) throws IOException {
+//        WMBusConnectionCUL connectionCUL = new WMBusConnectionCUL(mode, listener, transportLayer);
+//        connectionCUL.open();
+//        return connectionCUL;
+//      }
+//    };
+//  }
 
   public WMBusAdapterConnectionBuilder(WMBusManufacturer wmBusManufacturer, WMBusListener listener) {
     builder = new Builder(wmBusManufacturer, listener);
