@@ -1,4 +1,4 @@
-name: build-copybara
+name: Copybara executable
 
 on:
   schedule:
