@@ -1,0 +1,29 @@
+sourceUrl = "ssh://git@github.com/connectorio/connectorio-addons.git"
+destinationUrl = sourceUrl
+
+def create_workflow(version):
+  core.workflow(
+    name=version,
+    mode='ITERATIVE',
+    origin = git.github_pr_origin(
+       url = sourceUrl,
+       required_labels=["backport"],
+       #required_check_runs=["success"],
+       branch = "master",
+     ),
+    destination = git.github_pr_destination(
+      url = sourceUrl,
+      destination_ref = version,
+      title = version + " ${GITHUB_PR_TITLE}",
+      body = "Automatic patch derived from #${GITHUB_PR_NUMBER}.",
+      update_description = True
+    ),
+    authoring = authoring.pass_thru("ConnectorIO Bot <ci@connectorio.com>"),
+    transformations = [
+    ],
+  )
+
+create_workflow('3.1.x')
+create_workflow('3.2.x')
+create_workflow('3.3.x')
+create_workflow('3.4.x')

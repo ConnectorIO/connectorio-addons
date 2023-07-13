@@ -1,0 +1,29 @@
+name: Copybara executable
+
+on:
+  schedule:
+    - cron:  '0 0 1,15 * *'
+  workflow_dispatch:
+
+jobs:
+  build-copybara:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v3
+        with:
+          path: ${{ env.WORKING_DIR }}
+          repository: 'google/copybara'
+      - name: Mount bazel cache
+        uses: actions/cache@v3
+        with:
+          path: "/home/runner/.cache/bazel"
+          key: bazel
+      - name: Build
+        run: bazel build //java/com/google/copybara:copybara_deploy.jar
+      - name: Cache copybara jar
+        uses: actions/cache@v3
+        with:
+          path: bazel-bin/java/com/google/copybara/copybara_deploy.jar
+          key: copybara
