@@ -265,7 +265,7 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.binding.plc4x.amsads</artifactId>
+        <artifactId>org.connectorio.addons.binding.amsads</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -289,12 +289,12 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.binding.plc4x.canopen</artifactId>
+        <artifactId>org.connectorio.addons.binding.canopen</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.binding.plc4x.canopen.ta</artifactId>
+        <artifactId>org.connectorio.addons.binding.canopen.ta</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -313,7 +313,7 @@
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.binding.plc4x.s7</artifactId>
+        <artifactId>org.connectorio.addons.binding.s7</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

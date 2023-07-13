@@ -1,33 +1,34 @@
-# ConnectorIO Addons
+= ConnectorIO Addons
 
-This repository contains code and documentation of open source industrial integrations made by *ConnectorIO sp. z o.o.*.
-The code which is published allow to plug various hardware (PLC, controllers, meters) to openHAB based solutions.
+This repository contains handful set of software integrations which allow to communicate with industrial equipment.
+The code which is published allow to plug various hardware (PLC, controllers, meters) to openHAB compatible solutions.
+Code in this repository is maintained by *ConnectorIO sp. z o.o.*.
+
 All together openHAB and co7io-addons allows to:
 
-- Interaction between different hardware.
-- Monitoring of manufacturing processes.
-- Data collection and ingestion towards IT systems.
-- Secure remote access to hardware (without VPN client installation)
+- Enable interaction between different hardware suppliers.
+- Begin monitoring of manufacturing processes.
+- Collect data and ingest it towards IT systems.
+- Securely connect back to the hardware (without VPN client installation).
 
 While code is divided in specific areas most ot it is present under `bundles` folder:
 
- * `bundles` - various kinds of connectivity extensions which adapt industrial or functional algorithms into runtime.
+* `bundles` - various kinds of connectivity extensions which adapt industrial or functional algorithms into runtime.
  ** `org.connectorio.addons.binding` - common/shared code for binding.
- ** `org.connectorio.addons.binding.bacnet` - communication with BACnet enabled HVAC equipment other commercial real estate hardware.
- ** `org.connectorio.addons.binding.can` - core support for discovery of CAN interfaces.
- ** `org.connectorio.addons.binding.plc4x` - communication with industrial equipment thanks to http://plc4x.apache.org[Apache PLC4X] project.
- *** `org.connectorio.addons.binding.plc4x.amsads` - implementation of ADS based integration for Beckhoff PLCs.
- *** `org.connectorio.addons.binding.plc4x.canopen` - integration of CANopen enabled deployments through SocketCAN.
- *** `org.connectorio.addons.binding.plc4x.canopen.ta` - integration for https://ta.co.at[Technische Alternative] hardware (it is based on CANopen).
- *** `org.connectorio.addons.binding.plc4x.s7` - handling of connectivity to Step 7 (S7) enabled PLCs (coming from a certain vendor).
- * `org.connectorio.addons.transformation.*` - non standard operations which might be used at the link level to implement certain functionality.
- * `telemetry` - a telemetry service for streaming data from runtime for anonymous analytics and statistical purposes (not used nor implemented).
- * `features` (distributions) - packaging of binding code.
+ ** `org.connectorio.addons.binding.askoheat` - integration of Askoheat heaters (experimental).
+ ** `org.connectorio.addons.binding.amsads` - implementation of ADS based integration for Beckhoff PLCs.
+ ** `org.connectorio.addons.binding.can` - generic purpose CAN binding (experimental).
+ ** `org.connectorio.addons.binding.bacnet` - communication with BACnet enabled HVAC equipment and other commercial real estate hardware.
+ ** `org.connectorio.addons.binding.canopen` - integration of CANopen enabled deployments through SocketCAN.
+ ** `org.connectorio.addons.binding.canopen.ta` - integration for https://ta.co.at[Technische Alternative] hardware (it is based on CANopen).
+ ** `org.connectorio.addons.binding.plc4x` - integration with http://plc4x.apache.org[Apache PLC4X] project.
+ ** `org.connectorio.addons.binding.s7` - handling of connectivity to Step 7 (S7) enabled PLCs (coming from a certain vendor).
+ * `org.connectorio.addons.transformation.*` - non-standard operations which might be used at the link level to implement certain functionality.
  ** `org.connectorio.addons.feature` - main feature package
- ** `org.connectorio.addons.feature.bacnet` - BACnet deployment package
- ** `org.connectorio.addons.feature.plc4x` - base runtime package for integrations based upon Apache PLC4X
  ** `org.connectorio.addons.feature.amsads` - AMS/ADS deployment package
+ ** `org.connectorio.addons.feature.bacnet` - BACnet deployment package
  ** `org.connectorio.addons.feature.canopen` - CANopen deployment package
+ ** `org.connectorio.addons.feature.plc4x` - base runtime package for integrations based upon Apache PLC4X
  ** `org.connectorio.addons.feature.s7` - S7 deployment package
  ** `org.connectorio.addons.feature.openhab` - All-in-one deployment package for openHAB.
  * `documentation` textual descriptions, screenshots and such needed to understand operational aspects of working with this code.
@@ -36,7 +37,20 @@ If you seek for secure VPN-less cloud solution allowing accessing any of above h
 It allows combining multiple installations, buildings and machines across diverse geographical locations in https://app.connectorio.cloud[ConnectorIO Cloud].
 This is a lightweight dashboard application for collected information.
 
-### Relation to openHAB
+== License & notice
+Most of the code is licensed under Apache Software License. The `org.connectorio.addons.binding.bacnet` and `org.connectorio.addons.feature.bacnet` is exceptional and it is licensed under GPLv3 due to GPL code dependencies.
+
+Code refers EPLv1 and EPLv2 licensed code mainly through openHAB artifacts.
+
+== Commercial usage
+Commercial usage of this code is permitted and welcome as long as you can build binaries yourself.
+We provide no binary artifacts here, if you wish to receive one please https://connectorio.com/openhab[visit our web page] and register to download them.
+
+== Support
+We do support this code please https://connectorio.com/contact?utm_content=readme&utm_medium=social&utm_source=github.com[get in touch with us]
+if you are interested in terms and conditions.
+
+=== Relation to openHAB
 This code is deployed independently of openHAB addons repository due to "incompatible" licensing (ASLv2 vs EPLv2).
 It will stay here cause it allows us to unify infrastructure between bindings we maintain.
 The shared code for `bindings` which might not be fortunate, but simplifies a lot common operations and reduces boilerplate code.
@@ -45,31 +59,18 @@ Code style is not planned to be aligned.
 
 Please treat this repository as a source for third party addons.
 
-## License & notice
-Most of the code is licensed under Apache Software License. The `org.connectorio.addons.binding.bacnet` and `org.connectorio.addons.feature.bacnet` is exceptional and it is licensed under GPLv3 due to GPL code dependencies.
-
-Code refers EPLv1 and EPLv2 licensed code mainly through openHAB artifacts.
-
-## Commercial usage
-Commercial usage of this code is permitted and welcome as long as you can build binaries yourself.
-We provide no binary artifacts here, if you wish to receive one please https://connectorio.com/openhab[visit our web page] and register to download them.
-
-## Support
-We do support this code please https://connectorio.com/contact?utm_content=readme&utm_medium=social&utm_source=github.com[get in touch with us]
-if you are interested in terms and conditions.
-
-### Trademarks
+=== Trademarks
 The ® sign indicates that given name or logo is a registered trademark.
 
 We respect copyright, and we value trademarks of others.
-BACnet, Apache PLC4X, Siemens, Beckhoff, CANopen are all registered trademarks belonging to its respective owners.
-Above names are mentioned here to give credits to producers of awesome equipment, libraries and specifications.
+BACnet, Apache PLC4X, Siemens, Beckhoff, CANopen, openHAB are all registered trademarks belonging to its respective owners.
+Above names are mentioned here to give credits to producers of awesome equipment, libraries, software and specifications.
 They are not listed here for advertising or affirmation purposes.
 
 ConnectorIO sp. z o.o. (publisher of this code) is not in relation nor partnership of any kind with any of above organizations.
-If you was misled by contents of this file or our code https://connectorio.com/contact?utm_content=trademark_issue&utm_medium=social&utm_source=github.com[please let us know],
+If you were misled by contents of this file or our code https://connectorio.com/contact?utm_content=trademark_issue&utm_medium=social&utm_source=github.com[please let us know],
 so we can clean things up.
 
-### Disclaimer
+=== Disclaimer
 See point 7 of link:LICENSE#L144[license file].
 Be aware that you use this code at your own risk.

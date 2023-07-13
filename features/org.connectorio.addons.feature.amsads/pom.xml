@@ -35,7 +35,7 @@
   <dependencies>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.binding.plc4x.amsads</artifactId>
+      <artifactId>org.connectorio.addons.binding.amsads</artifactId>
     </dependency>
 
     <dependency>

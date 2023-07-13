@@ -21,14 +21,14 @@
   <repository>mvn:org.connectorio.addons/org.connectorio.addons.feature.plc4x/${project.version}/xml/features</repository>
 
   <feature name="openhab-binding-s7" description="S7 PLC Binding" version="${project.version}">
-    <feature>co7io-binding-plc4x-s7</feature>
+    <feature>co7io-binding-s7</feature>
   </feature>
 
-  <feature name="co7io-binding-plc4x-s7" description="S7 PLC Binding" version="${project.version}">
+  <feature name="co7io-binding-s7" description="S7 PLC Binding" version="${project.version}">
     <feature>openhab-runtime-base</feature>
     <feature>plc4x-s7-driver</feature>
     <feature>co7io-binding-plc4x</feature>
-    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.binding.plc4x.s7/${project.version}</bundle>
+    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.binding.s7/${project.version}</bundle>
   </feature>
 
 </features>

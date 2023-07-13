@@ -39,11 +39,11 @@
     </dependency>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.binding.plc4x.canopen</artifactId>
+      <artifactId>org.connectorio.addons.binding.canopen</artifactId>
     </dependency>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.binding.plc4x.canopen.ta</artifactId>
+      <artifactId>org.connectorio.addons.binding.canopen.ta</artifactId>
     </dependency>
 
     <dependency>

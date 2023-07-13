@@ -35,7 +35,7 @@
   <dependencies>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.binding.plc4x.s7</artifactId>
+      <artifactId>org.connectorio.addons.binding.s7</artifactId>
     </dependency>
 
     <dependency>

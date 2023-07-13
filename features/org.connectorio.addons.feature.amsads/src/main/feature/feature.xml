@@ -21,14 +21,14 @@
   <repository>mvn:org.connectorio.addons/org.connectorio.addons.feature.plc4x/${project.version}/xml/features</repository>
 
   <feature name="openhab-binding-amsads" description="AMS/ADS Binding" version="${project.version}">
-    <feature>co7io-binding-plc4x-amsads</feature>
+    <feature>co7io-binding-amsads</feature>
   </feature>
 
-  <feature name="co7io-binding-plc4x-amsads" description="AMS/ADS Binding" version="${project.version}">
+  <feature name="co7io-binding-amsads" description="AMS/ADS Binding" version="${project.version}">
     <feature>openhab-runtime-base</feature>
     <feature>plc4x-ads-driver</feature>
     <feature>co7io-binding-plc4x</feature>
-    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.binding.plc4x.amsads/${project.version}</bundle>
+    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.binding.amsads/${project.version}</bundle>
   </feature>
 
 </features>
