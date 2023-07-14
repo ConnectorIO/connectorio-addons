@@ -34,5 +34,5 @@ jobs:
           ${{ github.event.pull_request.number }}
           --git-committer-email "ci@connectorio.com"
           --git-committer-name "ConnectorIO Bot"
-          --git-destination-url="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git"
+          --git-destination-url="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
           --last-rev ${{ github.event.pull_request.base.sha }}
