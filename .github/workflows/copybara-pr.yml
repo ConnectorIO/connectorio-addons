@@ -6,7 +6,7 @@ on:
 
 jobs:
   copybara:
-    if: contains(github.event.pull_request.labels.*.name, 'backport') && github.repository == 'connectorio/connectorio-addons'
+    if: 0 == 1 # contains(github.event.pull_request.labels.*.name, 'backport') && github.repository == 'connectorio/connectorio-addons'
     permissions:
       pull-requests: write
       contents: write
