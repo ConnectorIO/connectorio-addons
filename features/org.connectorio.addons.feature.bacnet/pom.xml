@@ -72,6 +72,12 @@
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.feature.network</artifactId>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
 
     <!-- remove after KARAF-7316 is fixed -->
     <dependency>

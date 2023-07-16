@@ -17,7 +17,7 @@
  */
 package org.connectorio.addons.itest.wmbus;
 
-import org.connectorio.addons.itest.base.OfflineKarInstallationTest;
+import org.connectorio.addons.itest.OfflineKarInstallationTest;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers

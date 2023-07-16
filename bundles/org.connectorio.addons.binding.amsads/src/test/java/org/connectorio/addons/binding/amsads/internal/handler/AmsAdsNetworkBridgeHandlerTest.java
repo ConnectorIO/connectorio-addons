@@ -23,6 +23,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.net.ConnectException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -36,7 +37,7 @@ import org.connectorio.addons.binding.handler.GenericBridgeHandler;
 import org.connectorio.addons.binding.amsads.AmsAdsBindingConstants;
 import org.connectorio.addons.binding.amsads.internal.config.AmsAdsConfiguration;
 import org.connectorio.addons.binding.amsads.internal.config.NetworkConfiguration;
-import org.connectorio.addons.binding.amsads.internal.discovert.AmsAdsDiscoveryDriver;
+import org.connectorio.addons.binding.amsads.internal.discovery.AmsAdsDiscoveryDriver;
 import org.connectorio.plc4x.extras.osgi.core.internal.OsgiDriverManager;
 import org.connectorio.addons.binding.test.BridgeMock;
 import org.openhab.core.thing.Bridge;
@@ -70,7 +71,7 @@ class AmsAdsNetworkBridgeHandlerTest {
     AmsAdsConfiguration amsCfg = new AmsAdsConfiguration();
     amsCfg.sourceAmsId = "0.0.0.0.0.0";
     amsCfg.sourceAmsPort = 4040;
-    amsCfg.ipAddress = "10.10.10.10";
+    amsCfg.ipAddress = "127.0.0.1";
 
     BridgeMock<GenericBridgeHandler<Configuration>, Configuration> amsBridgeMock = new BridgeMock<>("ams-network")
       .withId(new ThingUID(AmsAdsBindingConstants.THING_TYPE_AMS, "amsads-1"))
@@ -88,7 +89,7 @@ class AmsAdsNetworkBridgeHandlerTest {
 
     Bridge bridge = bridgeMock.create();
 
-    AmsAdsNetworkBridgeHandler handler = new AmsAdsNetworkBridgeHandler(bridge, new OsgiDriverManager(Collections.emptyList()), discoveryDriver);
+    AmsAdsNetworkBridgeHandler handler = new AmsAdsNetworkBridgeHandler(bridge, new OsgiDriverManager(Arrays.asList(getClass().getClassLoader())), discoveryDriver);
     handler.setCallback(bridgeMock.getCallback());
     handler.initialize();
 

@@ -19,6 +19,7 @@ package org.connectorio.addons.binding.can;
 
 import java.util.Objects;
 
+@Deprecated
 public class CANInterface {
 
   private final String name;

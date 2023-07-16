@@ -22,7 +22,7 @@ import static org.connectorio.addons.binding.amsads.AmsAdsBindingConstants.THING
 import static org.connectorio.addons.binding.amsads.AmsAdsBindingConstants.THING_TYPE_NETWORK;
 import static org.connectorio.addons.binding.amsads.AmsAdsBindingConstants.THING_TYPE_SERIAL;
 
-import org.connectorio.addons.binding.amsads.internal.discovert.AmsAdsDiscoveryDriver;
+import org.connectorio.addons.binding.amsads.internal.discovery.AmsAdsDiscoveryDriver;
 import org.connectorio.addons.binding.plc4x.Plc4xHandlerFactory;
 import org.connectorio.plc4x.extras.osgi.PlcDriverManager;
 import org.openhab.core.thing.Bridge;

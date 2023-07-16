@@ -38,6 +38,18 @@
       <artifactId>org.connectorio.addons.binding.plc4x</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.network</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.network.ip</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.network.transmitter.ip</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.plc4x</groupId>
       <artifactId>plc4j-driver-ads</artifactId>
     </dependency>

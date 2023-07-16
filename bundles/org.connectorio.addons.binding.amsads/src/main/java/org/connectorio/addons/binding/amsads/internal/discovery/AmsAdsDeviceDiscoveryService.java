@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.amsads.internal.discovert;
+package org.connectorio.addons.binding.amsads.internal.discovery;
 
 import static org.connectorio.addons.binding.amsads.internal.AmsConverter.createDiscoveryAms;
 import static org.connectorio.addons.binding.amsads.AmsAdsBindingConstants.THING_TYPE_NETWORK;
@@ -29,7 +29,7 @@ import org.apache.plc4x.java.ads.discovery.readwrite.types.Operation;
 import org.connectorio.addons.binding.amsads.internal.config.AmsAdsConfiguration;
 import org.connectorio.addons.binding.amsads.internal.handler.AmsAdsBridgeHandler;
 import org.connectorio.addons.binding.amsads.AmsAdsBindingConstants;
-import org.connectorio.addons.binding.amsads.internal.discovert.DiscoverySender.Envelope;
+import org.connectorio.addons.binding.amsads.internal.discovery.DiscoverySender.Envelope;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
 import org.openhab.core.config.discovery.DiscoveryResultBuilder;

@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.can;
 
+@Deprecated
 public interface LifecycleListener {
 
   void interfaceStarted(CANInterface iface);

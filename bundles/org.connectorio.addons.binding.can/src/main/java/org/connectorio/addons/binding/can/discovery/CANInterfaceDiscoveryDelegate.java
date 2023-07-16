@@ -24,6 +24,7 @@ import org.connectorio.addons.binding.can.CANInterface;
  *
  * This interface is intended to let implementers know that given CAN interface is available and can be utilized.
  */
+@Deprecated
 public interface CANInterfaceDiscoveryDelegate {
 
   /**

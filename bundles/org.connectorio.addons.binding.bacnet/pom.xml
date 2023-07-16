@@ -52,6 +52,14 @@
     </dependency>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.network</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.network.ip</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.communication.watchdog</artifactId>
     </dependency>
     <dependency>

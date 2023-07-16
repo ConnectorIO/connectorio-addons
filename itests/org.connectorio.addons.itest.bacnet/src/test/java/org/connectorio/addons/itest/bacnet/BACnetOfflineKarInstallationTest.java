@@ -17,11 +17,10 @@
  */
 package org.connectorio.addons.itest.bacnet;
 
-import org.connectorio.addons.itest.base.OfflineKarInstallationTest;
+import org.connectorio.addons.itest.OfflineKarInstallationTest;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-
 public class BACnetOfflineKarInstallationTest extends OfflineKarInstallationTest {
 
   public BACnetOfflineKarInstallationTest() {

@@ -1205,6 +1205,12 @@
       </dependency>
       <dependency>
         <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${junit-jupiter.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-params</artifactId>
         <version>${junit-jupiter.version}</version>
         <scope>test</scope>
@@ -1304,8 +1310,19 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.testcontainers</groupId>
+        <artifactId>karaf</artifactId>
+        <version>${connectorio-testcontainers.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.testcontainers</groupId>
         <artifactId>openhab</artifactId>
         <version>${connectorio-testcontainers.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.11</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

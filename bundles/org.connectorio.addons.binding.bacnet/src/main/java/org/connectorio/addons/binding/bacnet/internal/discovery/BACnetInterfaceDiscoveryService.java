@@ -27,6 +27,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.connectorio.addons.binding.bacnet.internal.BACnetBindingConstants;
+import org.connectorio.addons.network.Network;
+import org.connectorio.addons.network.iface.NetworkInterface;
+import org.connectorio.addons.network.iface.NetworkInterfaceRegistry;
+import org.connectorio.addons.network.iface.NetworkInterfaceStateCallback;
+import org.connectorio.addons.network.ip.IpNetwork;
+import org.connectorio.addons.network.ip.IpNetworkInterfaceTypes;
+import org.connectorio.addons.network.ip.IpNetworkTypes;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
 import org.openhab.core.config.discovery.DiscoveryResultBuilder;
@@ -44,56 +51,80 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component(immediate = true, service = {DiscoveryService.class}, configurationPid = "discovery.bacnet.interface")
-public class BACnetInterfaceDiscoveryService extends AbstractDiscoveryService implements NetworkAddressChangeListener {
+public class BACnetInterfaceDiscoveryService extends AbstractDiscoveryService implements
+    NetworkInterfaceStateCallback {
 
   private final Logger logger = LoggerFactory.getLogger(BACnetInterfaceDiscoveryService.class);
-  private final NetworkAddressService networkAddressService;
+  private final NetworkInterfaceRegistry networkInterfaceRegistry;
 
   @Activate
-  public BACnetInterfaceDiscoveryService(@Reference NetworkAddressService networkAddressService)
+  public BACnetInterfaceDiscoveryService(@Reference NetworkInterfaceRegistry networkInterfaceRegistry)
     throws IllegalArgumentException {
     super(Collections.singleton(BACnetBindingConstants.IPV4_BRIDGE_THING_TYPE), 60, true);
-    this.networkAddressService = networkAddressService;
-
-    networkAddressService.addNetworkAddressChangeListener(this);
+    this.networkInterfaceRegistry = networkInterfaceRegistry;
+    this.networkInterfaceRegistry.addCentralNetworkInterfaceStateCallback(this);
   }
 
   @Override
   @Deactivate
   public void deactivate() {
     logger.debug("Deactivating BACnet network interface discovery service");
-    networkAddressService.removeNetworkAddressChangeListener(this);
+    networkInterfaceRegistry.removeCentralNetworkInterfaceStateCallback(this);
   }
 
   @Override
   protected void startScan() {
-    Collection<CidrAddress> addresses = NetUtil.getAllInterfaceAddresses();
-    discover(addresses);
+    for (NetworkInterface networkInterface : networkInterfaceRegistry.getAll()) {
+      if (IpNetworkInterfaceTypes.IP.equals(networkInterface.getInterfaceType())) {
+        discover(networkInterface);
+      }
+    }
   }
 
   @Override
-  public void onChanged(List<CidrAddress> added, List<CidrAddress> removed) {
-    if (!removed.isEmpty()) {
-      removeOlderResults(getTimestampOfLastScan());
+  public void networkInterfaceUp(NetworkInterface networkInterface) {
+    if (IpNetworkInterfaceTypes.IP.equals(networkInterface.getInterfaceType())) {
+      discover(networkInterface);
     }
-
-    discover(added);
   }
 
-  private void discover(Collection<CidrAddress> addresses) {
-    for (CidrAddress addr : addresses) {
-      InetAddress address = addr.getAddress();
-      if (address instanceof Inet4Address) {
-        String broadcastAddress = NetUtil.getIpv4NetBroadcastAddress(address.getHostAddress(), (short) addr.getPrefix());
+  @Override
+  public void networkInterfaceDown(NetworkInterface networkInterface) {
+    for (Network network : networkInterface.getNetworks()) {
+      if (!(network instanceof IpNetwork)) {
+        continue;
+      }
 
-        DiscoveryResult network = DiscoveryResultBuilder.create(new ThingUID(BACnetBindingConstants.IPV4_BRIDGE_THING_TYPE, broadcastAddress.replace(".", "_")))
-          .withLabel("BACnet IPv4 network " + address.getHostAddress())
+      // remove all discovery results which point to networks we just lost
+      IpNetwork ipNetwork = (IpNetwork) network;
+      String broadcastAddress = ipNetwork.getBroadcastAddress();
+      if (!broadcastAddress.isEmpty()) {
+        thingRemoved(createThingUID(broadcastAddress));
+      }
+    }
+  }
+
+  private void discover(NetworkInterface networkInterface) {
+    for (Network network : networkInterface.getNetworks()) {
+      if (!(network instanceof IpNetwork)) {
+        continue;
+      }
+
+      IpNetwork ipNetwork = (IpNetwork) network;
+      String broadcastAddress = ipNetwork.getBroadcastAddress();
+      if (!broadcastAddress.isEmpty()) {
+        DiscoveryResult ip4network = DiscoveryResultBuilder.create(createThingUID(broadcastAddress))
+          .withLabel("BACnet IPv4 network " + broadcastAddress)
           //.withProperty("localBindAddress", address.getHostAddress())
           .withProperty("broadcastAddress", broadcastAddress)
           .build();
-        thingDiscovered(network);
+        thingDiscovered(ip4network);
       }
     }
+  }
+
+  private static ThingUID createThingUID(String broadcastAddress) {
+    return new ThingUID(BACnetBindingConstants.IPV4_BRIDGE_THING_TYPE, broadcastAddress.replace(".", "_"));
   }
 
 }

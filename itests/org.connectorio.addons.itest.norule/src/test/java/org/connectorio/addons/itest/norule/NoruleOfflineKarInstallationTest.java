@@ -17,7 +17,7 @@
  */
 package org.connectorio.addons.itest.norule;
 
-import org.connectorio.addons.itest.base.OfflineKarInstallationTest;
+import org.connectorio.addons.itest.OfflineKarInstallationTest;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers

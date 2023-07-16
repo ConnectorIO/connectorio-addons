@@ -19,6 +19,7 @@
 <features name="co7io-binding-ads-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.6.0">
 
   <repository>mvn:org.connectorio.addons/org.connectorio.addons.feature.plc4x/${project.version}/xml/features</repository>
+  <repository>mvn:org.connectorio.addons/org.connectorio.addons.feature.network/${project.version}/xml/features</repository>
 
   <feature name="openhab-binding-amsads" description="AMS/ADS Binding" version="${project.version}">
     <feature>co7io-binding-amsads</feature>
@@ -28,6 +29,7 @@
     <feature>openhab-runtime-base</feature>
     <feature>plc4x-ads-driver</feature>
     <feature>co7io-binding-plc4x</feature>
+    <feature>co7io-network</feature>
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.binding.amsads/${project.version}</bundle>
   </feature>
 

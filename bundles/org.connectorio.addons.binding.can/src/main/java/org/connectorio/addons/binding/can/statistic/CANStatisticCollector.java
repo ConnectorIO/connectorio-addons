@@ -22,6 +22,7 @@ import javax.measure.Quantity;
 /**
  * Helper interface to gather CAN statistics.
  */
+@Deprecated
 public interface CANStatisticCollector<Q extends Quantity<Q>> {
 
   String getName();

@@ -15,10 +15,13 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.amsads.internal.discovert;
+package org.connectorio.addons.binding.amsads.internal.discovery;
 
-public interface AmsAdsRouteListener {
+public interface RouteReceiver {
 
-  void add(String host, String sourceAms, boolean success);
+  void addRouteListener(AmsAdsRouteListener listener);
+
+  void removeRouteListener(AmsAdsRouteListener listener);
+
 
 }

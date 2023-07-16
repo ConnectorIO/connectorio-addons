@@ -20,6 +20,7 @@ package org.connectorio.addons.binding.can;
 import java.util.Optional;
 import org.openhab.core.thing.binding.BridgeHandler;
 
+@Deprecated
 public interface CANThingHandler extends BridgeHandler {
 
   Optional<String> getName();

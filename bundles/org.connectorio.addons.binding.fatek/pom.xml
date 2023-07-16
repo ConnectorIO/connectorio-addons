@@ -48,12 +48,10 @@
     <dependency>
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.network</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.network.transmitter.ip</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.simplify4u</groupId>

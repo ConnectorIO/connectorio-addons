@@ -37,11 +37,6 @@
       <artifactId>org.connectorio.addons.kar.bacnet</artifactId>
       <type>kar</type>
     </dependency>
-    <dependency>
-      <groupId>org.openhab.distro</groupId>
-      <artifactId>openhab</artifactId>
-      <type>zip</type>
-    </dependency>
 
     <dependency>
       <groupId>org.connectorio.addons</groupId>
@@ -55,7 +50,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <configuration>
-          <includeArtifactIds>org.connectorio.addons.itest.base,org.connectorio.addons.kar.bacnet</includeArtifactIds>
+          <includeArtifactIds>org.connectorio.addons.kar.bacnet</includeArtifactIds>
         </configuration>
       </plugin>
     </plugins>

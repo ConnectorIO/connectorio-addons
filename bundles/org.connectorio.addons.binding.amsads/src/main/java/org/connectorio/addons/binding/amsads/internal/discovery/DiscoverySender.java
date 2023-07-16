@@ -15,12 +15,22 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.amsads.internal.discovert;
+package org.connectorio.addons.binding.amsads.internal.discovery;
 
-public interface DiscoveryReceiver {
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscovery;
 
-  void addDiscoveryListener(AmsAdsDiscoveryListener listener);
+public interface DiscoverySender {
 
-  void removeDiscoveryListener(AmsAdsDiscoveryListener listener);
+  class Envelope {
+    public final String host;
+    public final AdsDiscovery structure;
+
+    public Envelope(String host, AdsDiscovery structure) {
+      this.host = host;
+      this.structure = structure;
+    }
+  }
+
+  void send(Envelope packet);
 
 }

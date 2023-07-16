@@ -19,12 +19,14 @@ package org.connectorio.addons.binding.can;
 
 import java.util.Objects;
 
+@Deprecated
 public interface CANInterfaceTypes {
 
   CANInterfaceType SOCKET_CAN = new SimpleInterface("socketcan");
 
 }
 
+@Deprecated
 class SimpleInterface implements CANInterfaceType {
 
   private final String type;
