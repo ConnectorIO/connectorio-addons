@@ -21,7 +21,6 @@
  */
 package org.connectorio.addons.binding.bacnet.internal.handler.object.task;
 
-import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import java.util.ArrayList;
@@ -39,7 +38,9 @@ import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.api.BacNetClientException;
 import org.code_house.bacnet4j.wrapper.api.BacNetObject;
 import org.code_house.bacnet4j.wrapper.api.Device;
+import org.connectorio.addons.link.LinkManager;
 import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.openhab.core.types.State;
 import org.slf4j.Logger;
@@ -49,23 +50,25 @@ public class RefreshDeviceTask extends AbstractTask {
 
   private final Logger logger = LoggerFactory.getLogger(RefreshDeviceTask.class);
   private final Supplier<CompletableFuture<BacNetClient>> client;
+  private final Thing thing;
   private final ThingHandlerCallback callback;
   private final Device device;
   private Set<Readout> channels;
-  private Set<ChannelUID> linkedChannels;
+  private final LinkManager linkManager;
 
-  public RefreshDeviceTask(Supplier<CompletableFuture<BacNetClient>> client, ThingHandlerCallback callback, Device device, Set<Readout> channels, Set<ChannelUID> linkedChannels) {
+  public RefreshDeviceTask(Supplier<CompletableFuture<BacNetClient>> client, Thing thing, ThingHandlerCallback callback, Device device, Set<Readout> channels, LinkManager linkManager) {
     this.client = client;
+    this.thing = thing;
     this.callback = callback;
     this.device = device;
     this.channels = channels;
-    this.linkedChannels = linkedChannels;
+    this.linkManager = linkManager;
   }
 
   private Map<BacNetObject, Set<Readout>> getReadouts() {
     Map<BacNetObject, Set<Readout>> readouts = new LinkedHashMap<>();
     for (Readout readout : channels) {
-      if (!linkedChannels.contains(readout.channel)) {
+      if (!linkManager.isLinked(readout.channel)) {
         continue;
       }
 
@@ -79,7 +82,7 @@ public class RefreshDeviceTask extends AbstractTask {
 
   @Override
   public void run() {
-    if (linkedChannels.isEmpty()) {
+    if (linkManager.hasLinkedChannels(thing)) {
       logger.trace("Ignore device {} readout, no linked channels found.", device);
       return;
     }

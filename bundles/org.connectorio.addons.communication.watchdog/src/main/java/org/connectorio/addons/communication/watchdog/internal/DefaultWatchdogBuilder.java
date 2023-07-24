@@ -25,6 +25,7 @@ import org.connectorio.addons.communication.watchdog.WatchdogBuilder;
 import org.connectorio.addons.communication.watchdog.WatchdogClock;
 import org.connectorio.addons.communication.watchdog.WatchdogCondition;
 import org.connectorio.addons.communication.watchdog.WatchdogListener;
+import org.connectorio.addons.link.LinkManager;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.binding.ThingHandlerCallback;
@@ -33,14 +34,16 @@ public class DefaultWatchdogBuilder implements WatchdogBuilder {
 
   private WatchdogClock clock;
   private DefaultWatchdogManager manager;
+  private final LinkManager linkManager;
   private final Thing thing;
   private final Map<ChannelUID, WatchdogCondition> conditions = new HashMap<>();
   private long delayMs;
   private int multiplier;
 
-  public DefaultWatchdogBuilder(WatchdogClock clock, DefaultWatchdogManager manager, Thing thing) {
+  public DefaultWatchdogBuilder(WatchdogClock clock, DefaultWatchdogManager manager, LinkManager linkManager, Thing thing) {
     this.clock = clock;
     this.manager = manager;
+    this.linkManager = linkManager;
     this.thing = thing;
   }
 
@@ -70,7 +73,7 @@ public class DefaultWatchdogBuilder implements WatchdogBuilder {
 
   @Override
   public Watchdog build(ThingHandlerCallback callback, WatchdogListener listener) {
-    DefaultWatchdog watchdog = new DefaultWatchdog(callback, conditions, manager::close);
+    DefaultWatchdog watchdog = new DefaultWatchdog(thing, callback, conditions, manager::close);
     manager.registerWatchdog(thing, watchdog, listener);
     return watchdog;
   }

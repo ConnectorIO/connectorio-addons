@@ -33,6 +33,9 @@ public interface WatchdogCondition {
 
   long getInterval();
 
+  /**
+   * Mark condition as touched, meaning it received an update.
+   */
   void mark();
 
   ChannelUID getChannel();

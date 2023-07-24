@@ -24,6 +24,7 @@ import org.connectorio.addons.communication.watchdog.Watchdog;
 import org.connectorio.addons.communication.watchdog.WatchdogBuilder;
 import org.connectorio.addons.communication.watchdog.WatchdogClock;
 import org.connectorio.addons.communication.watchdog.WatchdogListener;
+import org.connectorio.addons.link.LinkManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -43,6 +44,9 @@ class DefaultWatchdogManagerTest {
   WatchdogClock clock;
 
   @Mock
+  LinkManager linkManager;
+
+  @Mock
   private Thing thing;
   @Mock
   private ThingHandlerCallback callback;
@@ -52,10 +56,25 @@ class DefaultWatchdogManagerTest {
   long timestamp = 0;
 
   @Test
+  void verifyUnlinkedChannel() throws InterruptedException {
+    when(linkManager.isLinked(TEST_CHANNEL)).thenReturn(false);
+
+    DefaultWatchdogManager manager = new DefaultWatchdogManager(clock, linkManager);
+    WatchdogBuilder builder = manager.builder(thing);
+
+    Watchdog watchdog = builder.withChannel(TEST_CHANNEL, 10)
+      .build(callback, listener);
+
+    manager.check(watchdog, listener);
+    Mockito.verifyNoInteractions(listener);
+  }
+
+  @Test
   void verify() throws InterruptedException {
     when(clock.getTimestamp()).thenAnswer((invocation) -> timestamp);
+    when(linkManager.isLinked(TEST_CHANNEL)).thenReturn(true);
 
-    DefaultWatchdogManager manager = new DefaultWatchdogManager(clock);
+    DefaultWatchdogManager manager = new DefaultWatchdogManager(clock, linkManager);
     WatchdogBuilder builder = manager.builder(thing);
 
     Watchdog watchdog = builder.withChannel(TEST_CHANNEL, 10)

@@ -60,6 +60,7 @@
     <module>org.connectorio.addons.io.transport.serial.persistent</module>
     <module>org.connectorio.addons.io.transport.serial.purejavacomm</module>
     <module>org.connectorio.addons.io.transport.serial.shell</module>
+    <module>org.connectorio.addons.link</module>
     <module>org.connectorio.addons.managed.item</module>
     <module>org.connectorio.addons.managed.link</module>
     <module>org.connectorio.addons.managed.thing</module>

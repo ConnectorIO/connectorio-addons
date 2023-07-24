@@ -62,6 +62,7 @@ import org.connectorio.addons.communication.watchdog.Watchdog;
 import org.connectorio.addons.communication.watchdog.contrib.ThingStatusWatchdogListener;
 import org.connectorio.addons.communication.watchdog.WatchdogBuilder;
 import org.connectorio.addons.communication.watchdog.WatchdogManager;
+import org.connectorio.addons.link.LinkManager;
 import org.connectorio.addons.temporal.item.TemporalItemFactory;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.library.CoreItemFactory;
@@ -86,15 +87,13 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
-  private final Set<ChannelUID> linkedChannels = new CopyOnWriteArraySet<>();
-  private final ItemChannelLinkRegistry channelLinkRegistry;
+  private final LinkManager linkManager;
   private WatchdogManager watchdogManager;
 
   private Device device;
   private CompletableFuture<BacNetClient> clientFuture = new CompletableFuture<>();
   private Map<Long, ScheduledFuture<?>> pollers = new LinkedHashMap<>();
   private boolean discoverObjects;
-  private ScheduledFuture<?> linkSynchronizer;
   private Watchdog watchdog;
 
   /**
@@ -102,9 +101,9 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
    *
    * @param bridge the thing that should be handled, not null
    */
-  public BACnetDeviceHandler(Bridge bridge, ItemChannelLinkRegistry channelLinkRegistry, WatchdogManager watchdogManager) {
+  public BACnetDeviceHandler(Bridge bridge, LinkManager linkManager, WatchdogManager watchdogManager) {
     super(bridge);
-    this.channelLinkRegistry = channelLinkRegistry;
+    this.linkManager = linkManager;
     this.watchdogManager = watchdogManager;
   }
 
@@ -138,7 +137,7 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
   }
 
   protected void initializeChannels(BacNetClient client) {
-    //WatchdogBuilder watchdogBuilder = watchdogManager.builder(getThing());
+    WatchdogBuilder watchdogBuilder = watchdogManager.builder(getThing());
 
     DeviceConfig deviceConfig = getConfigAs(DeviceConfig.class);
     discoverObjects = deviceConfig.discoverObjects;
@@ -150,9 +149,9 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
     for (Channel channel : thing.getChannels()) {
       DeviceChannelConfig deviceChannelConfig = channel.getConfiguration().as(DeviceChannelConfig.class);
       Long refreshInterval = Optional.ofNullable(deviceChannelConfig.refreshInterval)
-          .filter(value -> value != 0)
-          .orElse(getRefreshInterval());
-      //watchdogBuilder.withChannel(channel.getUID(), refreshInterval);
+        .filter(value -> value != 0)
+        .orElse(getRefreshInterval());
+      watchdogBuilder.withChannel(channel.getUID(), refreshInterval);
       if (!pollingMap.containsKey(refreshInterval)) {
         pollingMap.put(refreshInterval, new LinkedHashSet<>());
       }
@@ -162,20 +161,9 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
       pollingMap.get(refreshInterval).add(readout);
     }
 
-    linkSynchronizer = scheduler.scheduleAtFixedRate(new Runnable() {
-      @Override
-      public void run() {
-        for (Channel channel : getThing().getChannels()) {
-          if (channelLinkRegistry.isLinked(channel.getUID())) {
-            linkedChannels.add(channel.getUID());
-          }
-        }
-      }
-    }, 0, 30, TimeUnit.SECONDS);
-
-    //this.watchdog = watchdogBuilder.build(getCallback(), new ThingStatusWatchdogListener(getThing(), getCallback()));
+    this.watchdog = watchdogBuilder.build(getCallback(), new ThingStatusWatchdogListener(getThing(), getCallback()));
     for (Entry<Long, Set<Readout>> entry : pollingMap.entrySet()) {
-      ScheduledFuture<?> poller = scheduler.scheduleAtFixedRate(new RefreshDeviceTask(() -> clientFuture, watchdog.getCallbackWrapper(), device, entry.getValue(), linkedChannels),
+      ScheduledFuture<?> poller = scheduler.scheduleAtFixedRate(new RefreshDeviceTask(() -> clientFuture, thing, watchdog.getCallbackWrapper(), device, entry.getValue(), linkManager),
           0, entry.getKey(), TimeUnit.MILLISECONDS);
       pollers.put(entry.getKey(), poller);
     }
@@ -187,10 +175,6 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
   public void dispose() {
     if (watchdog != null) {
       watchdog.close();
-    }
-
-    if (linkSynchronizer != null) {
-      linkSynchronizer.cancel(false);
     }
 
     if (pollers != null) {
@@ -412,18 +396,6 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
       }
       logger.debug("Command {} for property {} executed successfully", command, object);
     }
-  }
-
-  @Override
-  public void channelLinked(ChannelUID channelUID) {
-    linkedChannels.add(channelUID);
-    super.channelLinked(channelUID);
-  }
-
-  @Override
-  public void channelUnlinked(ChannelUID channelUID) {
-    linkedChannels.remove(channelUID);
-    super.channelUnlinked(channelUID);
   }
 
   @Override

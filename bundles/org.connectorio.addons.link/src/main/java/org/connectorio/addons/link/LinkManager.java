@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2023 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,28 +15,19 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.communication.watchdog;
+package org.connectorio.addons.link;
 
-import java.util.Map;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
-import org.openhab.core.thing.binding.ThingHandlerCallback;
 
-public interface Watchdog {
+public interface LinkManager {
 
-  //
-  boolean isTimedOut();
+  boolean isLinked(ChannelUID channelUID);
 
-  ThingHandlerCallback getCallbackWrapper();
+  boolean hasLinkedChannels(Thing thing);
 
-  long getTimeoutEventDelay();
+  void registerListener(Thing thing, LinkListener listener);
 
-  Map<WatchdogCondition, Long> getConditionIntervalMap();
-
-  void mark(ChannelUID channelUID);
-
-  void close();
-
-  Thing getThing();
+  void deregisterListener(Thing thing, LinkListener listener);
 
 }

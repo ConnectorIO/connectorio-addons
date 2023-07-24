@@ -37,8 +37,13 @@ import org.connectorio.addons.communication.watchdog.WatchdogEvent.WatchdogRecov
 import org.connectorio.addons.communication.watchdog.WatchdogEvent.WatchdogTimeoutEvent;
 import org.connectorio.addons.communication.watchdog.WatchdogListener;
 import org.connectorio.addons.communication.watchdog.WatchdogManager;
+import org.connectorio.addons.link.LinkListener;
+import org.connectorio.addons.link.LinkManager;
+import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,18 +63,21 @@ public class DefaultWatchdogManager implements WatchdogManager {
   private final Map<Watchdog, List<ScheduledFuture>> checks = new HashMap<>();
 
   private final WatchdogClock clock;
+  private final LinkManager linkManager;
 
-  public DefaultWatchdogManager() {
-    this(new DefaultWatchdogClock());
+  @Activate
+  public DefaultWatchdogManager(@Reference LinkManager linkManager) {
+    this(new DefaultWatchdogClock(), linkManager);
   }
 
-  public DefaultWatchdogManager(WatchdogClock clock) {
+  public DefaultWatchdogManager(WatchdogClock clock, LinkManager linkManager) {
     this.clock = clock;
+    this.linkManager = linkManager;
   }
 
   @Override
   public WatchdogBuilder builder(Thing thing) {
-    return new DefaultWatchdogBuilder(clock, this, thing);
+    return new DefaultWatchdogBuilder(clock, this, linkManager, thing);
   }
 
   public void destroy() {
@@ -101,9 +109,10 @@ public class DefaultWatchdogManager implements WatchdogManager {
   }
 
   void close(Watchdog watchdog) {
-    if (watchdogMap.containsKey(watchdog)) {
+    if (watchdogMap.containsKey(watchdog.getThing())) {
       closeWatchdog(watchdog);
-      watchdogMap.remove(watchdog);
+
+      Watchdog removed = watchdogMap.remove(watchdog.getThing());
     }
   }
 
@@ -120,22 +129,29 @@ public class DefaultWatchdogManager implements WatchdogManager {
 
   private void evaluateCondition(WatchdogCondition condition, WatchdogListener listener) {
     State pastState = condition.getState();
+    ChannelUID channel = condition.getChannel();
+
+    if (!linkManager.isLinked(channel)) {
+      logger.debug("Ignore condition {} with listener {} and past state {}, because it is not linked yet.", condition, listener, pastState);
+      return;
+    }
+
     State currentState = condition.evaluate();
     logger.debug("Evaluation of condition {} with listener {}. Past state {}, current state {}", condition, listener, pastState, currentState);
     if (currentState == State.INITIALIZED) {
       if (State.INITIALIZED != pastState) {
         logger.debug("Condition {} is in initialization state", condition);
-        listener.initialized(new WatchdogInitializedEvent(condition.getChannel()));
+        listener.initialized(new WatchdogInitializedEvent(channel));
       }
     } else if (currentState == State.OK) {
       if (pastState != State.OK) {
         logger.debug("Condition {} switched to OK state", condition);
-        listener.recovery(new WatchdogRecoveryEvent(condition.getChannel()));
+        listener.recovery(new WatchdogRecoveryEvent(channel));
       }
     } else if (currentState == State.FAILED) {
       if (pastState != State.FAILED) {
         logger.debug("Condition {} switched to FAILURE state", condition);
-        listener.timeout(new WatchdogTimeoutEvent(condition.getChannel()));
+        listener.timeout(new WatchdogTimeoutEvent(channel));
       }
     }
   }

@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import org.connectorio.addons.communication.watchdog.Watchdog;
 import org.connectorio.addons.communication.watchdog.WatchdogCondition;
 import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +33,15 @@ import org.slf4j.LoggerFactory;
 public class DefaultWatchdog implements Watchdog {
 
   private final Logger logger = LoggerFactory.getLogger(DefaultWatchdog.class);
+  private final Thing thing;
   private final ThingHandlerCallback callback;
   private final Map<WatchdogCondition, Long> conditionIntervalMap;
   private Map<ChannelUID, WatchdogCondition> conditions;
   private Consumer<Watchdog> closeHandler;
   //private final long delayMs;
 
-  public DefaultWatchdog(ThingHandlerCallback callback, Map<ChannelUID, WatchdogCondition> conditions, Consumer<Watchdog> closeHandler) {
+  public DefaultWatchdog(Thing thing, ThingHandlerCallback callback, Map<ChannelUID, WatchdogCondition> conditions, Consumer<Watchdog> closeHandler) {
+    this.thing = thing;
     this.callback = callback;
     this.conditionIntervalMap = conditions.entrySet().stream().collect(Collectors.toMap(
       Entry::getValue,
@@ -85,6 +88,11 @@ public class DefaultWatchdog implements Watchdog {
   @Override
   public void close() {
     closeHandler.accept(this);
+  }
+
+  @Override
+  public Thing getThing() {
+    return thing;
   }
 
 }
