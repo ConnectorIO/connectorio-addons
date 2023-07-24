@@ -26,8 +26,8 @@ import java.util.function.Consumer;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest;
 import org.apache.plc4x.java.api.value.PlcValue;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenDataType;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenService;
 import org.apache.plc4x.java.spi.values.PlcStruct;
 import org.connectorio.addons.binding.canopen.api.CoConnection;
 import org.connectorio.addons.binding.canopen.api.CoNode;
@@ -63,7 +63,7 @@ public class DefaultConnection implements CoConnection {
 
   public CompletableFuture<CoSubscription> subscribe(int nodeId, CANOpenService service, Consumer<byte[]> consumer) {
     PlcSubscriptionRequest request = connection.subscriptionRequestBuilder()
-      .addEventField("subscribe", service.name() + ":" + nodeId + ":" + CANOpenDataType.RECORD).build();
+      .addEventTagAddress("subscribe", service.name() + ":" + nodeId + ":" + CANOpenDataType.RECORD).build();
 
     return request.execute().thenApply(sub -> {
       if (!subscriptions.containsKey(nodeId)) {
@@ -79,7 +79,7 @@ public class DefaultConnection implements CoConnection {
   @Override
   public CompletableFuture<CoSubscription> heartbeat(int nodeId, Consumer<PlcStruct> consumer) {
     PlcSubscriptionRequest request = connection.subscriptionRequestBuilder()
-      .addEventField("subscribe", CANOpenService.HEARTBEAT + ":" + nodeId).build();
+      .addEventTagAddress("subscribe", CANOpenService.HEARTBEAT + ":" + nodeId).build();
 
     return request.execute().thenApply(sub -> {
       if (!subscriptions.containsKey(nodeId)) {
@@ -94,7 +94,7 @@ public class DefaultConnection implements CoConnection {
 
   @Override
   public void send(int nodeId, CANOpenService service, PlcValue value) {
-    connection.writeRequestBuilder().addItem("pdo", service.name() + ":" + nodeId + ":" + CANOpenDataType.RECORD, value)
+    connection.writeRequestBuilder().addTagAddress("pdo", service.name() + ":" + nodeId + ":" + CANOpenDataType.RECORD, value)
       .build().execute().whenComplete(new PdoWriteCallback(nodeId, service, value));
   }
 

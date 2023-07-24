@@ -29,7 +29,7 @@ public class SocketCANConfiguration extends CoNodeConfig {
 
   public int retryCount = 3;
 
-  public double throttleReading;
-  public double throttleWriting;
+  public long throttleReading;
+  public long throttleWriting;
 
 }

@@ -55,7 +55,7 @@ public class ReadTask implements Runnable {
       .as(CommonChannelConfiguration.class);
 
     this.request = connection.readRequestBuilder()
-      .addItem(getUID(), channelConfig.field)
+      .addTagAddress(getUID(), channelConfig.field)
       .build();
   }
 

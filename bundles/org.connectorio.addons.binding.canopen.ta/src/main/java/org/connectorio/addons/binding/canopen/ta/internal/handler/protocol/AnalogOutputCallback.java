@@ -18,8 +18,10 @@
 package org.connectorio.addons.binding.canopen.ta.internal.handler.protocol;
 
 import org.apache.plc4x.java.api.messages.PlcSubscriptionEvent;
+import org.apache.plc4x.java.spi.generation.ByteOrder;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
+import org.apache.plc4x.java.spi.generation.ReadBufferByteBased;
 import org.connectorio.addons.binding.canopen.ta.internal.handler.ValueListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,16 +39,16 @@ public class AnalogOutputCallback extends AbstractCallback {
 
   @Override
   public void accept(PlcSubscriptionEvent event) {
-    byte[] bytes = getBytes(event, event.getFieldNames().iterator().next());
+    byte[] bytes = getBytes(event, event.getTagNames().iterator().next());
 
-    ReadBuffer buffer = new ReadBuffer(bytes, true);
     try {
+      ReadBuffer buffer = new ReadBufferByteBased(bytes, ByteOrder.LITTLE_ENDIAN);
       for (int index = 1; index < 5; index++) {
         // we could use here getBytes or just delegate reading to unit
         listener.analog(offset + index, buffer);
       }
-    }catch (ParseException e) {
-      e.printStackTrace();
+    } catch (ParseException e) {
+      logger.error("Failed to parse event data", e);
     }
   }
 

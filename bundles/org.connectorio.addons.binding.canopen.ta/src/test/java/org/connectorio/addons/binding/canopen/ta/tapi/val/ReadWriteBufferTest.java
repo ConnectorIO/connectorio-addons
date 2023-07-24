@@ -19,8 +19,11 @@ package org.connectorio.addons.binding.canopen.ta.tapi.val;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.apache.plc4x.java.spi.generation.ByteOrder;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
+import org.apache.plc4x.java.spi.generation.ReadBufferByteBased;
 import org.apache.plc4x.java.spi.generation.WriteBuffer;
+import org.apache.plc4x.java.spi.generation.WriteBufferByteBased;
 import org.connectorio.addons.binding.canopen.ta.internal.config.AnalogUnit;
 import org.junit.jupiter.api.Test;
 
@@ -31,13 +34,13 @@ public class ReadWriteBufferTest {
     //new Argument(0x46ea, 3, 23.4),
     RASValue value = new RASValue((short) 0x46ea, AnalogUnit.TEMPERATURE_REGULATOR);
 
-    WriteBuffer writeBuffer = new WriteBuffer(8, true);
+    WriteBufferByteBased writeBuffer = new WriteBufferByteBased(8, ByteOrder.LITTLE_ENDIAN);
     for (int index = 0; index < 4; index++) {
       writeBuffer.writeShort(16, value.encode());
     }
 
-    byte[] data = writeBuffer.getData();
-    ReadBuffer readBuffer = new ReadBuffer(data, true);
+    byte[] data = writeBuffer.getBytes();
+    ReadBuffer readBuffer = new ReadBufferByteBased(data, ByteOrder.LITTLE_ENDIAN);
     for (int index = 0; index < 4; index++) {
       RASValue read = new RASValue(readBuffer.readShort(16), AnalogUnit.TEMPERATURE_REGULATOR);
       assertThat(read).isEqualTo(value);
@@ -48,7 +51,7 @@ public class ReadWriteBufferTest {
   void testReadCelsius33() throws Exception {
     byte[] data = {74, 1};
     AnalogValue value = new ShortAnalogValue((short) 330, AnalogUnit.CELSIUS);
-    ReadBuffer readBuffer = new ReadBuffer(data, true);
+    ReadBuffer readBuffer = new ReadBufferByteBased(data, ByteOrder.LITTLE_ENDIAN);
     short raw = readBuffer.readShort(16);
     AnalogValue read = new ShortAnalogValue(raw, AnalogUnit.CELSIUS);
     assertThat(read).isEqualTo(value);
@@ -58,7 +61,7 @@ public class ReadWriteBufferTest {
   void testReadCelsius100() throws Exception {
     byte[] data = {-24, 3};
     AnalogValue value = new ShortAnalogValue((short) 1000, AnalogUnit.CELSIUS);
-    ReadBuffer readBuffer = new ReadBuffer(data, true);
+    ReadBuffer readBuffer = new ReadBufferByteBased(data, ByteOrder.LITTLE_ENDIAN);
     short raw = readBuffer.readShort(16);
     AnalogValue read = new ShortAnalogValue(raw, AnalogUnit.CELSIUS);
     assertThat(read).isEqualTo(value);

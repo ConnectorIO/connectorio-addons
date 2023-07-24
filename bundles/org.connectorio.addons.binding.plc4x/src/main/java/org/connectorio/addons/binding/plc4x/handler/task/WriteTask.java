@@ -46,7 +46,7 @@ public class WriteTask implements Runnable {
       .as(CommonChannelConfiguration.class);
 
     this.request = connection.writeRequestBuilder()
-      .addItem(getUID(), channelConfig.field, fromOpenhab(value))
+      .addTagAddress(getUID(), channelConfig.field, fromOpenhab(value))
       .build();
   }
 
@@ -73,7 +73,7 @@ public class WriteTask implements Runnable {
     PlcResponseCode object = response.getResponseCode(getUID());
     switch (object) {
       case OK:
-        logger.debug("Value {} set to {}", channelConfig.field, response.getField(getUID()));
+        logger.debug("Value {} set to {}", channelConfig.field, response.getTag(getUID()));
         break;
       case NOT_FOUND:
         logger.warn("Block {} no found", channelConfig.field);

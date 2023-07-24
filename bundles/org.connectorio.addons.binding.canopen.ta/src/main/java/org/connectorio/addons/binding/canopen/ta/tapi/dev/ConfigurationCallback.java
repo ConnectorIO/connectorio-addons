@@ -18,7 +18,6 @@
 package org.connectorio.addons.binding.canopen.ta.tapi.dev;
 
 import org.apache.plc4x.java.canopen.readwrite.IndexAddress;
-import org.apache.plc4x.java.canopen.readwrite.io.IndexAddressIO;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
 
@@ -42,10 +41,10 @@ class ConfigurationCallback extends AbstractCallback {
     }
     logger.info("Received configuration of device {} outputs. Payload {}", device, buffer);
 
-    IndexAddress address = IndexAddressIO.staticParse(buffer);
+    IndexAddress address = IndexAddress.staticParse(buffer);
     final int subIndex = address.getSubindex();
     short rawValue = buffer.readShort(16);
-    buffer.readByte(8); // constant 0x41
+    buffer.readUnsignedByte(8); // constant 0x41
     int unit = buffer.readUnsignedShort(8);
 
     if (logger.isDebugEnabled()) {

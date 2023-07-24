@@ -19,7 +19,7 @@ package org.connectorio.addons.binding.canopen.api;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenService;
 
 public interface CoNode extends CoSdoAware, CoNodeAware {
 

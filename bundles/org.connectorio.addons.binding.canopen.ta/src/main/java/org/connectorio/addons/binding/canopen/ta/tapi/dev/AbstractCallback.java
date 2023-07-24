@@ -19,8 +19,10 @@ package org.connectorio.addons.binding.canopen.ta.tapi.dev;
 
 import java.util.function.Consumer;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.plc4x.java.spi.generation.ByteOrder;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
+import org.apache.plc4x.java.spi.generation.ReadBufferByteBased;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +42,7 @@ abstract class AbstractCallback implements Consumer<byte[]> {
   @Override
   public void accept(byte[] bytes) {
     try {
-      accept(new ReadBuffer(bytes, littleEndian) {
+      accept(new ReadBufferByteBased(bytes, littleEndian ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN) {
         @Override
         public String toString() {
           return "ReadBuffer [" + Hex.encodeHexString(bytes) + ", pos=" + getPos() + "]";

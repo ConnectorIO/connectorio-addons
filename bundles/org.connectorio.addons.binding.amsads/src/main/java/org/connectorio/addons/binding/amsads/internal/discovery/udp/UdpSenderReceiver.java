@@ -32,13 +32,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscovery;
-import org.apache.plc4x.java.ads.discovery.readwrite.DiscoveryResponse;
-import org.apache.plc4x.java.ads.discovery.readwrite.RouteResponse;
-import org.apache.plc4x.java.ads.discovery.readwrite.io.AdsDiscoveryIO;
-import org.apache.plc4x.java.ads.discovery.readwrite.types.RouteStatus;
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscoveryBlockHostName;
+import org.apache.plc4x.java.ads.discovery.readwrite.AmsString;
+import org.apache.plc4x.java.ads.discovery.readwrite.Operation;
+import org.apache.plc4x.java.spi.generation.ByteOrder;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
+import org.apache.plc4x.java.spi.generation.ReadBufferByteBased;
+import org.apache.plc4x.java.spi.generation.SerializationException;
 import org.apache.plc4x.java.spi.generation.WriteBuffer;
+import org.apache.plc4x.java.spi.generation.WriteBufferByteBased;
 import org.connectorio.addons.binding.amsads.internal.AmsConverter;
 import org.connectorio.addons.binding.amsads.internal.discovery.AmsAdsDiscoveryDriver;
 import org.connectorio.addons.binding.amsads.internal.discovery.AmsAdsDiscoveryListener;
@@ -147,15 +150,15 @@ public class UdpSenderReceiver implements DiscoverySender, DiscoveryReceiver, Ro
           Envelope send = queue.poll(500, TimeUnit.MILLISECONDS);
           if (send != null) {
             final AdsDiscovery structure = send.structure;
-            final WriteBuffer buffer = new WriteBuffer(structure.getLengthInBytes(), false);
-            AdsDiscoveryIO.staticSerialize(buffer, structure);
-            byte[] frame = buffer.getData();
+            final WriteBufferByteBased buffer = new WriteBufferByteBased(structure.getLengthInBytes(), ByteOrder.LITTLE_ENDIAN);
+            structure.serialize(buffer);
+            byte[] frame = buffer.getBytes();
             DatagramPacket packet = new DatagramPacket(frame, frame.length, InetAddress.getByName(send.host), AMSADS_UDP_PORT);
 
             socket.send(packet);
           }
           Thread.sleep(1000);
-        } catch (ParseException | IOException | InterruptedException e) {
+        } catch (SerializationException | IOException | InterruptedException e) {
           logger.info("Could not send packet", e);
         }
       }
@@ -200,7 +203,7 @@ public class UdpSenderReceiver implements DiscoverySender, DiscoveryReceiver, Ro
       }
 
       try {
-        final AdsDiscovery discovery = AdsDiscoveryIO.staticParse(new ReadBuffer(data, false));
+        final AdsDiscovery discovery = AdsDiscovery.staticParse(new ReadBufferByteBased(data, ByteOrder.LITTLE_ENDIAN));
         logger.debug("Received valid discovery frame from {}. Content: {}", sender, HexUtils.bytesToHex(data));
         return Optional.of(discovery);
       } catch (ParseException e) {
@@ -231,14 +234,23 @@ public class UdpSenderReceiver implements DiscoverySender, DiscoveryReceiver, Ro
         Envelope reply = queue.poll();
 
         if (reply != null) {
-          if (reply.structure instanceof DiscoveryResponse) {
-            DiscoveryResponse identification = (DiscoveryResponse) reply.structure;
-            discoveryListeners.forEach(listener -> listener.deviceDiscovered(
-              reply.host, new String(identification.getName().getText(), StandardCharsets.UTF_8), AmsConverter.parseDiscoveryAms(identification.getAmsNetId())
-            ));
-          } else if (reply.structure instanceof RouteResponse) {
-            RouteResponse route = (RouteResponse) reply.structure;
-            routeListeners.forEach(listener -> listener.add(reply.host, AmsConverter.parseDiscoveryAms(route.getAmsNetId()), route.getStatus() == RouteStatus.SUCCESS));
+          if (reply.structure instanceof AdsDiscovery) {
+            AdsDiscovery identification = (AdsDiscovery) reply.structure;
+            if (identification.getOperation() == Operation.DISCOVERY_RESPONSE) {
+              String hostname = identification.getBlocks().stream().filter(block -> block instanceof AdsDiscoveryBlockHostName)
+                .map(AdsDiscoveryBlockHostName.class::cast)
+                .map(AdsDiscoveryBlockHostName::getHostName)
+                .map(AmsString::getText)
+                .findFirst().orElse("<unknown>");
+              discoveryListeners.forEach(listener -> listener.deviceDiscovered(
+                reply.host, hostname, AmsConverter.parseDiscoveryAms(identification.getAmsNetId())
+              ));
+            }
+            if (identification.getOperation() == Operation.ADD_OR_UPDATE_ROUTE_RESPONSE) {
+              // success = route.getStatus() == RouteStatus.SUCCESS);
+              boolean success = !identification.getBlocks().isEmpty();
+              routeListeners.forEach(listener -> listener.add(reply.host, identification.getAmsNetId().toString(), success));
+            }
           } else {
             logger.warn("Unknown response from {}, packet {}", reply.host, reply.structure);
           }

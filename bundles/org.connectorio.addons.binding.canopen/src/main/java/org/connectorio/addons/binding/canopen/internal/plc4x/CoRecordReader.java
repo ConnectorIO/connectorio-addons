@@ -20,7 +20,7 @@ package org.connectorio.addons.binding.canopen.internal.plc4x;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import org.apache.plc4x.java.api.messages.PlcFieldResponse;
+import org.apache.plc4x.java.api.messages.PlcTagResponse;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionEvent;
 import org.apache.plc4x.java.api.types.PlcResponseCode;

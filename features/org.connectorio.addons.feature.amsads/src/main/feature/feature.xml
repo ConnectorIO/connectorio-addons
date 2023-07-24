@@ -27,7 +27,7 @@
 
   <feature name="co7io-binding-amsads" description="AMS/ADS Binding" version="${project.version}">
     <feature>openhab-runtime-base</feature>
-    <feature>plc4x-ads-driver</feature>
+    <feature>plc4j-ads-driver</feature>
     <feature>co7io-binding-plc4x</feature>
     <feature>co7io-network</feature>
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.binding.amsads/${project.version}</bundle>

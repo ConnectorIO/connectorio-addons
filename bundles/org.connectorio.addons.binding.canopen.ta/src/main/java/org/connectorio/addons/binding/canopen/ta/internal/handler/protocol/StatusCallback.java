@@ -20,7 +20,9 @@ package org.connectorio.addons.binding.canopen.ta.internal.handler.protocol;
 import java.util.function.Consumer;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionEvent;
+import org.apache.plc4x.java.spi.generation.ByteOrder;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
+import org.apache.plc4x.java.spi.generation.ReadBufferByteBased;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +44,7 @@ public class StatusCallback extends AbstractCallback {
     try {
       byte[] answer = getBytes(event, "status");
 
-      ReadBuffer buffer = new ReadBuffer(answer, true);        // 0
+      ReadBuffer buffer = new ReadBufferByteBased(answer, ByteOrder.LITTLE_ENDIAN);        // 0
       int mpdoId = 0x80 | buffer.readUnsignedInt(8);
       int index = buffer.readUnsignedInt(16);                     // 1+2
       int subIndex = buffer.readUnsignedInt(8);                   // 3

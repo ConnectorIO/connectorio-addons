@@ -17,7 +17,7 @@
  */
 package org.connectorio.addons.binding.canopen.config;
 
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenService;
 import org.connectorio.addons.binding.config.PollingConfiguration;
 
 public class CoPdoConfig extends PollingConfiguration {

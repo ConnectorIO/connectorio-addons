@@ -20,7 +20,7 @@ package org.connectorio.addons.binding.canopen.internal.plc4x;
 import java.util.function.BiConsumer;
 import org.apache.plc4x.java.api.messages.PlcWriteResponse;
 import org.apache.plc4x.java.api.value.PlcValue;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -18,8 +18,10 @@
 package org.connectorio.addons.binding.canopen.ta.tapi.io;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.plc4x.java.spi.generation.ByteOrder;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
+import org.apache.plc4x.java.spi.generation.ReadBufferByteBased;
 import org.connectorio.addons.binding.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.canopen.ta.tapi.dev.TADevice;
 import org.connectorio.addons.binding.canopen.ta.tapi.val.BaseAnalogValue;
@@ -72,9 +74,9 @@ public class TAAnalogOutput extends TACanOutputObject<Value<?>> {
   void update(byte[] data) {
     try {
       logger.trace("Encoded value for CAN Output {} is {}", this, Hex.encodeHexString(data));
-      ReadBuffer buffer = new ReadBuffer(data, true);
-      this.type = buffer.readByte(8); // type
-      this.unit = buffer.readByte(8); // unit
+      ReadBuffer buffer = new ReadBufferByteBased(data, ByteOrder.LITTLE_ENDIAN);
+      this.type = buffer.readUnsignedByte(8); // type
+      this.unit = buffer.readUnsignedByte(8); // unit
       int numericValue = parseNumber(buffer, data.length);
 
       if (numericValue > Short.MIN_VALUE && numericValue < Short.MAX_VALUE) {

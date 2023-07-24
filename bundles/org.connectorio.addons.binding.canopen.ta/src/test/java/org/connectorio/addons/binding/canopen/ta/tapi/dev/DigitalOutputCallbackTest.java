@@ -23,7 +23,9 @@ import static org.mockito.Mockito.when;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.plc4x.java.spi.generation.ParseException;
+import org.apache.plc4x.java.spi.generation.SerializationException;
 import org.apache.plc4x.java.spi.generation.WriteBuffer;
+import org.apache.plc4x.java.spi.generation.WriteBufferByteBased;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -99,14 +101,14 @@ class DigitalOutputCallbackTest extends AbstractCallbackTest {
   }
 
   @Test
-  void testWriteAndTrigger() throws ParseException {
-    WriteBuffer buffer = new WriteBuffer(8);
+  void testWriteAndTrigger() throws SerializationException {
+    WriteBufferByteBased buffer = new WriteBufferByteBased(8);
     buffer.writeBit(true);
-    for (int index = 2; index < 32; index++) {
+    for (int index = 1; index < 32; index++) {
       buffer.writeBit(false);
     }
 
-    trigger(callback, buffer.getData());
+    trigger(callback, buffer.getBytes());
 
     verify(device).updateDigital(1, true);
     for (int index = 2; index < 33; index++) {

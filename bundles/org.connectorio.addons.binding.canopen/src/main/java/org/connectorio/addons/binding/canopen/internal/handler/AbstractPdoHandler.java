@@ -18,7 +18,7 @@
 package org.connectorio.addons.binding.canopen.internal.handler;
 
 import java.util.Optional;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenDataType;
 import org.connectorio.addons.binding.canopen.api.CoNode;
 import org.connectorio.addons.binding.canopen.config.CoPdoConfig;
 import org.connectorio.addons.binding.canopen.internal.provider.CoPdoChannelTypeProvider;

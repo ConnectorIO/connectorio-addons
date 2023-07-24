@@ -18,8 +18,8 @@
 package org.connectorio.addons.binding.canopen.internal.plc4x;
 
 import java.util.concurrent.CompletableFuture;
-import org.apache.plc4x.java.canopen.field.CANOpenSDOField;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenDataType;
+import org.apache.plc4x.java.canopen.tag.CANOpenSDOTag;
 import org.connectorio.addons.binding.canopen.api.CoSdoAware;
 
 public class DefaultSdoAware extends DefaultNodeAware implements CoSdoAware {
@@ -30,15 +30,15 @@ public class DefaultSdoAware extends DefaultNodeAware implements CoSdoAware {
 
   @Override
   public CompletableFuture<byte[]> read(short index, short subindex) {
-    CANOpenSDOField fieldQuery = new CANOpenSDOField(nodeId, index, subindex, CANOpenDataType.RECORD);
-    return connection.connection.readRequestBuilder().addItem("record-data", fieldQuery).build()
+    CANOpenSDOTag fieldQuery = new CANOpenSDOTag(nodeId, index, subindex, CANOpenDataType.RECORD);
+    return connection.connection.readRequestBuilder().addTag("record-data", fieldQuery).build()
       .execute().thenApply(new CoRecordReader("record-data"));
   }
 
   @Override
   public <T> CompletableFuture<T> read(short index, short subIndex, CANOpenDataType type) {
-    CANOpenSDOField fieldQuery = new CANOpenSDOField(nodeId, index, subIndex, type);
-    return connection.connection.readRequestBuilder().addItem("typed-data", fieldQuery).build()
+    CANOpenSDOTag fieldQuery = new CANOpenSDOTag(nodeId, index, subIndex, type);
+    return connection.connection.readRequestBuilder().addTag("typed-data", fieldQuery).build()
       .execute().thenApply(new CoTypeReader<>("typed-data", type));
   }
 

@@ -17,7 +17,7 @@
  */
 package org.connectorio.addons.binding.canopen.config;
 
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenDataType;
 import org.connectorio.addons.binding.config.PollingConfiguration;
 
 public class CoSdoConfig extends PollingConfiguration {

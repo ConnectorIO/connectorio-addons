@@ -19,7 +19,7 @@ package org.connectorio.addons.binding.canopen.internal.provider;
 
 import java.util.Arrays;
 import java.util.List;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenService;
 import org.openhab.core.thing.ThingTypeUID;
 
 public class ThingTypeDef {

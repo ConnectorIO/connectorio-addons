@@ -25,9 +25,13 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenDataType;
+import org.apache.plc4x.java.spi.codegen.WithOption;
+import org.apache.plc4x.java.spi.generation.ByteOrder;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
+import org.apache.plc4x.java.spi.generation.ReadBufferByteBased;
+import org.apache.plc4x.java.spi.generation.WithReaderArgs;
 import org.connectorio.addons.binding.canopen.api.CoNode;
 import org.connectorio.addons.binding.canopen.api.CoSubscription;
 import org.connectorio.addons.binding.canopen.config.ReceivePdoConfig;
@@ -124,7 +128,7 @@ public class CoPdoReceiveHandler extends AbstractPdoHandler<ReceivePdoConfig> im
   public void accept(byte[] bytes) {
     updated.set(System.currentTimeMillis());
 
-    ReadBuffer buffer = new ReadBuffer(bytes, true);
+    ReadBuffer buffer = new ReadBufferByteBased(bytes, ByteOrder.LITTLE_ENDIAN);
     int offset = 0;
     for (Entry<CANOpenDataType, Channel> entry : template) {
       try {
@@ -168,7 +172,7 @@ public class CoPdoReceiveHandler extends AbstractPdoHandler<ReceivePdoConfig> im
       case OCTET_STRING:
       case VISIBLE_STRING:
       case UNICODE_STRING:
-        return new StringType(buffer.readString(type.getNumBits(), "UTF-8"));
+        return new StringType(buffer.readString(type.getNumBits(), WithOption.WithEncoding("UTF-8")));
     }
 
     throw new IllegalArgumentException("Unsupported record type " + type);

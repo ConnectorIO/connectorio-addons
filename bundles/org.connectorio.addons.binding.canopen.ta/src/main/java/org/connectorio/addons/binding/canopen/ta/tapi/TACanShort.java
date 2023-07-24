@@ -19,7 +19,7 @@ package org.connectorio.addons.binding.canopen.ta.tapi;
 
 import java.util.concurrent.CompletableFuture;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenDataType;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
 import org.connectorio.addons.binding.canopen.api.CoNode;

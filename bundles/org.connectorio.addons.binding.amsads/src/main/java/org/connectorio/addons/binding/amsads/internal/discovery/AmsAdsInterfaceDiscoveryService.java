@@ -17,7 +17,11 @@
  */
 package org.connectorio.addons.binding.amsads.internal.discovery;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import org.connectorio.addons.binding.amsads.AmsAdsBindingConstants;
 import org.connectorio.addons.network.Network;
 import org.connectorio.addons.network.iface.NetworkInterface;

@@ -60,7 +60,7 @@ public class AmsAdsSerialBridgeHandler extends AbstractAmsAdsBridgeHandler<PlcCo
           SerialConfiguration config = getBridgeConfig().get();
           String target = "targetAmsNetId=" + config.targetAmsId + "&targetAmsPort=" + config.targetAmsPort;
           String source = "&sourceAmsNetId=" + amsAds.sourceAmsId + "&sourceAmsPort=" + amsAds.sourceAmsPort;
-          PlcConnection connection = driverManager.getConnection("ads:serial://" + config.port + "/" + target + source);
+          PlcConnection connection = driverManager.getConnectionManager().getConnection("ads:serial://" + config.port + "/" + target + source);
 
           if (!connection.isConnected()) {
             connection.connect();

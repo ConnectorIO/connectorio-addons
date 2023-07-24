@@ -19,9 +19,12 @@ package org.connectorio.addons.binding.canopen.ta.tapi.dev.publisher;
 
 import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenService;
+import org.apache.plc4x.java.spi.generation.ByteOrder;
 import org.apache.plc4x.java.spi.generation.ParseException;
+import org.apache.plc4x.java.spi.generation.SerializationException;
 import org.apache.plc4x.java.spi.generation.WriteBuffer;
+import org.apache.plc4x.java.spi.generation.WriteBufferByteBased;
 import org.connectorio.addons.binding.canopen.api.CoNode;
 import org.connectorio.addons.binding.canopen.ta.tapi.io.AnalogGroup;
 import org.connectorio.addons.binding.canopen.ta.tapi.io.TAAnalogInput;
@@ -47,7 +50,7 @@ public class DigitalInputRunnable extends PublishingRunnable {
     int writeIndex = 0;
     try {
       logger.trace("Sending update of {} digital inputs.", digitalInput.size());
-      WriteBuffer buffer = new WriteBuffer(8, true);
+      WriteBufferByteBased buffer = new WriteBufferByteBased(8, ByteOrder.LITTLE_ENDIAN);
       int sum = 0;
       for (Entry<Integer, TADigitalInput> entry : digitalInput.entrySet()) {
         int index = entry.getKey();
@@ -61,7 +64,7 @@ public class DigitalInputRunnable extends PublishingRunnable {
       buffer.writeInt(32, 0);
 
       send(clientId, CANOpenService.TRANSMIT_PDO_1, buffer);
-    } catch (ParseException e) {
+    } catch (SerializationException e) {
       logger.error("Failed to update digital inputs, failure at index {}", writeIndex, e);
     } catch (Exception e) {
       logger.error("An unexpected error while update of digital outputs, failure at index {}", writeIndex, e);

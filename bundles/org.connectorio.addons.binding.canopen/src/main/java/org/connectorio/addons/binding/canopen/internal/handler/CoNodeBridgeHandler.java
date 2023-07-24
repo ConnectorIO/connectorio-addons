@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.value.PlcValue;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenDataType;
 import org.apache.plc4x.java.spi.values.PlcStruct;
 import org.connectorio.addons.binding.canopen.CANopenBindingConstants;
 import org.connectorio.addons.binding.canopen.api.CoConnection;

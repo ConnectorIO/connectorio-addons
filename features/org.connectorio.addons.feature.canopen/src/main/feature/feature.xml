@@ -26,7 +26,7 @@
 
   <feature name="dbus" description="DBus transport" version="${project.version}">
     <feature prerequisite="true">wrap</feature>
-    <bundle dependency="true">mvn:org.ow2.asm/asm/(7.1,]</bundle>
+    <bundle>mvn:org.ow2.asm/asm/7.3.1</bundle>
 
     <bundle>mvn:com.github.jnr/jnr-unixsocket/0.33</bundle>
     <bundle>mvn:com.github.jnr/jnr-constants/0.9.15</bundle>
@@ -54,12 +54,12 @@
 
   <feature name="co7io-binding-canopen" description="CANopen Binding" version="${project.version}">
     <feature>openhab-runtime-base</feature>
-    <feature>plc4x-canopen-driver</feature>
+    <feature>plc4j-canopen-driver</feature>
     <feature>co7io-binding-plc4x</feature>
     <feature>co7io-binding-can</feature>
-    <feature>co7io-plc4x-decorator-phase</feature>
-    <feature>co7io-plc4x-decorator-retry</feature>
-    <feature>co7io-plc4x-decorator-throttle</feature>
+    <feature>co7io-plc4j-decorator-phase</feature>
+    <feature>co7io-plc4j-decorator-retry</feature>
+    <feature>co7io-plc4j-decorator-throttle</feature>
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.binding.canopen/${project.version}</bundle>
   </feature>
 

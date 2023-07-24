@@ -48,15 +48,7 @@ class S7NetworkBridgeHandlerTest {
     CompletableFuture<PlcConnection> initializer = handler.getPlcConnection();
     AbstractThrowableAssert<?, ? extends Throwable> thrownBy = assertThatThrownBy(initializer::join);
     thrownBy.isInstanceOf(CompletionException.class)
-      .hasMessageContaining("Error creating channel.");
-
-    thrownBy = thrownBy.getCause();
-    thrownBy.isInstanceOf(PlcConnectionException.class)
-      .hasMessageContaining("Error creating channel.");
-
-    thrownBy = thrownBy.getCause();
-    thrownBy.isInstanceOf(UnknownHostException.class)
-      .hasMessageContaining("null");
+      .hasMessageContaining("Connection is not possible.");
   }
 
   @Test
@@ -82,14 +74,10 @@ class S7NetworkBridgeHandlerTest {
 
     AbstractThrowableAssert<?, ? extends Throwable> thrownBy = assertThatThrownBy(initializer::join);
     thrownBy.isInstanceOf(CompletionException.class)
-      .hasMessageContaining("Error creating channel.");
+      .hasMessageContaining("Connection is not possible.");
 
-    thrownBy = thrownBy.getCause();
+    thrownBy = thrownBy.cause();
     thrownBy.isInstanceOf(PlcConnectionException.class);
-
-    thrownBy = thrownBy.getCause();
-    thrownBy.isNotExactlyInstanceOf(ConnectException.class)
-      .hasMessageContaining("Connection refused: /%s:%d", cfg.host, S7Driver.ISO_ON_TCP_PORT);
   }
 
 }

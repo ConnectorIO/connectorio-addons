@@ -19,7 +19,7 @@ package org.connectorio.addons.binding.canopen.ta.tapi;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenDataType;
 import org.connectorio.addons.binding.canopen.api.CoNode;
 
 public abstract class TACanValue<T> {

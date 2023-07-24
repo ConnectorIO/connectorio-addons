@@ -17,10 +17,10 @@
  */
 package org.connectorio.addons.binding.canopen.ta.tapi.io;
 
-import static org.apache.plc4x.java.canopen.readwrite.types.CANOpenService.*;
+import static org.apache.plc4x.java.canopen.readwrite.CANOpenService.*;
 
 import java.util.Objects;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenService;
 
 /**
  * Analog inputs and outputs are packed up in several groups. Each having exactly 4 members.

@@ -20,12 +20,16 @@ package org.connectorio.addons.binding.amsads.internal.discovery;
 import static org.connectorio.addons.binding.amsads.internal.AmsConverter.createDiscoveryAms;
 import static org.connectorio.addons.binding.amsads.AmsAdsBindingConstants.THING_TYPE_NETWORK;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-import org.apache.plc4x.java.ads.discovery.readwrite.DiscoveryRequest;
-import org.apache.plc4x.java.ads.discovery.readwrite.types.Direction;
-import org.apache.plc4x.java.ads.discovery.readwrite.types.Operation;
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscovery;
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscoveryBlockAmsNetId;
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsPortNumbers;
+import org.apache.plc4x.java.ads.discovery.readwrite.AmsNetId;
+import org.apache.plc4x.java.ads.discovery.readwrite.Operation;
+import org.connectorio.addons.binding.amsads.internal.AmsConverter;
 import org.connectorio.addons.binding.amsads.internal.config.AmsAdsConfiguration;
 import org.connectorio.addons.binding.amsads.internal.handler.AmsAdsBridgeHandler;
 import org.connectorio.addons.binding.amsads.AmsAdsBindingConstants;
@@ -53,9 +57,12 @@ public class AmsAdsDeviceDiscoveryService extends AbstractDiscoveryService imple
       .ifPresent(discoveryDriver -> {
         AmsAdsConfiguration cfg = getConfig().get();
 
+        AmsNetId discoveryAms = createDiscoveryAms(cfg.sourceAmsId);
         discoveryDriver.send(new Envelope(
           cfg.broadcastAddress,
-          new DiscoveryRequest(Operation.DISCOVERY, Direction.REQUEST, createDiscoveryAms(cfg.sourceAmsId))
+          new AdsDiscovery(0, Operation.DISCOVERY_REQUEST, discoveryAms, AdsPortNumbers.SYSTEM_SERVICE, Arrays.asList(
+            new AdsDiscoveryBlockAmsNetId(discoveryAms)
+          ))
         ));
       });
   }

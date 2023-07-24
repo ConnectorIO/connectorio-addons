@@ -18,8 +18,11 @@
 package org.connectorio.addons.binding.canopen.ta.tapi.dev.publisher;
 
 import java.util.Map;
+import org.apache.plc4x.java.spi.generation.ByteOrder;
 import org.apache.plc4x.java.spi.generation.ParseException;
+import org.apache.plc4x.java.spi.generation.SerializationException;
 import org.apache.plc4x.java.spi.generation.WriteBuffer;
+import org.apache.plc4x.java.spi.generation.WriteBufferByteBased;
 import org.connectorio.addons.binding.canopen.api.CoNode;
 import org.connectorio.addons.binding.canopen.ta.tapi.io.AnalogGroup;
 import org.connectorio.addons.binding.canopen.ta.tapi.io.TAAnalogInput;
@@ -54,7 +57,7 @@ public class AnalogInputRunnable extends PublishingRunnable {
   public void sendAnalog(AnalogGroup group) {
     int writeIndex = 0;
     try {
-      WriteBuffer buffer = new WriteBuffer(8, true);
+      WriteBufferByteBased buffer = new WriteBufferByteBased(8, ByteOrder.LITTLE_ENDIAN);
       logger.debug("Sending update of analog inputs from {} to {}", group.getStartBoundary(), group.getEndBoundary());
 
       for (int objectIndex = group.getStartBoundary(); objectIndex <= group.getEndBoundary(); objectIndex++) {
@@ -77,7 +80,7 @@ public class AnalogInputRunnable extends PublishingRunnable {
       }
 
       send(group.getNodeId(), group.getService(), buffer);
-    } catch (ParseException e) {
+    } catch (SerializationException e) {
       logger.error("Failed to update analog group {}, failure at index {}", group, writeIndex, e);
     } catch (Exception e) {
       logger.error("An unexpected error while update of group {}, failure at index {}", group, writeIndex, e);

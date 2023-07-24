@@ -84,7 +84,7 @@ public class CoSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<PlcConne
           String nodeId = "nodeId=" + config.nodeId;
           String heartbeat = "&heartbeat=" + config.heartbeat;
           AbstractPlcConnection connection = (AbstractPlcConnection) driverManager
-            .getConnection("canopen:socketcan://" + config.name + "?" + nodeId + heartbeat);
+            .getConnectionManager().getConnection("canopen:socketcan://" + config.name + "?" + nodeId + heartbeat);
 
           if (connection.isConnected()) {
             updateStatus(ThingStatus.ONLINE);
@@ -199,8 +199,8 @@ public class CoSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<PlcConne
     }
     if (config.throttleReading > 0 || config.throttleWriting > 0) {
       composition.add(new ThrottleDecorator(
-        config.throttleReading > 0 ? config.throttleReading : Integer.MAX_VALUE,
-        config.throttleWriting > 0 ? config.throttleWriting : Integer.MAX_VALUE
+        config.throttleReading > 0 ? config.throttleReading : Long.MAX_VALUE,
+        config.throttleWriting > 0 ? config.throttleWriting : Long.MAX_VALUE
       ));
     }
     return composition;

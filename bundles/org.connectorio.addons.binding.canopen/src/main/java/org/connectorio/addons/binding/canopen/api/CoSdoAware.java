@@ -18,7 +18,7 @@
 package org.connectorio.addons.binding.canopen.api;
 
 import java.util.concurrent.CompletableFuture;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenDataType;
 
 public interface CoSdoAware {
 

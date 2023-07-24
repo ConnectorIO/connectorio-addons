@@ -19,7 +19,7 @@ package org.connectorio.addons.binding.canopen.internal.plc4x;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenService;
 import org.connectorio.addons.binding.canopen.api.CoConnection;
 import org.connectorio.addons.binding.canopen.api.CoNode;
 import org.connectorio.addons.binding.canopen.api.CoSubscription;

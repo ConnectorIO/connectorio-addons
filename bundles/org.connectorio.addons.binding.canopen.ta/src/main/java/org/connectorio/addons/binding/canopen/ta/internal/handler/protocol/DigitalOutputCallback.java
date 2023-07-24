@@ -18,9 +18,12 @@
 package org.connectorio.addons.binding.canopen.ta.internal.handler.protocol;
 
 import org.apache.plc4x.java.api.messages.PlcSubscriptionEvent;
+import org.apache.plc4x.java.spi.generation.ByteOrder;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
+import org.apache.plc4x.java.spi.generation.ReadBufferByteBased;
 import org.connectorio.addons.binding.canopen.ta.internal.handler.ValueListener;
+import org.openhab.core.util.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,16 +38,16 @@ public class DigitalOutputCallback extends AbstractCallback {
 
   @Override
   public void accept(PlcSubscriptionEvent event) {
-    byte[] data = getBytes(event, event.getFieldNames().iterator().next());
-    ReadBuffer buffer = new ReadBuffer(data, true);
+    byte[] data = getBytes(event, event.getTagNames().iterator().next());
     try {
+      ReadBuffer buffer = new ReadBufferByteBased(data, ByteOrder.LITTLE_ENDIAN);
       for (int index = 0; index < 32; index++) {
         boolean status = buffer.readBit();
         logger.info("Digital Output {}={}", index + 1, status);
         listener.digital(index + 1, status);
       }
     } catch (ParseException e) {
-      e.printStackTrace();
+      logger.error("Failed to parse digital outputs {}", HexUtils.bytesToHex(data), e);
     }
   }
 

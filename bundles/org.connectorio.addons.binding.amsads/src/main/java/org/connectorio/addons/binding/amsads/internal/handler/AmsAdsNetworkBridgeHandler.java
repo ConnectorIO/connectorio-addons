@@ -17,15 +17,22 @@
  */
 package org.connectorio.addons.binding.amsads.internal.handler;
 
-import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.apache.plc4x.java.ads.discovery.readwrite.AmsMagicString;
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscovery;
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscoveryBlock;
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscoveryBlockAmsNetId;
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscoveryBlockHostName;
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscoveryBlockPassword;
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscoveryBlockRouteName;
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscoveryBlockUserName;
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsPortNumbers;
 import org.apache.plc4x.java.ads.discovery.readwrite.AmsNetId;
-import org.apache.plc4x.java.ads.discovery.readwrite.RouteRequest;
-import org.apache.plc4x.java.ads.discovery.readwrite.types.Direction;
-import org.apache.plc4x.java.ads.discovery.readwrite.types.Operation;
+import org.apache.plc4x.java.ads.discovery.readwrite.AmsString;
+import org.apache.plc4x.java.ads.discovery.readwrite.Operation;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
@@ -95,13 +102,17 @@ public class AmsAdsNetworkBridgeHandler extends AbstractAmsAdsBridgeHandler<PlcC
 
           if (config.username != null && discoveryDriver != null) {
             AmsNetId sendingAms = AmsConverter.createDiscoveryAms(amsAds.sourceAmsId);
-            AmsMagicString routeName = new AmsMagicString(("openhab-" + amsAds.ipAddress).getBytes(StandardCharsets.UTF_8));
             AmsNetId target = AmsConverter.createDiscoveryAms(amsAds.sourceAmsId);
-            AmsMagicString username = new AmsMagicString(config.username.getBytes(StandardCharsets.UTF_8));
-            AmsMagicString password = new AmsMagicString(Optional.ofNullable(config.password).orElse("").getBytes(StandardCharsets.UTF_8));
-            AmsMagicString address = new AmsMagicString(amsAds.ipAddress.getBytes(StandardCharsets.UTF_8));
-            RouteRequest request = new RouteRequest(Operation.ROUTE, Direction.REQUEST,
-              sendingAms, routeName, target, username, password, address);
+            List<AdsDiscoveryBlock> blocks = Arrays.asList(
+              new AdsDiscoveryBlockRouteName(
+                new AmsString("openhab-" + amsAds.ipAddress)
+              ),
+              new AdsDiscoveryBlockAmsNetId(target),
+              new AdsDiscoveryBlockUserName(new AmsString(config.username)),
+              new AdsDiscoveryBlockPassword(new AmsString(Optional.ofNullable(config.password).orElse(""))),
+              new AdsDiscoveryBlockHostName(new AmsString(amsAds.ipAddress))
+            );
+            AdsDiscovery request = new AdsDiscovery(1, Operation.ADD_OR_UPDATE_ROUTE_REQUEST, sendingAms, AdsPortNumbers.SYSTEM_SERVICE, blocks);
             logger.info("Making an attempt to setup route from {} to us using {}", config.host, request);
             discoveryDriver.send(new Envelope(config.host, request));
 
@@ -123,7 +134,7 @@ public class AmsAdsNetworkBridgeHandler extends AbstractAmsAdsBridgeHandler<PlcC
           String target = "targetAmsNetId=" + config.targetAmsId + "&targetAmsPort=" + config.targetAmsPort;
           String source = "&sourceAmsNetId=" + amsAds.sourceAmsId + "&sourceAmsPort=" + amsAds.sourceAmsPort;
 
-          PlcConnection connection = driverManager.getConnection("ads:tcp://" + config.host + "?" + target + source);
+          PlcConnection connection = driverManager.getConnectionManager().getConnection("ads:tcp://" + config.host + "?" + target + source);
 
           if (connection.isConnected()) {
             updateStatus(ThingStatus.ONLINE);

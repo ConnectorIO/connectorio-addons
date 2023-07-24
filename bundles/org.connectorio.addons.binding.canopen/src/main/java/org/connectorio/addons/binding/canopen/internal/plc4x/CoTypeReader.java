@@ -18,7 +18,7 @@
 package org.connectorio.addons.binding.canopen.internal.plc4x;
 
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenDataType;
 
 class CoTypeReader<T> extends AbstractReader<PlcReadResponse, T> {
 

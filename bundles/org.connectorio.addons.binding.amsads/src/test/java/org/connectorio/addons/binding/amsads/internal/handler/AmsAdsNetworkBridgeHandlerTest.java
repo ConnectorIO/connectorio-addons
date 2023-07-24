@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import org.apache.plc4x.java.ads.ADSPlcDriver;
+import org.apache.plc4x.java.ads.readwrite.AdsConstants;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.assertj.core.api.AbstractThrowableAssert;
@@ -104,7 +104,7 @@ class AmsAdsNetworkBridgeHandlerTest {
 
     thrownBy = thrownBy.getCause();
     thrownBy.isInstanceOf(ConnectException.class)
-      .hasMessageContaining("Connection refused: /%s:%d", cfg.host, ADSPlcDriver.TCP_PORT);
+      .hasMessageContaining("Connection refused: /%s:%d", cfg.host, AdsConstants.ADSTCPDEFAULTPORT);
   }
 
 }

@@ -37,14 +37,17 @@ import org.apache.plc4x.java.api.messages.PlcSubscriptionEvent;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionResponse;
 import org.apache.plc4x.java.api.messages.PlcWriteResponse;
 import org.apache.plc4x.java.api.model.PlcConsumerRegistration;
-import org.apache.plc4x.java.api.model.PlcSubscriptionField;
+import org.apache.plc4x.java.api.model.PlcSubscriptionTag;
 import org.apache.plc4x.java.api.types.PlcResponseCode;
-import org.apache.plc4x.java.canopen.field.CANOpenSDOField;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenService;
+import org.apache.plc4x.java.canopen.tag.CANOpenPDOTag;
+import org.apache.plc4x.java.canopen.tag.CANOpenSDOTag;
 import org.apache.plc4x.java.canopen.readwrite.IndexAddress;
-import org.apache.plc4x.java.canopen.readwrite.io.IndexAddressIO;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenDataType;
+import org.apache.plc4x.java.spi.generation.ByteOrder;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
+import org.apache.plc4x.java.spi.generation.ReadBufferByteBased;
 import org.apache.plc4x.java.spi.values.PlcUSINT;
 import org.apache.plc4x.java.spi.values.PlcValues;
 import org.connectorio.addons.binding.canopen.ta.internal.type.TAString;
@@ -81,7 +84,7 @@ public class TAOperations {
 
   public CompletableFuture<Map<String, String>> identify(int nodeId) {
     return connection.readRequestBuilder()
-      .addItem("type", new CANOpenSDOField(nodeId, (short) 0x23E2, (short) 0x01, CANOpenDataType.UNSIGNED8))
+      .addTag("type", new CANOpenSDOTag(nodeId, (short) 0x23E2, (short) 0x01, CANOpenDataType.UNSIGNED8))
       .build().execute().thenCompose((response) -> {
         if (response.getInteger("type") == 0x87) {
           return identifyUVR16x2(nodeId);
@@ -93,14 +96,14 @@ public class TAOperations {
 
   protected CompletableFuture<Map<String, String>> identifyUVR16x2(int nodeId) {
     CompletableFuture<? extends PlcReadResponse> request = connection.readRequestBuilder()
-      .addItem("name", new CANOpenSDOField(nodeId, (short) 0x2512, (short) 0x00, CANOpenDataType.RECORD))
-      .addItem("function", new CANOpenSDOField(nodeId, (short) 0x57E0, (short) 0x07, CANOpenDataType.RECORD))
-      .addItem("version", new CANOpenSDOField(nodeId, (short) 0x57E0, (short) 0x00, CANOpenDataType.RECORD))
-      .addItem("serial", new CANOpenSDOField(nodeId, (short) 0x57E0, (short) 0x01, CANOpenDataType.RECORD))
-      .addItem("production_date", new CANOpenSDOField(nodeId, (short) 0x57E0, (short) 0x02, CANOpenDataType.RECORD))
-      .addItem("bootsector", new CANOpenSDOField(nodeId, (short) 0x57E0, (short) 0x03, CANOpenDataType.RECORD))
-      .addItem("hardware_cover", new CANOpenSDOField(nodeId, (short) 0x57E0, (short) 0x04, CANOpenDataType.RECORD))
-      .addItem("hardware_mains", new CANOpenSDOField(nodeId, (short) 0x57E0, (short) 0x05, CANOpenDataType.RECORD))
+      .addTag("name", new CANOpenSDOTag(nodeId, (short) 0x2512, (short) 0x00, CANOpenDataType.RECORD))
+      .addTag("function", new CANOpenSDOTag(nodeId, (short) 0x57E0, (short) 0x07, CANOpenDataType.RECORD))
+      .addTag("version", new CANOpenSDOTag(nodeId, (short) 0x57E0, (short) 0x00, CANOpenDataType.RECORD))
+      .addTag("serial", new CANOpenSDOTag(nodeId, (short) 0x57E0, (short) 0x01, CANOpenDataType.RECORD))
+      .addTag("production_date", new CANOpenSDOTag(nodeId, (short) 0x57E0, (short) 0x02, CANOpenDataType.RECORD))
+      .addTag("bootsector", new CANOpenSDOTag(nodeId, (short) 0x57E0, (short) 0x03, CANOpenDataType.RECORD))
+      .addTag("hardware_cover", new CANOpenSDOTag(nodeId, (short) 0x57E0, (short) 0x04, CANOpenDataType.RECORD))
+      .addTag("hardware_mains", new CANOpenSDOTag(nodeId, (short) 0x57E0, (short) 0x05, CANOpenDataType.RECORD))
       .build().execute();
 
     return request.thenApply(response -> {
@@ -126,7 +129,7 @@ public class TAOperations {
   }
 
   public CompletableFuture<?> reload(int nodeId) {
-    return connection.writeRequestBuilder().addItem("mpdo", "TRANSMIT_PDO_4:0:RECORD",
+    return connection.writeRequestBuilder().addTag("mpdo", new CANOpenPDOTag(0, CANOpenService.TRANSMIT_PDO_4, CANOpenDataType.RECORD),
       (Byte) (byte) (0x80 + nodeId),
       (Byte) (byte) 0x01,
       (Byte) (byte) 0x4e,
@@ -141,7 +144,7 @@ public class TAOperations {
   }
 
   public CompletableFuture<? extends PlcWriteResponse> login(int nodeId, int clientId) {
-    return connection.writeRequestBuilder().addItem("mpdo", "RECEIVE_PDO_3:" + clientId + ":RECORD", PlcValues.of(
+    return connection.writeRequestBuilder().addTag("mpdo", new CANOpenPDOTag(clientId, CANOpenService.RECEIVE_PDO_3, CANOpenDataType.RECORD), PlcValues.of(
       new PlcUSINT((0x80 + nodeId)),
       new PlcUSINT(0x00),
       new PlcUSINT(0x1F),
@@ -156,7 +159,7 @@ public class TAOperations {
   }
 
   public CompletableFuture<? extends PlcWriteResponse> logout(int nodeId, int clientId) {
-    return connection.writeRequestBuilder().addItem("mpdo", "RECEIVE_PDO_3:" + clientId + ":RECORD", PlcValues.of(
+    return connection.writeRequestBuilder().addTagAddress("mpdo", "RECEIVE_PDO_3:" + clientId + ":RECORD", PlcValues.of(
       new PlcUSINT((0x80 + nodeId)),
       new PlcUSINT(0x01),
       new PlcUSINT(0x1F),
@@ -189,14 +192,14 @@ public class TAOperations {
   private void subscribe(String name, String field, Consumer<PlcSubscriptionEvent> callback) {
     logger.debug("Subscribe to event {} with mask {}", name, field);
 
-    connection.subscriptionRequestBuilder().addEventField(name, field)
+    connection.subscriptionRequestBuilder().addEventTagAddress(name, field)
       .build().execute().whenComplete(new SubscriptionResponseCallback(EVENTS, registrations, callback));
   }
 
   public void subscribeInputOutputConfig(Consumer<TAObject> consumer, int nodeId) {
     ConfigCallback callback = new ConfigCallback(connection, consumer, nodeId);
 
-    connection.subscriptionRequestBuilder().addEventField("config", "TRANSMIT_PDO_4:" + nodeId + ":RECORD")
+    connection.subscriptionRequestBuilder().addEventTagAddress("config", "TRANSMIT_PDO_4:" + nodeId + ":RECORD")
       .build().execute().whenComplete(new SubscriptionResponseCallback(EVENTS, registrations, callback));
 
   }
@@ -208,10 +211,10 @@ public class TAOperations {
   }
 
 //  String label = getBridgeConnection().map(connection -> {
-//    CANOpenSDOField field = new CANOpenSDOField(nodeId, (short) sdoIndex, (short) labelIndex, CANOpenDataType.VISIBLE_STRING);
+//    CANOpenSDOTag field = new CANOpenSDOTag(nodeId, (short) sdoIndex, (short) labelIndex, CANOpenDataType.VISIBLE_STRING);
 //    logger.info("Requesting data {}", field);
 //    return connection.readRequestBuilder()
-//      .addItem("label", field)
+//      .addTag("label", field)
 //      .build().execute()
 //      .join()
 //      .getString("label");
@@ -232,19 +235,19 @@ public class TAOperations {
 
     @Override
     public void accept(PlcSubscriptionEvent event) {
-      final byte[] bytes = AbstractCallback.getBytes(event, event.getFieldNames().iterator().next());
+      final byte[] bytes = AbstractCallback.getBytes(event, event.getTagNames().iterator().next());
       try {
-        ReadBuffer buffer = new ReadBuffer(bytes, true);
+        ReadBuffer buffer = new ReadBufferByteBased(bytes, ByteOrder.LITTLE_ENDIAN);
         int sender = buffer.readUnsignedShort(8);
         if (sender != nodeId) {
           logger.warn("Received configuration notification from wrong node: {}. Configured node id {}", sender, nodeId);
           return;
         }
 
-        IndexAddress address = IndexAddressIO.staticParse(buffer);
+        IndexAddress address = IndexAddress.staticParse(buffer);
         final int subIndex = address.getSubindex();
         short rawValue = buffer.readShort(16);
-        buffer.readByte(8); // constant 0x41
+        buffer.readUnsignedByte(8); // constant 0x41
         int unit = buffer.readUnsignedShort(8);
 
         TAValue value = new TAValue(unit, rawValue);
@@ -277,10 +280,10 @@ public class TAOperations {
     }
 
     private CompletableFuture<String> readLabel(int nodeId, IndexAddress labelAddress) {
-      CANOpenSDOField field = new CANOpenSDOField(nodeId, (short) labelAddress.getIndex(), labelAddress.getSubindex(),
+      CANOpenSDOTag field = new CANOpenSDOTag(nodeId, (short) labelAddress.getIndex(), labelAddress.getSubindex(),
         CANOpenDataType.RECORD);
 
-      return connection.readRequestBuilder().addItem("label", field)
+      return connection.readRequestBuilder().addTag("label", field)
         .build().execute().thenApply(response -> {
           byte[] label = AbstractCallback.getBytes(response, "label");
           return new TAString(label).getValue();
@@ -308,8 +311,8 @@ static class SubscriptionResponseCallback implements BiConsumer<PlcSubscriptionR
       logger.warn("Could not complete subscribe request", throwable);
       return;
     }
-    for (String subscriptionName : response.getFieldNames()) {
-      PlcSubscriptionField field = response.getRequest().getField(subscriptionName);
+    for (String subscriptionName : response.getTagNames()) {
+      PlcSubscriptionTag field = response.getRequest().getTag(subscriptionName);
       PlcResponseCode responseCode = response.getResponseCode(subscriptionName);
       if (responseCode == PlcResponseCode.OK) {
         registrations.add(response.getSubscriptionHandle(subscriptionName).register(new Consumer<PlcSubscriptionEvent>() {
@@ -318,7 +321,7 @@ static class SubscriptionResponseCallback implements BiConsumer<PlcSubscriptionR
             executor.submit(new Runnable() {
               @Override
               public void run() {
-                logger.debug("Dispatching event with fields {}", event.getFieldNames());
+                logger.debug("Dispatching event with fields {}", event.getTagNames());
                 callback.accept(event);
               }
             });

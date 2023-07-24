@@ -22,9 +22,13 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import org.apache.plc4x.java.api.value.PlcValue;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenDataType;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenDataType;
+import org.apache.plc4x.java.spi.codegen.WithOption;
+import org.apache.plc4x.java.spi.generation.ByteOrder;
 import org.apache.plc4x.java.spi.generation.ParseException;
+import org.apache.plc4x.java.spi.generation.SerializationException;
 import org.apache.plc4x.java.spi.generation.WriteBuffer;
+import org.apache.plc4x.java.spi.generation.WriteBufferByteBased;
 import org.apache.plc4x.java.spi.values.PlcSINT;
 import org.apache.plc4x.java.spi.values.PlcValues;
 import org.connectorio.addons.binding.canopen.api.CoNode;
@@ -80,7 +84,7 @@ public class CoPdoTransmitHandler extends AbstractPdoHandler<CoPdoConfig> implem
   }
 
   private void publish() {
-    WriteBuffer buffer = new WriteBuffer(8, true);
+    WriteBufferByteBased buffer = new WriteBufferByteBased(8, ByteOrder.LITTLE_ENDIAN);
     for (Entry<CANOpenDataType, Channel> entry : template) {
       ChannelUID uid = entry.getValue().getUID();
       CANOpenDataType type = entry.getKey();
@@ -90,13 +94,13 @@ public class CoPdoTransmitHandler extends AbstractPdoHandler<CoPdoConfig> implem
         } else {
           buffer.writeInt(type.getNumBits(), 0);
         }
-      } catch (ParseException e) {
+      } catch (SerializationException e) {
         logger.error("Failed to map channel {} state {} to PDO", uid, values.get(uid), e);
         break;
       }
     }
 
-    this.node.getConnection().send(node.getNodeId(), config.service, toPlcValue(buffer.getData()));
+    this.node.getConnection().send(node.getNodeId(), config.service, toPlcValue(buffer.getBytes()));
   }
 
   private PlcValue toPlcValue(byte[] data) {
@@ -112,7 +116,7 @@ public class CoPdoTransmitHandler extends AbstractPdoHandler<CoPdoConfig> implem
     );
   }
 
-  private void writeState(WriteBuffer buffer, CANOpenDataType type, Command command) throws ParseException {
+  private void writeState(WriteBuffer buffer, CANOpenDataType type, Command command) throws SerializationException {
     switch (type) {
       case BOOLEAN:
         if (command instanceof OnOffType) {
@@ -171,7 +175,7 @@ public class CoPdoTransmitHandler extends AbstractPdoHandler<CoPdoConfig> implem
       case UNICODE_STRING:
         if (command instanceof StringType) {
           StringType value = (StringType) command;
-          buffer.writeString(type.getNumBits(), "UTF-8", value.toString());
+          buffer.writeString(type.getNumBits(), value.toString(), WithOption.WithEncoding("UTF-8"));
           return;
         }
         break;

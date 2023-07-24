@@ -71,7 +71,7 @@ public abstract class OfflineKarInstallationTest {
 
   // fallback openhab version to latest 3.0.x release which is for now 3.0.4
   @Container
-  protected OpenHABContainer<?> container = new OpenHABContainer<>()
+  protected OpenHABContainer<?> container = new OpenHABContainer<>("3.0.4")
     .withNetworkAliases("openhab")
     .withCustomization(new UserAccountCustomization("test", "test"))
     .withCustomization(new UserApiTokenCustomization())

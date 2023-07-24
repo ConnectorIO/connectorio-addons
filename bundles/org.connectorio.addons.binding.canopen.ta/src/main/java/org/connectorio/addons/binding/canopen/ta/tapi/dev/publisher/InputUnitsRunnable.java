@@ -18,9 +18,12 @@
 package org.connectorio.addons.binding.canopen.ta.tapi.dev.publisher;
 
 import java.util.Map;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenService;
+import org.apache.plc4x.java.spi.generation.ByteOrder;
 import org.apache.plc4x.java.spi.generation.ParseException;
+import org.apache.plc4x.java.spi.generation.SerializationException;
 import org.apache.plc4x.java.spi.generation.WriteBuffer;
+import org.apache.plc4x.java.spi.generation.WriteBufferByteBased;
 import org.connectorio.addons.binding.canopen.api.CoNode;
 import org.connectorio.addons.binding.canopen.ta.internal.config.AnalogUnit;
 import org.connectorio.addons.binding.canopen.ta.internal.config.DigitalUnit;
@@ -52,7 +55,7 @@ public class InputUnitsRunnable extends PublishingRunnable {
           continue;
         }
 
-        WriteBuffer buffer = new WriteBuffer(8, true);
+        WriteBufferByteBased buffer = new WriteBufferByteBased(8, ByteOrder.LITTLE_ENDIAN);
         buffer.writeUnsignedShort(8, (short) 1);  // first byte is static value
         buffer.writeUnsignedShort(8, (short) (index - 1)); // call count - 0x00..0x05 analog
 
@@ -76,7 +79,7 @@ public class InputUnitsRunnable extends PublishingRunnable {
           continue;
         }
 
-        WriteBuffer buffer = new WriteBuffer(8, true);
+        WriteBufferByteBased buffer = new WriteBufferByteBased(8, ByteOrder.LITTLE_ENDIAN);
         buffer.writeUnsignedShort(8, (short) 1);
         buffer.writeUnsignedShort(8, (short) (6 + index - 1));  // call count - 0x06..0x0B digital
 
@@ -94,7 +97,7 @@ public class InputUnitsRunnable extends PublishingRunnable {
         }
         send(clientId + 0x40, CANOpenService.TRANSMIT_PDO_1, buffer);
       }
-    } catch (ParseException e) {
+    } catch (SerializationException e) {
       logger.error("Failed to publish configured input units", e);
     } catch (Exception e) {
       logger.error("An unexpected error while publishing unit information", e);
