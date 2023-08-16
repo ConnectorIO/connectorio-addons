@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
+import org.connectorio.addons.binding.fatek.config.SerialBridgeConfig;
 import org.connectorio.addons.binding.fatek.internal.transport.ReflectiveCall;
 import org.connectorio.addons.config.ConfigMapperFactory;
 import org.connectorio.addons.io.transport.serial.config.SerialPortConfig;
@@ -30,27 +31,40 @@ import org.openhab.core.io.transport.serial.SerialPort;
 import org.openhab.core.io.transport.serial.SerialPortIdentifier;
 import org.openhab.core.io.transport.serial.SerialPortManager;
 import org.openhab.core.io.transport.serial.UnsupportedCommOperationException;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.simplify4u.jfatek.FatekPLC;
 import org.simplify4u.jfatek.io.FatekConfig;
 import org.simplify4u.jfatek.io.FatekConnection;
 import org.simplify4u.jfatek.io.FatekConnectionFactory;
+import org.simplify4u.jfatek.io.FatekConnectionManager;
 
-@Component
+@Component(service = FatekConnectionFactory.class)
 public class FatekSerialConnectionFactory implements FatekConnectionFactory {
 
   private final SerialPortManager serialPortManager;
   private final ConfigMapperFactory configMapperFactory;
 
-  public FatekSerialConnectionFactory(SerialPortManager serialPortManager, ConfigMapperFactory configMapperFactory) {
+  @Activate
+  public FatekSerialConnectionFactory(@Reference SerialPortManager serialPortManager, @Reference ConfigMapperFactory configMapperFactory) {
     this.serialPortManager = serialPortManager;
     this.configMapperFactory = configMapperFactory;
+
+    FatekPLC.registerConnectionFactory(this);
+  }
+
+  @Deactivate
+  public void deactivate() {
+    // TODO deregister this factory upon deactivation
   }
 
   @Override
   public FatekConnection getConnection(FatekConfig fatekConfig) throws IOException {
     SerialPortIdentifier identifier = serialPortManager.getIdentifier(fatekConfig.getFullName());
     Map<String, Object> params = ReflectiveCall.field(FatekConfig.class, fatekConfig, "params");
-    SerialPortConfig serialPortConfig = configMapperFactory.createMapper(SerialPortConfig.class).map(params);
+    SerialPortConfig serialPortConfig = configMapperFactory.createMapper(SerialBridgeConfig.class).map(params);
     int timeout = fatekConfig.getTimeout();
     if (identifier != null) {
       try {

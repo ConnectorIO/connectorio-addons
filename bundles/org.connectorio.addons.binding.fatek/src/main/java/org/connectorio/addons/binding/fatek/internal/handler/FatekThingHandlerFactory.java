@@ -18,6 +18,8 @@
 package org.connectorio.addons.binding.fatek.internal.handler;
 
 import org.connectorio.addons.binding.fatek.FatekBindingConstants;
+import org.connectorio.addons.binding.fatek.internal.channel.DefaultChannelHandlerFactory;
+import org.connectorio.addons.binding.fatek.internal.channel.FatekChannelHandlerFactory;
 import org.connectorio.addons.binding.handler.factory.BaseThingHandlerFactory;
 import org.connectorio.addons.binding.fatek.internal.discovery.DiscoveryCoordinator;
 import org.openhab.core.io.transport.serial.SerialPortManager;
@@ -28,17 +30,20 @@ import org.openhab.core.thing.binding.ThingHandlerFactory;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.simplify4u.jfatek.io.FatekConnectionFactory;
 
 @Component(service = ThingHandlerFactory.class)
 public class FatekThingHandlerFactory extends BaseThingHandlerFactory {
 
-  private final SerialPortManager serialPortManager;
+  private final FatekChannelHandlerFactory channelHandlerFactory = new DefaultChannelHandlerFactory();
+  private final FatekConnectionFactory serialConnectionFactory;
   private final DiscoveryCoordinator discoveryCoordinator;
 
+  // The connection factory argument is artificial, its here just to force proper initialization order
   @Activate
-  public FatekThingHandlerFactory(@Reference SerialPortManager serialPortManager, @Reference DiscoveryCoordinator discoveryCoordinator) {
+  public FatekThingHandlerFactory(@Reference FatekConnectionFactory connectionFactory, @Reference DiscoveryCoordinator discoveryCoordinator) {
     super(FatekBindingConstants.SUPPORTED_THING_TYPES);
-    this.serialPortManager = serialPortManager;
+    this.serialConnectionFactory = connectionFactory;
     this.discoveryCoordinator = discoveryCoordinator;
   }
 
@@ -46,7 +51,7 @@ public class FatekThingHandlerFactory extends BaseThingHandlerFactory {
   protected ThingHandler createHandler(Thing thing) {
     if (thing instanceof Bridge) {
       if (FatekBindingConstants.SERIAL_BRIDGE_TYPE.equals(thing.getThingTypeUID())) {
-        return new FatekSerialBridgeHandler((Bridge) thing, serialPortManager, discoveryCoordinator);
+        return new FatekSerialBridgeHandler((Bridge) thing, serialConnectionFactory, discoveryCoordinator);
       }
       if (FatekBindingConstants.TCP_BRIDGE_TYPE.equals(thing.getThingTypeUID())) {
         return new FatekTcpBridgeHandler((Bridge) thing, discoveryCoordinator);
@@ -54,7 +59,7 @@ public class FatekThingHandlerFactory extends BaseThingHandlerFactory {
     }
 
     if (FatekBindingConstants.PLC_THING_TYPE.equals(thing.getThingTypeUID())) {
-      return new FatekPlcThingHandler(thing);
+      return new FatekPlcThingHandler(thing, channelHandlerFactory);
     }
 
     return null;

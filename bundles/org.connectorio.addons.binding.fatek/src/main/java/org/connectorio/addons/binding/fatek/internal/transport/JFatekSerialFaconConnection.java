@@ -17,14 +17,21 @@
  */
 package org.connectorio.addons.binding.fatek.internal.transport;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import org.simplify4u.jfatek.FatekPLC;
 import org.simplify4u.jfatek.io.FatekIOException;
 
 public class JFatekSerialFaconConnection extends JFatekFaconConnection {
 
-  public JFatekSerialFaconConnection(ExecutorService executor, String port, int connectionTimeout) throws FatekIOException {
-    super(executor, new FatekPLC("serial:" + port + "?plcId=0&timeout=" + connectionTimeout));
+  public JFatekSerialFaconConnection(ExecutorService executor, String port, int connectionTimeout, Map<String, Object> params) throws FatekIOException {
+    super(executor, new FatekPLC("serial://" + port + "?plcId=0&timeout=" + connectionTimeout + "&" + parameters(params)));
+  }
+
+  private static String parameters(Map<String, Object> params) {
+    return params.entrySet().stream()
+      .map(e -> e.getKey() + "=" + e.getValue())
+      .reduce("", (l, r) -> l + "&" + r);
   }
 
 }

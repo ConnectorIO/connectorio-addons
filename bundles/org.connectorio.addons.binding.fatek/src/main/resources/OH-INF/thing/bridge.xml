@@ -42,6 +42,12 @@
         <unitLabel>s</unitLabel>
         <description>Maximum time required to establish connection with host</description>
       </parameter>
+      <parameter name="refreshInterval" type="integer" required="false">
+        <label>Refresh interval</label>
+        <description>Time between next poll cycles.</description>
+        <unitLabel>ms</unitLabel>
+        <default>1000</default>
+      </parameter>
     </config-description>
   </bridge-type>
 
@@ -92,6 +98,12 @@
           <option value="PARITY_MARK">MARK</option>
           <option value="PARITY_SPACE">SPACE</option>
         </options>
+      </parameter>
+      <parameter name="refreshInterval" type="integer" required="false">
+        <label>Refresh interval</label>
+        <description>Time between next poll cycles.</description>
+        <unitLabel>ms</unitLabel>
+        <default>1000</default>
       </parameter>
     </config-description>
   </bridge-type>

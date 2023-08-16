@@ -23,26 +23,18 @@
 
   <!-- switch to PLC specific channel kinds .. maybe?  -->
 
-  <!-- dynamic (extensible) channels -->
-  <channel-type id="number">
-    <item-type>Number</item-type>
-    <label>Number value</label>
-    <state pattern="%.4f" readOnly="true" />
-    <config-description-ref uri="thing-type:co7io-fatek:channel"></config-description-ref>
+  <channel-type id="discrete-input">
+    <item-type>Contact</item-type>
+    <label>Discrete input</label>
+    <description>Input (or related register) of connected PLC.</description>
+    <config-description-ref uri="channel-type:co7io-fatek:binary"></config-description-ref>
   </channel-type>
 
-  <channel-type id="datetime">
-    <item-type>DateTime</item-type>
-    <label>Date Time value</label>
-    <state pattern="%s" readOnly="true" />
-    <config-description-ref uri="thing-type:co7io-fatek:channel"></config-description-ref>
-  </channel-type>
-
-  <channel-type id="string">
-    <item-type>String</item-type>
-    <label>String value</label>
-    <state pattern="%s" readOnly="true" />
-    <config-description-ref uri="thing-type:co7io-fatek:channel"></config-description-ref>
+  <channel-type id="discrete-output">
+    <item-type>Switch</item-type>
+    <label>Discrete output</label>
+    <description>Output (or related register) of connected PLC.</description>
+    <config-description-ref uri="channel-type:co7io-fatek:binary"></config-description-ref>
   </channel-type>
 
 </thing:thing-descriptions>

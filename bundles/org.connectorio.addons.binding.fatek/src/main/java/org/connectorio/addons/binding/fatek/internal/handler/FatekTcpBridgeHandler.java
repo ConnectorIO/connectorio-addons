@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.fatek.internal.handler;
 
+import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
@@ -34,26 +35,28 @@ import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.types.Command;
 import org.simplify4u.jfatek.io.FatekIOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FatekTcpBridgeHandler extends GenericBridgeHandlerBase<TcpBridgeConfig> implements
   FatekBridgeHandler<TcpBridgeConfig> {
 
+  private final Logger logger = LoggerFactory.getLogger(FatekPlcThingHandler.class);
+  private final CompletableFuture<FaconConnection> connection = new CompletableFuture<>();
+
   private final DiscoveryCoordinator discoveryCoordinator;
 
   private ExecutorService executor;
-  private CompletableFuture<FaconConnection> connection;
+  private Long refreshInterval;
 
   public FatekTcpBridgeHandler(Bridge thing, DiscoveryCoordinator discoveryCoordinator) {
     super(thing);
     this.discoveryCoordinator = discoveryCoordinator;
   }
 
-
   @Override
   public void initialize() {
     TcpBridgeConfig config = getBridgeConfig().orElse(null);
-
-    ThreadPoolManager.getPool("fatek");
 
     if (config == null) {
       updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "Missing configuration");
@@ -74,6 +77,7 @@ public class FatekTcpBridgeHandler extends GenericBridgeHandlerBase<TcpBridgeCon
 
       try {
         JFatekTcpFaconConnection faconConnection = new JFatekTcpFaconConnection(executor, config.hostAddress, config.port, timeout);
+        this.refreshInterval = config.refreshInterval;
         connection.complete(faconConnection);
         updateStatus(ThingStatus.ONLINE);
       } catch (FatekIOException e) {
@@ -85,6 +89,14 @@ public class FatekTcpBridgeHandler extends GenericBridgeHandlerBase<TcpBridgeCon
 
   @Override
   public void dispose() {
+    if (connection.isDone()) {
+      try {
+        connection.join().close();
+      } catch (IOException e) {
+        logger.warn("Graceful shutdown of TCP connection failed", e);
+      }
+    }
+
     if (executor != null) {
       executor.shutdownNow();
     }
@@ -99,7 +111,7 @@ public class FatekTcpBridgeHandler extends GenericBridgeHandlerBase<TcpBridgeCon
 
   @Override
   public Long getRefreshInterval() {
-    return 1000L;
+    return refreshInterval;
   }
 
   @Override

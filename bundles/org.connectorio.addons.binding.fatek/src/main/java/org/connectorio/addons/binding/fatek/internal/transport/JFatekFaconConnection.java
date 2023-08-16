@@ -22,13 +22,17 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import org.connectorio.addons.binding.fatek.internal.transport.command.MultiplexCmd;
 import org.connectorio.addons.binding.fatek.transport.FaconConnection;
+import org.openhab.core.config.core.status.ConfigStatusMessage.Builder;
 import org.simplify4u.jfatek.FatekCommand;
 import org.simplify4u.jfatek.FatekException;
 import org.simplify4u.jfatek.FatekPLC;
 import org.simplify4u.jfatek.io.FatekIOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class JFatekFaconConnection implements FaconConnection {
 
+  private final Logger logger = LoggerFactory.getLogger(JFatekFaconConnection.class);
   private final ExecutorService executor;
   private final FatekPLC connection;
 
@@ -42,10 +46,14 @@ public abstract class JFatekFaconConnection implements FaconConnection {
     CompletableFuture<T> future = new CompletableFuture<>();
     executor.execute(() -> {
       try {
-        T result = new MultiplexCmd<>(connection, stationNo, command).send();
-        future.complete(result);
+        synchronized (connection) {
+          T result = new MultiplexCmd<>(connection, stationNo, command).send();
+          future.complete(result);
+        }
       } catch (FatekException | FatekIOException e) {
         future.completeExceptionally(e);
+      } catch (Exception e) {
+        logger.error("Command {} generated unexpected error", command, e);
       }
     });
     return future;

@@ -23,7 +23,7 @@
     https://openhab.org/schemas/thing-description-1.0.0.xsd
   ">
 
-  <thing-type id="plc" extensible="number,datetime,string">
+  <thing-type id="plc" extensible="discrete-input,discrete-output">
     <supported-bridge-type-refs>
       <bridge-type-ref id="serial" />
       <bridge-type-ref id="tcp" />
@@ -36,6 +36,12 @@
       <parameter name="stationNumber" type="integer" min="1" max="255" required="true">
         <label>Station number</label>
         <default>1</default>
+      </parameter>
+      <parameter name="refreshInterval" type="integer" required="false">
+        <label>Refresh interval</label>
+        <description>Time between next poll cycles.</description>
+        <unitLabel>ms</unitLabel>
+        <default>1000</default>
       </parameter>
     </config-description>
   </thing-type>

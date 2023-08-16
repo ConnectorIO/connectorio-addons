@@ -34,6 +34,7 @@ public class SerialBridgeConfig extends BridgeConfig implements SerialPortConfig
   public FlowControl flowControl;
 
   public Rts rts;
+  public int connectionTimeout;
 
   @Override
   public String getSerialPort() {
