@@ -39,7 +39,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component
 public class DefaultChannelLinkManager implements LinkManager {
 
-  public static final String ITEM_CHANNEL_LINK_REGISTRY_FILTER = "objectClass=org.openhab.core.thing.link.ItemChannelLinkRegistry";
+  public static final String ITEM_CHANNEL_LINK_REGISTRY_FILTER = "(objectClass=org.openhab.core.thing.link.ItemChannelLinkRegistry)";
 
   private final Map<Thing, List<LinkListener>> listeners = new ConcurrentHashMap<>();
 

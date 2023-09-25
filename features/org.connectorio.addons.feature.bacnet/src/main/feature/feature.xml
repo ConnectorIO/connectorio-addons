@@ -42,7 +42,6 @@
     <feature>co7io-binding-base</feature>
     <feature>bacnet4j-wrapper</feature>
     <feature>co7io-communication-watchdog</feature>
-    <bundle start-level="80">mvn:com.j2html/j2html/1.5.0</bundle>
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.temporal/${project.version}</bundle>
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.temporal.item/${project.version}</bundle>
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.binding.bacnet/${project.version}</bundle>

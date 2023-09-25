@@ -36,6 +36,7 @@ import org.connectorio.addons.binding.bacnet.internal.handler.object.MultiStateO
 import org.connectorio.addons.binding.bacnet.internal.handler.object.MultiStateValueHandler;
 import org.connectorio.addons.binding.bacnet.internal.handler.object.ScheduleHandler;
 import org.connectorio.addons.communication.watchdog.WatchdogManager;
+import org.connectorio.addons.link.LinkManager;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingTypeUID;
@@ -56,14 +57,14 @@ public class BACnetThingHandlerFactory extends BaseThingHandlerFactory implement
   private final Logger logger = LoggerFactory.getLogger(BACnetThingHandlerFactory.class);
 
   private final SerialPortManager serialPortManager;
-  private ItemChannelLinkRegistry itemChannelLinkRegistry;
-  private WatchdogManager watchdogManager;
+  private final LinkManager linkManager;
+  private final WatchdogManager watchdogManager;
 
   @Activate
-  public BACnetThingHandlerFactory(@Reference SerialPortManager serialPortManager, @Reference ItemChannelLinkRegistry itemChannelLinkRegistry,
+  public BACnetThingHandlerFactory(@Reference SerialPortManager serialPortManager, @Reference LinkManager linkManager,
       @Reference WatchdogManager watchdogManager) {
     this.serialPortManager = serialPortManager;
-    this.itemChannelLinkRegistry = itemChannelLinkRegistry;
+    this.linkManager = linkManager;
     this.watchdogManager = watchdogManager;
   }
 
@@ -73,9 +74,9 @@ public class BACnetThingHandlerFactory extends BaseThingHandlerFactory implement
 
     if (thing instanceof Bridge) {
       if (IP_DEVICE_THING_TYPE.equals(thingTypeUID)) {
-        return new BACnetIpDeviceHandler((Bridge) thing, itemChannelLinkRegistry, watchdogManager);
+        return new BACnetIpDeviceHandler((Bridge) thing, linkManager, watchdogManager);
       } else if (MSTP_DEVICE_THING_TYPE.equals(thingTypeUID)) {
-          return new BACnetMstpDeviceHandler((Bridge) thing, itemChannelLinkRegistry, watchdogManager);
+          return new BACnetMstpDeviceHandler((Bridge) thing, linkManager, watchdogManager);
       } else if (IPV4_BRIDGE_THING_TYPE.equals(thingTypeUID)) {
         return new BACnetIpv4BridgeHandler((Bridge) thing);
 //      } else if (IPV6_BRIDGE_THING_TYPE.equals(thingTypeUID)) {

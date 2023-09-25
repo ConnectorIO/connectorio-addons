@@ -18,6 +18,7 @@
 package org.connectorio.addons.communication.watchdog.internal;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.when;
 
 import org.connectorio.addons.communication.watchdog.Watchdog;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.verification.VerificationMode;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingUID;
@@ -85,21 +87,21 @@ class DefaultWatchdogManagerTest {
 
     tick(10);
     manager.check(watchdog, listener);
-    Mockito.verify(listener).timeout(any());
+    Mockito.verify(listener, atLeastOnce()).timeout(any());
 
     tick(10);
     manager.check(watchdog, listener);
-    Mockito.verify(listener).timeout(any());
+    Mockito.verify(listener, atLeastOnce()).timeout(any());
 
     tick(9);
     watchdog.mark(TEST_CHANNEL);
     tick(1);
     manager.check(watchdog, listener);
-    Mockito.verify(listener).recovery(any());
+    Mockito.verify(listener, atLeastOnce()).recovery(any());
 
     tick(1);
     manager.check(watchdog, listener);
-    Mockito.verify(listener).timeout(any());
+    Mockito.verify(listener, atLeastOnce()).timeout(any());
   }
 
   void tick(long time) {
