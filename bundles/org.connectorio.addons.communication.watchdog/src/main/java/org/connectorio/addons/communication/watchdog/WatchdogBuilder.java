@@ -32,6 +32,8 @@ public interface WatchdogBuilder {
   WatchdogBuilder withChannel(ChannelUID channel, long timeoutPeriodMs);
   WatchdogBuilder withChannel(ChannelUID channel, Duration duration);
 
+  WatchdogBuilder withChannel(ChannelUID channel, WatchdogCondition condition);
+
   WatchdogBuilder withTimeoutDelay(long timeout);
 
   WatchdogBuilder withTimeoutMultiplier(int multiplier);

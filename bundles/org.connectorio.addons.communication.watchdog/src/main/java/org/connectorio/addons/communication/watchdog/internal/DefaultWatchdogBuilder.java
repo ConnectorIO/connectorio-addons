@@ -49,13 +49,19 @@ public class DefaultWatchdogBuilder implements WatchdogBuilder {
 
   @Override
   public WatchdogBuilder withChannel(ChannelUID channel, long timeoutPeriodMs) {
-    conditions.put(channel, new TimeoutCondition(clock, channel, timeoutPeriodMs));
+    put(channel, new TimeoutCondition(clock, channel, timeoutPeriodMs));
     return this;
   }
 
   @Override
   public WatchdogBuilder withChannel(ChannelUID channel, Duration duration) {
-    conditions.put(channel, new TimeoutCondition(clock, channel, duration.toMillis()));
+    put(channel, new TimeoutCondition(clock, channel, duration.toMillis()));
+    return this;
+  }
+
+  @Override
+  public WatchdogBuilder withChannel(ChannelUID channel, WatchdogCondition condition) {
+    put(channel, condition);
     return this;
   }
 
@@ -76,6 +82,15 @@ public class DefaultWatchdogBuilder implements WatchdogBuilder {
     DefaultWatchdog watchdog = new DefaultWatchdog(thing, callback, conditions, manager::close);
     manager.registerWatchdog(thing, watchdog, listener);
     return watchdog;
+  }
+
+  private void put(ChannelUID channel, WatchdogCondition condition) {
+    if (!conditions.containsKey(channel)) {
+      conditions.put(channel, condition);
+      return;
+    }
+    WatchdogCondition earlierCondition = conditions.remove(channel);
+    conditions.put(channel, new ChainedCondition(earlierCondition, condition));
   }
 
 }

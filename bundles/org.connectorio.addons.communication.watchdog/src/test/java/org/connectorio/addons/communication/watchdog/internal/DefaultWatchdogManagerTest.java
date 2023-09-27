@@ -18,12 +18,15 @@
 package org.connectorio.addons.communication.watchdog.internal;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import java.util.concurrent.Semaphore;
 import org.connectorio.addons.communication.watchdog.Watchdog;
 import org.connectorio.addons.communication.watchdog.WatchdogBuilder;
 import org.connectorio.addons.communication.watchdog.WatchdogClock;
+import org.connectorio.addons.communication.watchdog.WatchdogCondition;
 import org.connectorio.addons.communication.watchdog.WatchdogListener;
 import org.connectorio.addons.link.LinkManager;
 import org.junit.jupiter.api.Test;
@@ -31,7 +34,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.verification.VerificationMode;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingUID;
@@ -78,34 +80,87 @@ class DefaultWatchdogManagerTest {
 
     DefaultWatchdogManager manager = new DefaultWatchdogManager(clock, linkManager);
     WatchdogBuilder builder = manager.builder(thing);
+    Semaphore semaphore = new Semaphore(0);
 
-    Watchdog watchdog = builder.withChannel(TEST_CHANNEL, 10)
+    Watchdog watchdog = builder.withChannel(TEST_CHANNEL, 1000)
+      .withChannel(TEST_CHANNEL, new BlockingConditions(TEST_CHANNEL, semaphore, 1000))
       .build(callback, listener);
 
     manager.check(watchdog, listener);
     Mockito.verify(listener).initialized(any());
 
-    tick(10);
+    tick(1001);
+    semaphore.acquire();
     manager.check(watchdog, listener);
-    Mockito.verify(listener, atLeastOnce()).timeout(any());
+    Mockito.verify(listener).timeout(any());
 
-    tick(10);
+    tick(20);
+    semaphore.acquire();
     manager.check(watchdog, listener);
-    Mockito.verify(listener, atLeastOnce()).timeout(any());
+    Mockito.verify(listener, never()).timeout(any());
 
     tick(9);
+    semaphore.acquire();
     watchdog.mark(TEST_CHANNEL);
     tick(1);
+    semaphore.acquire();
     manager.check(watchdog, listener);
-    Mockito.verify(listener, atLeastOnce()).recovery(any());
+    Mockito.verify(listener).recovery(any());
 
     tick(1);
+    semaphore.acquire();
     manager.check(watchdog, listener);
-    Mockito.verify(listener, atLeastOnce()).timeout(any());
+    Mockito.verify(listener).timeout(any());
+    verifyNoInteractions(listener);
   }
 
   void tick(long time) {
-    timestamp += time;
+    timestamp = time;
+  }
+
+  static class BlockingConditions implements WatchdogCondition {
+
+    private final ChannelUID channel;
+    private final Semaphore semaphore;
+    private final long interval;
+
+    private State state;
+
+    BlockingConditions(ChannelUID channel, Semaphore semaphore, long interval) {
+      this.channel = channel;
+      this.semaphore = semaphore;
+      this.interval = interval;
+    }
+
+    @Override
+    public State evaluate() {
+      if (state == null) {
+        state = State.INITIALIZED;
+      } else {
+        state = State.OK;
+      }
+      return state;
+    }
+
+    @Override
+    public State getState() {
+      return state;
+    }
+
+    @Override
+    public long getInterval() {
+      return interval;
+    }
+
+    @Override
+    public void mark() {
+      semaphore.release();
+    }
+
+    @Override
+    public ChannelUID getChannel() {
+      return channel;
+    }
   }
 
 }

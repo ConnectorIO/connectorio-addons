@@ -52,9 +52,10 @@ public class TimeoutCondition implements WatchdogCondition {
     if (this.lastUpdate == null) {
       // assume we haven't seen anything for last window
       this.lastUpdate = updateWindow;
+      logger.debug("Expected update window for channel {} is {}", channel, updateWindow);
       return State.INITIALIZED;
     }
-    logger.debug("Last update time {} should be higher than {}", lastUpdate, updateWindow);
+    logger.debug("Channel {} last update time {} should be higher than {}", channel, lastUpdate, updateWindow);
     State currentState = lastUpdate > updateWindow ? State.OK : State.FAILED;
     state.set(currentState);
     return currentState;
