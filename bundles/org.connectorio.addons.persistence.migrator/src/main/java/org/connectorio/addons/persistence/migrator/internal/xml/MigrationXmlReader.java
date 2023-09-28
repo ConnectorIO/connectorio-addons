@@ -22,7 +22,7 @@ import org.connectorio.addons.persistence.migrator.internal.operation.CopyPatter
 import org.connectorio.addons.persistence.migrator.internal.operation.DeleteOperation;
 import org.connectorio.addons.persistence.migrator.internal.operation.CopyOperation;
 import org.connectorio.addons.persistence.migrator.internal.operation.TruncateOperation;
-import org.openhab.core.config.xml.util.XmlDocumentReader;
+import org.openhab.core.config.core.xml.util.XmlDocumentReader;
 
 public class MigrationXmlReader extends XmlDocumentReader<Migrations> {
 
