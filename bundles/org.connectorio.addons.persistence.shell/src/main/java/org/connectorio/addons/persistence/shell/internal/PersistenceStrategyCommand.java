@@ -20,6 +20,7 @@ package org.connectorio.addons.persistence.shell.internal;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -32,16 +33,14 @@ import org.openhab.core.io.console.extensions.AbstractConsoleCommandExtension;
 import org.openhab.core.io.console.extensions.ConsoleCommandExtension;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemRegistry;
-import org.openhab.core.persistence.PersistenceFilter;
 import org.openhab.core.persistence.PersistenceItemConfiguration;
-import org.openhab.core.persistence.PersistenceManager;
-import org.openhab.core.persistence.PersistenceService;
-import org.openhab.core.persistence.PersistenceServiceConfiguration;
-import org.openhab.core.persistence.PersistenceServiceRegistry;
 import org.openhab.core.persistence.config.PersistenceAllConfig;
 import org.openhab.core.persistence.config.PersistenceConfig;
 import org.openhab.core.persistence.config.PersistenceGroupConfig;
 import org.openhab.core.persistence.config.PersistenceItemConfig;
+import org.openhab.core.persistence.filter.PersistenceFilter;
+import org.openhab.core.persistence.registry.PersistenceServiceConfiguration;
+import org.openhab.core.persistence.registry.PersistenceServiceConfigurationRegistry;
 import org.openhab.core.persistence.strategy.PersistenceStrategy;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -54,15 +53,13 @@ import org.osgi.service.component.annotations.Reference;
 public class PersistenceStrategyCommand extends AbstractConsoleCommandExtension {
 
   private final ItemRegistry itemRegistry;
-  private final PersistenceManager manager;
-  private final PersistenceServiceRegistry persistenceService;
+  private final PersistenceServiceConfigurationRegistry manager;
 
   @Activate
-  public PersistenceStrategyCommand(@Reference ItemRegistry itemRegistry, @Reference PersistenceManager manager, @Reference PersistenceServiceRegistry persistenceService) {
+  public PersistenceStrategyCommand(@Reference ItemRegistry itemRegistry, @Reference PersistenceServiceConfigurationRegistry manager) {
     super("co7io-persistence-strategy", "Show persistence statistics for items");
     this.itemRegistry = itemRegistry;
     this.manager = manager;
-    this.persistenceService = persistenceService;
   }
 
   @Override
@@ -70,31 +67,31 @@ public class PersistenceStrategyCommand extends AbstractConsoleCommandExtension 
     TreeSet<Item> items = new TreeSet<>(Comparator.comparing(Item::getName));
     items.addAll(itemRegistry.getAll());
 
-    for (Entry<String, PersistenceServiceConfiguration> config : get(manager).entrySet()) {
-      console.println("service  '" + config.getKey() + "'");
-      for (PersistenceItemConfiguration itemConfig : config.getValue().getConfigs()) {
-        console.println("  alias '" + itemConfig.getAlias() + "'");
+    for (PersistenceServiceConfiguration config : get(manager)) {
+      console.println("service  '" + config.getUID() + "'");
+      for (PersistenceItemConfiguration itemConfig : config.getConfigs()) {
+        console.println("  alias '" + itemConfig.alias() + "'");
         console.println("  - includes:");
-        for (PersistenceConfig itemCfg : itemConfig.getItems()) {
+        for (PersistenceConfig itemCfg : itemConfig.items()) {
           print(console, "    ", itemCfg);
         }
-        List<PersistenceStrategy> strategies = itemConfig.getStrategies() == null ? new ArrayList<>() : itemConfig.getStrategies();
+        List<PersistenceStrategy> strategies = itemConfig.strategies();
         console.println("  - strategies:");
         for (PersistenceStrategy strategy : strategies) {
           print(console, "    ", strategy);
         }
         console.println("  - excludes:");
-        List<PersistenceFilter> filters = itemConfig.getFilters() == null ? new ArrayList<>() : itemConfig.getFilters();
+        List<PersistenceFilter> filters = itemConfig.filters();
         for (PersistenceFilter filter : filters) {
           console.println("    " + filter);
         }
       }
       console.println("  - defaults:");
-      for (PersistenceStrategy strategy : config.getValue().getDefaults()) {
+      for (PersistenceStrategy strategy : config.getDefaults()) {
         console.println("  " + strategy);
       }
       console.println("  - strategies:");
-      for (PersistenceStrategy strategy : config.getValue().getStrategies()) {
+      for (PersistenceStrategy strategy : config.getStrategies()) {
         print(console, "  ", strategy);
       }
     }
@@ -121,20 +118,8 @@ public class PersistenceStrategyCommand extends AbstractConsoleCommandExtension 
     return Arrays.asList("co7io-persistence-strategy");
   }
 
-  static Map<String, PersistenceServiceConfiguration> get(PersistenceManager manager) {
-    try {
-      Field field = manager.getClass().getDeclaredField("persistenceServiceConfigs");
-      if (field != null) {
-        field.setAccessible(true);
-        Object value = field.get(manager);
-        if (value instanceof Map) {
-          return ((Map<String, PersistenceServiceConfiguration>) value);
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return Collections.emptyMap();
+  static Collection<PersistenceServiceConfiguration> get(PersistenceServiceConfigurationRegistry manager) {
+    return manager.getAll();
   }
 
 }

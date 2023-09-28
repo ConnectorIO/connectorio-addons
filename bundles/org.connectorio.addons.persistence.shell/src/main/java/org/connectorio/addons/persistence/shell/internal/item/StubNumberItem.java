@@ -22,6 +22,7 @@ import java.util.Locale;
 import java.util.Set;
 import javax.measure.Quantity;
 import javax.measure.Unit;
+import org.openhab.core.items.Metadata;
 import org.openhab.core.library.items.NumberItem;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.QuantityType;
@@ -57,11 +58,6 @@ public class StubNumberItem extends NumberItem {
   }
 
   @Override
-  public QuantityType<?> toQuantityType(DecimalType originalType, Class<? extends Quantity<?>> dimension) {
-    return item.toQuantityType(originalType, dimension);
-  }
-
-  @Override
   public State getState() {
     return state;
   }
@@ -89,6 +85,16 @@ public class StubNumberItem extends NumberItem {
   @Override
   public List<Class<? extends Command>> getAcceptedCommandTypes() {
     return item.getAcceptedCommandTypes();
+  }
+
+  @Override
+  public void addedMetadata(Metadata metadata) {
+    item.addedMetadata(metadata);
+  }
+
+  @Override
+  public void removedMetadata(Metadata metadata) {
+    item.removedMetadata(metadata);
   }
 
   @Override
