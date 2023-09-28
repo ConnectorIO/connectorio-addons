@@ -23,6 +23,7 @@ import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.thing.profiles.StateProfile;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
+import org.openhab.core.types.TimeSeries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,6 +79,11 @@ public class ChainedProfileCallback implements ProfileCallback {
       logger.trace("Sending state {} to final callback", state);
       delegate.sendUpdate(state);
     }
+  }
+
+  @Override
+  public void sendTimeSeries(TimeSeries timeSeries) {
+    delegate.sendTimeSeries(timeSeries);
   }
 
   public String toString() {

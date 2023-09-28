@@ -21,6 +21,7 @@ import org.openhab.core.thing.link.ItemChannelLink;
 import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
+import org.openhab.core.types.TimeSeries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ public class StackedProfileCallback implements ProfileCallback {
 
   @Override
   public void sendCommand(Command command) {
-    logger.trace("Sending command {} toi profile chain", command);
+    logger.trace("Sending command {} to profile chain", command);
     getDelegate().sendCommand(command);
   }
 
@@ -56,6 +57,12 @@ public class StackedProfileCallback implements ProfileCallback {
   public void sendUpdate(State state) {
     logger.trace("Sending state {} to profile chain", state);
     getDelegate().sendUpdate(state);
+  }
+
+  @Override
+  public void sendTimeSeries(TimeSeries timeSeries) {
+    logger.trace("Sending time series {} to profile chain", timeSeries);
+    getDelegate().sendTimeSeries(timeSeries);
   }
 
   private ProfileCallback getDelegate() {
