@@ -20,19 +20,16 @@ package org.connectorio.addons.persistence.manager.internal;
 import org.openhab.core.common.SafeCaller;
 import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.persistence.PersistenceService;
-import org.openhab.core.persistence.internal.PersistenceManagerImpl;
+import org.openhab.core.persistence.internal.PersistenceManager;
+import org.openhab.core.persistence.registry.PersistenceServiceConfigurationRegistry;
 import org.openhab.core.scheduler.CronScheduler;
 import org.openhab.core.service.ReadyService;
 
-public class AccessiblePersistenceManager extends PersistenceManagerImpl {
+public class AccessiblePersistenceManager extends PersistenceManager {
 
-  public AccessiblePersistenceManager(CronScheduler scheduler, ItemRegistry itemRegistry, SafeCaller safeCaller, ReadyService readyService) {
-    super(scheduler, itemRegistry, safeCaller, readyService);
-  }
-
-  @Override
-  public void activate() {
-    super.activate();
+  public AccessiblePersistenceManager(CronScheduler scheduler, ItemRegistry itemRegistry, SafeCaller safeCaller, ReadyService readyService,
+      PersistenceServiceConfigurationRegistry configurationRegistry) {
+    super(scheduler, itemRegistry, safeCaller, readyService, configurationRegistry);
   }
 
   @Override

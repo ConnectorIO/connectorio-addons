@@ -58,6 +58,11 @@ public class NavigableCallback implements ProfileCallback {
   }
 
   @Override
+  public ItemChannelLink getItemChannelLink() {
+    return link;
+  }
+
+  @Override
   public String toString() {
     return "Chained Callback [" + link + " at index " + index + "]";
   }
