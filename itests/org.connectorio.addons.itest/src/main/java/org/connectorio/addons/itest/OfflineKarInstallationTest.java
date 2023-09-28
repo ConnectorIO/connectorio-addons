@@ -111,7 +111,7 @@ public abstract class OfflineKarInstallationTest {
     container.start(); // if not started yet?
     //logger.info("Debugger awaits connection at port {}", container.getMappedPort(5005));
     Integer port = container.getMappedPort(8080);
-    this.client.updateBaseUri("http://localhost:" + port + "/rest/");
+    this.client.updateBaseUri("http://localhost:" + port + "/rest");
 
     File[] karFiles = new File("target/additional-resources")
       .listFiles(file -> file.getName().matches("org.connectorio.addons.kar." + assembly + "-.*\\.kar"));
