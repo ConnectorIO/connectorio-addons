@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,6 +30,7 @@ class PersistenceItemStateRetrieverTest {
   @Mock
   private PersistenceServiceRegistry persistenceServiceRegistry;
 
+  @Test
   public void testStateRetrieval() {
     ItemChannelLink link = new ItemChannelLink(TEST_ITEM, CHANNEL_UID);
     CallbackImpl stub = new CallbackImpl(link);
@@ -64,7 +66,7 @@ class PersistenceItemStateRetrieverTest {
 
   static class CallbackImpl extends ProfileCallbackImpl {
     public CallbackImpl(ItemChannelLink link) {
-      super(null, null, null, link, null, null);
+      super(null, null, null, link, null, null, null);
     }
   }
 }
