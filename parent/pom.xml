@@ -37,7 +37,7 @@
     <compiler.source>11</compiler.source>
     <compiler.target>11</compiler.target>
 
-    <plc4x-extras.version>0.11.0-connectorio-1</plc4x-extras.version>
+    <plc4x-extras.version>0.11.0-connectorio-2</plc4x-extras.version>
     <bacnet4j-wrapper.version>1.3.0-alpha3</bacnet4j-wrapper.version>
 
     <openhab.version>3.0.4-connectorio-1</openhab.version>
