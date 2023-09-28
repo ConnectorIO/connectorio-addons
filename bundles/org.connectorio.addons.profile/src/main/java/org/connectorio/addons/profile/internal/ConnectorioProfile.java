@@ -52,7 +52,6 @@ class ConnectorioProfile implements StateProfile {
   private final LinkedList<StateProfile> callbackChain = new LinkedList<>();
 
   private final ProfileFactoryRegistry registry;
-  private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   ConnectorioProfile(ProfileCallback callback, ProfileContext context, ProfileFactoryRegistry registry) {
     this(context.getExecutorService(), callback, context, registry);

@@ -63,9 +63,9 @@
           </execution>
         </executions>
         <configuration>
-          <inputSpec>${project.basedir}/src/main/openapi/openhab-openapi-3.1.x.json</inputSpec>
-          <apiPackage>org.connectorio.bddhab.rest.client.v31</apiPackage>
-          <modelPackage>org.connectorio.bddhab.rest.client.v31.model</modelPackage>
+          <inputSpec>${project.basedir}/src/main/openapi/openhab-openapi-4.0.x.json</inputSpec>
+          <apiPackage>org.connectorio.bddhab.rest.client.v40</apiPackage>
+          <modelPackage>org.connectorio.bddhab.rest.client.v40.model</modelPackage>
           <additionalProperties>
             <additionalProperty>openApiNullable=false</additionalProperty>
           </additionalProperties>

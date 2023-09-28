@@ -44,7 +44,7 @@ import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tec.uom.se.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeHandler, ChargerConfig> implements
   StatusNotificationHandler, TransactionHandler, MeterValuesHandler, ConnectorCommandContext {
