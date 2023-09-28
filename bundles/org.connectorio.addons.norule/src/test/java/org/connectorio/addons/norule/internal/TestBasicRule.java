@@ -26,6 +26,7 @@ import org.connectorio.addons.norule.internal.action.DefaultThingActionsRegistry
 import org.connectorio.addons.test.ItemMutation;
 import org.connectorio.addons.test.StubEventBuilder;
 import org.connectorio.addons.test.StubItemBuilder;
+import org.connectorio.addons.test.StubUnitProvider;
 import org.connectorio.addons.test.TestingItemRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,8 +45,11 @@ public class TestBasicRule {
   @Mock
   private ThingRegistry thingRegistry;
 
-  private NumberItem heatProduced = StubItemBuilder.createQuantity(Energy.class, ActualCopRule.HEAT_PRODUCED).build();
-  private NumberItem energyConsumed = StubItemBuilder.createQuantity(Energy.class, ActualCopRule.ENERGY_CONSUMED).build();
+  private StubUnitProvider unitProvider = new StubUnitProvider()
+      .withDimension(Energy.class, Units.KILOWATT_HOUR);
+
+  private NumberItem heatProduced = StubItemBuilder.createQuantity(unitProvider, Energy.class, ActualCopRule.HEAT_PRODUCED).build();
+  private NumberItem energyConsumed = StubItemBuilder.createQuantity(unitProvider, Energy.class, ActualCopRule.ENERGY_CONSUMED).build();
   private NumberItem efficiency = StubItemBuilder.createNumber(ActualCopRule.EFFICIENCY).build();
 
   @Test

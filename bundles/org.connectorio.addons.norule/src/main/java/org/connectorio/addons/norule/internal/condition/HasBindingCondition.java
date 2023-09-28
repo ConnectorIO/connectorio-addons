@@ -18,22 +18,21 @@
 package org.connectorio.addons.norule.internal.condition;
 
 import org.connectorio.addons.norule.Condition;
-import org.connectorio.addons.norule.ConditionBuilder;
-import org.openhab.core.binding.BindingInfoRegistry;
+import org.openhab.core.addon.AddonInfoRegistry;
 
 public class HasBindingCondition implements Condition {
 
-  private final BindingInfoRegistry bindingInfoRegistry;
+  private final AddonInfoRegistry bindingInfoRegistry;
   private final String binding;
 
-  public HasBindingCondition(BindingInfoRegistry bindingInfoRegistry, String binding) {
+  public HasBindingCondition(AddonInfoRegistry bindingInfoRegistry, String binding) {
     this.bindingInfoRegistry = bindingInfoRegistry;
     this.binding = binding;
   }
 
   @Override
   public boolean evaluate() {
-    return bindingInfoRegistry.getBindingInfo(binding) != null;
+    return bindingInfoRegistry.getAddonInfo("binding-" + binding) != null;
   }
 
   public String toString() {
