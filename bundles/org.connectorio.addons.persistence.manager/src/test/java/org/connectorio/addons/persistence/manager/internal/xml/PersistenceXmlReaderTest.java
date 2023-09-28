@@ -3,21 +3,19 @@ package org.connectorio.addons.persistence.manager.internal.xml;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import org.assertj.core.api.RecursiveComparisonAssert;
 import org.connectorio.addons.persistence.manager.HasNamePatternPersistenceFilter;
 import org.connectorio.addons.persistence.manager.HasTagPersistenceFilter;
 import org.junit.jupiter.api.Test;
 import org.openhab.core.persistence.PersistenceItemConfiguration;
-import org.openhab.core.persistence.PersistenceServiceConfiguration;
 import org.openhab.core.persistence.config.PersistenceAllConfig;
 import org.openhab.core.persistence.config.PersistenceConfig;
 import org.openhab.core.persistence.config.PersistenceGroupConfig;
 import org.openhab.core.persistence.config.PersistenceItemConfig;
+import org.openhab.core.persistence.registry.PersistenceServiceConfiguration;
 import org.openhab.core.persistence.strategy.PersistenceCronStrategy;
 import org.openhab.core.persistence.strategy.PersistenceStrategy;
 import org.openhab.core.persistence.strategy.PersistenceStrategy.Globals;
@@ -41,8 +39,8 @@ class PersistenceXmlReaderTest {
     List<PersistenceStrategy> defaults = Arrays.asList(Globals.CHANGE, new PersistenceCronStrategy("everyHour", "0 ? ? ?"));
     List<PersistenceStrategy> strategies = new ArrayList<>();
     strategies.add(Globals.CHANGE);
-    PersistenceServiceConfiguration configuration = new PersistenceServiceConfiguration(
-      configs, defaults, strategies
+    PersistenceServiceConfiguration configuration = new PersistenceServiceConfiguration("a",
+      configs, defaults, strategies, Collections.emptyList()
     );
 
     assertThat(config.getDefaults()).isEqualTo(configuration.getDefaults());
@@ -53,12 +51,12 @@ class PersistenceXmlReaderTest {
       PersistenceItemConfiguration itemConfiguration = configConfigs.get(index);
       PersistenceItemConfiguration source = configuration.getConfigs().get(index);
 
-      assertThat(itemConfiguration.getAlias()).isEqualTo(source.getAlias());
+      assertThat(itemConfiguration.alias()).isEqualTo(source.alias());
       // persistence configuration elements do not define equals/hash code!
-      assertThat(itemConfiguration.getItems().toString()).isEqualTo(source.getItems().toString());
-      assertThat(itemConfiguration.getStrategies()).isEqualTo(source.getStrategies());
-      if (source.getFilters() != null) {
-        assertThat(itemConfiguration.getFilters()).isEqualTo(source.getFilters());
+      assertThat(itemConfiguration.items().toString()).isEqualTo(source.items().toString());
+      assertThat(itemConfiguration.strategies()).isEqualTo(source.strategies());
+      if (source.filters() != null) {
+        assertThat(itemConfiguration.filters()).isEqualTo(source.filters());
       }
     }
   }
