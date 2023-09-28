@@ -16,12 +16,13 @@
  -
  - SPDX-License-Identifier: Apache-2.0
  -->
-<binding:binding id="co7io-askoheat" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:binding="https://openhab.org/schemas/binding/v1.0.0"
-  xsi:schemaLocation="https://openhab.org/schemas/binding/v1.0.0 https://openhab.org/schemas/binding-1.0.0.xsd">
+<addon:addon id="co7io-canopen" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:addon="https://openhab.org/schemas/addon/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/addon/v1.0.0 https://openhab.org/schemas/addon-1.0.0.xsd">
 
-  <name>Askoheat Binding</name>
-  <description>This binding allow to read and also consigure Askoheat over its http API.</description>
-  <author>Łukasz Dywicki</author>
+  <type>binding</type>
+  <name>CANopen Binding</name>
+  <description>This binding provides interaction layer for CANopen enabled devices.</description>
+  <connection>local</connection>
 
-</binding:binding>
+</addon:addon>
