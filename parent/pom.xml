@@ -689,6 +689,11 @@
       </dependency>
       <dependency>
         <groupId>org.openhab.core.bundles</groupId>
+        <artifactId>org.openhab.core.addon</artifactId>
+        <version>${openhab.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.openhab.core.bundles</groupId>
         <artifactId>org.openhab.core.boot</artifactId>
         <version>${openhab.version}</version>
       </dependency>
@@ -955,11 +960,6 @@
       <dependency>
         <groupId>org.openhab.core.bundles</groupId>
         <artifactId>org.openhab.core.config.serial</artifactId>
-        <version>${openhab.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.openhab.core.bundles</groupId>
-        <artifactId>org.openhab.core.config.xml</artifactId>
         <version>${openhab.version}</version>
       </dependency>
       <dependency>

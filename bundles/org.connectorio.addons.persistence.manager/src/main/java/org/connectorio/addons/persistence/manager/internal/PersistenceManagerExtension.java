@@ -18,16 +18,20 @@
 package org.connectorio.addons.persistence.manager.internal;
 
 import java.io.File;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.connectorio.addons.persistence.manager.internal.xml.PersistenceXmlReader;
 import org.openhab.core.OpenHAB;
 import org.openhab.core.common.NamedThreadFactory;
-import org.openhab.core.persistence.PersistenceManager;
+import org.openhab.core.common.registry.ProviderChangeListener;
 import org.openhab.core.persistence.PersistenceService;
-import org.openhab.core.persistence.PersistenceServiceConfiguration;
+import org.openhab.core.persistence.registry.PersistenceServiceConfiguration;
+import org.openhab.core.persistence.registry.PersistenceServiceConfigurationProvider;
 import org.openhab.core.service.ReadyMarker;
 import org.openhab.core.service.ReadyMarkerFilter;
 import org.openhab.core.service.ReadyService;
@@ -41,33 +45,48 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component(immediate = true)
-public class PersistenceManagerExtension implements ReadyTracker {
+public class PersistenceManagerExtension implements ReadyTracker, PersistenceServiceConfigurationProvider {
 
   private final Logger logger = LoggerFactory.getLogger(PersistenceManagerExtension.class);
   private final ReadyMarker marker = new ReadyMarker("co7io-persistence", "configure");
-  private final List<PersistenceService> services = new CopyOnWriteArrayList<>();
+  private final Map<String, PersistenceServiceConfiguration> configurations = new ConcurrentHashMap<>();
+
+  private Set<ProviderChangeListener<PersistenceServiceConfiguration>> listeners = new CopyOnWriteArraySet<>();
 
   private final ReadyService readyService;
-  private final PersistenceManager manager;
 
   @Activate
-  public PersistenceManagerExtension(@Reference ReadyService readyService, @Reference PersistenceManager manager) {
+  public PersistenceManagerExtension(@Reference ReadyService readyService) {
     this.readyService = readyService;
-    this.manager = manager;
     // wait for retrieval of items which should be set at the same start level of 20.
     readyService.registerTracker(this, new ReadyMarkerFilter().withType("managed").withIdentifier("item"));
+  }
+
+  @Override
+  public void addProviderChangeListener(ProviderChangeListener<PersistenceServiceConfiguration> listener) {
+    this.listeners.add(listener);
+  }
+
+  @Override
+  public Collection<PersistenceServiceConfiguration> getAll() {
+    return configurations.values();
+  }
+
+  @Override
+  public void removeProviderChangeListener(ProviderChangeListener<PersistenceServiceConfiguration> listener) {
+    this.listeners.remove(listener);
   }
 
   @Override
   public void onReadyMarkerAdded(ReadyMarker readyMarker) {
     ExecutorService scheduler = Executors.newSingleThreadExecutor(new NamedThreadFactory("persistenceManager"));
     scheduler.submit(() -> {
-      for (PersistenceService service : services) {
-        PersistenceServiceConfiguration configuration = configure(service.getId());
+      for (String serviceId : configurations.keySet()) {
+        PersistenceServiceConfiguration configuration = configure(serviceId);
         if (configuration != null) {
-          manager.addConfig(service.getId(), configuration);
+          listeners.forEach(listener -> listener.added(this, configuration));
         } else {
-          logger.info("No dedicated persistence configuration for service {}. It will rely on own defaults", service.getId());
+          logger.info("No dedicated persistence configuration for service {}. It will rely on own defaults", serviceId);
         }
       }
       readyService.markReady(marker);
@@ -82,11 +101,15 @@ public class PersistenceManagerExtension implements ReadyTracker {
 
   @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
   public void addPersistenceService(PersistenceService service) {
-    services.add(service);
+    PersistenceServiceConfiguration configuration = null;
+    if (configurations.containsKey(service.getId())) {
+      configuration = configurations.remove(service.getId());
+    }
+    configurations.put(service.getId(), configuration);
   }
 
   public void removePersistenceService(PersistenceService service) {
-    services.remove(service);
+    configurations.remove(service.getId());
   }
 
   private PersistenceServiceConfiguration configure(String serviceId) {
@@ -102,5 +125,4 @@ public class PersistenceManagerExtension implements ReadyTracker {
     }
     return null;
   }
-
 }

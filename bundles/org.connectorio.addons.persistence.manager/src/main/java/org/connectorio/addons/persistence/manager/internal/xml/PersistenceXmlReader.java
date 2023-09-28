@@ -21,12 +21,13 @@ import com.thoughtworks.xstream.XStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.connectorio.addons.persistence.manager.HasNamePatternPersistenceFilter;
 import org.connectorio.addons.persistence.manager.HasTagPersistenceFilter;
-import org.openhab.core.config.xml.util.XmlDocumentReader;
-import org.openhab.core.persistence.PersistenceFilter;
+import org.openhab.core.config.core.xml.util.XmlDocumentReader;
 import org.openhab.core.persistence.PersistenceItemConfiguration;
-import org.openhab.core.persistence.PersistenceServiceConfiguration;
+import org.openhab.core.persistence.filter.PersistenceFilter;
+import org.openhab.core.persistence.registry.PersistenceServiceConfiguration;
 import org.openhab.core.persistence.config.PersistenceAllConfig;
 import org.openhab.core.persistence.config.PersistenceConfig;
 import org.openhab.core.persistence.config.PersistenceGroupConfig;
@@ -50,6 +51,7 @@ public class PersistenceXmlReader extends XmlDocumentReader<PersistenceServiceCo
     xstream.registerConverter(new PersistenceItemConfigConverter());
     xstream.registerConverter(new PersistenceGroupConfigConverter());
     //xstream.registerConverter(new PersistenceAllConfigConverter());
+    xstream.registerConverter(new PersistenceItemConfigurationConverter());
     xstream.registerConverter(new PersistenceStrategyConverter());
     xstream.registerConverter(new HasNamePatternPersistenceFilterConverter());
 
@@ -69,8 +71,7 @@ public class PersistenceXmlReader extends XmlDocumentReader<PersistenceServiceCo
     xstream.alias("service", MutablePersistenceServiceConfiguration.class);
     xstream.addImplicitCollection(MutablePersistenceServiceConfiguration.class, "configs");
 
-    xstream.alias("config", PersistenceItemConfiguration.class, NullSafePersistenceItemConfiguration.class);
-    xstream.useAttributeFor(PersistenceItemConfiguration.class, "alias");
+    xstream.alias("config", PersistenceItemConfiguration.class);
     xstream.alias("strategy", PersistenceStrategy.class);
     xstream.alias("cron", PersistenceCronStrategy.class);
   }
@@ -81,7 +82,7 @@ public class PersistenceXmlReader extends XmlDocumentReader<PersistenceServiceCo
       PersistenceItemConfiguration.class, PersistenceStrategy.class, PersistenceCronStrategy.class,
       PersistenceAllConfig.class, PersistenceGroupConfig.class, PersistenceItemConfig.class,
       HasTagPersistenceFilter.class, HasNamePatternPersistenceFilter.class,
-      MutablePersistenceServiceConfiguration.class, NullSafePersistenceItemConfiguration.class
+      MutablePersistenceServiceConfiguration.class, PersistenceItemConfiguration.class
     });
     this.xstream = xstream;
   }
@@ -91,27 +92,15 @@ public class PersistenceXmlReader extends XmlDocumentReader<PersistenceServiceCo
     configureSecurity(xStream);
   }
 
-  static class NullSafePersistenceItemConfiguration extends PersistenceItemConfiguration {
-
-    public NullSafePersistenceItemConfiguration(List<PersistenceConfig> items, String alias,
-      List<PersistenceStrategy> strategies, List<PersistenceFilter> filters) {
-      super(items, alias, strategies, filters == null ? new ArrayList<>() : filters);
-    }
-
-    @Override
-    public List<PersistenceFilter> getFilters() {
-      List<PersistenceFilter> filters = super.getFilters();
-      return filters == null ? Collections.emptyList() : filters;
-    }
-  }
 
   public static class MutablePersistenceServiceConfiguration extends PersistenceServiceConfiguration {
     private List<PersistenceItemConfiguration> configs = new ArrayList<>();
     private List<PersistenceStrategy> defaults = new ArrayList<>();
     private List<PersistenceStrategy> strategies = new ArrayList<>();
+    private List<PersistenceFilter> filters = new ArrayList<>();
 
-    public MutablePersistenceServiceConfiguration() {
-      super(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+    public MutablePersistenceServiceConfiguration(String serviceId) {
+      super(serviceId, Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
     }
 
     @Override
@@ -129,6 +118,11 @@ public class PersistenceXmlReader extends XmlDocumentReader<PersistenceServiceCo
       return strategies;
     }
 
+    @Override
+    public List<PersistenceFilter> getFilters() {
+      return filters;
+    }
+
     public void setConfigs(List<PersistenceItemConfiguration> configs) {
       this.configs = configs;
     }
@@ -141,11 +135,16 @@ public class PersistenceXmlReader extends XmlDocumentReader<PersistenceServiceCo
       this.strategies = strategies;
     }
 
+    public void setFilters(List<PersistenceFilter> filters) {
+      this.filters = filters;
+    }
+
     @Override
     public String toString() {
       return "MutablePersistenceServiceConfiguration[configs=" + getConfigs()
         + ", defaults=" + getDefaults()
-        + ", strategies=" + getStrategies()
+          + ", strategies=" + getStrategies()
+          + ", filters=" + getFilters()
         + "]";
     }
   }
