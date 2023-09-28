@@ -101,13 +101,4 @@
     <module>org.connectorio.units.si</module>
   </modules>
 
-  <profiles>
-    <profile>
-      <id>osh</id>
-      <modules>
-        <module>org.connectorio.addons.managed.widget</module>
-      </modules>
-    </profile>
-  </profiles>
-
 </project>
