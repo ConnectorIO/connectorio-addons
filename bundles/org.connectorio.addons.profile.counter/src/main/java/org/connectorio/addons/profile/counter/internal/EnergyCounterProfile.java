@@ -27,13 +27,13 @@ import javax.measure.quantity.Energy;
 import org.connectorio.addons.profile.counter.internal.state.DummyStateRetriever;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.QuantityType;
+import org.openhab.core.library.unit.MetricPrefix;
 import org.openhab.core.library.unit.Units;
 import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.thing.profiles.ProfileContext;
 import org.openhab.core.thing.profiles.ProfileTypeUID;
 import org.openhab.core.types.Type;
-import tec.uom.se.unit.MetricPrefix;
-import tec.uom.se.unit.ProductUnit;
+import tech.units.indriya.unit.ProductUnit;
 
 /**
  * Little utility profile which, based on power reading will calculate energy consumption.
