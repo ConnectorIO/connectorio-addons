@@ -23,7 +23,7 @@ import org.connectorio.addons.managed.thing.model.ChannelEntry;
 import org.connectorio.addons.managed.thing.model.ThingEntry;
 import org.connectorio.addons.managed.thing.model.Things;
 import org.connectorio.addons.managed.xstream.NestedMapConverter;
-import org.openhab.core.config.xml.util.XmlDocumentReader;
+import org.openhab.core.config.core.xml.util.XmlDocumentReader;
 
 public class XStreamThingReader extends XmlDocumentReader<Things> {
 
