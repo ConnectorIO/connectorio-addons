@@ -21,7 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import org.connectorio.addons.norule.Condition;
 import org.connectorio.addons.norule.ConditionBuilder;
-import org.openhab.core.binding.BindingInfoRegistry;
+import org.openhab.core.addon.AddonInfoRegistry;
 import org.openhab.core.service.ReadyMarker;
 import org.openhab.core.service.ReadyService;
 import org.openhab.core.service.StartLevelService;
@@ -29,10 +29,10 @@ import org.openhab.core.service.StartLevelService;
 public class DefaultConditionBuilder implements ConditionBuilder {
 
   private final ReadyService readyService;
-  private final BindingInfoRegistry bindingInfoRegistry;
+  private final AddonInfoRegistry bindingInfoRegistry;
   private final Set<Condition> conditions = new LinkedHashSet<>();
 
-  public DefaultConditionBuilder(ReadyService readyService, BindingInfoRegistry bindingInfoRegistry) {
+  public DefaultConditionBuilder(ReadyService readyService, AddonInfoRegistry bindingInfoRegistry) {
     this.readyService = readyService;
     this.bindingInfoRegistry = bindingInfoRegistry;
   }
