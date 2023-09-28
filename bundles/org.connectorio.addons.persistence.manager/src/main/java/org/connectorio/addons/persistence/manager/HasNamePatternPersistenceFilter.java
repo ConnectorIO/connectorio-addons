@@ -19,17 +19,27 @@ package org.connectorio.addons.persistence.manager;
 
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.openhab.core.items.Item;
-import org.openhab.core.persistence.PersistenceFilter;
+import org.openhab.core.persistence.filter.PersistenceFilter;
 
 public class HasNamePatternPersistenceFilter extends PersistenceFilter implements Predicate<Item> {
 
   private final Pattern pattern;
 
   public HasNamePatternPersistenceFilter(String pattern) {
+    super("name");
     this.pattern = Pattern.compile(pattern);
+  }
+
+  @Override
+  public boolean apply(Item item) {
+    return test(item);
+  }
+
+  @Override
+  public void persisted(Item item) {
+
   }
 
   @Override
