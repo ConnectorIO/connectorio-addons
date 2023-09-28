@@ -19,7 +19,7 @@ package org.connectorio.addons.norule.internal.condition;
 
 import org.connectorio.addons.norule.ConditionBuilder;
 import org.connectorio.addons.norule.ConditionBuilderFactory;
-import org.openhab.core.binding.BindingInfoRegistry;
+import org.openhab.core.addon.AddonInfoRegistry;
 import org.openhab.core.service.ReadyService;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -29,10 +29,10 @@ import org.osgi.service.component.annotations.Reference;
 public class DefaultConditionBuilderFactory implements ConditionBuilderFactory {
 
   private final ReadyService readyService;
-  private final BindingInfoRegistry bindingInfoRegistry;
+  private final AddonInfoRegistry bindingInfoRegistry;
 
   @Activate
-  public DefaultConditionBuilderFactory(@Reference ReadyService readyService, @Reference BindingInfoRegistry bindingInfoRegistry) {
+  public DefaultConditionBuilderFactory(@Reference ReadyService readyService, @Reference AddonInfoRegistry bindingInfoRegistry) {
     this.readyService = readyService;
     this.bindingInfoRegistry = bindingInfoRegistry;
   }
