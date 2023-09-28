@@ -37,9 +37,11 @@ import org.openhab.core.library.items.NumberItem;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.persistence.PersistenceItemConfiguration;
 import org.openhab.core.persistence.PersistenceService;
-import org.openhab.core.persistence.PersistenceServiceConfiguration;
 import org.openhab.core.persistence.config.PersistenceItemConfig;
+import org.openhab.core.persistence.registry.PersistenceServiceConfiguration;
+import org.openhab.core.persistence.registry.PersistenceServiceConfigurationRegistry;
 import org.openhab.core.persistence.strategy.PersistenceStrategy.Globals;
+import org.openhab.core.scheduler.Scheduler;
 import org.openhab.core.service.ReadyMarker;
 import org.openhab.core.service.ReadyService;
 import org.openhab.core.service.StartLevelService;
@@ -58,11 +60,14 @@ public class PersistenceManagerTest {
   @Mock
   PersistenceService persistenceService;
 
+  @Mock
+  PersistenceServiceConfigurationRegistry configurationRegistry;
+
   private AccessiblePersistenceManager manager;
 
-  Item OUTSIDE_TEMPERATURE_ITEM = new NumberItem("Number", "OutsideTemperature");
-  Item INSIDE_TEMPERATURE_ITEM = new NumberItem("Number", "InsideTemperature");
-  Item ENERGY_ITEM = new NumberItem("Number", "ElectricityConsumption");
+  Item OUTSIDE_TEMPERATURE_ITEM = new NumberItem("Number", "OutsideTemperature", null);
+  Item INSIDE_TEMPERATURE_ITEM = new NumberItem("Number", "InsideTemperature", null);
+  Item ENERGY_ITEM = new NumberItem("Number", "ElectricityConsumption", null);
   Item TEMPERATURES = new GroupItem("Temperatures") {
     {{
       addMember(OUTSIDE_TEMPERATURE_ITEM);
@@ -72,8 +77,9 @@ public class PersistenceManagerTest {
 
   @BeforeEach
   void setup() throws Exception {
-    manager = new AccessiblePersistenceManager(new CronSchedulerImpl(new SchedulerImpl()), itemRegistry, new SafeCallerImpl(
-      Collections.emptyMap()), readyService);
+    Scheduler scheduler = new SchedulerImpl();
+    manager = new AccessiblePersistenceManager(new CronSchedulerImpl(scheduler), scheduler, itemRegistry, new SafeCallerImpl(
+      Collections.emptyMap()), readyService, configurationRegistry);
 
     when(persistenceService.getId()).thenReturn(INFLUX);
     when(persistenceService.getDefaultStrategies()).thenReturn(Collections.singletonList(Globals.CHANGE));
@@ -86,7 +92,6 @@ public class PersistenceManagerTest {
 //  registerItem(ENERGY_ITEM);
 //  registerItem(TEMPERATURES);
 
-    manager.activate();
     manager.addPersistenceService(persistenceService);
   }
 
@@ -109,11 +114,12 @@ public class PersistenceManagerTest {
 
   @Test
   void checkManagerWithEmptyItemSettings() throws Exception {
-    manager.addConfig(INFLUX, new PersistenceServiceConfiguration(
-      Arrays.asList(new PersistenceItemConfiguration(
+    manager.added(new PersistenceServiceConfiguration(INFLUX,
+        Arrays.asList(new PersistenceItemConfiguration(
         Arrays.asList(new PersistenceItemConfig(OUTSIDE_TEMPERATURE_ITEM.getName())),
         null, Collections.emptyList(), null
       )),
+      Arrays.asList(),
       Arrays.asList(),
       Arrays.asList()
     ));
@@ -130,14 +136,15 @@ public class PersistenceManagerTest {
 
   @Test
   void checkManagerWithVerboseItemSettings() throws Exception {
-    manager.addConfig(INFLUX, new PersistenceServiceConfiguration(
-      Arrays.asList(new PersistenceItemConfiguration(
+    manager.added(new PersistenceServiceConfiguration(INFLUX,
+        Arrays.asList(new PersistenceItemConfiguration(
         Arrays.asList(new PersistenceItemConfig(OUTSIDE_TEMPERATURE_ITEM.getName())),
         "update", Arrays.asList(Globals.UPDATE), null
       ), new PersistenceItemConfiguration(
         Arrays.asList(new PersistenceItemConfig(OUTSIDE_TEMPERATURE_ITEM.getName())),
         "change", Arrays.asList(Globals.CHANGE), null
       )),
+      Arrays.asList(),
       Arrays.asList(),
       Arrays.asList()
     ));
@@ -155,11 +162,12 @@ public class PersistenceManagerTest {
     verify(persistenceService, times(1)).store(OUTSIDE_TEMPERATURE_ITEM, "update");
     verify(persistenceService, times(0)).store(eq(INSIDE_TEMPERATURE_ITEM), anyString());
 
-    manager.addConfig(INFLUX, new PersistenceServiceConfiguration(
-      Arrays.asList(new PersistenceItemConfiguration(
+    manager.added(new PersistenceServiceConfiguration(INFLUX,
+        Arrays.asList(new PersistenceItemConfiguration(
         Arrays.asList(new PersistenceItemConfig(OUTSIDE_TEMPERATURE_ITEM.getName())),
         "reset", Arrays.asList(Globals.UPDATE), null
       )),
+      Arrays.asList(),
       Arrays.asList(),
       Arrays.asList()
     ));
