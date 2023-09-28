@@ -3,6 +3,7 @@ package org.connectorio.addons.test;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import javax.measure.Quantity;
+import org.openhab.core.i18n.UnitProvider;
 import org.openhab.core.internal.items.ItemBuilderFactoryImpl;
 import org.openhab.core.items.GroupFunction;
 import org.openhab.core.items.GroupItem;
@@ -27,7 +28,11 @@ public class StubItemBuilder<T extends Item> {
   protected final ItemBuilder builder;
 
   protected StubItemBuilder(String type, String name) {
-    this(createBuilder(type, name));
+    this(new StubUnitProvider(), type, name);
+  }
+
+  protected StubItemBuilder(UnitProvider unitProvider, String type, String name) {
+    this(createBuilder(unitProvider, type, name));
   }
 
   protected StubItemBuilder(ItemBuilder builder) {
@@ -62,8 +67,8 @@ public class StubItemBuilder<T extends Item> {
     return new StubItemBuilder<>(CoreItemFactory.LOCATION, name);
   }
 
-  public static StubItemBuilder<NumberItem> createQuantity(Class<? extends Quantity<?>> quantity, String name) {
-    return new StubItemBuilder<>(CoreItemFactory.NUMBER + ":" + quantity.getSimpleName(), name);
+  public static StubItemBuilder<NumberItem> createQuantity(UnitProvider unitProvider, Class<? extends Quantity<?>> quantity, String name) {
+    return new StubItemBuilder<>(unitProvider, CoreItemFactory.NUMBER + ":" + quantity.getSimpleName(), name);
   }
 
   public static StubItemBuilder<NumberItem> createNumber(String name) {
@@ -86,16 +91,16 @@ public class StubItemBuilder<T extends Item> {
     return new StubItemBuilder<>(CoreItemFactory.SWITCH, name);
   }
 
-  public static StubItemBuilder<GroupItem> createGroup(String name) {
-    return createGroup(null, name, null);
+  public static StubItemBuilder<GroupItem> createGroup(UnitProvider unitProvider, String name) {
+    return createGroup(unitProvider, null, name, null);
   }
 
-  public static StubItemBuilder<GroupItem> createGroup(String type, String name, GroupFunction function) {
-    ItemBuilder builder = createBuilder(GroupItem.TYPE, name);
+  public static StubItemBuilder<GroupItem> createGroup(UnitProvider unitProvider, String type, String name, GroupFunction function) {
+    ItemBuilder builder = createBuilder(unitProvider, GroupItem.TYPE, name);
     builder.withGroupFunction(function);
     if (type != null) {
       // name is irrelevant, so we stub it
-      builder.withBaseItem(createBuilder(type, "base_stub_" + name).build());
+      builder.withBaseItem(createBuilder(unitProvider, type, "base_stub_" + name).build());
     }
     return new StubItemBuilder<>(builder);
   }
@@ -119,8 +124,8 @@ public class StubItemBuilder<T extends Item> {
     return (T) builder.build();
   }
 
-  private static ItemBuilder createBuilder(String type, String name) {
-    return new ItemBuilderFactoryImpl(new CoreItemFactory()).newItemBuilder(type, name);
+  private static ItemBuilder createBuilder(UnitProvider unitProvider, String type, String name) {
+    return new ItemBuilderFactoryImpl(new CoreItemFactory(unitProvider)).newItemBuilder(type, name);
   }
 
 }
