@@ -60,6 +60,7 @@
     <ocpp-common.version>1.0</ocpp-common.version>
     <milo.version>0.6.7</milo.version>
     <pax-exam.version>4.13.5</pax-exam.version>
+    <xstream.version>1.4.13</xstream.version>
 
     <openapi-generator.version>5.4.0</openapi-generator.version>
     <connectorio-openapi-generators.version>${openapi-generator.version}</connectorio-openapi-generators.version>
@@ -1160,6 +1161,11 @@
         <version>${unit-se.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>com.thoughtworks.xstream</groupId>
+        <artifactId>xstream</artifactId>
+        <version>${xstream.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.apache.karaf.features</groupId>

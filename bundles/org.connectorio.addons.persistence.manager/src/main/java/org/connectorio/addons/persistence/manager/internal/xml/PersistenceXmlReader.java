@@ -79,6 +79,9 @@ public class PersistenceXmlReader extends XmlDocumentReader<PersistenceServiceCo
   public void configureSecurity(XStream xstream) {
     xstream.allowTypes(new Class[] { MutablePersistenceServiceConfiguration.class,
       PersistenceItemConfiguration.class, PersistenceStrategy.class, PersistenceCronStrategy.class,
+      PersistenceAllConfig.class, PersistenceGroupConfig.class, PersistenceItemConfig.class,
+      HasTagPersistenceFilter.class, HasNamePatternPersistenceFilter.class,
+      MutablePersistenceServiceConfiguration.class, NullSafePersistenceItemConfiguration.class
     });
     this.xstream = xstream;
   }
