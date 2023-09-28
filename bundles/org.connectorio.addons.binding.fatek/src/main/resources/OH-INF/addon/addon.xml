@@ -16,12 +16,13 @@
  -
  - SPDX-License-Identifier: Apache-2.0
  -->
-<binding:binding id="co7io-fatek" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:binding="https://openhab.org/schemas/binding/v1.0.0"
-  xsi:schemaLocation="https://openhab.org/schemas/binding/v1.0.0 https://openhab.org/schemas/binding-1.0.0.xsd">
+<addon:addon id="co7io-fatek" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:addon="https://openhab.org/schemas/addon/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/addon/v1.0.0 https://openhab.org/schemas/addon-1.0.0.xsd">
 
+  <type>binding</type>
   <name>Fatek Binding</name>
   <description>This binding provides integration with Fatek PLCs (FBs line).</description>
-  <author>Łukasz Dywicki</author>
+  <connection>local</connection>
 
-</binding:binding>
+</addon:addon>
