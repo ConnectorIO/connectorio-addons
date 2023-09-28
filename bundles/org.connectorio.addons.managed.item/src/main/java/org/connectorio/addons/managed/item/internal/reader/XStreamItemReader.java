@@ -24,7 +24,7 @@ import org.connectorio.addons.managed.item.model.Items;
 import org.connectorio.addons.managed.item.model.MetadataEntry;
 import org.connectorio.addons.managed.link.model.BaseLinkEntry;
 import org.connectorio.addons.managed.xstream.NestedMapConverter;
-import org.openhab.core.config.xml.util.XmlDocumentReader;
+import org.openhab.core.config.core.xml.util.XmlDocumentReader;
 
 public class XStreamItemReader extends XmlDocumentReader<Items> {
 
