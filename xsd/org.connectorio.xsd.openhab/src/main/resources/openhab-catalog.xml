@@ -17,6 +17,7 @@
  - SPDX-License-Identifier: Apache-2.0
  -->
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <system systemId="https://openhab.org/schemas/addon-1.0.0.xsd" uri="./xsd/openhab/addon-1.0.0.xsd"/>
   <system systemId="https://openhab.org/schemas/binding-1.0.0.xsd" uri="./xsd/openhab/binding-1.0.0.xsd"/>
   <system systemId="https://openhab.org/schemas/config-description-1.0.0.xsd" uri="./xsd/openhab/config-description-1.0.0.xsd"/>
   <system systemId="https://openhab.org/schemas/thing-description-1.0.0.xsd" uri="./xsd/openhab/thing-description-1.0.0.xsd"/>
