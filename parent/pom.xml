@@ -44,7 +44,7 @@
     <openhab-distro.version>3.0.4</openhab-distro.version>
     <karaf.version>4.3.9</karaf.version>
 
-    <slf4j.version>1.7.21</slf4j.version>
+    <slf4j.version>1.7.36</slf4j.version>
     <fasterxml-classmate.version>1.5.1</fasterxml-classmate.version>
 
     <assertj.version>3.23.1</assertj.version>
@@ -1199,7 +1199,7 @@
 
       <dependency>
         <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-simple</artifactId>
+        <artifactId>slf4j-reload4j</artifactId>
         <version>${slf4j.version}</version>
         <scope>test</scope>
       </dependency>

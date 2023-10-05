@@ -36,8 +36,6 @@ public interface AmsAdsBindingConstants extends BaseBindingConstants {
 
   ThingTypeUID THING_TYPE_SERIAL = new ThingTypeUID(BINDING_ID, "serial");
 
-  ThingTypeUID THING_TYPE_ADS = new ThingTypeUID(BINDING_ID, "ads");
-
   // List of all Channel types
   String SWITCH = "switch";
 

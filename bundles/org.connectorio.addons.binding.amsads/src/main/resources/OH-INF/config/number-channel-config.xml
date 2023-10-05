@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- - Copyright (C) 2019-2021 ConnectorIO Sp. z o.o.
+ - Copyright (C) 2019-2023 ConnectorIO Sp. z o.o.
  -
  - Licensed under the Apache License, Version 2.0 (the "License");
  - you may not use this file except in compliance with the License.
@@ -21,37 +21,141 @@
   xmlns:config-description="https://openhab.org/schemas/config-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
 
-  <config-description uri="thing-type:co7io-amsads:number">
-    <parameter-group name="basic">
-      <label>Required configuration</label>
-      <description>Below fields are required in order to read/write data from PLC.</description>
-    </parameter-group>
-
-    <parameter name="field" type="text" groupName="basic">
-      <label>Field</label>
-      <description>Field to be read from PLC. Supported format of field:
-        indexGroup:indexOffset:BOOL[numberOfElements]* (also using 0x notation)
-        USINT
-        UINT
-        DINT
-        UDINT
-        LWORD
-        LINT
-        ULINT
-        REAL
-        LREAL
-        (etc)
+  <config-description uri="thing-type:co7io-amsads:number-symbol-tag">
+    <parameter name="symbol" type="text">
+      <label>Field symbol</label>
+      <description>Name of field be read from device.
+        For TwinCAT 2 use names such .symbol, for TwinCAT 3 use Task.Name.
       </description>
     </parameter>
-
-    <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
-      <label>Refresh interval</label>
-      <description>
-        Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
-      </description>
-      <unitLabel>ms</unitLabel>
-      <default>0</default>
+    <parameter name="type" type="text">
+      <label>Value encoding</label>
+      <description>Encoding of the field. Value in brackets indicate length of type in bytes.</description>
+      <options>
+        <option value="BOOL">BOOL (1)</option>
+        <option value="BIT">BOOL (1)</option>
+        <option value="BIT8">BYTE (1)</option>
+        <option value="BYTE">BYTE (1)</option>
+        <option value="BITARR8">BYTE (1)</option>
+        <option value="WORD">WORD (2)</option>
+        <option value="BITARR16">WORD (2)</option>
+        <option value="DWORD">DWORD (4)</option>
+        <option value="BITARR32">DWORD (4)</option>
+        <option value="SINT">SINT (1)</option>
+        <option value="INT8">SINT (1)</option>
+        <option value="USINT">USINT (1)</option>
+        <option value="UINT8">USINT (1)</option>
+        <option value="INT">INT (2)</option>
+        <option value="INT16">INT (2)</option>
+        <option value="UINT">UINT (2)</option>
+        <option value="UINT16">UINT (2)</option>
+        <option value="DINT">DINT (4)</option>
+        <option value="INT32">DINT (4)</option>
+        <option value="UDINT">UDINT (4)</option>
+        <option value="UINT32">UDINT (4)</option>
+        <option value="LINT">LINT (8)</option>
+        <option value="INT64">LINT (8)</option>
+        <option value="ULINT">ULINT (8)</option>
+        <option value="UINT64">ULINT (8)</option>
+        <option value="REAL">REAL (4)</option>
+        <option value="FLOAT">REAL (4)</option>
+        <option value="LREAL">LREAL (8)</option>
+        <option value="DOUBLE">LREAL (8)</option>
+      </options>
     </parameter>
-
   </config-description>
+
+  <config-description uri="thing-type:co7io-amsads:number-direct-dec-tag">
+    <parameter name="indexGroup" type="integer">
+      <label>Index Group (decimal)</label>
+      <description>Index group in decimal format (excluding 0x prefix). For example F00F.</description>
+    </parameter>
+    <parameter name="indexOffset" type="integer">
+      <label>Index Offset (decimal)</label>
+      <description>Offset in given decimal in hex format (excluding 0x prefix). For example 01.</description>
+    </parameter>
+    <parameter name="type" type="text">
+      <label>Value encoding</label>
+      <description>Encoding of the field. Value in brackets indicate length of type in bytes.</description>
+      <options>
+        <option value="BOOL">BOOL (1)</option>
+        <option value="BIT">BOOL (1)</option>
+        <option value="BIT8">BYTE (1)</option>
+        <option value="BYTE">BYTE (1)</option>
+        <option value="BITARR8">BYTE (1)</option>
+        <option value="WORD">WORD (2)</option>
+        <option value="BITARR16">WORD (2)</option>
+        <option value="DWORD">DWORD (4)</option>
+        <option value="BITARR32">DWORD (4)</option>
+        <option value="SINT">SINT (1)</option>
+        <option value="INT8">SINT (1)</option>
+        <option value="USINT">USINT (1)</option>
+        <option value="UINT8">USINT (1)</option>
+        <option value="INT">INT (2)</option>
+        <option value="INT16">INT (2)</option>
+        <option value="UINT">UINT (2)</option>
+        <option value="UINT16">UINT (2)</option>
+        <option value="DINT">DINT (4)</option>
+        <option value="INT32">DINT (4)</option>
+        <option value="UDINT">UDINT (4)</option>
+        <option value="UINT32">UDINT (4)</option>
+        <option value="LINT">LINT (8)</option>
+        <option value="INT64">LINT (8)</option>
+        <option value="ULINT">ULINT (8)</option>
+        <option value="UINT64">ULINT (8)</option>
+        <option value="REAL">REAL (4)</option>
+        <option value="FLOAT">REAL (4)</option>
+        <option value="LREAL">LREAL (8)</option>
+        <option value="DOUBLE">LREAL (8)</option>
+      </options>
+    </parameter>
+  </config-description>
+
+
+  <config-description uri="thing-type:co7io-amsads:number-direct-hex-tag">
+    <parameter name="indexGroup" type="text">
+      <label>Index Group (hex)</label>
+      <description>Index group in hex format (excluding 0x prefix). For example F00F.</description>
+    </parameter>
+    <parameter name="indexOffset" type="integer">
+      <label>Index Offset (hex)</label>
+      <description>Offset in given group in hex format (excluding 0x prefix). For example 01.</description>
+    </parameter>
+    <parameter name="type" type="text">
+      <label>Value encoding</label>
+      <description>Encoding of the field. Value in brackets indicate length of type in bytes.</description>
+      <options>
+        <option value="BOOL">BOOL (1)</option>
+        <option value="BIT">BOOL (1)</option>
+        <option value="BIT8">BYTE (1)</option>
+        <option value="BYTE">BYTE (1)</option>
+        <option value="BITARR8">BYTE (1)</option>
+        <option value="WORD">WORD (2)</option>
+        <option value="BITARR16">WORD (2)</option>
+        <option value="DWORD">DWORD (4)</option>
+        <option value="BITARR32">DWORD (4)</option>
+        <option value="SINT">SINT (1)</option>
+        <option value="INT8">SINT (1)</option>
+        <option value="USINT">USINT (1)</option>
+        <option value="UINT8">USINT (1)</option>
+        <option value="INT">INT (2)</option>
+        <option value="INT16">INT (2)</option>
+        <option value="UINT">UINT (2)</option>
+        <option value="UINT16">UINT (2)</option>
+        <option value="DINT">DINT (4)</option>
+        <option value="INT32">DINT (4)</option>
+        <option value="UDINT">UDINT (4)</option>
+        <option value="UINT32">UDINT (4)</option>
+        <option value="LINT">LINT (8)</option>
+        <option value="INT64">LINT (8)</option>
+        <option value="ULINT">ULINT (8)</option>
+        <option value="UINT64">ULINT (8)</option>
+        <option value="REAL">REAL (4)</option>
+        <option value="FLOAT">REAL (4)</option>
+        <option value="LREAL">LREAL (8)</option>
+        <option value="DOUBLE">LREAL (8)</option>
+      </options>
+    </parameter>
+  </config-description>
+
 </config-description:config-descriptions>

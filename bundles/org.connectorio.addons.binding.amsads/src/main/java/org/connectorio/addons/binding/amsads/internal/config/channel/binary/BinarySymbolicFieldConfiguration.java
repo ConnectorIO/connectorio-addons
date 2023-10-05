@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,17 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.amsads.internal.config;
+package org.connectorio.addons.binding.amsads.internal.config.channel.binary;
 
-import org.connectorio.addons.binding.config.PollingConfiguration;
+import org.connectorio.addons.binding.amsads.internal.config.channel.DirectHexFieldConfiguration;
 
-public class BridgeConfiguration extends PollingConfiguration {
+public class BinarySymbolicFieldConfiguration extends DirectHexFieldConfiguration implements BinaryFieldConfiguration {
 
-  public String targetAmsId;
-  public Integer targetAmsPort;
+  public boolean inverse;
+
+  @Override
+  public boolean isInverse() {
+    return inverse;
+  }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,16 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.amsads.internal.config;
+package org.connectorio.addons.binding.amsads.internal.symbol;
 
-import org.connectorio.addons.binding.config.Configuration;
+import org.apache.plc4x.java.api.PlcConnection;
+import org.connectorio.addons.binding.amsads.internal.symbol.reader.TwinCat2SymbolReader2;
 
-public class AmsAdsConfiguration implements Configuration {
+public class DefaultSymbolReaderFactory implements SymbolReaderFactory {
 
-  public String sourceAmsId;
-  public String broadcastAddress;
-  public String ipAddress;
-  public Integer sourceAmsPort = 30000;
+  @Override
+  public SymbolReader create(PlcConnection connection) {
+    return new TwinCat2SymbolReader2(connection);
+  }
 
 }

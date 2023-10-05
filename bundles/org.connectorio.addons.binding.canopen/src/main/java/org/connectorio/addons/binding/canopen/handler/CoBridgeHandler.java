@@ -23,10 +23,11 @@ import org.apache.plc4x.java.api.PlcConnection;
 import org.connectorio.addons.binding.canopen.api.CoConnection;
 import org.connectorio.addons.binding.canopen.config.CoNodeConfig;
 import org.connectorio.addons.binding.canopen.discovery.CoDiscoveryParticipant;
+import org.connectorio.addons.binding.handler.polling.PollingBridgeHandler;
 import org.connectorio.addons.binding.plc4x.handler.Plc4xBridgeHandler;
 import org.connectorio.plc4x.extras.decorator.Decorator;
 
-public interface CoBridgeHandler<C extends CoNodeConfig> extends Plc4xBridgeHandler<PlcConnection, C> {
+public interface CoBridgeHandler<C extends CoNodeConfig> extends Plc4xBridgeHandler<PlcConnection, C>, PollingBridgeHandler<C> {
 
   String getName();
 

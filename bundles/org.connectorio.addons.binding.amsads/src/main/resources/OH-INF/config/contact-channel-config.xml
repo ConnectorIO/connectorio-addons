@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- - Copyright (C) 2019-2023 ConnectorIO Sp. z o.o.
+ - Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
  -
  - Licensed under the Apache License, Version 2.0 (the "License");
  - you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
   xmlns:config-description="https://openhab.org/schemas/config-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
 
-  <config-description uri="thing-type:co7io-amsads:switch-symbol-tag">
+  <config-description uri="thing-type:co7io-amsads:contact-symbol-tag">
     <parameter name="symbol" type="text">
       <label>Field symbol</label>
       <description>Name of field be read from device.
@@ -32,8 +32,8 @@
       <label>Value encoding</label>
       <description>
         Encoding of the field. Value in brackets indicate length of type in bytes.
-        Value FALSE or its numeric representation 0 is interpreted as OFF.
-        Any other value is assumed to represent ON.
+        Value FALSE or its numeric representation 0 is interpreted as OPEN.
+        Any other value is assumed to represent CLOSED.
       </description>
       <options>
         <option value="BOOL">BOOL (1)</option>
@@ -50,7 +50,7 @@
     </parameter>
   </config-description>
 
-  <config-description uri="thing-type:co7io-amsads:switch-direct-dec-tag">
+  <config-description uri="thing-type:co7io-amsads:contact-direct-dec-tag">
     <parameter name="indexGroup" type="integer">
       <label>Index Group (decimal)</label>
       <description>Index group in decimal format (excluding 0x prefix). For example F00F.</description>
@@ -63,8 +63,8 @@
       <label>Value encoding</label>
       <description>
         Encoding of the field. Value in brackets indicate length of type in bytes.
-        Value FALSE or its numeric representation 0 is interpreted as OFF.
-        Any other value is assumed to represent ON.
+        Value FALSE or its numeric representation 0 is interpreted as OPEN.
+        Any other value is assumed to represent CLOSED.
       </description>
       <options>
         <option value="BOOL">BOOL (1)</option>
@@ -81,7 +81,7 @@
     </parameter>
   </config-description>
 
-  <config-description uri="thing-type:co7io-amsads:switch-direct-hex-tag">
+  <config-description uri="thing-type:co7io-amsads:contact-direct-hex-tag">
     <parameter name="indexGroup" type="text">
       <label>Index Group (hex)</label>
       <description>Index group in hex format (excluding 0x prefix). For example F00F.</description>
@@ -94,8 +94,8 @@
       <label>Value encoding</label>
       <description>
         Encoding of the field. Value in brackets indicate length of type in bytes.
-        Value FALSE or its numeric representation 0 is interpreted as OFF.
-        Any other value is assumed to represent ON.
+        Value FALSE or its numeric representation 0 is interpreted as OPEN.
+        Any other value is assumed to represent CLOSED.
       </description>
       <options>
         <option value="BOOL">BOOL (1)</option>

@@ -19,57 +19,55 @@ package org.connectorio.addons.binding.test;
 
 import static org.mockito.Mockito.when;
 
-import java.util.Optional;
 import org.connectorio.addons.binding.config.Configuration;
-import org.connectorio.addons.binding.handler.GenericBridgeHandler;
-import org.mockito.quality.Strictness;
-import org.openhab.core.thing.Bridge;
-import org.openhab.core.thing.ThingUID;
-import org.openhab.core.thing.binding.BridgeHandler;
-import org.openhab.core.thing.binding.ThingHandlerCallback;
+import org.connectorio.addons.binding.handler.GenericThingHandler;
 import org.mockito.Mockito;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingUID;
+import org.openhab.core.thing.binding.ThingHandler;
+import org.openhab.core.thing.binding.ThingHandlerCallback;
 
-public class BridgeMock<B extends GenericBridgeHandler<C>, C extends Configuration> {
+public class ThingMock<T extends GenericThingHandler, C extends Configuration> {
 
-  private final Bridge bridge;
+  private final Thing thing;
   private final ThingHandlerCallback callback = Mockito.mock(ThingHandlerCallback.class);
   private final ConfigurationMock<C> config = new ConfigurationMock<>();
-  private B handler;
+  private T handler;
 
-  public BridgeMock() {
-    this("Bridge " + Math.random());
+  public ThingMock() {
+    this("Thing " + Math.random());
   }
 
-  public BridgeMock(String name) {
-    bridge = Mockito.mock(Bridge.class, Mockito.withSettings().name(name).strictness(Strictness.LENIENT));
+  public ThingMock(String name) {
+    thing = Mockito.mock(Bridge.class, Mockito.withSettings().name(name));
   }
 
-  public BridgeMock<B, C> withId(String id) {
+  public ThingMock<T, C> withId(String id) {
     return withId(new ThingUID(id));
   }
 
-  public BridgeMock<B, C> withId(ThingUID id) {
-    when(bridge.getUID()).thenReturn(id);
+  public ThingMock<T, C> withId(ThingUID id) {
+    when(thing.getUID()).thenReturn(id);
     return this;
   }
 
-  public BridgeMock<B, C> withConfig(C mapped) {
+  public ThingMock<T, C> withConfig(C mapped) {
     org.openhab.core.config.core.Configuration cfg = config.get(mapped);
-    when(bridge.getConfiguration()).thenReturn(cfg);
-    when(handler.getBridgeConfig()).thenReturn(Optional.of(mapped));
+    when(thing.getConfiguration()).thenReturn(cfg);
     return this;
   }
 
-  public BridgeMock<B, C> withBridge(Bridge parent) {
+  public ThingMock<T, C> withBridge(Bridge parent) {
     ThingUID parentUid = parent.getUID();
-    when(bridge.getBridgeUID()).thenReturn(parentUid);
+    when(thing.getBridgeUID()).thenReturn(parentUid);
     when(callback.getBridge(parentUid)).thenReturn(parent);
     return this;
   }
 
-  public BridgeMock<B, C> mockHandler(Class<B> type) {
-    handler = Mockito.mock(type, Mockito.withSettings().strictness(Strictness.LENIENT));
-    when(bridge.getHandler()).thenReturn(handler);
+  public ThingMock<T, C> withHandler(T target) {
+    this.handler = target;
+    when(thing.getHandler()).thenReturn(this.handler);
     return this;
   }
 
@@ -77,11 +75,11 @@ public class BridgeMock<B extends GenericBridgeHandler<C>, C extends Configurati
     return callback;
   }
 
-  public Bridge create() {
-    return bridge;
+  public Thing create() {
+    return thing;
   }
 
-  public BridgeHandler getHandler() {
+  public ThingHandler getHandler() {
     return handler;
   }
 

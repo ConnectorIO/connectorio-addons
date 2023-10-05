@@ -17,12 +17,15 @@
  */
 package org.connectorio.addons.binding.amsads.internal.handler;
 
-import static org.connectorio.addons.binding.amsads.AmsAdsBindingConstants.THING_TYPE_ADS;
 import static org.connectorio.addons.binding.amsads.AmsAdsBindingConstants.THING_TYPE_AMS;
 import static org.connectorio.addons.binding.amsads.AmsAdsBindingConstants.THING_TYPE_NETWORK;
 import static org.connectorio.addons.binding.amsads.AmsAdsBindingConstants.THING_TYPE_SERIAL;
 
 import org.connectorio.addons.binding.amsads.internal.discovery.AmsAdsDiscoveryDriver;
+import org.connectorio.addons.binding.amsads.internal.handler.channel.ChannelHandlerFactory;
+import org.connectorio.addons.binding.amsads.internal.handler.channel.DefaultChannelHandlerFactory;
+import org.connectorio.addons.binding.amsads.internal.symbol.DefaultSymbolReaderFactory;
+import org.connectorio.addons.binding.amsads.internal.symbol.SymbolReaderFactory;
 import org.connectorio.addons.binding.plc4x.Plc4xHandlerFactory;
 import org.connectorio.plc4x.extras.osgi.PlcDriverManager;
 import org.openhab.core.thing.Bridge;
@@ -45,11 +48,16 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class AmsAdsHandlerFactory extends Plc4xHandlerFactory {
 
   private final PlcDriverManager driverManager;
+
+  private final SymbolReaderFactory symbolReaderFactory = new DefaultSymbolReaderFactory();
+
+  private final ChannelHandlerFactory channelHandlerFactory = new DefaultChannelHandlerFactory();
+
   private AmsAdsDiscoveryDriver discoveryDriver;
 
   @Activate
   public AmsAdsHandlerFactory(@Reference PlcDriverManager driverManager) {
-    super(THING_TYPE_AMS, THING_TYPE_NETWORK, THING_TYPE_SERIAL, THING_TYPE_ADS);
+    super(THING_TYPE_AMS, THING_TYPE_NETWORK, THING_TYPE_SERIAL);
     this.driverManager = driverManager;
   }
 
@@ -58,13 +66,11 @@ public class AmsAdsHandlerFactory extends Plc4xHandlerFactory {
     ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
     if (THING_TYPE_AMS.equals(thingTypeUID)) {
-      return new AmsAdsBridgeHandler((Bridge) thing, discoveryDriver);
+      return new AmsBridgeHandler((Bridge) thing, discoveryDriver);
     } else if (THING_TYPE_NETWORK.equals(thingTypeUID)) {
-      return new AmsAdsNetworkBridgeHandler((Bridge) thing, driverManager, discoveryDriver);
+      return new AmsAdsNetworkBridgeHandler(thing, symbolReaderFactory, channelHandlerFactory, driverManager, discoveryDriver);
     } else if (THING_TYPE_SERIAL.equals(thingTypeUID)) {
-      return new AmsAdsSerialBridgeHandler((Bridge) thing, driverManager);
-    } else if (THING_TYPE_ADS.equals(thingTypeUID)) {
-      return new AmsAdsPlcHandler(thing);
+      return new AmsAdsSerialBridgeHandler(thing, symbolReaderFactory, channelHandlerFactory, driverManager);
     }
 
     return null;

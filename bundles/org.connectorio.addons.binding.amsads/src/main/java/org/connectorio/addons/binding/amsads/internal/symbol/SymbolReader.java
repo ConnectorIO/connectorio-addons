@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,16 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.amsads.internal.config;
+package org.connectorio.addons.binding.amsads.internal.symbol;
 
-public class SerialConfiguration extends AdsConfiguration {
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
-  public String port;
+public interface SymbolReader {
+
+  void onChange(Consumer<Void> consumer);
+
+  CompletableFuture<Set<SymbolEntry>> read();
 
 }

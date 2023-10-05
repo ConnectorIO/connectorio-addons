@@ -15,22 +15,15 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.test;
+package org.connectorio.addons.binding.amsads.internal.config;
 
-import static org.mockito.Mockito.when;
+import org.connectorio.addons.binding.config.Configuration;
 
-import org.mockito.quality.Strictness;
-import org.openhab.core.config.core.Configuration;
-import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
+public class AmsConfiguration implements Configuration {
 
-public class ConfigurationMock<T extends org.connectorio.addons.binding.config.Configuration> {
-
-  private final Configuration configuration = Mockito.mock(Configuration.class, Mockito.withSettings().strictness(Strictness.LENIENT));
-
-  public Configuration get(T mapped) {
-    when(configuration.as(mapped.getClass())).thenAnswer((Answer<Object>) invocation -> mapped);
-    return configuration;
-  }
+  public String sourceAmsId;
+  public String broadcastAddress;
+  public String ipAddress;
+  public Integer sourceAmsPort = 30000;
 
 }

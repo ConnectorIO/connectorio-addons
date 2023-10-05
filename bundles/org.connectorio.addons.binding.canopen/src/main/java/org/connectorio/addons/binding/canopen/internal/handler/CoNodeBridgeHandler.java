@@ -18,25 +18,20 @@
 package org.connectorio.addons.binding.canopen.internal.handler;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import org.apache.plc4x.java.api.PlcConnection;
-import org.apache.plc4x.java.api.value.PlcValue;
 import org.apache.plc4x.java.canopen.readwrite.CANOpenDataType;
-import org.apache.plc4x.java.spi.values.PlcStruct;
 import org.connectorio.addons.binding.canopen.CANopenBindingConstants;
 import org.connectorio.addons.binding.canopen.api.CoConnection;
 import org.connectorio.addons.binding.canopen.api.CoNode;
 import org.connectorio.addons.binding.canopen.config.CoNodeBridgeConfig;
 import org.connectorio.addons.binding.canopen.config.CoSdoConfig;
 import org.connectorio.addons.binding.canopen.handler.CoBridgeHandler;
-import org.connectorio.addons.binding.canopen.config.CoNodeConfig;
 import org.connectorio.addons.binding.canopen.handler.HeartbeatMonitor;
 import org.connectorio.addons.binding.canopen.handler.ThingStatusHeartbeatCallback;
 import org.connectorio.addons.binding.canopen.internal.provider.CoSdoChannelTypeProvider;

@@ -29,9 +29,8 @@ import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscoveryBlockAmsNetId;
 import org.apache.plc4x.java.ads.discovery.readwrite.AdsPortNumbers;
 import org.apache.plc4x.java.ads.discovery.readwrite.AmsNetId;
 import org.apache.plc4x.java.ads.discovery.readwrite.Operation;
-import org.connectorio.addons.binding.amsads.internal.AmsConverter;
-import org.connectorio.addons.binding.amsads.internal.config.AmsAdsConfiguration;
-import org.connectorio.addons.binding.amsads.internal.handler.AmsAdsBridgeHandler;
+import org.connectorio.addons.binding.amsads.internal.config.AmsConfiguration;
+import org.connectorio.addons.binding.amsads.internal.handler.AmsBridgeHandler;
 import org.connectorio.addons.binding.amsads.AmsAdsBindingConstants;
 import org.connectorio.addons.binding.amsads.internal.discovery.DiscoverySender.Envelope;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
@@ -53,9 +52,9 @@ public class AmsAdsDeviceDiscoveryService extends AbstractDiscoveryService imple
 
   @Override
   protected void startScan() {
-    getHandler().map(AmsAdsBridgeHandler::getDiscoveryDriver)
+    getHandler().map(AmsBridgeHandler::getDiscoveryDriver)
       .ifPresent(discoveryDriver -> {
-        AmsAdsConfiguration cfg = getConfig().get();
+        AmsConfiguration cfg = getConfig().get();
 
         AmsNetId discoveryAms = createDiscoveryAms(cfg.sourceAmsId);
         discoveryDriver.send(new Envelope(
@@ -84,26 +83,26 @@ public class AmsAdsDeviceDiscoveryService extends AbstractDiscoveryService imple
 
   @Override
   public void activate() {
-    getHandler().map(AmsAdsBridgeHandler::getDiscoveryDriver)
+    getHandler().map(AmsBridgeHandler::getDiscoveryDriver)
       .ifPresent(receiver -> receiver.addDiscoveryListener(this));
   }
 
   @Override
   public void deactivate() {
-    getHandler().map(AmsAdsBridgeHandler::getDiscoveryDriver)
+    getHandler().map(AmsBridgeHandler::getDiscoveryDriver)
       .ifPresent(receiver -> receiver.removeDiscoveryListener(this));
   }
 
-  private Optional<AmsAdsConfiguration> getConfig() {
-    if (handler instanceof AmsAdsBridgeHandler) {
-      return ((AmsAdsBridgeHandler) handler).getBridgeConfig();
+  private Optional<AmsConfiguration> getConfig() {
+    if (handler instanceof AmsBridgeHandler) {
+      return ((AmsBridgeHandler) handler).getBridgeConfig();
     }
     return Optional.empty();
   }
 
-  private Optional<AmsAdsBridgeHandler> getHandler() {
-    if (handler instanceof AmsAdsBridgeHandler) {
-      return Optional.of(((AmsAdsBridgeHandler) handler));
+  private Optional<AmsBridgeHandler> getHandler() {
+    if (handler instanceof AmsBridgeHandler) {
+      return Optional.of(((AmsBridgeHandler) handler));
     }
     return Optional.empty();
   }

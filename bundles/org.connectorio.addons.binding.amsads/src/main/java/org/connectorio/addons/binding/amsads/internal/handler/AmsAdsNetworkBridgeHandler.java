@@ -37,14 +37,16 @@ import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.connectorio.addons.binding.amsads.internal.AmsConverter;
-import org.connectorio.addons.binding.amsads.internal.config.AmsAdsConfiguration;
+import org.connectorio.addons.binding.amsads.internal.config.AmsConfiguration;
 import org.connectorio.addons.binding.amsads.internal.config.NetworkConfiguration;
 import org.connectorio.addons.binding.amsads.internal.discovery.AmsAdsDiscoveryDriver;
 import org.connectorio.addons.binding.amsads.internal.discovery.AmsAdsRouteListener;
 import org.connectorio.addons.binding.amsads.internal.discovery.DiscoverySender.Envelope;
+import org.connectorio.addons.binding.amsads.internal.handler.channel.ChannelHandlerFactory;
+import org.connectorio.addons.binding.amsads.internal.symbol.SymbolReaderFactory;
 import org.connectorio.plc4x.extras.osgi.PlcDriverManager;
-import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.types.Command;
@@ -57,8 +59,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Lukasz Dywicki - Initial contribution
  */
-public class AmsAdsNetworkBridgeHandler extends AbstractAmsAdsBridgeHandler<PlcConnection, NetworkConfiguration> implements
-  AmsAdsRouteListener {
+public class AmsAdsNetworkBridgeHandler extends AbstractAmsAdsThingHandler<AmsBridgeHandler, NetworkConfiguration> implements AmsAdsRouteListener {
 
   private final Logger logger = LoggerFactory.getLogger(AmsAdsNetworkBridgeHandler.class);
   private final AtomicBoolean routing = new AtomicBoolean(false);
@@ -66,8 +67,9 @@ public class AmsAdsNetworkBridgeHandler extends AbstractAmsAdsBridgeHandler<PlcC
   private final PlcDriverManager driverManager;
   private final AmsAdsDiscoveryDriver discoveryDriver;
 
-  public AmsAdsNetworkBridgeHandler(Bridge thing, PlcDriverManager driverManager, AmsAdsDiscoveryDriver discoveryDriver) {
-    super(thing);
+  public AmsAdsNetworkBridgeHandler(Thing thing, SymbolReaderFactory symbolReaderFactory, ChannelHandlerFactory channelHandlerFactory,
+    PlcDriverManager driverManager, AmsAdsDiscoveryDriver discoveryDriver) {
+    super(thing, symbolReaderFactory, channelHandlerFactory);
     this.driverManager = driverManager;
     this.discoveryDriver = discoveryDriver;
   }
@@ -93,12 +95,12 @@ public class AmsAdsNetworkBridgeHandler extends AbstractAmsAdsBridgeHandler<PlcC
   }
 
   @Override
-  protected Runnable createInitializer(AmsAdsConfiguration amsAds, CompletableFuture<PlcConnection> initializer) {
+  protected Runnable createInitializer(AmsConfiguration amsAds, CompletableFuture<PlcConnection> initializer) {
     return new Runnable() {
       @Override
       public void run() {
         try {
-          NetworkConfiguration config = getBridgeConfig().get();
+          NetworkConfiguration config = getThingConfig().get();
 
           if (config.username != null && discoveryDriver != null) {
             AmsNetId sendingAms = AmsConverter.createDiscoveryAms(amsAds.sourceAmsId);
@@ -133,11 +135,11 @@ public class AmsAdsNetworkBridgeHandler extends AbstractAmsAdsBridgeHandler<PlcC
 
           String target = "targetAmsNetId=" + config.targetAmsId + "&targetAmsPort=" + config.targetAmsPort;
           String source = "&sourceAmsNetId=" + amsAds.sourceAmsId + "&sourceAmsPort=" + amsAds.sourceAmsPort;
+          String extraOpts = "&load-symbol-and-data-type-tables=false";
 
-          PlcConnection connection = driverManager.getConnectionManager().getConnection("ads:tcp://" + config.host + "?" + target + source);
+          PlcConnection connection = driverManager.getConnectionManager().getConnection("ads:tcp://" + config.host + "?" + target + source + extraOpts);
 
           if (connection.isConnected()) {
-            updateStatus(ThingStatus.ONLINE);
             initializer.complete(connection);
           } else {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Connection failed");
@@ -156,11 +158,10 @@ public class AmsAdsNetworkBridgeHandler extends AbstractAmsAdsBridgeHandler<PlcC
     };
   }
 
-
   @Override
   public void add(String host, String sourceAms, boolean success) {
-    String targetHost = getBridgeConfig().map(cfg -> cfg.host).orElse("");
-    String targetAms = getBridgeConfig().map(cfg -> cfg.targetAmsId).orElse("");
+    String targetHost = getThingConfig().map(cfg -> cfg.host).orElse("");
+    String targetAms = getThingConfig().map(cfg -> cfg.targetAmsId).orElse("");
 
     if (targetHost.equals(host) && sourceAms.equals(targetAms)) {
       logger.debug("Received routing setup for ams {}, status: {}", sourceAms, success);

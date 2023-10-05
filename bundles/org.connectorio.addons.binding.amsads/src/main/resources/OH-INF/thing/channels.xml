@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- - Copyright (C) 2019-2021 ConnectorIO Sp. z o.o.
+ - Copyright (C) 2019-2023 ConnectorIO Sp. z o.o.
  -
  - Licensed under the Apache License, Version 2.0 (the "License");
  - you may not use this file except in compliance with the License.
@@ -21,22 +21,61 @@
   xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-  <channel-type id="switch">
+  <channel-type id="switch-symbol">
     <item-type>Switch</item-type>
-    <label>On/Off Switch</label>
-    <config-description-ref uri="thing-type:co7io-amsads:switch"></config-description-ref>
+    <label>Switchable value (symbol)</label>
+    <description>Toggle retrieved through symbol name/symbolic field.</description>
+    <config-description-ref uri="thing-type:co7io-amsads:switch-symbol-tag" />
+  </channel-type>
+  <channel-type id="switch-direct-dec">
+    <item-type>Switch</item-type>
+    <label>Switchable value (index group+offset in dec.)</label>
+    <description>Toggle retrieved through direct retrieval from pointed registry using decimal notation.</description>
+    <config-description-ref uri="thing-type:co7io-amsads:switch-direct-dec-tag" />
+  </channel-type>
+  <channel-type id="switch-direct-hex">
+    <item-type>Switch</item-type>
+    <label>Switchable value (index group+offset in hex)</label>
+    <description>Toggle retrieved through direct retrieval from pointed registry using hexadecimal notation.</description>
+    <config-description-ref uri="thing-type:co7io-amsads:switch-direct-hex-tag" />
   </channel-type>
 
-  <channel-type id="contact">
+  <channel-type id="contact-symbol">
     <item-type>Contact</item-type>
-    <label>Open/Closed contact</label>
-    <config-description-ref uri="thing-type:co7io-amsads:switch"></config-description-ref>
+    <label>Read only contact (symbol)</label>
+    <description>Toggle retrieved through symbol name/symbolic field.</description>
+    <config-description-ref uri="thing-type:co7io-amsads:contact-symbol-tag" />
+  </channel-type>
+  <channel-type id="contact-direct-dec">
+    <item-type>Contact</item-type>
+    <label>Read only contact (index group+offset in dec.)</label>
+    <description>Toggle retrieved through direct retrieval from pointed registry using decimal notation.</description>
+    <config-description-ref uri="thing-type:co7io-amsads:contact-direct-dec-tag" />
+  </channel-type>
+  <channel-type id="contact-direct-hex">
+    <item-type>Contact</item-type>
+    <label>Read only contact (index group+offset in hex)</label>
+    <description>Toggle retrieved through direct retrieval from pointed registry using hexadecimal notation.</description>
+    <config-description-ref uri="thing-type:co7io-amsads:contact-direct-hex-tag" />
   </channel-type>
 
-  <channel-type id="number">
+  <channel-type id="number-symbol">
     <item-type>Number</item-type>
-    <label>Numeric value</label>
-    <config-description-ref uri="thing-type:co7io-amsads:number"></config-description-ref>
+    <label>Numeric value (symbol)</label>
+    <description>Numeric value retrieved through symbol name/symbolic field.</description>
+    <config-description-ref uri="thing-type:co7io-amsads:number-symbol-tag" />
+  </channel-type>
+  <channel-type id="number-direct-dec">
+    <item-type>Number</item-type>
+    <label>Numeric value (index group+offset in dec.)</label>
+    <description>Numeric value retrieved through direct retrieval from pointed registry using decimal notation.</description>
+    <config-description-ref uri="thing-type:co7io-amsads:number-direct-dec-tag" />
+  </channel-type>
+  <channel-type id="number-direct-hex">
+    <item-type>Number</item-type>
+    <label>Numeric value (index group+offset in hex)</label>
+    <description>Numeric value retrieved through direct retrieval from pointed registry using hexadecimal notation.</description>
+    <config-description-ref uri="thing-type:co7io-amsads:number-direct-hex-tag" />
   </channel-type>
 
 </thing:thing-descriptions>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2019-2023 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  */
 package org.connectorio.addons.binding.amsads.internal.config;
 
-public class NetworkConfiguration extends BridgeConfiguration {
+public class NetworkConfiguration extends AdsConfiguration {
 
   public String host;
 

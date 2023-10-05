@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,9 @@ package org.connectorio.addons.binding.amsads.internal.handler;
 
 import java.util.Collection;
 import java.util.Collections;
+import org.connectorio.addons.binding.handler.GenericBridgeHandler;
 import org.connectorio.addons.binding.handler.GenericBridgeHandlerBase;
-import org.connectorio.addons.binding.amsads.internal.config.AmsAdsConfiguration;
+import org.connectorio.addons.binding.amsads.internal.config.AmsConfiguration;
 import org.connectorio.addons.binding.amsads.internal.discovery.AmsAdsDeviceDiscoveryService;
 import org.connectorio.addons.binding.amsads.internal.discovery.AmsAdsDiscoveryDriver;
 import org.openhab.core.thing.Bridge;
@@ -32,17 +33,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link AmsAdsBridgeHandler} is responsible for defining virtual address needed to communicate with
+ * The {@link AmsBridgeHandler} is responsible for defining virtual address needed to communicate with
  * AMS/ADS devices.
  *
  * @author Lukasz Dywicki - Initial contribution
  */
-public class AmsAdsBridgeHandler extends GenericBridgeHandlerBase<AmsAdsConfiguration> {
+public class AmsBridgeHandler extends GenericBridgeHandlerBase<AmsConfiguration>
+  implements GenericBridgeHandler<AmsConfiguration> {
 
-  private final Logger logger = LoggerFactory.getLogger(AmsAdsBridgeHandler.class);
+  private final Logger logger = LoggerFactory.getLogger(AmsBridgeHandler.class);
   private final AmsAdsDiscoveryDriver discoveryDriver;
 
-  public AmsAdsBridgeHandler(Bridge thing, AmsAdsDiscoveryDriver discoveryDriver) {
+  public AmsBridgeHandler(Bridge thing, AmsAdsDiscoveryDriver discoveryDriver) {
     super(thing);
     this.discoveryDriver = discoveryDriver;
   }

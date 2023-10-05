@@ -179,10 +179,6 @@ public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnectio
     return getBridgeHandler().get().getConnection();
   }
 
-  protected Optional<PlcConnection> getBridgeConnection() {
-    return getBridgeHandler().map(Plc4xBridgeHandler::getConnection).map(CompletableFuture::join);
-  }
-
   @Override
   public void dispose() {
     for (ChannelHandler<?, ?, ?> handler : channelHandlers.values()) {

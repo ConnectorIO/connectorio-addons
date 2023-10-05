@@ -53,21 +53,9 @@
       <groupId>org.apache.plc4x</groupId>
       <artifactId>plc4j-driver-ads</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.binding.test</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
       <artifactId>org.openhab.core.config.discovery</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.karaf.features</groupId>
-      <artifactId>framework</artifactId>
-      <type>kar</type>
     </dependency>
 
     <dependency>
@@ -77,6 +65,19 @@
       <type>xml</type>
     </dependency>
 
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.binding.test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-reload4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.connectorio.plc4x.extras</groupId>
       <artifactId>org.connectorio.plc4x.extras.osgi.core</artifactId>

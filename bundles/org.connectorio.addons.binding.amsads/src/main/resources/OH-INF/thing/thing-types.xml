@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- - Copyright (C) 2019-2021 ConnectorIO Sp. z o.o.
+ - Copyright (C) 2019-2023 ConnectorIO Sp. z o.o.
  -
  - Licensed under the Apache License, Version 2.0 (the "License");
  - you may not use this file except in compliance with the License.
@@ -51,20 +51,20 @@
   </bridge-type>
 
 
-  <bridge-type id="network">
+  <thing-type id="network" extensible="switch-symbol,switch-direct-dec,switch-direct-hex,contact-symbol,contact-direct-dec,contact-direct-hex,number-symbol,number-symbol,number-direct-dec,number-direct-hex">
     <supported-bridge-type-refs>
       <bridge-type-ref id="ams"/>
     </supported-bridge-type-refs>
 
-    <label>AMS/ADS Network Bridge</label>
-    <description>TCP/IP Connection to AMS/ADS PLC.</description>
+    <label>AMS/ADS Device (TCP)</label>
+    <description>AMS/ADS enabled device communicating over network socket.</description>
 
     <config-description>
       <parameter-group name="authentication">
         <label>Authentication</label>
         <description>
-          Authentication information is optional. It is used to setup AMS routing table on contacted device before making connection attempt.
-          If you don't know if PLC already have route or you run this integration under Linux it is highly recommended to set these values.
+          Authentication information is optional. It is used to set up AMS routing table on contacted device before making connection attempt.
+          If you don't know if PLC already have route, or you run this integration under Linux it is highly recommended to set these values.
         </description>
       </parameter-group>
 
@@ -102,16 +102,25 @@
         <description>Time between next poll cycles.</description>
         <default>1000</default>
       </parameter>
-    </config-description>
-  </bridge-type>
 
-  <bridge-type id="serial">
+      <parameter name="discoverChannels" type="boolean" groupName="discovery" required="false">
+        <label>Discover channels</label>
+        <description>
+          Because AMS/ADS enabled PLCs might retain symbol table which can be scanned.
+          This option enabled automatic discovery of channels after connection is established.
+        </description>
+        <default>true</default>
+      </parameter>
+    </config-description>
+  </thing-type>
+
+  <thing-type id="serial">
     <supported-bridge-type-refs>
       <bridge-type-ref id="ams"/>
     </supported-bridge-type-refs>
 
-    <label>AMS/ADS Serial Bridge</label>
-    <description>Serial port connection to AMS/ADS PLC.</description>
+    <label>AMS/ADS Device (serial)</label>
+    <description>Device communicating over serial port connection using AMS/ADS protocol.</description>
 
     <config-description>
       <parameter name="port" type="text" required="true">
@@ -133,28 +142,6 @@
         <label>Refresh interval</label>
         <description>Time between next poll cycles.</description>
         <default>1000</default>
-      </parameter>
-    </config-description>
-  </bridge-type>
-
-  <thing-type id="ads" extensible="switch,contact,number">
-    <supported-bridge-type-refs>
-      <bridge-type-ref id="network"/>
-      <bridge-type-ref id="serial"/>
-    </supported-bridge-type-refs>
-
-    <label>AMS/ADS device</label>
-    <description>A PLC with ADS communication capabilities which can be polled for data.</description>
-
-    <config-description>
-      <parameter name="refreshInterval" type="integer" groupName="basic" required="false">
-        <label>Refresh interval</label>
-        <unitLabel>ms</unitLabel>
-        <description>
-          Time between next poll cycles. If no value is given value defined for bridge is used (1000
-          ms by default).
-        </description>
-        <default>0</default>
       </parameter>
     </config-description>
   </thing-type>

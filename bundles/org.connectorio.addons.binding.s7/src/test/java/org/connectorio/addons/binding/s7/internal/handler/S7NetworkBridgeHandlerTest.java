@@ -28,17 +28,20 @@ import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.s7.readwrite.S7Driver;
 import org.assertj.core.api.AbstractThrowableAssert;
+import org.connectorio.addons.binding.test.ThingMock;
 import org.connectorio.plc4x.extras.osgi.core.internal.OsgiDriverManager;
 import org.connectorio.addons.binding.s7.internal.config.S7NetworkConfiguration;
 import org.connectorio.addons.binding.test.BridgeMock;
 import org.openhab.core.thing.Bridge;
 import org.junit.jupiter.api.Test;
+import org.openhab.core.thing.binding.ThingHandler;
 
 class S7NetworkBridgeHandlerTest {
 
   @Test
   void testHandlerInitializationWithNoConfig() {
-    Bridge bridge = new BridgeMock<>()
+    Bridge bridge = new BridgeMock()
+      .mockHandler(S7NetworkBridgeHandler.class)
       .withConfig(new S7NetworkConfiguration())
       .create();
 
@@ -58,11 +61,11 @@ class S7NetworkBridgeHandlerTest {
     cfg.localRack = 10;
     cfg.localSlot = 11;
 
-    Bridge bridge = new BridgeMock<>()
-      .withConfig(cfg)
-      .create();
+    BridgeMock<S7NetworkBridgeHandler, S7NetworkConfiguration> bridge = new BridgeMock()
+      .mockHandler(S7NetworkBridgeHandler.class)
+      .withConfig(cfg);
 
-    S7NetworkBridgeHandler handler = new S7NetworkBridgeHandler(bridge, new OsgiDriverManager(Collections.emptyList()));
+    S7NetworkBridgeHandler handler = new S7NetworkBridgeHandler(bridge.create(), new OsgiDriverManager(Collections.emptyList()));
     handler.initialize();
 
 //    CompletableFuture<AbstractPlcConnection> initializer = handler.getInitializer();

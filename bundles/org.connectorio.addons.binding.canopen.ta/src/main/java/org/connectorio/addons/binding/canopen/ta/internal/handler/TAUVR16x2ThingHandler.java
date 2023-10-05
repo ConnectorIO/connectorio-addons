@@ -40,7 +40,7 @@ import org.connectorio.addons.binding.canopen.ta.internal.type.TAADigitalOutput;
 import org.connectorio.addons.binding.canopen.ta.internal.type.TAAnalogOutput;
 import org.connectorio.addons.binding.canopen.ta.internal.type.TAUnit;
 import org.connectorio.addons.binding.canopen.ta.internal.type.TAValue;
-import org.connectorio.addons.binding.plc4x.handler.Plc4xThingHandler;
+import org.connectorio.addons.binding.handler.polling.PollingThingHandler;
 import org.connectorio.addons.binding.plc4x.handler.base.PollingPlc4xThingHandler;
 import org.connectorio.plc4x.extras.decorator.phase.Phase;
 import org.openhab.core.config.core.Configuration;
@@ -61,7 +61,7 @@ import tec.uom.se.AbstractUnit;
 
 @Deprecated
 public class TAUVR16x2ThingHandler extends PollingPlc4xThingHandler<PlcConnection, CoBridgeHandler<?>, CoNodeConfig>
-  implements Plc4xThingHandler<PlcConnection, CoBridgeHandler<?>, CoNodeConfig>, Consumer<TAObject> {
+  implements PollingThingHandler<CoBridgeHandler<?>, CoNodeConfig>, Consumer<TAObject> {
 
   private final Logger logger = LoggerFactory.getLogger(TAUVR16x2ThingHandler.class);
   private int nodeId;

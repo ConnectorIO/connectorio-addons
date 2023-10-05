@@ -18,15 +18,16 @@
 package org.connectorio.addons.binding.amsads.internal.handler;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeoutException;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
-import org.connectorio.addons.binding.amsads.internal.config.AmsAdsConfiguration;
+import org.connectorio.addons.binding.amsads.internal.config.AmsConfiguration;
 import org.connectorio.addons.binding.amsads.internal.config.SerialConfiguration;
+import org.connectorio.addons.binding.amsads.internal.handler.channel.ChannelHandlerFactory;
+import org.connectorio.addons.binding.amsads.internal.symbol.SymbolReaderFactory;
 import org.connectorio.plc4x.extras.osgi.PlcDriverManager;
-import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
-import org.openhab.core.thing.ThingStatus;
-import org.openhab.core.thing.ThingStatusDetail;
+import org.openhab.core.thing.Thing;
 import org.openhab.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,13 +38,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author Lukasz Dywicki - Initial contribution
  */
-public class AmsAdsSerialBridgeHandler extends AbstractAmsAdsBridgeHandler<PlcConnection, SerialConfiguration> {
+public class AmsAdsSerialBridgeHandler extends AbstractAmsAdsThingHandler<AmsBridgeHandler, SerialConfiguration> {
 
   private final Logger logger = LoggerFactory.getLogger(AmsAdsSerialBridgeHandler.class);
   private final PlcDriverManager driverManager;
 
-  public AmsAdsSerialBridgeHandler(Bridge thing, PlcDriverManager driverManager) {
-    super(thing);
+  public AmsAdsSerialBridgeHandler(Thing thing, SymbolReaderFactory symbolReaderFactory, ChannelHandlerFactory channelHandlerFactory,
+    PlcDriverManager driverManager) {
+    super(thing, symbolReaderFactory, channelHandlerFactory);
     this.driverManager = driverManager;
   }
 
@@ -52,12 +54,12 @@ public class AmsAdsSerialBridgeHandler extends AbstractAmsAdsBridgeHandler<PlcCo
   }
 
   @Override
-  protected Runnable createInitializer(AmsAdsConfiguration amsAds, CompletableFuture<PlcConnection> initializer) {
+  protected Runnable createInitializer(AmsConfiguration amsAds, CompletableFuture<PlcConnection> initializer) {
     return new Runnable() {
       @Override
       public void run() {
         try {
-          SerialConfiguration config = getBridgeConfig().get();
+          SerialConfiguration config = getThingConfig().get();
           String target = "targetAmsNetId=" + config.targetAmsId + "&targetAmsPort=" + config.targetAmsPort;
           String source = "&sourceAmsNetId=" + amsAds.sourceAmsId + "&sourceAmsPort=" + amsAds.sourceAmsPort;
           PlcConnection connection = driverManager.getConnectionManager().getConnection("ads:serial://" + config.port + "/" + target + source);
@@ -67,15 +69,11 @@ public class AmsAdsSerialBridgeHandler extends AbstractAmsAdsBridgeHandler<PlcCo
           }
 
           if (connection.isConnected()) {
-            updateStatus(ThingStatus.ONLINE);
             initializer.complete(connection);
           } else {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Connection failed");
-            initializer.complete(null);
+            initializer.completeExceptionally(new TimeoutException("Could not establish connection"));
           }
         } catch (PlcConnectionException e) {
-          logger.warn("Could not obtain connection", e);
-          updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
           initializer.completeExceptionally(e);
         }
       }
