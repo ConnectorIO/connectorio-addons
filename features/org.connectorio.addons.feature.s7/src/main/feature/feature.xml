@@ -20,7 +20,7 @@
 
   <repository>mvn:org.connectorio.addons/org.connectorio.addons.feature.plc4x/${project.version}/xml/features</repository>
 
-  <feature name="openhab-binding-s7" description="S7 PLC Binding" version="${project.version}">
+  <feature name="openhab-binding-co7io-s7" description="S7 PLC Binding" version="${project.version}">
     <feature>co7io-binding-s7</feature>
   </feature>
 

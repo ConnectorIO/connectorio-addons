@@ -24,7 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class WMBusOfflineKarInstallationTest extends OfflineKarInstallationTest {
 
   public WMBusOfflineKarInstallationTest() {
-    super("wmbus");
+    super("wmbus", "co7io-wmbus");
   }
 
 }

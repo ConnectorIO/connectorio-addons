@@ -24,7 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class OCPPOfflineKarInstallationTest extends OfflineKarInstallationTest {
 
   public OCPPOfflineKarInstallationTest() {
-    super("ocpp");
+    super("ocpp", "co7io-ocpp");
   }
 
 }

@@ -24,7 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class BACnetOfflineKarInstallationTest extends OfflineKarInstallationTest {
 
   public BACnetOfflineKarInstallationTest() {
-    super("bacnet");
+    super("bacnet", "co7io-bacnet");
   }
 
 }

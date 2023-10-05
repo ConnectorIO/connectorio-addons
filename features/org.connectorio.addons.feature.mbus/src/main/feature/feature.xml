@@ -22,7 +22,7 @@
   <repository>mvn:org.connectorio.addons/org.connectorio.addons.feature.io.transport.mbus/${project.version}/xml/features</repository>
   <repository>mvn:org.connectorio.addons/org.connectorio.addons.feature/${project.version}/xml/features</repository>
 
-  <feature name="openhab-binding-mbus" description="openHAB M-Bus Binding" version="${project.version}">
+  <feature name="openhab-binding-co7io-mbus" description="openHAB M-Bus Binding" version="${project.version}">
     <feature>co7io-binding-mbus</feature>
   </feature>
 

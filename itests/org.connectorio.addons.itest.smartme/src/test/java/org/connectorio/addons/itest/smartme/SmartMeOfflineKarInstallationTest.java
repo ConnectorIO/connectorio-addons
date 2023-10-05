@@ -24,7 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class SmartMeOfflineKarInstallationTest extends OfflineKarInstallationTest {
 
   public SmartMeOfflineKarInstallationTest() {
-    super("smartme");
+    super("smartme", "co7io-smartme");
   }
 
 }

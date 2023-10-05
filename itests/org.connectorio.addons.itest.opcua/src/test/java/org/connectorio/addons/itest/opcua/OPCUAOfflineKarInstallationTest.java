@@ -24,7 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class OPCUAOfflineKarInstallationTest extends OfflineKarInstallationTest {
 
   public OPCUAOfflineKarInstallationTest() {
-    super("opcua");
+    super("opcua", "co7io-opcua");
   }
 
 }

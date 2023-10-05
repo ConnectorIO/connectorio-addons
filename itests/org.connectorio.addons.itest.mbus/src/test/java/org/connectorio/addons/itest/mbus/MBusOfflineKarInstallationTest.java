@@ -24,7 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class MBusOfflineKarInstallationTest extends OfflineKarInstallationTest {
 
   public MBusOfflineKarInstallationTest() {
-    super("mbus");
+    super("mbus", "co7io-mbus");
   }
 
 }

@@ -24,7 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class CANopenOfflineKarInstallationTest extends OfflineKarInstallationTest {
 
   public CANopenOfflineKarInstallationTest() {
-    super("canopen", "binding", "canopen-ta");
+    super("canopen", "binding", "co7io-canopen-ta");
   }
 
 }

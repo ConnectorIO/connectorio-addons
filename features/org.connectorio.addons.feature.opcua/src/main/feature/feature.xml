@@ -38,7 +38,7 @@
     <bundle>mvn:org.bouncycastle/bcutil-jdk15on/1.69</bundle>
   </feature>
 
-  <feature name="openhab-binding-opcua" description="OPC UA Binding" version="${project.version}">
+  <feature name="openhab-binding-co7io-opcua" description="OPC UA Binding" version="${project.version}">
     <feature>co7io-binding-opcua</feature>
   </feature>
 

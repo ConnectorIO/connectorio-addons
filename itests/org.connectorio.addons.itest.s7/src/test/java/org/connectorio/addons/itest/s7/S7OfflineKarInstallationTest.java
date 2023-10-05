@@ -24,7 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class S7OfflineKarInstallationTest extends OfflineKarInstallationTest {
 
   public S7OfflineKarInstallationTest() {
-    super("s7");
+    super("s7", "co7io-s7");
   }
 
 }

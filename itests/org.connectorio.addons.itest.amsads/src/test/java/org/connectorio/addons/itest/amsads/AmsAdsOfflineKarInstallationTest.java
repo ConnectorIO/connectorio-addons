@@ -25,7 +25,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class AmsAdsOfflineKarInstallationTest extends OfflineKarInstallationTest {
 
   public AmsAdsOfflineKarInstallationTest() {
-    super("amsads");
+    super("amsads", "co7io-amsads");
   }
 
 }

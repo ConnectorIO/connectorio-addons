@@ -60,7 +60,7 @@ public abstract class OfflineKarInstallationTest {
 
   private final Logger containerLogger = LoggerFactory.getLogger("");
 
-  private final String assembly;
+  private final String kar;
   private final String category;
   private final String addon;
   private final String feature;
@@ -82,7 +82,11 @@ public abstract class OfflineKarInstallationTest {
     this(binding, "binding", binding);
   }
 
-  protected OfflineKarInstallationTest(String assembly, String category, String addon) {
+  protected OfflineKarInstallationTest(String kar, String binding) {
+    this(kar, "binding", binding);
+  }
+
+  protected OfflineKarInstallationTest(String kar, String category, String addon) {
     this.client = new ApiClient();
     this.client.setRequestInterceptor(new Consumer<Builder>() {
       @Override
@@ -90,7 +94,7 @@ public abstract class OfflineKarInstallationTest {
         builder.header("X-OPENHAB-TOKEN", container.getCustomization(UserApiTokenCustomization.class).getApiToken());
       }
     });
-    this.assembly = assembly;
+    this.kar = kar;
     this.category = category;
     this.addon = addon;
     this.feature = category + "-" + addon;
@@ -98,7 +102,7 @@ public abstract class OfflineKarInstallationTest {
 
   @Before
   public void installAddonKar() throws Exception {
-    Pattern pattern = Pattern.compile(".*Added feature repository 'mvn:org.connectorio.addons/.*" + assembly);
+    Pattern pattern = Pattern.compile(".*Added feature repository 'mvn:org.connectorio.addons/.*" + kar);
 
     CountDownLatch latch = new CountDownLatch(1);
     container.withLogConsumer(frame -> {
@@ -114,7 +118,7 @@ public abstract class OfflineKarInstallationTest {
     this.client.updateBaseUri("http://localhost:" + port + "/rest");
 
     File[] karFiles = new File("target/additional-resources")
-      .listFiles(file -> file.getName().matches("org.connectorio.addons.kar." + assembly + "-.*\\.kar"));
+      .listFiles(file -> file.getName().matches("org.connectorio.addons.kar." + kar + "-.*\\.kar"));
 
     if (karFiles == null || karFiles.length != 1) {
       fail("Could not find KAR file for addon " + addon + ", matching files are " + (karFiles == null ? "none" : Arrays.toString(karFiles)));

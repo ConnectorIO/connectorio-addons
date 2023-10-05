@@ -24,7 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class FatekOfflineKarInstallationTest extends OfflineKarInstallationTest {
 
   public FatekOfflineKarInstallationTest() {
-    super("fatek");
+    super("fatek", "co7io-fatek");
   }
 
 }
