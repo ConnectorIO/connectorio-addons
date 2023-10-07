@@ -27,7 +27,6 @@ public class SymbolEntry {
   private final String description;
   private final long index;
   private final long offset;
-
   private final boolean readOnly;
 
   public SymbolEntry(AdsDataType type, String name, String description, long index, long offset, boolean readOnly) {

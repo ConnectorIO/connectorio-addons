@@ -17,8 +17,13 @@
  */
 package org.connectorio.addons.binding.amsads.internal.config.channel;
 
-public interface SymbolicFieldConfiguration {
+public class SymbolFieldConfiguration extends TypedChannelConfiguration implements SymbolicFieldConfiguration {
 
-  String getSymbol();
+  public String symbol;
+
+  @Override
+  public String getSymbol() {
+    return symbol;
+  }
 
 }

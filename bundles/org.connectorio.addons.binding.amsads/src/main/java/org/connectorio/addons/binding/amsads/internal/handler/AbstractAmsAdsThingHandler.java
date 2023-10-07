@@ -19,10 +19,17 @@ package org.connectorio.addons.binding.amsads.internal.handler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import org.apache.plc4x.java.api.PlcConnection;
+import org.apache.plc4x.java.api.messages.PlcSubscriptionEvent;
+import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest.Builder;
+import org.apache.plc4x.java.api.value.PlcValue;
+import org.apache.plc4x.java.spi.values.PlcBOOL;
 import org.connectorio.addons.binding.amsads.internal.config.AmsConfiguration;
 import org.connectorio.addons.binding.amsads.internal.config.AdsConfiguration;
 import org.connectorio.addons.binding.amsads.internal.handler.channel.AdsChannelHandler;
@@ -31,12 +38,16 @@ import org.connectorio.addons.binding.amsads.internal.symbol.SymbolEntry;
 import org.connectorio.addons.binding.amsads.internal.symbol.SymbolReader;
 import org.connectorio.addons.binding.amsads.internal.symbol.SymbolReaderFactory;
 import org.connectorio.addons.binding.handler.GenericThingHandlerBase;
+import org.openhab.core.library.types.DecimalType;
+import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.types.Command;
+import org.openhab.core.types.State;
+import org.openhab.core.types.UnDefType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +61,8 @@ public abstract class AbstractAmsAdsThingHandler<B extends AmsBridgeHandler, C e
   private final Logger logger = LoggerFactory.getLogger(AbstractAmsAdsThingHandler.class);
   private final SymbolReaderFactory symbolReaderFactory;
   private final ChannelHandlerFactory channelHandlerFactory;
+
+  private final Map<String, AdsChannelHandler> handlerMap = new ConcurrentHashMap<String, AdsChannelHandler>();
   private CompletableFuture<PlcConnection> initializer = new CompletableFuture<>();;
 
   public AbstractAmsAdsThingHandler(Thing thing, SymbolReaderFactory symbolReaderFactory, ChannelHandlerFactory channelHandlerFactory) {
@@ -103,8 +116,58 @@ public abstract class AbstractAmsAdsThingHandler<B extends AmsBridgeHandler, C e
         }
       }
 
-      updateStatus(ThingStatus.ONLINE);
+      List<Channel> channels = getThing().getChannels();
+      Builder subscriptionBuilder = connection.subscriptionRequestBuilder();
+      for (Channel channel : channels) {
+        AdsChannelHandler handler = channelHandlerFactory.map(thing, channel);
+        if (handler != null) {
+          handlerMap.put(channel.getUID().getAsString(), handler);
+          handler.subscribe(subscriptionBuilder);
+        }
+      }
+
+      subscriptionBuilder.build().execute().whenComplete((r, e) -> {
+        if (e != null) {
+          logger.error("Failed to setup subscription within PLC", e);
+          updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, "Failure while subscribing for data subscribe " + e.getMessage());
+          return;
+        }
+        for (String channelId : r.getTagNames()) {
+          AdsChannelHandler handler = handlerMap.get(channelId);
+          if (handler == null) {
+            logger.warn("Received update for unknown channel {} in thing {}", channelId, thing.getUID());
+            continue;
+          }
+          r.getSubscriptionHandle(channelId).register(new Consumer<PlcSubscriptionEvent>() {
+            @Override
+            public void accept(PlcSubscriptionEvent plcSubscriptionEvent) {
+              Object value = plcSubscriptionEvent.getObject(channelId);
+              if (value != null) {
+                logger.debug("Channel {} received update {}", channelId, value);
+                getCallback().stateUpdated(new ChannelUID(channelId), convert(value));
+              }
+            }
+          });
+        }
+
+        updateStatus(ThingStatus.ONLINE);
+      });
     });
+  }
+
+  private State convert(Object value) {
+    if (value == null) {
+      return UnDefType.NULL;
+    }
+    if (value instanceof PlcValue) {
+      if (value instanceof PlcBOOL) {
+        return ((PlcBOOL) value).getBoolean() ? OnOffType.ON : OnOffType.OFF;
+      }
+      return new DecimalType(((PlcValue) value).getBigDecimal());
+    }
+
+    // missing mapping
+    return UnDefType.UNDEF;
   }
 
   private void updateChannels(Set<SymbolEntry> symbolEntries) {

@@ -17,9 +17,9 @@
  */
 package org.connectorio.addons.binding.amsads.internal.config.channel.binary;
 
-import org.connectorio.addons.binding.amsads.internal.config.channel.DirectHexFieldConfiguration;
+import org.connectorio.addons.binding.amsads.internal.config.channel.SymbolFieldConfiguration;
 
-public class BinarySymbolicFieldConfiguration extends DirectHexFieldConfiguration implements BinaryFieldConfiguration {
+public class BinarySymbolicFieldConfiguration extends SymbolFieldConfiguration implements BinaryFieldConfiguration {
 
   public boolean inverse;
 
