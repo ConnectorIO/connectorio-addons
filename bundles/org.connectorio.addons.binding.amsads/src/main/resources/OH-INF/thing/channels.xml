@@ -78,4 +78,42 @@
     <config-description-ref uri="thing-type:co7io-amsads:number-direct-hex-tag" />
   </channel-type>
 
+  <channel-type id="datetime-symbol">
+    <item-type>DateTime</item-type>
+    <label>Date time value (symbol)</label>
+    <description>Date, time or date time value retrieved through symbol name/symbolic field.</description>
+    <config-description-ref uri="thing-type:co7io-amsads:datetime-symbol-tag" />
+  </channel-type>
+  <channel-type id="datetime-direct-dec">
+    <item-type>DateTime</item-type>
+    <label>Date time value (index group+offset in dec.)</label>
+    <description>Date, time or date time value retrieved through direct retrieval from pointed registry using decimal notation.</description>
+    <config-description-ref uri="thing-type:co7io-amsads:datetime-direct-dec-tag" />
+  </channel-type>
+  <channel-type id="datetime-direct-hex">
+    <item-type>DateTime</item-type>
+    <label>Date time value (index group+offset in hex)</label>
+    <description>Date, time or date time value retrieved through direct retrieval from pointed registry using hexadecimal notation.</description>
+    <config-description-ref uri="thing-type:co7io-amsads:datetime-direct-hex-tag" />
+  </channel-type>
+
+  <channel-type id="text-symbol">
+    <item-type>String</item-type>
+    <label>Text value (symbol)</label>
+    <description>Text value retrieved through symbol name/symbolic field.</description>
+    <config-description-ref uri="thing-type:co7io-amsads:text-symbol-tag" />
+  </channel-type>
+  <channel-type id="text-direct-dec">
+    <item-type>String</item-type>
+    <label>Text value (index group+offset in dec.)</label>
+    <description>Text value retrieved through direct retrieval from pointed registry using decimal notation.</description>
+    <config-description-ref uri="thing-type:co7io-amsads:text-direct-dec-tag" />
+  </channel-type>
+  <channel-type id="text-direct-hex">
+    <item-type>String</item-type>
+    <label>Text value (index group+offset in hex)</label>
+    <description>Text value retrieved through direct retrieval from pointed registry using hexadecimal notation.</description>
+    <config-description-ref uri="thing-type:co7io-amsads:text-direct-hex-tag" />
+  </channel-type>
+
 </thing:thing-descriptions>

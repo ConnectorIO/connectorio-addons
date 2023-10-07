@@ -51,7 +51,7 @@
   </bridge-type>
 
 
-  <thing-type id="network" extensible="switch-symbol,switch-direct-dec,switch-direct-hex,contact-symbol,contact-direct-dec,contact-direct-hex,number-symbol,number-symbol,number-direct-dec,number-direct-hex">
+  <thing-type id="network" extensible="switch-symbol,switch-direct-dec,switch-direct-hex,contact-symbol,contact-direct-dec,contact-direct-hex,number-symbol,number-symbol,number-direct-dec,number-direct-hex,datetime-symbol,datetime-direct-dec,datetime-direct-hex,text-symbol,text-direct-dec,text-direct-hex">
     <supported-bridge-type-refs>
       <bridge-type-ref id="ams"/>
     </supported-bridge-type-refs>

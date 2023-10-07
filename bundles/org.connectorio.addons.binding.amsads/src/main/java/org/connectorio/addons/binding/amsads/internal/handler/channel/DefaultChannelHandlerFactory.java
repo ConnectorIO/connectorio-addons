@@ -63,6 +63,19 @@ public class DefaultChannelHandlerFactory implements ChannelHandlerFactory {
       case LREAL:
       case DOUBLE:
         return new NumericAdsChannelHandler(thing, symbol);
+      case CHAR:
+      case WCHAR:
+      case STRING:
+      case WSTRING:
+        return new TextAdsChannelHandler(thing, symbol);
+      case TIME:
+      case LTIME:
+      case DATE:
+      case TIME_OF_DAY:
+      case TOD:
+      case DATE_AND_TIME:
+      case DT:
+        return new DateTimeAdsChannelHandler(thing, symbol);
     }
     return null;
   }
@@ -75,6 +88,12 @@ public class DefaultChannelHandlerFactory implements ChannelHandlerFactory {
     }
     if (channelId.startsWith("number-")) {
       return new NumericAdsChannelHandler(thing, channel);
+    }
+    if (channelId.startsWith("datetime-")) {
+      return new DateTimeAdsChannelHandler(thing, channel);
+    }
+    if (channelId.startsWith("text-")) {
+      return new TextAdsChannelHandler(thing, channel);
     }
     return null;
   }

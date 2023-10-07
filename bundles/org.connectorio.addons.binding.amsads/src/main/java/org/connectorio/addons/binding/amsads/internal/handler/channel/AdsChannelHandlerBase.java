@@ -51,11 +51,11 @@ public abstract class AdsChannelHandlerBase implements AdsChannelHandler {
     subscriptionBuilder.addChangeOfStateTag(channelId, tag);
   }
 
-  protected final AdsTag createTag(TypedChannelConfiguration typeCfg, DirectFieldConfiguration address) {
+  protected AdsTag createTag(TypedChannelConfiguration typeCfg, DirectFieldConfiguration address) {
     return new DirectAdsTag(address.getIndexGroup(), address.getIndexOffset(), typeCfg.type.name(), 1);
   }
 
-  protected final AdsTag createTag(TypedChannelConfiguration typeCfg, SymbolicFieldConfiguration address) {
+  protected AdsTag createTag(TypedChannelConfiguration typeCfg, SymbolicFieldConfiguration address) {
     PlcValueType dataType = ads2plc(typeCfg.type);
     if (dataType != null) {
       return new SymbolicAdsTag(address.getSymbol(), dataType, Collections.emptyList());

@@ -39,6 +39,14 @@ public interface AdsChannelHandler {
   ChannelTypeUID NUMBER_DIRECT_HEX = new ChannelTypeUID(AmsAdsBindingConstants.BINDING_ID, "number-direct-hex");
   ChannelTypeUID NUMBER_DIRECT_DEC = new ChannelTypeUID(AmsAdsBindingConstants.BINDING_ID, "number-direct-dec");
 
+  ChannelTypeUID DATETIME_SYMBOL = new ChannelTypeUID(AmsAdsBindingConstants.BINDING_ID, "datetime-symbol");
+  ChannelTypeUID DATETIME_DIRECT_HEX = new ChannelTypeUID(AmsAdsBindingConstants.BINDING_ID, "datetime-direct-hex");
+  ChannelTypeUID DATETIME_DIRECT_DEC = new ChannelTypeUID(AmsAdsBindingConstants.BINDING_ID, "datetime-direct-dec");
+
+  ChannelTypeUID TEXT_SYMBOL = new ChannelTypeUID(AmsAdsBindingConstants.BINDING_ID, "text-symbol");
+  ChannelTypeUID TEXT_DIRECT_HEX = new ChannelTypeUID(AmsAdsBindingConstants.BINDING_ID, "text-direct-hex");
+  ChannelTypeUID TEXT_DIRECT_DEC = new ChannelTypeUID(AmsAdsBindingConstants.BINDING_ID, "text-direct-dec");
+
   Channel createChannel();
 
   void subscribe(Builder subscriptionBuilder, String channelId);
