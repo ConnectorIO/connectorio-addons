@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.amsads.internal.handler;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +25,15 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionEvent;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest.Builder;
+import org.apache.plc4x.java.api.messages.PlcSubscriptionResponse;
+import org.apache.plc4x.java.api.messages.PlcUnsubscriptionRequest;
+import org.apache.plc4x.java.api.messages.PlcWriteRequest;
+import org.apache.plc4x.java.api.model.PlcSubscriptionHandle;
 import org.apache.plc4x.java.api.value.PlcValue;
 import org.apache.plc4x.java.spi.values.PlcBOOL;
 import org.connectorio.addons.binding.amsads.internal.config.AmsConfiguration;
@@ -62,8 +68,10 @@ public abstract class AbstractAmsAdsThingHandler<B extends AmsBridgeHandler, C e
   private final SymbolReaderFactory symbolReaderFactory;
   private final ChannelHandlerFactory channelHandlerFactory;
 
-  private final Map<String, AdsChannelHandler> handlerMap = new ConcurrentHashMap<String, AdsChannelHandler>();
-  private CompletableFuture<PlcConnection> initializer = new CompletableFuture<>();;
+  private final Map<String, AdsChannelHandler> handlerMap = new ConcurrentHashMap<>();
+  private final CompletableFuture<PlcConnection> initializer = new CompletableFuture<>();;
+
+  private PlcUnsubscriptionRequest unsubscriptionRequest;
 
   public AbstractAmsAdsThingHandler(Thing thing, SymbolReaderFactory symbolReaderFactory, ChannelHandlerFactory channelHandlerFactory) {
     super(thing);
@@ -73,6 +81,17 @@ public abstract class AbstractAmsAdsThingHandler<B extends AmsBridgeHandler, C e
 
   @Override
   public void handleCommand(ChannelUID channelUID, Command command) {
+    AdsChannelHandler channelHandler = handlerMap.get(channelUID.getAsString());
+    if (channelHandler == null) {
+      logger.warn("Could not handle command '{}', unsupported channel {}", command, channelUID);
+      return;
+    }
+
+    getPlcConnection().thenCompose(connection -> {
+      PlcWriteRequest.Builder builder = connection.writeRequestBuilder();
+      //channelHandler.update(builder, channelUID.getAsString(), command);
+      return builder.build().execute();
+    });
   }
 
   @Override
@@ -121,49 +140,89 @@ public abstract class AbstractAmsAdsThingHandler<B extends AmsBridgeHandler, C e
       for (Channel channel : channels) {
         AdsChannelHandler handler = channelHandlerFactory.map(thing, channel);
         if (handler != null) {
-          handlerMap.put(channel.getUID().getAsString(), handler);
-          handler.subscribe(subscriptionBuilder);
+          String channelId = channel.getUID().getAsString();
+          handlerMap.put(channelId, handler);
+          handler.subscribe(subscriptionBuilder, channelId);
         }
       }
 
-      subscriptionBuilder.build().execute().whenComplete((r, e) -> {
-        if (e != null) {
-          logger.error("Failed to setup subscription within PLC", e);
-          updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, "Failure while subscribing for data subscribe " + e.getMessage());
-          return;
-        }
-        for (String channelId : r.getTagNames()) {
-          AdsChannelHandler handler = handlerMap.get(channelId);
-          if (handler == null) {
-            logger.warn("Received update for unknown channel {} in thing {}", channelId, thing.getUID());
-            continue;
+      try {
+        PlcSubscriptionResponse rsp = subscriptionBuilder.build().execute().whenComplete((r, e) -> {
+          if (e != null) {
+            logger.error("Failed to setup subscription within PLC", e);
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, "Failure while subscribing for data subscribe " + e.getMessage());
+            return;
           }
-          r.getSubscriptionHandle(channelId).register(new Consumer<PlcSubscriptionEvent>() {
-            @Override
-            public void accept(PlcSubscriptionEvent plcSubscriptionEvent) {
-              Object value = plcSubscriptionEvent.getObject(channelId);
-              if (value != null) {
-                logger.debug("Channel {} received update {}", channelId, value);
-                getCallback().stateUpdated(new ChannelUID(channelId), convert(value));
-              }
-            }
-          });
-        }
 
-        updateStatus(ThingStatus.ONLINE);
-      });
+          PlcUnsubscriptionRequest.Builder urb = connection.unsubscriptionRequestBuilder();
+          for (String channelId : r.getTagNames()) {
+            AdsChannelHandler handler = handlerMap.get(channelId);
+            if (handler == null) {
+              logger.warn("Received update for unknown channel {} in thing {}", channelId, thing.getUID());
+              continue;
+            }
+            PlcSubscriptionHandle subscriptionHandle = r.getSubscriptionHandle(channelId);
+            subscriptionHandle.register(new Consumer<PlcSubscriptionEvent>() {
+              @Override
+              public void accept(PlcSubscriptionEvent plcSubscriptionEvent) {
+                Object value = plcSubscriptionEvent.getObject(channelId);
+                if (value != null) {
+                  logger.debug("Channel {} received update {}", channelId, value);
+                  getCallback().stateUpdated(new ChannelUID(channelId), convert(value));
+                }
+              }
+            });
+            urb.addHandles(subscriptionHandle);
+          }
+          unsubscriptionRequest = urb.build();
+
+          updateStatus(ThingStatus.ONLINE);
+        }).get();
+      } catch (Exception e) {
+        logger.error("Failed to initialize thing", e);
+        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, "Failed to initialize thing " + e.getMessage());
+      }
     });
+  }
+
+  @Override
+  public void dispose() {
+    if (unsubscriptionRequest != null) {
+      scheduler.execute(() -> {
+        try {
+          unsubscriptionRequest.execute().get();
+        } catch (Exception e) {
+          logger.warn("Failed to gracefully shutdown subscription", e);
+        }
+      });
+    }
+    super.dispose();
   }
 
   private State convert(Object value) {
     if (value == null) {
       return UnDefType.NULL;
     }
-    if (value instanceof PlcValue) {
-      if (value instanceof PlcBOOL) {
-        return ((PlcBOOL) value).getBoolean() ? OnOffType.ON : OnOffType.OFF;
-      }
-      return new DecimalType(((PlcValue) value).getBigDecimal());
+    if (value instanceof Boolean) {
+      return (Boolean) value ? OnOffType.ON : OnOffType.OFF;
+    }
+    if (value instanceof BigDecimal) {
+      return new DecimalType((BigDecimal) value);
+    }
+    if (value instanceof Long) {
+      return new DecimalType((Long) value);
+    }
+    if (value instanceof Integer) {
+      return new DecimalType((Integer) value);
+    }
+    if (value instanceof Short) {
+      return new DecimalType((Short) value);
+    }
+    if (value instanceof Float) {
+      return new DecimalType((Float) value);
+    }
+    if (value instanceof Double) {
+      return new DecimalType((Double) value);
     }
 
     // missing mapping

@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.amsads.internal.handler.channel;
 
+import org.apache.plc4x.java.ads.readwrite.AdsDataType;
 import org.connectorio.addons.binding.amsads.internal.symbol.SymbolEntry;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.Thing;
@@ -25,7 +26,12 @@ public class DefaultChannelHandlerFactory implements ChannelHandlerFactory {
 
   @Override
   public AdsChannelHandler create(Thing thing, SymbolEntry symbol) {
-    switch (symbol.getType()) {
+    AdsDataType type = symbol.getType();
+    if (type == null) {
+      return null;
+    }
+
+    switch (type) {
       case BOOL:
       case BIT:
       case BIT8:

@@ -29,8 +29,6 @@ import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.binding.builder.ChannelBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class BinaryAdsChannelHandler extends AdsChannelHandlerBase implements AdsChannelHandler {
 
@@ -64,25 +62,25 @@ public class BinaryAdsChannelHandler extends AdsChannelHandlerBase implements Ad
   }
 
   @Override
-  public void subscribe(Builder subscriptionBuilder) {
+  public void subscribe(Builder subscriptionBuilder, String channelId) {
     if (CONTACT_DIRECT_DEC.equals(channel.getChannelTypeUID())) {
       BinaryDirectDecimalFieldConfiguration configuration = channel.getConfiguration().as(BinaryDirectDecimalFieldConfiguration.class);
-      subscribe(subscriptionBuilder, createTag(configuration, configuration));
+      subscribe(subscriptionBuilder, createTag(configuration, configuration), channelId);
     } else if (CONTACT_DIRECT_HEX.equals(channel.getChannelTypeUID())) {
       BinaryDirectHexFieldConfiguration configuration = channel.getConfiguration().as(BinaryDirectHexFieldConfiguration.class);
-      subscribe(subscriptionBuilder, createTag(configuration, configuration));
+      subscribe(subscriptionBuilder, createTag(configuration, configuration), channelId);
     } else if (CONTACT_SYMBOL.equals(channel.getChannelTypeUID())) {
       BinarySymbolicFieldConfiguration configuration = channel.getConfiguration().as(BinarySymbolicFieldConfiguration.class);
-      subscribe(subscriptionBuilder, createTag(configuration, configuration));
+      subscribe(subscriptionBuilder, createTag(configuration, configuration), channelId);
     } else if (SWITCH_DIRECT_HEX.equals(channel.getChannelTypeUID())) {
       BinaryDirectDecimalFieldConfiguration configuration = channel.getConfiguration().as(BinaryDirectDecimalFieldConfiguration.class);
-      subscribe(subscriptionBuilder, createTag(configuration, configuration));
+      subscribe(subscriptionBuilder, createTag(configuration, configuration), channelId);
     } else if (SWITCH_DIRECT_DEC.equals(channel.getChannelTypeUID())) {
       BinaryDirectHexFieldConfiguration configuration = channel.getConfiguration().as(BinaryDirectHexFieldConfiguration.class);
-      subscribe(subscriptionBuilder, createTag(configuration, configuration));
+      subscribe(subscriptionBuilder, createTag(configuration, configuration), channelId);
     } else if (SWITCH_SYMBOL.equals(channel.getChannelTypeUID())) {
       BinarySymbolicFieldConfiguration configuration = channel.getConfiguration().as(BinarySymbolicFieldConfiguration.class);
-      subscribe(subscriptionBuilder, createTag(configuration, configuration));
+      subscribe(subscriptionBuilder, createTag(configuration, configuration), channelId);
     }
   }
 

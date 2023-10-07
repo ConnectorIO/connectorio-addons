@@ -18,12 +18,12 @@
 package org.connectorio.addons.binding.amsads.internal.config.channel;
 
 public class DirectDecimalFieldConfiguration extends TypedChannelConfiguration implements DirectFieldConfiguration {
-  public int indexGroup;
-  public int indexOffset;
-  public int getIndexGroup() {
+  public long indexGroup;
+  public long indexOffset;
+  public long getIndexGroup() {
     return indexGroup;
   }
-  public int getIndexOffset() {
+  public long getIndexOffset() {
     return indexOffset;
   }
 

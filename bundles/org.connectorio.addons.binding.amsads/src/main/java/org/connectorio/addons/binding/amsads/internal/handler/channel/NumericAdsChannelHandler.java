@@ -28,7 +28,6 @@ import org.openhab.core.library.CoreItemFactory;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
-import org.openhab.core.thing.binding.BaseDynamicStateDescriptionProvider;
 import org.openhab.core.thing.binding.builder.ChannelBuilder;
 
 public class NumericAdsChannelHandler extends AdsChannelHandlerBase implements AdsChannelHandler {
@@ -63,16 +62,16 @@ public class NumericAdsChannelHandler extends AdsChannelHandlerBase implements A
   }
 
   @Override
-  public void subscribe(Builder subscriptionBuilder) {
+  public void subscribe(Builder subscriptionBuilder, String channelId) {
     if (NUMBER_DIRECT_DEC.equals(channel.getChannelTypeUID())) {
       BinaryDirectDecimalFieldConfiguration configuration = channel.getConfiguration().as(BinaryDirectDecimalFieldConfiguration.class);
-      subscribe(subscriptionBuilder, createTag(configuration, configuration));
+      subscribe(subscriptionBuilder, createTag(configuration, configuration), channelId);
     } else if (NUMBER_DIRECT_HEX.equals(channel.getChannelTypeUID())) {
       BinaryDirectHexFieldConfiguration configuration = channel.getConfiguration().as(BinaryDirectHexFieldConfiguration.class);
-      subscribe(subscriptionBuilder, createTag(configuration, configuration));
+      subscribe(subscriptionBuilder, createTag(configuration, configuration), channelId);
     } else if (NUMBER_SYMBOL.equals(channel.getChannelTypeUID())) {
       BinarySymbolicFieldConfiguration configuration = channel.getConfiguration().as(BinarySymbolicFieldConfiguration.class);
-      subscribe(subscriptionBuilder, createTag(configuration, configuration));
+      subscribe(subscriptionBuilder, createTag(configuration, configuration), channelId);
     }
   }
 

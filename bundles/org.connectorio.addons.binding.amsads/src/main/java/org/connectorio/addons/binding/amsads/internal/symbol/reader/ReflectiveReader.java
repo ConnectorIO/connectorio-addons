@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.plc4x.java.ads.configuration.AdsConfiguration;
 import org.apache.plc4x.java.ads.protocol.AdsProtocolLogic;
 import org.apache.plc4x.java.ads.readwrite.AdsDataTypeTableEntry;
+import org.apache.plc4x.java.ads.readwrite.AdsSymbolTableEntry;
 import org.apache.plc4x.java.ads.readwrite.AmsPacket;
 import org.apache.plc4x.java.ads.readwrite.AmsTCPPacket;
 import org.apache.plc4x.java.api.PlcConnection;
@@ -34,6 +35,7 @@ public abstract class ReflectiveReader implements SymbolReader {
 
   protected final ConversationContext<AmsTCPPacket> conversation;
   protected final Map<String, AdsDataTypeTableEntry> dataTypeTable;
+  protected final Map<String, AdsSymbolTableEntry> symbolTable;
   protected final RequestTransactionManager tm;
   protected final AtomicLong invokeId;
   protected final AdsConfiguration configuration;
@@ -41,6 +43,7 @@ public abstract class ReflectiveReader implements SymbolReader {
   protected ReflectiveReader(PlcConnection connection) {
     AdsProtocolLogic logic = getField(connection, "protocol", AdsProtocolLogic.class);
     dataTypeTable = getField(logic, "dataTypeTable", Map.class);
+    symbolTable = getField(logic, "symbolTable", Map.class);
     configuration = getField(logic, "configuration", AdsConfiguration.class);
     conversation = getField(logic, "context", ConversationContext.class);
     tm = getField(logic, "tm", RequestTransactionManager.class);

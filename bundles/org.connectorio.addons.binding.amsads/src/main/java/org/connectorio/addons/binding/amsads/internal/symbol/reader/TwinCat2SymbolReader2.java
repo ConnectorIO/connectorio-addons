@@ -157,6 +157,7 @@ public class TwinCat2SymbolReader2 extends ReflectiveReader implements SymbolRea
         try {
           AdsSymbolTableEntry symbol = AdsSymbolTableEntry.staticParse(buff);
 
+          symbolTable.put(symbol.getName(), symbol);
           AdsDataType dataType = AdsDataType.enumForValue((byte) symbol.getDataType());
           resolvedSymbols.add(new SymbolEntry(
             dataType,

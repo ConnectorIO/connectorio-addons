@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.amsads.internal.handler.channel;
 
+import java.util.Collections;
 import org.apache.plc4x.java.ads.readwrite.AdsDataType;
 import org.apache.plc4x.java.ads.tag.AdsTag;
 import org.apache.plc4x.java.ads.tag.DirectAdsTag;
@@ -42,12 +43,12 @@ public abstract class AdsChannelHandlerBase implements AdsChannelHandler {
     this.channel = channel;
   }
 
-  protected void subscribe(Builder subscriptionBuilder, AdsTag tag) {
+  protected void subscribe(Builder subscriptionBuilder, AdsTag tag, String channelId) {
     if (tag == null) {
-      logger.warn("Could not determine valid subscription kind for channel {}", channel);
+      logger.warn("Could not determine valid subscription kind for channel {} with config {}", channel.getUID(), channel.getConfiguration().getProperties());
       return;
     }
-    subscriptionBuilder.addChangeOfStateTag(channel.getUID().getId(), tag);
+    subscriptionBuilder.addChangeOfStateTag(channelId, tag);
   }
 
   protected final AdsTag createTag(TypedChannelConfiguration typeCfg, DirectFieldConfiguration address) {
@@ -57,13 +58,13 @@ public abstract class AdsChannelHandlerBase implements AdsChannelHandler {
   protected final AdsTag createTag(TypedChannelConfiguration typeCfg, SymbolicFieldConfiguration address) {
     PlcValueType dataType = ads2plc(typeCfg.type);
     if (dataType != null) {
-      return new SymbolicAdsTag(address.getSymbol(), dataType, null);
+      return new SymbolicAdsTag(address.getSymbol(), dataType, Collections.emptyList());
     }
     return null;
   }
 
   private PlcValueType ads2plc(AdsDataType adsDataType) {
-    return PlcValueType.valueOf(adsDataType.name());
+    return PlcValueType.enumForValue(adsDataType.getPlcValueType().getValue());
   }
 
 }

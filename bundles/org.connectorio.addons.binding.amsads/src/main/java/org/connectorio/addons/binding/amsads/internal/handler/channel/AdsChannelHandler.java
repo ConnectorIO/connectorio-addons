@@ -41,5 +41,5 @@ public interface AdsChannelHandler {
 
   Channel createChannel();
 
-  void subscribe(Builder subscriptionBuilder);
+  void subscribe(Builder subscriptionBuilder, String channelId);
 }

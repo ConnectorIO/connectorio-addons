@@ -19,7 +19,7 @@ package org.connectorio.addons.binding.amsads.internal.config.channel;
 
 public interface DirectFieldConfiguration {
 
-  int getIndexGroup();
-  int getIndexOffset();
+  long getIndexGroup();
+  long getIndexOffset();
 
 }
