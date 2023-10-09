@@ -1,0 +1,145 @@
+= WM-Bus - Wireless M-Bus
+
+The Wireless M-Bus is popular metering standard widely deployed within Europe.
+Standard defines several bands and encoding schemes of radio signal which serve different purposes.
+Radio specification is defined within EN 13757–4 norm.
+Application layer protocol defines several communication methods.
+This binding is a receiver of unidirectional packets within mode S, T, C (or S1, T1, C1).
+
+.WM-Bus binding capability table
+|===
+|Device discovery| Channel discovery |Read | Write | Subscribe
+
+|Yes
+|Yes
+|No
+|No
+|Yes
+|===
+
+While binding does not discover radio interfaces out of the box, it does discover devices from received frames.
+The discovery logic is chained, meaning that it might be customized further, for use cases where vendor specific encoding is used within standard frame.
+Based on standard frame, binding will also attempt to discover channels.
+Because most popular WM-Bus devices are unidirectional (they broadcast their frames), binding does not attempt to read nor write data back to them.
+The only way to receive data is subscription.
+
+This binding supports following radio chips:
+
+ * Amber (tested AMB8465-M and AMB8665-M)
+ * IMST (tested IM871A-USB)
+ * Radiocrafts (tested RC1180-MBUS)
+
+Above manufacturers are use different serial port protocol (wrappers around frames).
+You can attempt to use this binding with other radio chips and other chip models from these manufacturers, as long as they comply with serial port protocol.
+
+== Device discovery
+The device discovery logic uses standard Wireless M-Bus header to identify device.
+
+Header is constructed from several fields:
+
+ * manufacturer - a three char manufacturer code.
+ * device - device identifier, its serial number.
+ * version - number which indicate hardware revision or model.
+ * type - number which translates to pre-defined device types (oil meter, electricity meter, gas meter etc).
+
+Header is not encrypted thus it allows to always identify sending device.
+In case when no further extensions are installed, binding uses above information to propose a _Thing_ instance.
+
+Due to popularity Wireless M-Bus is being used not only for metering.
+There are other applications such as smoke detection which can be reported though radio frames.
+Most of these use cases might require vendor mapping and customization of discovery procedure.
+
+If your device is properly detected, but reports invalid data, it is very likely that it requires customized mapping.
+
+== Thing and Channel discovery
+As mentioned above - each meter which sends data is identified as separate _Thing_.
+Once _Thing_ is accepted through inbox functionality, additional configuration can be supplied.
+In most of the cases it is an encryption key which allows to decode data part of received broadcast frames.
+
+There are several security schemes, out of which only few are currently supported:
+
+ * NONE
+ * AES_128
+ * DES_CBC
+ * DES_CBC_IV
+ * *AES_CBC_IV* - supported
+ * AES_CBC_IV_0
+ * TLS
+
+Other security modes are currently not covered by underlying WM-Bus stack.
+**Encryption key is required in order to detect channels for devices which use encrypted data**.
+For all other devices channel discovery is automatic.
+
+Binding by default will create a new channel for each properly encoded data record within frame.
+The protocol defines several encoding schemes for data:
+
+* Empty data block
+* INT8
+* INT16
+* INT24
+* INT32
+* INT48
+* INT64
+* Real (32 bit)
+* BCD2
+* BCD4
+* BCD6
+* BCD8
+* BCD12
+* Date
+* String
+
+Types are simplified at stack level to several top-level primitive kinds - Long, Double, Date, String, BCD and None.
+From that point of view integrations do not need to worry about exact encoding, because due to low level type encoding limits, could change during lifetime of the meter.
+
+== Readout principles
+There is no readout specification, because this binding serves as read only data acquisition tool.
+This means that readout will not be initiated by binding itself.
+
+== Write principles
+There is no write support within this binding.
+There are no specific remarks for writing.
+
+=== Channel definitions
+Each channel is configured with `div` and `vib` parameters which uniquely identify each record within frame.
+The `dib` stands for Data Information Block and `vib` represents Value Information Block.
+Both blocks deliver together few extra pieces of information.
+The information which comes from these two places are:
+
+DIB ships:
+
+* Storage - a present (0), or historical data value register.
+* Function
+** Instant value
+** Max value
+** Min value
+** Error value
+* Sub unit
+* Tariff
+* Storage number
+
+VIB delivers:
+
+* Measurement kind
+* Multiplier
+* Measurement unit
+
+All above information by default is placed in detected channel label / description, if available.
+It does not trigger any specific behavior when it comes to data acquisition.
+
+== Configuration example
+
+[source,indent=0,subs="verbatim,attributes",role="primary"]
+.dsl
+----
+include::{examplesdir}/wmbus/test.things[]
+----
+<1> The jrxtx bridge assumes default serial port settings based on manufacturer, so they do not have to be specified.
+<2> Wireless M-Bus header is assembled automatically from device identification fields.
+<3> Channel associated with device rely on *hex* notation for DIB and VIB parameters.
+
+[source,xml,indent=0,subs="verbatim,attributes",role="secondary"]
+.co7io
+----
+include::{examplesdir}/wmbus/things.xml[]
+----

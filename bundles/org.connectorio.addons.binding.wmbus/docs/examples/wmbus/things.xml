@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<things xmlns="http://connectorio.com/xmlns/managed/things">
+
+  <bridge type="co7io-wmbus:serial-jrxtx" label="Radio interface">
+    <id>radio1</id>
+    <config>
+      <serialPort>/dev/ttyS3</serialPort>
+      <manufacturer>AMBER</manufacturer>
+    </config>
+  </bridge>
+
+  <thing type="co7io-wmbus:device" label="Kamstrup Multical">
+    <id>heatMeter1</id>
+    <bridge>co7io-wmbus:serial-jrxtx:radio1</bridge>
+    <config>
+      <serialNumber>01234</serialNumber>
+      <manufacturer>KAM</manufacturer>
+      <version>3</version>
+      <deviceType>HEAT_METER</deviceType>
+    </config>
+    <channel>
+      <id>co7io-wmbus:device:radio1:heatMeter1:power</id>
+      <type>co7io-wmbus:number</type>
+      <label>Heat power</label>
+      <config>
+        <dib>AO</dib>
+        <vib>10</vib>
+      </config>
+    </channel>
+    <channel>
+      <id>co7io-wmbus:device:radio1:heatMeter1:flowRate</id>
+      <type>co7io-wmbus:number</type>
+      <label>Flow rate</label>
+      <config>
+        <dib>AO</dib>
+        <vib>11</vib>
+      </config>
+    </channel>
+  </thing>
+
+  <thing type="co7io-wmbus:device" label="Techem ultra">
+    <id>heatMeter2</id>
+    <bridge>co7io-wmbus:serial-jrxtx:radio1</bridge>
+    <config>
+      <serialNumber>43210</serialNumber>
+      <manufacturer>TCH</manufacturer>
+      <version>23</version>
+      <deviceType>HEAT_METER</deviceType>
+    </config>
+    <channel>
+      <id>co7io-wmbus:device:radio1:heatMeter2:power</id>
+      <type>co7io-wmbus:number</type>
+      <label>Heat power</label>
+      <config>
+        <dib>1D</dib>
+        <vib>F0</vib>
+      </config>
+    </channel>
+    <channel>
+      <id>co7io-wmbus:device:radio1:heatMeter2:flowRate</id>
+      <type>co7io-wmbus:number</type>
+      <label>Flow rate</label>
+      <config>
+        <dib>3D</dib>
+        <vib>FB</vib>
+      </config>
+    </channel>
+  </thing>
+
+</things>

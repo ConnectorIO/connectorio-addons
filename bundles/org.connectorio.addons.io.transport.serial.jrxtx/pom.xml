@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -
+ - SPDX-License-Identifier: Apache-2.0
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.connectorio.addons</groupId>
+    <artifactId>bundles</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>org.connectorio.addons.io.transport.serial.jrxtx</artifactId>
+  <packaging>bundle</packaging>
+
+  <name>ConnectorIO - Addons - IO - Transport - Serial - JRXTX</name>
+  <description>Wrapper around jrxtx library.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.openmuc</groupId>
+      <artifactId>jrxtx</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.service.component.annotations</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.neuronrobotics</groupId>
+      <artifactId>nrjavaserial</artifactId>
+      <version>5.2.1.OH1</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-project-dependencies</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeArtifactIds>nrjavaserial</includeArtifactIds>
+              <outputDirectory>${project.build.directory}/ant/additional-resources</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>process-project-dependencies</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <ant antfile="${project.basedir}/build.xml" />
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Export-Package>
+              org.openmuc.jrxtx.*
+            </Export-Package>
+            <Private-Package>
+              !gnu.io.factory,
+              !gnu.io.rfc2217,
+              gnu.io*;-split-package=merge,
+              native.**
+            </Private-Package>
+            <Bundle-NativeCode>
+              native/linux/x86_32/librxtxSerial.so; osname=Linux; processor=x86_32,
+              native/linux/x86_64/librxtxSerial.so; osname=Linux; processor=x86_64,
+              native/linux/ARM_32/5/librxtxSerial.so; osname=Linux; processor=armv5,
+              native/linux/ARM_32/6/librxtxSerial.so; osname=Linux; processor=armv5,
+              native/linux/ARM_32/7/librxtxSerial.so; osname=Linux; processor=armv7,
+              native/linux/ARM_32/8/librxtxSerial.so; osname=Linux; processor=armv8,
+              native/linux/ARM_64/8/librxtxSerial.so; osname=Linux; processor=AArch64
+              native/linux/PPC/librxtxSerial.so; osname=Linux; processor=PowerPC,
+              native/windows/x86_32/librxtxSerial.dll; osname=Windows; processor=x86_32,
+              native/windows/x86_64/librxtxSerial.dll; osname=Windows; processor=x86_64,
+              native/osx/librxtxSerial.jnilib; osname=osx
+            </Bundle-NativeCode>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

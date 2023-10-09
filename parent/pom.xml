@@ -67,6 +67,7 @@
     <connectorio-testcontainers.version>0.1.0</connectorio-testcontainers.version>
     <jmbus.version>3.2.1</jmbus.version>
     <jfatek.version>3.0.1</jfatek.version>
+    <jrxtx.version>1.0.1</jrxtx.version>
     <testcontainers.version>1.17.6</testcontainers.version>
   </properties>
 
@@ -417,6 +418,11 @@
       <dependency>
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.io.transport.serial</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.io.transport.serial.jrxtx</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1329,6 +1335,11 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>3.11</version>
+      </dependency>
+      <dependency>
+        <groupId>org.openmuc</groupId>
+        <artifactId>jrxtx</artifactId>
+        <version>${jrxtx.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

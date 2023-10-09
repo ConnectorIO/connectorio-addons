@@ -25,7 +25,7 @@
   <channel-type id="rssi">
     <item-type>Number:Power</item-type>
     <label>RSSI</label>
-    <description>Received signal strength indication - determine quality of signal</description>
+    <description>Received signal strength indication - determine quality of device signal on receiver side.</description>
     <state readOnly="true" pattern="%d dBm" />
   </channel-type>
 
@@ -33,22 +33,25 @@
   <channel-type id="number">
     <item-type>Number</item-type>
     <label>Number value</label>
+    <description>Numeric value retrieved from Wireless M-Bus frame.</description>
     <state pattern="%.4f" readOnly="true" />
-    <config-description-ref uri="thing-type:co7io-wmbus:channel"></config-description-ref>
+    <config-description-ref uri="thing-type:co7io-wmbus:channel" />
   </channel-type>
 
   <channel-type id="datetime">
     <item-type>DateTime</item-type>
     <label>Date Time value</label>
+    <description>Date time value retrieved from Wireless M-Bus frame.</description>
     <state pattern="%s" readOnly="true" />
-    <config-description-ref uri="thing-type:co7io-wmbus:channel"></config-description-ref>
+    <config-description-ref uri="thing-type:co7io-wmbus:channel" />
   </channel-type>
 
   <channel-type id="string">
     <item-type>String</item-type>
     <label>String value</label>
+    <description>Text/string value retrieved from Wireless M-Bus frame.</description>
     <state pattern="%s" readOnly="true" />
-    <config-description-ref uri="thing-type:co7io-wmbus:channel"></config-description-ref>
+    <config-description-ref uri="thing-type:co7io-wmbus:channel" />
   </channel-type>
 
 </thing:thing-descriptions>

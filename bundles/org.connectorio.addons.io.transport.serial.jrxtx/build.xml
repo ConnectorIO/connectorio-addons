@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright (C) 2019-2021 ConnectorIO Sp. z o.o.
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -
+ - SPDX-License-Identifier: Apache-2.0
+ -->
+<project name="co7io-io-transport-jrxtx" default="copy-native-libs">
+
+  <target name="copy-native-libs">
+    <echo>Unpacking dependencies</echo>
+
+    <unzip dest="${project.build.directory}/ant/unpack">
+      <fileset dir="${project.build.directory}/ant/additional-resources" includes="*.jar" />
+    </unzip>
+    <copy todir="${project.build.outputDirectory}/native" verbose="true">
+      <fileset dir="${project.build.directory}/ant/unpack/native" excludes="linux/ARM_*" />
+      <mapper type="regexp" from="^(.*)/(.*)NRJavaSerial(.*)$" to="\1/\2rxtxSerial\3" />
+    </copy>
+    <copy todir="${project.build.outputDirectory}/native/linux/ARM_32" verbose="true">
+      <fileset dir="${project.build.directory}/ant/unpack/native/linux/ARM_32" />
+      <mapper type="regexp" from="^(.*)NRJavaSerial[v](\d+)(.*)$" to="\2/\1rxtxSerial\3" />
+    </copy>
+    <copy todir="${project.build.outputDirectory}/native/linux/ARM_64" verbose="true">
+      <fileset dir="${project.build.directory}/ant/unpack/native/linux/ARM_64" />
+      <mapper type="regexp" from="^(.*)NRJavaSerial[v](\d+)(.*)$" to="\2/\1rxtxSerial\3" />
+    </copy>
+  </target>
+
+</project>

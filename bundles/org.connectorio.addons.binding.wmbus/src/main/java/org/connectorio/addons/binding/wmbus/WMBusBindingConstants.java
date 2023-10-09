@@ -32,11 +32,13 @@ public interface WMBusBindingConstants extends BaseBindingConstants {
 
   ThingTypeUID TCP_BRIDGE_TYPE = new ThingTypeUID(BINDING_ID, "tcp");
   ThingTypeUID SERIAL_BRIDGE_TYPE = new ThingTypeUID(BINDING_ID, "serial");
+  ThingTypeUID SERIAL_JRXTX_BRIDGE_TYPE = new ThingTypeUID(BINDING_ID, "serial-jrxtx");
 
   Set<ThingTypeUID> SUPPORTED_THING_TYPES = new HashSet<>(Arrays.asList(
     DEVICE_THING_TYPE,
     TCP_BRIDGE_TYPE,
-    SERIAL_BRIDGE_TYPE
+    SERIAL_BRIDGE_TYPE,
+    SERIAL_JRXTX_BRIDGE_TYPE
   ));
 
   // static channels

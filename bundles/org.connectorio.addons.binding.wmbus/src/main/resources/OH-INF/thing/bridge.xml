@@ -22,8 +22,11 @@
   xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
   <bridge-type id="serial">
-    <label>Serial Bridge</label>
-    <description>The WM-Bus Serial bridge allows to receive data using compatible radio interfaces.</description>
+    <label>Serial Bridge (experimental)</label>
+    <description>
+      The WM-Bus Serial bridge allows to receive data using compatible radio interfaces.
+      This bridge implementation uses standard serial port stack.
+    </description>
 
     <config-description>
       <parameter-group name="network">
@@ -102,6 +105,102 @@
           <option value="PARITY_EVEN">EVEN</option>
           <option value="PARITY_MARK">MARK</option>
           <option value="PARITY_SPACE">SPACE</option>
+        </options>
+      </parameter>
+
+      <parameter name="discoverDevices" type="boolean" groupName="discovery">
+        <label>Discover devices</label>
+        <description>Turn on or off discovery of new devices for this interface.</description>
+        <default>true</default>
+      </parameter>
+      <parameter name="discoveryTimeToLive" type="integer" groupName="discovery" min="-1">
+        <label>Time to live</label>
+        <description>
+          Time to live (TTL) in minutes for discovered elements. After passing of TTL element will be removed, possibly re-discovered when appears again.
+          This setting can be used to discard invalid records produced by unstable radio interface.
+          Please note that some devices may have irregular communication schedule.
+          Value of -1 disables time to live.
+          Common values are 60 (one hour) and 1440 (one day).
+        </description>
+        <default>0</default>
+        <unitLabel>m</unitLabel>
+      </parameter>
+    </config-description>
+  </bridge-type>
+
+  <bridge-type id="serial-jrxtx">
+    <label>Serial Bridge (jrxtx)</label>
+    <description>
+      The WM-Bus Serial bridge based on customized serial port library.
+      This bridge implementation is recommended to start with as it relies on serial port stack provided by WM-Bus library.
+    </description>
+
+    <config-description>
+      <parameter-group name="network">
+        <label>WM-Bus network</label>
+        <description>Configuration of network layer.</description>
+      </parameter-group>
+      <parameter-group name="discovery">
+        <label>Discovery</label>
+        <description>Control options for behavior of device discovery.</description>
+      </parameter-group>
+      <parameter-group name="serial">
+        <label>Serial port settings</label>
+        <description>Settings related to hardware adapter communication. Most common mode is Data Bits: 8, parity: none, stop bits: 1.
+          Baud rate depends on manufacturer - use 19200 for Radio Crafts, 9600 for Amber Wireless and  57600 for IMST.
+          You can leave serial port settings unset to assume defaults for specific radio adapter.
+        </description>
+      </parameter-group>
+
+      <parameter name="mode" type="text" required="true" groupName="network">
+        <label>WM-Bus receiver mode</label>
+        <description>Frequency and encoding of radio signal from devices.</description>
+        <default>T</default>
+        <options>
+          <option value="C">C - compact</option>
+          <option value="T">T - frequent</option>
+          <option value="S">S - stationary</option>
+        </options>
+      </parameter>
+
+      <parameter name="manufacturer" type="text" required="true" groupName="serial">
+        <label>Manufacturer</label>
+        <description>Manufacturer of radio interface.</description>
+        <options>
+          <option value="AMBER">AMBER</option>
+          <option value="IMST">IMST</option>
+          <option value="RADIO_CRAFTS">RADIO_CRAFTS</option>
+        </options>
+      </parameter>
+      <parameter name="serialPort" type="text" required="true" groupName="serial">
+        <label>Serial port</label>
+        <description>Serial interface port.</description>
+        <context>serial-port</context>
+      </parameter>
+      <parameter name="baudRate" type="integer" required="true" groupName="serial">
+        <label>Baud rate</label>
+        <description>Baud rate for serial connection.</description>
+        <default>9600</default>
+      </parameter>
+      <parameter name="dataBits" type="text" required="true" groupName="serial">
+        <label>Baud rate</label>
+        <description>Data bits in each serial transmission.</description>
+        <default>DATABITS_8</default>
+        <options>
+          <option value="DATABITS_5">5</option>
+          <option value="DATABITS_6">6</option>
+          <option value="DATABITS_7">7</option>
+          <option value="DATABITS_8">8</option>
+        </options>
+      </parameter>
+      <parameter name="stopBits" type="text" required="true" groupName="serial">
+        <label>Baud rate</label>
+        <description>Stop bits after transmission.</description>
+        <default>STOPBITS_1</default>
+        <options>
+          <option value="STOPBITS_1">1</option>
+          <option value="STOPBITS_2">2</option>
+          <option value="STOPBITS_1_5">1.5</option>
         </options>
       </parameter>
 

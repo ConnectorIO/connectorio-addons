@@ -51,6 +51,9 @@ public class WMBusThingHandlerFactory extends BaseThingHandlerFactory {
       if (WMBusBindingConstants.SERIAL_BRIDGE_TYPE.equals(thing.getThingTypeUID())) {
         return new WMBusSerialBridgeHandler((Bridge) thing, serialPortManager, discoveryCoordinator);
       }
+      if (WMBusBindingConstants.SERIAL_JRXTX_BRIDGE_TYPE.equals(thing.getThingTypeUID())) {
+        return new WMBusSerialJrxtxBridgeHandler((Bridge) thing, discoveryCoordinator);
+      }
     }
 
     if (WMBusBindingConstants.DEVICE_THING_TYPE.equals(thing.getThingTypeUID())) {

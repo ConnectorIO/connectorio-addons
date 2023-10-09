@@ -38,14 +38,13 @@
       <artifactId>org.connectorio.addons.io.transport.serial</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.io.transport.serial.jrxtx</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.openmuc</groupId>
       <artifactId>jmbus</artifactId>
       <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.neuronrobotics</groupId>
-      <artifactId>nrjavaserial</artifactId>
-      <version>5.2.1</version>
     </dependency>
   </dependencies>
 
@@ -58,20 +57,12 @@
           <instructions>
             <Export-Package>
               org.connectorio.addons.io.transport.mbus.config,
-              org.openmuc.jmbus*;version=${jmbus.version};-split-package:=merge-first,
-              org.openmuc.jrxtx*;resolution:=optional,
+              org.openmuc.jmbus*;version=${jmbus.version};-split-package:=merge-first
             </Export-Package>
             <Import-Package>
-              !org.openmuc.jmbus*,
-              !gnu.io
+<!--              gnu.io*;provider=openmuc-jrxtx; mandatory:=provider,-->
               *
             </Import-Package>
-            <!--
-            <Private-Package>
-              gnu.io*
-            </Private-Package>
-            <Embed-Dependency>artifactId=nrjavaserial</Embed-Dependency>
-            -->
           </instructions>
         </configuration>
       </plugin>

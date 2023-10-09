@@ -22,16 +22,11 @@
   xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
 
   <config-description uri="thing-type:co7io-wmbus:channel">
-    <parameter-group name="identification">
-      <label>Record identification</label>
-      <description>Below fields are required in order to match channel with data incoming from devices.</description>
-    </parameter-group>
-
-    <parameter name="dib" type="text" groupName="identification">
+    <parameter name="dib" type="text" required="true">
       <label>Data Information Block (DIB)</label>
       <description>Data identification block in hex format - allows to determine data encoding.</description>
     </parameter>
-    <parameter name="vib" type="text" groupName="identification">
+    <parameter name="vib" type="text" required="true">
       <label>Value Information Block (VIB)</label>
       <description>Value identification block allows to interpret value.</description>
     </parameter>

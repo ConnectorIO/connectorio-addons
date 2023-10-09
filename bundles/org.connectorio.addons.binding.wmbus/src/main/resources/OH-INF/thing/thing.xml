@@ -25,8 +25,8 @@
 
   <thing-type id="device" extensible="number,datetime,string">
     <supported-bridge-type-refs>
-      <bridge-type-ref id="jrxtx-serial" />
-      <bridge-type-ref id="openhab-serial" />
+      <bridge-type-ref id="serial" />
+      <bridge-type-ref id="serial-jrxtx" />
     </supported-bridge-type-refs>
 
     <label>WM-Bus Device</label>
