@@ -57,6 +57,7 @@
     <module>org.connectorio.addons.io.proxy.http</module>
     <module>org.connectorio.addons.io.transport.mbus</module>
     <module>org.connectorio.addons.io.transport.serial</module>
+    <module>org.connectorio.addons.io.transport.serial.jrxtx</module>
     <module>org.connectorio.addons.io.transport.serial.persistent</module>
     <module>org.connectorio.addons.io.transport.serial.purejavacomm</module>
     <module>org.connectorio.addons.io.transport.serial.shell</module>

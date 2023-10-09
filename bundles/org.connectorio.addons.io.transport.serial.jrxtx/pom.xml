@@ -26,30 +26,46 @@
     <version>4.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>org.connectorio.addons.io.transport.mbus</artifactId>
+  <artifactId>org.connectorio.addons.io.transport.serial.jrxtx</artifactId>
   <packaging>bundle</packaging>
 
-  <name>ConnectorIO - Addons - IO - Transport - M-Bus</name>
-  <description>M-Bus and WM-Bus transport layer.</description>
+  <name>ConnectorIO - Addons - IO - Transport - Serial - JRXTX</name>
+  <description>Wrapper around jrxtx library.</description>
 
   <dependencies>
     <dependency>
-      <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.io.transport.serial</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.io.transport.serial.jrxtx</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.openmuc</groupId>
-      <artifactId>jmbus</artifactId>
-      <scope>compile</scope>
+      <artifactId>jrxtx</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.neuronrobotics</groupId>
       <artifactId>nrjavaserial</artifactId>
-      <version>5.2.1</version>
+      <version>5.2.1.OH1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.service.component.annotations</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
     </dependency>
   </dependencies>
 
@@ -61,21 +77,13 @@
         <configuration>
           <instructions>
             <Export-Package>
-              org.connectorio.addons.io.transport.mbus.config,
-              org.openmuc.jmbus*;version=${jmbus.version};-split-package:=merge-first,
-              org.openmuc.jrxtx*;resolution:=optional,
+              org.openmuc.jrxtx.*
             </Export-Package>
-            <Import-Package>
-              !org.openmuc.jmbus*,
-              !gnu.io
-              *
-            </Import-Package>
-            <!--
             <Private-Package>
-              gnu.io*
+              !gnu.io.factory,
+              !gnu.io.rfc2217,
+              gnu.io*;-split-package=merge
             </Private-Package>
-            <Embed-Dependency>artifactId=nrjavaserial</Embed-Dependency>
-            -->
           </instructions>
         </configuration>
       </plugin>

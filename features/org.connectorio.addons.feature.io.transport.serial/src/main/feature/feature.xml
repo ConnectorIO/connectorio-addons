@@ -23,6 +23,16 @@
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.io.transport.serial/${project.version}</bundle>
   </feature>
 
+  <feature name="openhab-transport-serial-jrxtx" description="Shaded jrxtx library for some artifacts which need it." version="${project.version}">
+    <feature>co7io-transport-serial-jrxtx</feature>
+  </feature>
+
+  <feature name="co7io-transport-serial-jrxtx" description="Shaded jrxtx library for some artifacts which need it." version="${project.version}">
+    <feature>openhab.tp-serial-rxtx</feature>
+    <feature>openhab-runtime-base</feature>
+    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.io.transport.serial.jrxtx/${project.version}</bundle>
+  </feature>
+
   <feature name="openhab-transport-serial-persistent" description="Persistent serial port identifier provider." version="${project.version}">
     <feature>co7io-transport-serial-persistent</feature>
   </feature>
