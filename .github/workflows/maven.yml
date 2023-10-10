@@ -27,6 +27,9 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
         distribution: 'temurin'
+        server-id: co7io-public-snapshots
+        server-username: CI_DEPLOY_USERNAME
+        server-password: CI_DEPLOY_PASSWORD
     - name: Cache local Maven repository
       uses: actions/cache@v3
       with:
@@ -40,6 +43,13 @@ jobs:
         path: ~/.sonar/cache
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
+    - name: Calculate branch version
+      if: github.event_name == 'pull_request'
+      shell: bash
+      run: |
+        baseVersion=$(mvn org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate -Dexpression=project.version -q -DforceStdout)
+        gitCommitId=$(git rev-parse --short HEAD)
+        mvn versions:set -DnewVersion=${baseVersion//-/"-$gitCommitId-"}
     - name: Build with Maven
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -50,6 +60,15 @@ jobs:
         -Dsonar.projectKey=ConnectorIO_connectorio-addons
         -Dsonar.organization=connectorio
         -Dsonar.host.url=https://sonarcloud.io
+    - name: Maven deploy
+      if: success()
+      env:
+        CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
+        CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
+      run: >-
+        mvn -B -nsu package deploy
+        -Dmaven.test.skip=true
+        -DretryFailedDeploymentCount=3
     - name: Publish Test Report
       if: success() || failure()
       uses: scacap/action-surefire-report@v1
@@ -61,11 +80,3 @@ jobs:
         path: |
           **/surefire-reports/TEST-*.xml
           **/failsafe-reports/TEST-*.xml
-    - name: Upload binary artifacts
-      uses: actions/upload-artifact@v3
-      if: success()
-      with:
-        name: "kars-${{ github.sha }}-${{ matrix.os }}-java-${{ matrix.java }}"
-        retention-days: 15
-        path: |
-          kars/*/target/*.kar

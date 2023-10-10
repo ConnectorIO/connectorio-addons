@@ -35,6 +35,16 @@
   <name>ConnectorIO - Addons</name>
   <description>This project contains support for third party bindings.</description>
 
+  <properties>
+    <snapshot.repository-id>co7io-public-snapshots</snapshot.repository-id>
+    <snapshot.repository-name>ConnectorIO Public Snapshots</snapshot.repository-name>
+    <snapshot.repository-url>https://repository.connectorio.cloud/repository/co7io-public-snapshots/</snapshot.repository-url>
+
+    <release.repository-id>co7io-public-releases</release.repository-id>
+    <release.repository-name>ConnectorIO Public Releases</release.repository-name>
+    <release.repository-url>https://repository.connectorio.cloud/repository/co7io-public-releases/</release.repository-url>
+  </properties>
+
   <modules>
     <module>parent</module>
     <module>bddhab</module>
