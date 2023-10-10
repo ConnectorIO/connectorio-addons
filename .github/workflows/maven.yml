@@ -61,4 +61,11 @@ jobs:
         path: |
           **/surefire-reports/TEST-*.xml
           **/failsafe-reports/TEST-*.xml
-
+    - name: Upload binary artifacts
+      uses: actions/upload-artifact@v3
+      if: success()
+      with:
+        name: "kars-${{ github.sha }}-${{ matrix.os }}-java-${{ matrix.java }}"
+        retention-days: 15
+        path: |
+          kars/*/target/*.kar

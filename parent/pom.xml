@@ -1343,8 +1343,10 @@
           <inherited>true</inherited>
           <configuration>
             <instructions>
-              <Build-Version>$${githead}</Build-Version>
-              <_removeheaders>Require-Capability,Provide-Capability</_removeheaders>
+              <Git-SCM-SHA>$${githead}</Git-SCM-SHA>
+              <_removeheaders>Include-Resource,Private-Package,Require-Capability,Provide-Capability,Bnd-LastModified</_removeheaders>
+              <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+              <Bundle-Version>${project.version}.$${substring;$${githead};0;6}</Bundle-Version>
               <_noimportjava>true</_noimportjava>
             </instructions>
           </configuration>
