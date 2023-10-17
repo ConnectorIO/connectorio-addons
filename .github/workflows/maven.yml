@@ -48,8 +48,8 @@ jobs:
       shell: bash
       run: |
         baseVersion=$(mvn org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate -Dexpression=project.version -q -DforceStdout)
-        gitCommitId=$(git rev-parse --short HEAD)
-        mvn versions:set -DnewVersion=${baseVersion//-/"-$gitCommitId-"}
+        pullRequestId="pr-${{ github.event.pull_request.number }}"
+        mvn versions:set -DnewVersion=${baseVersion//-/"-$pullRequestId-"}
     - name: Build with Maven
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
