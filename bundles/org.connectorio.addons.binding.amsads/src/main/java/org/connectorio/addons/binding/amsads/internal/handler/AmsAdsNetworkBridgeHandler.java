@@ -36,6 +36,7 @@ import org.apache.plc4x.java.ads.discovery.readwrite.Operation;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
+import org.apache.plc4x.java.transport.serial.SerialTransport;
 import org.connectorio.addons.binding.amsads.internal.AmsConverter;
 import org.connectorio.addons.binding.amsads.internal.config.AmsConfiguration;
 import org.connectorio.addons.binding.amsads.internal.config.NetworkConfiguration;

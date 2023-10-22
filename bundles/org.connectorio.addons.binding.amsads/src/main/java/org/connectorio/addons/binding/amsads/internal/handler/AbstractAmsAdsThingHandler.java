@@ -19,6 +19,7 @@ package org.connectorio.addons.binding.amsads.internal.handler;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import org.apache.plc4x.java.api.PlcConnection;
+import org.apache.plc4x.java.api.exceptions.PlcException;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionEvent;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest.Builder;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionResponse;
@@ -123,10 +125,16 @@ public abstract class AbstractAmsAdsThingHandler<B extends AmsBridgeHandler, C e
         return;
       }
 
-      if (getThingConfig().get().discoverChannels) {
+      Set<SymbolEntry> symbolEntries = Collections.emptySet();
+      try {
         SymbolReader reader = symbolReaderFactory.create(connection);
+        symbolEntries = reader.read().join();
+      } catch (Exception e) {
+        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, "Could not retrieve data type and symbol information from ADS device " + e.getMessage());
+      }
+
+      if (getThingConfig().get().discoverChannels) {
         try {
-          Set<SymbolEntry> symbolEntries = reader.read().join();
           updateChannels(symbolEntries);
         } catch (Exception e) {
           logger.warn("Failed to discover ADS channels", e);
@@ -138,7 +146,7 @@ public abstract class AbstractAmsAdsThingHandler<B extends AmsBridgeHandler, C e
       List<Channel> channels = getThing().getChannels();
       Builder subscriptionBuilder = connection.subscriptionRequestBuilder();
       for (Channel channel : channels) {
-        AdsChannelHandler handler = channelHandlerFactory.map(thing, channel);
+        AdsChannelHandler handler = channelHandlerFactory.map(thing, getCallback(), channel);
         if (handler != null) {
           String channelId = channel.getUID().getAsString();
           handlerMap.put(channelId, handler);
@@ -168,7 +176,7 @@ public abstract class AbstractAmsAdsThingHandler<B extends AmsBridgeHandler, C e
                 Object value = plcSubscriptionEvent.getObject(channelId);
                 if (value != null) {
                   logger.debug("Channel {} received update {}", channelId, value);
-                  getCallback().stateUpdated(new ChannelUID(channelId), convert(value));
+                  handler.onChange(value);
                 }
               }
             });
@@ -196,6 +204,15 @@ public abstract class AbstractAmsAdsThingHandler<B extends AmsBridgeHandler, C e
         }
       });
     }
+    initializer.thenAccept((connection) -> {
+      try {
+        if (connection.isConnected()) {
+          connection.close();
+        }
+      } catch (Exception e) {
+        logger.warn("Failed to close connection", e);
+      }
+    });
     super.dispose();
   }
 

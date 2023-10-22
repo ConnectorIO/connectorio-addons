@@ -17,83 +17,75 @@
  */
 package org.connectorio.addons.binding.amsads.internal.handler.channel;
 
-import org.apache.plc4x.java.ads.readwrite.AdsDataType;
+import org.apache.plc4x.java.ads.readwrite.PlcValueType;
 import org.connectorio.addons.binding.amsads.internal.symbol.SymbolEntry;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.binding.ThingHandlerCallback;
 
 public class DefaultChannelHandlerFactory implements ChannelHandlerFactory {
 
   @Override
   public AdsChannelHandler create(Thing thing, SymbolEntry symbol) {
-    AdsDataType type = symbol.getType();
+    PlcValueType type = symbol.getType();
     if (type == null) {
       return null;
     }
 
     switch (type) {
+      case NULL:
+        break;
       case BOOL:
-      case BIT:
-      case BIT8:
-      case BYTE:
-      case BITARR8:
         return new BinaryAdsChannelHandler(thing, symbol);
+      case BYTE:
+      case LWORD:
       case WORD:
-      case BITARR16:
       case DWORD:
-      case BITARR32:
       case SINT:
-      case INT8:
       case USINT:
-      case UINT8:
       case INT:
-      case INT16:
       case UINT:
-      case UINT16:
       case DINT:
-      case INT32:
       case UDINT:
-      case UINT32:
       case LINT:
-      case INT64:
       case ULINT:
-      case UINT64:
       case REAL:
-      case FLOAT:
       case LREAL:
-      case DOUBLE:
         return new NumericAdsChannelHandler(thing, symbol);
       case CHAR:
       case WCHAR:
       case STRING:
       case WSTRING:
         return new TextAdsChannelHandler(thing, symbol);
+      case LDATE:
+        break;
+      case LTIME_OF_DAY:
+        break;
       case TIME:
       case LTIME:
       case DATE:
       case TIME_OF_DAY:
-      case TOD:
       case DATE_AND_TIME:
-      case DT:
+      case LDATE_AND_TIME:
         return new DateTimeAdsChannelHandler(thing, symbol);
     }
     return null;
   }
 
   @Override
-  public AdsChannelHandler map(Thing thing, Channel channel) {
+  public AdsChannelHandler map(Thing thing, ThingHandlerCallback callback, Channel channel) {
     String channelId = channel.getChannelTypeUID().getId();
     if (channelId.startsWith("contact-") || channelId.startsWith("switch-")) {
-      return new BinaryAdsChannelHandler(thing, channel);
+      return new BinaryAdsChannelHandler(thing, callback, channel);
     }
     if (channelId.startsWith("number-")) {
-      return new NumericAdsChannelHandler(thing, channel);
+      return new NumericAdsChannelHandler(thing, callback, channel);
     }
     if (channelId.startsWith("datetime-")) {
-      return new DateTimeAdsChannelHandler(thing, channel);
+      return new DateTimeAdsChannelHandler(thing, callback, channel);
     }
     if (channelId.startsWith("text-")) {
-      return new TextAdsChannelHandler(thing, channel);
+      return new TextAdsChannelHandler(thing, callback, channel);
     }
     return null;
   }

@@ -25,9 +25,12 @@ import org.connectorio.addons.binding.amsads.internal.config.channel.binary.Bina
 import org.connectorio.addons.binding.amsads.internal.symbol.SymbolEntry;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.library.CoreItemFactory;
+import org.openhab.core.library.types.OnOffType;
+import org.openhab.core.library.types.OpenClosedType;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.openhab.core.thing.binding.builder.ChannelBuilder;
 
 public class BinaryAdsChannelHandler extends AdsChannelHandlerBase implements AdsChannelHandler {
@@ -35,26 +38,29 @@ public class BinaryAdsChannelHandler extends AdsChannelHandlerBase implements Ad
   private final SymbolEntry symbol;
 
   public BinaryAdsChannelHandler(Thing thing, SymbolEntry symbol) {
-    this(thing, null, symbol);
+    this(thing, null, null, symbol);
   }
 
-  public BinaryAdsChannelHandler(Thing thing, Channel channel) {
-    this(thing, channel, null);
+  public BinaryAdsChannelHandler(Thing thing, ThingHandlerCallback callback, Channel channel) {
+    this(thing, callback, channel, null);
   }
 
-  private BinaryAdsChannelHandler(Thing thing, Channel channel, SymbolEntry symbol) {
-    super(thing, channel);
+  private BinaryAdsChannelHandler(Thing thing, ThingHandlerCallback callback, Channel channel, SymbolEntry symbol) {
+    super(thing, callback, channel);
     this.symbol = symbol;
   }
 
   @Override
   public Channel createChannel() {
     return ChannelBuilder.create(new ChannelUID(thing.getUID(), Long.toHexString(symbol.getIndex()) + "x" + Long.toHexString(symbol.getOffset())))
+      //.withType(symbol.isReadOnly() ? AdsChannelHandler.CONTACT_DIRECT_HEX : AdsChannelHandler.SWITCH_DIRECT_HEX)
       .withType(symbol.isReadOnly() ? AdsChannelHandler.CONTACT_SYMBOL : AdsChannelHandler.SWITCH_SYMBOL)
       .withAcceptedItemType(symbol.isReadOnly() ? CoreItemFactory.CONTACT : CoreItemFactory.SWITCH)
       .withLabel(symbol.getName())
       .withDescription(symbol.getDescription())
       .withConfiguration(new Configuration(Map.of(
+//        "indexGroup", Long.toHexString(symbol.getIndex()),
+//        "indexOffset", Long.toHexString(symbol.getOffset()),
         "symbol", symbol.getName(),
         "type", symbol.getType().name()
       )))
@@ -84,4 +90,11 @@ public class BinaryAdsChannelHandler extends AdsChannelHandlerBase implements Ad
     }
   }
 
+  @Override
+  public void onChange(Object value) {
+    if (CoreItemFactory.CONTACT.equals(channel.getAcceptedItemType())) {
+      callback.stateUpdated(channel.getUID(), Boolean.TRUE.equals(value) ? OpenClosedType.OPEN : OpenClosedType.CLOSED);
+    }
+    callback.stateUpdated(channel.getUID(), Boolean.TRUE.equals(value) ? OnOffType.ON : OnOffType.OFF);
+  }
 }

@@ -32,9 +32,13 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscovery;
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscoveryBlock;
 import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscoveryBlockHostName;
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscoveryBlockStatus;
+import org.apache.plc4x.java.ads.discovery.readwrite.AdsDiscoveryBlockType;
 import org.apache.plc4x.java.ads.discovery.readwrite.AmsString;
 import org.apache.plc4x.java.ads.discovery.readwrite.Operation;
+import org.apache.plc4x.java.ads.discovery.readwrite.Status;
 import org.apache.plc4x.java.spi.generation.ByteOrder;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
@@ -247,9 +251,19 @@ public class UdpSenderReceiver implements DiscoverySender, DiscoveryReceiver, Ro
               ));
             }
             if (identification.getOperation() == Operation.ADD_OR_UPDATE_ROUTE_RESPONSE) {
-              // success = route.getStatus() == RouteStatus.SUCCESS);
-              boolean success = !identification.getBlocks().isEmpty();
-              routeListeners.forEach(listener -> listener.add(reply.host, identification.getAmsNetId().toString(), success));
+              boolean success = false;
+              for (AdsDiscoveryBlock discoveryBlock : identification.getBlocks()) {
+                if (discoveryBlock instanceof AdsDiscoveryBlockStatus) {
+                  AdsDiscoveryBlockStatus statusBlock = (AdsDiscoveryBlockStatus) discoveryBlock;
+                  if (statusBlock.getStatus() != Status.SUCCESS) {
+                    logger.warn("Route setup failed, operation status is {}", statusBlock.getStatus());
+                  }
+                  success = statusBlock.getStatus() == Status.SUCCESS;
+                }
+              }
+              for (AmsAdsRouteListener listener : routeListeners) {
+                listener.add(reply.host, AmsConverter.parseDiscoveryAms(identification.getAmsNetId()), success);
+              }
             }
           } else {
             logger.warn("Unknown response from {}, packet {}", reply.host, reply.structure);

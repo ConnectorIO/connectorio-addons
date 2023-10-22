@@ -20,11 +20,12 @@ package org.connectorio.addons.binding.amsads.internal.handler.channel;
 import org.connectorio.addons.binding.amsads.internal.symbol.SymbolEntry;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.binding.ThingHandlerCallback;
 
 public interface ChannelHandlerFactory {
 
   AdsChannelHandler create(Thing thing, SymbolEntry symbol);
 
-  AdsChannelHandler map(Thing thing, Channel channel);
+  AdsChannelHandler map(Thing thing, ThingHandlerCallback callback, Channel channel);
 
 }

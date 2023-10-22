@@ -17,6 +17,10 @@
  */
 package org.connectorio.addons.binding.amsads.internal.handler.channel;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Map;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest.Builder;
 import org.connectorio.addons.binding.amsads.internal.config.channel.DirectDecimalFieldConfiguration;
@@ -25,9 +29,11 @@ import org.connectorio.addons.binding.amsads.internal.config.channel.SymbolField
 import org.connectorio.addons.binding.amsads.internal.symbol.SymbolEntry;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.library.CoreItemFactory;
+import org.openhab.core.library.types.DateTimeType;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.openhab.core.thing.binding.builder.ChannelBuilder;
 
 public class DateTimeAdsChannelHandler extends AdsChannelHandlerBase implements AdsChannelHandler {
@@ -35,15 +41,15 @@ public class DateTimeAdsChannelHandler extends AdsChannelHandlerBase implements 
   private final SymbolEntry symbol;
 
   public DateTimeAdsChannelHandler(Thing thing, SymbolEntry symbol) {
-    this(thing, null, symbol);
+    this(thing, null, null, symbol);
   }
 
-  public DateTimeAdsChannelHandler(Thing thing, Channel channel) {
-    this(thing, channel, null);
+  public DateTimeAdsChannelHandler(Thing thing, ThingHandlerCallback callback, Channel channel) {
+    this(thing, callback, channel, null);
   }
 
-  private DateTimeAdsChannelHandler(Thing thing, Channel channel, SymbolEntry symbol) {
-    super(thing, channel);
+  private DateTimeAdsChannelHandler(Thing thing, ThingHandlerCallback callback, Channel channel, SymbolEntry symbol) {
+    super(thing, callback, channel);
     this.symbol = symbol;
   }
 
@@ -52,11 +58,14 @@ public class DateTimeAdsChannelHandler extends AdsChannelHandlerBase implements 
   @Override
   public Channel createChannel() {
     return ChannelBuilder.create(new ChannelUID(thing.getUID(), Long.toHexString(symbol.getIndex()) + "x" + Long.toHexString(symbol.getOffset())))
-      .withType(AdsChannelHandler.DATETIME_DIRECT_HEX)
+      //.withType(AdsChannelHandler.DATETIME_DIRECT_HEX)
+      .withType(AdsChannelHandler.DATETIME_SYMBOL)
       .withAcceptedItemType(CoreItemFactory.DATETIME)
       .withLabel(symbol.getName())
       .withDescription(symbol.getDescription())
       .withConfiguration(new Configuration(Map.of(
+//        "indexGroup", Long.toHexString(symbol.getIndex()),
+//        "indexOffset", Long.toHexString(symbol.getOffset()),
         "symbol", symbol.getName(),
         "type", symbol.getType().name()
       )))
@@ -75,6 +84,17 @@ public class DateTimeAdsChannelHandler extends AdsChannelHandlerBase implements 
       SymbolFieldConfiguration configuration = channel.getConfiguration().as(SymbolFieldConfiguration.class);
       subscribe(subscriptionBuilder, createTag(configuration, configuration), channelId);
     }
+  }
+
+  @Override
+  public void onChange(Object value) {
+//    if (value instanceof LocalTime) {
+//      callback.stateUpdated(channel.getUID(), new DateTimeType("1970-01-01T" + value));
+//    } else if (value instanceof LocalDateTime) {
+//      callback.stateUpdated(channel.getUID(), new DateTimeType(((LocalDateTime) value).atZone(ZoneId.systemDefault())));
+//    } else if (value instanceof Duration) {
+//      callback.stateUpdated(channel.getUID(), new DateTimeType("1970-01-01T" + value.));
+//    }
   }
 
 }

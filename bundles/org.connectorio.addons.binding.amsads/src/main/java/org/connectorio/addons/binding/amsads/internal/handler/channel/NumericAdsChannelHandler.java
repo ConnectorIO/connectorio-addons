@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.amsads.internal.handler.channel;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest.Builder;
 import org.connectorio.addons.binding.amsads.internal.config.channel.binary.BinaryDirectDecimalFieldConfiguration;
@@ -25,9 +26,11 @@ import org.connectorio.addons.binding.amsads.internal.config.channel.binary.Bina
 import org.connectorio.addons.binding.amsads.internal.symbol.SymbolEntry;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.library.CoreItemFactory;
+import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.openhab.core.thing.binding.builder.ChannelBuilder;
 
 public class NumericAdsChannelHandler extends AdsChannelHandlerBase implements AdsChannelHandler {
@@ -35,26 +38,29 @@ public class NumericAdsChannelHandler extends AdsChannelHandlerBase implements A
   private final SymbolEntry symbol;
 
   public NumericAdsChannelHandler(Thing thing, SymbolEntry symbol) {
-    this(thing, null, symbol);
+    this(thing, null, null, symbol);
   }
 
-  public NumericAdsChannelHandler(Thing thing, Channel channel) {
-    this(thing, channel, null);
+  public NumericAdsChannelHandler(Thing thing, ThingHandlerCallback callback, Channel channel) {
+    this(thing, callback, channel, null);
   }
 
-  public NumericAdsChannelHandler(Thing thing, Channel channel, SymbolEntry symbol) {
-    super(thing, channel);
+  public NumericAdsChannelHandler(Thing thing, ThingHandlerCallback callback, Channel channel, SymbolEntry symbol) {
+    super(thing, callback, channel);
     this.symbol = symbol;
   }
 
   @Override
   public Channel createChannel() {
     return ChannelBuilder.create(new ChannelUID(thing.getUID(), Long.toHexString(symbol.getIndex()) + "x" + Long.toHexString(symbol.getOffset())))
+      //.withType(AdsChannelHandler.NUMBER_DIRECT_HEX)
       .withType(AdsChannelHandler.NUMBER_SYMBOL)
       .withAcceptedItemType(CoreItemFactory.NUMBER)
       .withLabel(symbol.getName())
       .withDescription(symbol.getDescription())
       .withConfiguration(new Configuration(Map.of(
+//        "indexGroup", Long.toHexString(symbol.getIndex()),
+//        "indexOffset", Long.toHexString(symbol.getOffset()),
         "symbol", symbol.getName(),
         "type", symbol.getType().name()
       )))
@@ -72,6 +78,25 @@ public class NumericAdsChannelHandler extends AdsChannelHandlerBase implements A
     } else if (NUMBER_SYMBOL.equals(channel.getChannelTypeUID())) {
       BinarySymbolicFieldConfiguration configuration = channel.getConfiguration().as(BinarySymbolicFieldConfiguration.class);
       subscribe(subscriptionBuilder, createTag(configuration, configuration), channelId);
+    }
+  }
+
+  @Override
+  public void onChange(Object value) {
+    if (value instanceof Long) {
+      callback.stateUpdated(channel.getUID(), new DecimalType((Long) value));
+    } else if (value instanceof Integer) {
+      callback.stateUpdated(channel.getUID(), new DecimalType((Integer) value));
+    } else if (value instanceof Short) {
+      callback.stateUpdated(channel.getUID(), new DecimalType((Short) value));
+    } else if (value instanceof BigDecimal) {
+      callback.stateUpdated(channel.getUID(), new DecimalType((BigDecimal) value));
+    } else if (value instanceof Double) {
+      callback.stateUpdated(channel.getUID(), new DecimalType((Double) value));
+    } else if (value instanceof Float) {
+      callback.stateUpdated(channel.getUID(), new DecimalType((Float) value));
+    } else {
+      callback.stateUpdated(channel.getUID(), new DecimalType(value.toString()));
     }
   }
 

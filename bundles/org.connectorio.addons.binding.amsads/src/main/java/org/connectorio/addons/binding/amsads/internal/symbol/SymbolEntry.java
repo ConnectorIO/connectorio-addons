@@ -19,17 +19,18 @@ package org.connectorio.addons.binding.amsads.internal.symbol;
 
 import java.util.Objects;
 import org.apache.plc4x.java.ads.readwrite.AdsDataType;
+import org.apache.plc4x.java.ads.readwrite.PlcValueType;
 
 public class SymbolEntry {
 
-  private final AdsDataType type;
+  private final PlcValueType type;
   private final String name;
   private final String description;
   private final long index;
   private final long offset;
   private final boolean readOnly;
 
-  public SymbolEntry(AdsDataType type, String name, String description, long index, long offset, boolean readOnly) {
+  public SymbolEntry(PlcValueType type, String name, String description, long index, long offset, boolean readOnly) {
     this.type = type;
     this.name = name;
     this.description = description;
@@ -38,7 +39,7 @@ public class SymbolEntry {
     this.readOnly = readOnly;
   }
 
-  public AdsDataType getType() {
+  public PlcValueType getType() {
     return type;
   }
 

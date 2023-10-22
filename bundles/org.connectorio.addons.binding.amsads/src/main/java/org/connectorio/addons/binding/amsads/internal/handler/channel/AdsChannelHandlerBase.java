@@ -29,6 +29,7 @@ import org.connectorio.addons.binding.amsads.internal.config.channel.SymbolicFie
 import org.connectorio.addons.binding.amsads.internal.config.channel.TypedChannelConfiguration;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,10 +37,12 @@ public abstract class AdsChannelHandlerBase implements AdsChannelHandler {
 
   protected final Logger logger = LoggerFactory.getLogger(getClass());
   protected final Thing thing;
+  protected final ThingHandlerCallback callback;
   protected final Channel channel;
 
-  protected AdsChannelHandlerBase(Thing thing, Channel channel) {
+  protected AdsChannelHandlerBase(Thing thing, ThingHandlerCallback callback, Channel channel) {
     this.thing = thing;
+    this.callback = callback;
     this.channel = channel;
   }
 

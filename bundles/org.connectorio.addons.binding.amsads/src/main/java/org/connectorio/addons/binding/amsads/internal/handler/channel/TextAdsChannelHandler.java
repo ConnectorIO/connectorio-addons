@@ -31,9 +31,11 @@ import org.connectorio.addons.binding.amsads.internal.config.channel.TypedChanne
 import org.connectorio.addons.binding.amsads.internal.symbol.SymbolEntry;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.library.CoreItemFactory;
+import org.openhab.core.library.types.StringType;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.openhab.core.thing.binding.builder.ChannelBuilder;
 
 public class TextAdsChannelHandler extends AdsChannelHandlerBase implements AdsChannelHandler {
@@ -41,26 +43,29 @@ public class TextAdsChannelHandler extends AdsChannelHandlerBase implements AdsC
   private final SymbolEntry symbol;
 
   public TextAdsChannelHandler(Thing thing, SymbolEntry symbol) {
-    this(thing, null, symbol);
+    this(thing, null, null, symbol);
   }
 
-  public TextAdsChannelHandler(Thing thing, Channel channel) {
-    this(thing, channel, null);
+  public TextAdsChannelHandler(Thing thing, ThingHandlerCallback callback, Channel channel) {
+    this(thing, callback, channel, null);
   }
 
-  private TextAdsChannelHandler(Thing thing, Channel channel, SymbolEntry symbol) {
-    super(thing, channel);
+  private TextAdsChannelHandler(Thing thing, ThingHandlerCallback callback, Channel channel, SymbolEntry symbol) {
+    super(thing, callback, channel);
     this.symbol = symbol;
   }
 
   @Override
   public Channel createChannel() {
     return ChannelBuilder.create(new ChannelUID(thing.getUID(), Long.toHexString(symbol.getIndex()) + "x" + Long.toHexString(symbol.getOffset())))
-      .withType(AdsChannelHandler.TEXT_DIRECT_HEX)
+      //.withType(AdsChannelHandler.TEXT_DIRECT_HEX)
+      .withType(AdsChannelHandler.TEXT_SYMBOL)
       .withAcceptedItemType(CoreItemFactory.STRING)
       .withLabel(symbol.getName())
       .withDescription(symbol.getDescription())
       .withConfiguration(new Configuration(Map.of(
+//        "indexGroup", Long.toHexString(symbol.getIndex()),
+//        "indexOffset", Long.toHexString(symbol.getOffset()),
         "symbol", symbol.getName(),
         "type", symbol.getType().name()
       )))
@@ -101,4 +106,12 @@ public class TextAdsChannelHandler extends AdsChannelHandlerBase implements AdsC
     }
     subscriptionBuilder.addCyclicTag(channelId, tag, Duration.ofMillis(5000L));
   }
+
+  @Override
+  public void onChange(Object value) {
+    if (value instanceof String) {
+      callback.stateUpdated(channel.getUID(), new StringType((String) value));
+    }
+  }
+
 }

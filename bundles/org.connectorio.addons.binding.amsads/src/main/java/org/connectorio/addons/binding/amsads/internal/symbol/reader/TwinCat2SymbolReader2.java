@@ -35,6 +35,7 @@ import org.apache.plc4x.java.ads.readwrite.AdsSymbolTableEntry;
 import org.apache.plc4x.java.ads.readwrite.AdsTableSizes;
 import org.apache.plc4x.java.ads.readwrite.AmsPacket;
 import org.apache.plc4x.java.ads.readwrite.AmsTCPPacket;
+import org.apache.plc4x.java.ads.readwrite.PlcValueType;
 import org.apache.plc4x.java.ads.readwrite.ReservedIndexGroups;
 import org.apache.plc4x.java.ads.readwrite.ReturnCode;
 import org.apache.plc4x.java.ads.tag.DirectAdsTag;
@@ -49,10 +50,14 @@ import org.apache.plc4x.java.spi.generation.ReadBufferByteBased;
 import org.apache.plc4x.java.spi.transaction.RequestTransactionManager;
 import org.connectorio.addons.binding.amsads.internal.symbol.SymbolEntry;
 import org.connectorio.addons.binding.amsads.internal.symbol.SymbolReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TwinCat2SymbolReader2 extends ReflectiveReader implements SymbolReader {
 
+  private final Logger logger = LoggerFactory.getLogger(TwinCat2SymbolReader2.class);
   private final PlcConnection connection;
+
   public TwinCat2SymbolReader2(PlcConnection connection) {
     super(connection);
     this.connection = connection;
@@ -156,11 +161,34 @@ public class TwinCat2SymbolReader2 extends ReflectiveReader implements SymbolRea
       for (int index = 0; index < symbols.getSymbolCount(); index++) {
         try {
           AdsSymbolTableEntry symbol = AdsSymbolTableEntry.staticParse(buff);
-
           symbolTable.put(symbol.getName(), symbol);
-          AdsDataType dataType = AdsDataType.enumForValue((byte) symbol.getDataType());
+
+          String typeName = symbol.getDataTypeName();
+          PlcValueType type = null;
+          /*if (typeName.startsWith("STRING") || typeName.startsWith("WSTRING")) {
+            type = PlcValueType.STRING;
+          } else if (typeName.equals("DT")) {
+            type = PlcValueType.DATE_AND_TIME;
+          } else if (typeName.equals("TOD")) {
+            type = PlcValueType.TIME_OF_DAY;
+          } else*/ if (typeName.equals("INT16")) {
+            type = PlcValueType.USINT;
+          } else if (typeName.equals("UINT16")) {
+            type = PlcValueType.USINT;
+          } else if (typeName.contains("(") || typeName.contains("[") || typeName.contains("{")) {
+            logger.warn("Ignore PLC symbol {} as it uses complex structure {}, missing primitive type mapping", symbol.getName(), typeName);
+            continue;
+          } else {
+            try {
+              type = PlcValueType.valueOf(typeName.toUpperCase());
+            } catch (IllegalArgumentException e) {
+              logger.warn("Unrecognized PLC symbol {}, its type {} is missing primitive type mapping", symbol.getName(), typeName);
+              continue;
+            }
+          }
+
           resolvedSymbols.add(new SymbolEntry(
-            dataType,
+            type,
             symbol.getName(),
             symbol.getComment(),
             symbol.getGroup(),
