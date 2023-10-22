@@ -22,18 +22,10 @@
   xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
   <!-- switch to PLC specific channel kinds .. maybe?  -->
-
-  <channel-type id="discrete-input">
-    <item-type>Contact</item-type>
-    <label>Discrete input</label>
-    <description>Input (or related register) of connected PLC.</description>
-    <config-description-ref uri="channel-type:co7io-fatek:binary"></config-description-ref>
-  </channel-type>
-
-  <channel-type id="discrete-output">
+  <channel-type id="discrete">
     <item-type>Switch</item-type>
-    <label>Discrete output</label>
-    <description>Output (or related register) of connected PLC.</description>
+    <label>Discrete register</label>
+    <description>Discrete register of connected PLC.</description>
     <config-description-ref uri="channel-type:co7io-fatek:binary"></config-description-ref>
   </channel-type>
 

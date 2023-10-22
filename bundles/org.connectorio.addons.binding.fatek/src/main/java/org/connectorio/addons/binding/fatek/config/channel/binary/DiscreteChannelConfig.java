@@ -18,11 +18,19 @@
 package org.connectorio.addons.binding.fatek.config.channel.binary;
 
 import org.connectorio.addons.binding.fatek.config.channel.RegisterConfig;
+import org.simplify4u.jfatek.registers.RegName;
 
 public class DiscreteChannelConfig implements RegisterConfig {
 
   public int index;
+
+  public RegName register;
   public boolean invert;
+
+  @Override
+  public RegName getRegister() {
+    return register;
+  }
 
   @Override
   public int getIndex() {

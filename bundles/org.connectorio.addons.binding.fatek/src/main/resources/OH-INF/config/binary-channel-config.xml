@@ -22,7 +22,22 @@
   xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
 
   <config-description uri="channel-type:co7io-fatek:binary">
-    <parameter name="index" type="integer">
+    <parameter name="register" type="text" required="true">
+      <label>Register symbol</label>
+      <description>Symbol (kind) of register to read</description>
+      <options>
+        <option value="X">X: (DI) Digital input</option>
+        <option value="Y">Y: (DO) Digital output</option>
+        <!--
+        <option value="TR">TR: Temporal relay</option>
+        -->
+        <option value="M">M: Internal relay</option>
+        <option value="S">S: Step relay</option>
+        <option value="T">T: Timer contact</option>
+        <option value="C">C: Counter contact</option>
+      </options>
+    </parameter>
+    <parameter name="index" type="integer" required="true">
       <label>Register index</label>
       <description>Index of register used to retrieve data.</description>
       <default>0</default>

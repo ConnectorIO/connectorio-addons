@@ -20,6 +20,9 @@ package org.connectorio.addons.binding.fatek.config.channel;
 import org.simplify4u.jfatek.registers.RegName;
 
 public interface RegisterConfig {
+
+  RegName getRegister();
+
   int getIndex();
 
 }

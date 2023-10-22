@@ -25,13 +25,9 @@ public class DefaultChannelHandlerFactory implements FatekChannelHandlerFactory 
 
   @Override
   public FatekChannelHandler create(Channel channel) {
-    if (FatekBindingConstants.CHANNEL_TYPE_DISCRETE_INPUT.equals(channel.getChannelTypeUID())) {
+    if (FatekBindingConstants.CHANNEL_TYPE_DISCRETE.equals(channel.getChannelTypeUID())) {
       DiscreteChannelConfig config = channel.getConfiguration().as(DiscreteChannelConfig.class);
-      return new BinaryChannelHandler(true, channel, config);
-    }
-    if (FatekBindingConstants.CHANNEL_TYPE_DISCRETE_OUTPUT.equals(channel.getChannelTypeUID())) {
-      DiscreteChannelConfig config = channel.getConfiguration().as(DiscreteChannelConfig.class);
-      return new BinaryChannelHandler(false, channel, config);
+      return new BinaryChannelHandler(channel, config);
     }
     return null;
   }

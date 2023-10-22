@@ -38,9 +38,9 @@
       </parameter>
       <parameter name="connectionTimeout" type="integer" required="true">
         <label>Connection timeout</label>
-        <default>5</default>
-        <unitLabel>s</unitLabel>
-        <description>Maximum time required to establish connection with host</description>
+        <default>5000</default>
+        <unitLabel>ms</unitLabel>
+        <description>Maximum time permitted to establish connection with PLC or communication module.</description>
       </parameter>
       <parameter name="refreshInterval" type="integer" required="false">
         <label>Refresh interval</label>

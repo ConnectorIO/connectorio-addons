@@ -17,10 +17,8 @@
  */
 package org.connectorio.addons.binding.fatek.internal.channel;
 
-import static org.simplify4u.jfatek.registers.DisReg.X;
-import static org.simplify4u.jfatek.registers.DisReg.Y;
+import static org.simplify4u.jfatek.registers.DisReg.*;
 
-import org.connectorio.addons.binding.fatek.config.channel.RegisterConfig;
 import org.connectorio.addons.binding.fatek.config.channel.binary.DiscreteChannelConfig;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.OpenClosedType;
@@ -35,15 +33,34 @@ import org.simplify4u.jfatek.registers.RegValue;
 public class BinaryChannelHandler implements FatekChannelHandler {
 
   private final DisReg register;
-  private final boolean input;
   private final ChannelUID channel;
   private final boolean invert;
 
-  public <T> BinaryChannelHandler(boolean input, Channel channel, DiscreteChannelConfig config) {
-    this.input = input;
+  public <T> BinaryChannelHandler(Channel channel, DiscreteChannelConfig config) {
     this.channel = channel.getUID();
     this.invert = config.invert;
-    this.register = input ? X(config.getIndex()) : Y(config.getIndex());
+    switch (config.getRegister()) {
+      case X:
+        this.register = X(config.getIndex());
+        break;
+      case Y:
+        this.register = Y(config.getIndex());
+        break;
+      case M:
+        this.register = M(config.getIndex());
+        break;
+      case S:
+        this.register = S(config.getIndex());
+        break;
+      case T:
+        this.register = T(config.getIndex());
+        break;
+      case C:
+        this.register = C(config.getIndex());
+        break;
+      default:
+        throw new IllegalArgumentException("Unsupported register kind " + config.getRegister());
+    }
   }
 
   @Override
@@ -59,21 +76,18 @@ public class BinaryChannelHandler implements FatekChannelHandler {
   @Override
   public RegValue prepareWrite(Command command) {
     boolean value;
-    if (input) {
+    if (command instanceof OpenClosedType) {
       value = OpenClosedType.CLOSED == command;
     } else {
       value = OnOffType.ON == command;
     }
 
-    return RegValue.getForReg(register, invert ? !value : value);
+    return RegValue.getForReg(register, !invert ? !value : value);
   }
 
   @Override
   public State state(RegValue value) {
     boolean status = invert ? !value.boolValue() : value.boolValue();
-    if (input) {
-      return status ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
-    }
     return status ? OnOffType.ON : OnOffType.OFF;
   }
 

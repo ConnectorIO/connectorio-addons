@@ -142,6 +142,7 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
     if (future != null) {
       future.cancel(false);
     }
+    super.dispose();
   }
 
   @Override
