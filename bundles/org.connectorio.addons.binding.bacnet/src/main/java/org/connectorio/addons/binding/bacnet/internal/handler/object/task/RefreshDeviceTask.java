@@ -82,7 +82,7 @@ public class RefreshDeviceTask extends AbstractTask {
 
   @Override
   public void run() {
-    if (linkManager.hasLinkedChannels(thing)) {
+    if (!linkManager.hasLinkedChannels(thing)) {
       logger.trace("Ignore device {} readout, no linked channels found.", device);
       return;
     }

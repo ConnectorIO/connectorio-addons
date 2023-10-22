@@ -161,9 +161,9 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
       pollingMap.get(refreshInterval).add(readout);
     }
 
-    this.watchdog = watchdogBuilder.build(getCallback(), new ThingStatusWatchdogListener(getThing(), getCallback()));
+    //this.watchdog = watchdogBuilder.build(getCallback(), new ThingStatusWatchdogListener(getThing(), getCallback()));
     for (Entry<Long, Set<Readout>> entry : pollingMap.entrySet()) {
-      ScheduledFuture<?> poller = scheduler.scheduleAtFixedRate(new RefreshDeviceTask(() -> clientFuture, thing, watchdog.getCallbackWrapper(), device, entry.getValue(), linkManager),
+      ScheduledFuture<?> poller = scheduler.scheduleAtFixedRate(new RefreshDeviceTask(() -> clientFuture, thing, getCallback(), device, entry.getValue(), linkManager),
           0, entry.getKey(), TimeUnit.MILLISECONDS);
       pollers.put(entry.getKey(), poller);
     }
@@ -181,7 +181,7 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
       for (Entry<Long, ScheduledFuture<?>> entry : pollers.entrySet()) {
         try {
           ScheduledFuture<?> value = entry.getValue();
-          value.cancel(false);
+          value.cancel(true);
         } catch (Exception e) {
           logger.warn("Error during shutdown of poller checking device {} every {}ms", device, entry.getKey());
         }

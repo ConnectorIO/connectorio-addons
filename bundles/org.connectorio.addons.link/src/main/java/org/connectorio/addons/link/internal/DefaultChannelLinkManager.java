@@ -32,6 +32,7 @@ import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingRegistry;
 import org.openhab.core.thing.ThingUID;
 import org.openhab.core.thing.link.ItemChannelLink;
+import org.openhab.core.thing.link.ItemChannelLinkRegistry;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -52,7 +53,7 @@ public class DefaultChannelLinkManager implements LinkManager {
   private final ThingRegistryListener thingRegistryListener;
 
   @Activate
-  public DefaultChannelLinkManager(@Reference(target = ITEM_CHANNEL_LINK_REGISTRY_FILTER) Registry<ItemChannelLink, String> linkRegistry,
+  public DefaultChannelLinkManager(@Reference(target = ITEM_CHANNEL_LINK_REGISTRY_FILTER) ItemChannelLinkRegistry linkRegistry,
     @Reference ThingRegistry thingRegistry) {
     this.linkRegistry = linkRegistry;
     this.thingRegistry = thingRegistry;
@@ -61,6 +62,8 @@ public class DefaultChannelLinkManager implements LinkManager {
     thingRegistryListener = new ThingRegistryListener();
     linkRegistry.addRegistryChangeListener(linkRegistryListener);
     thingRegistry.addRegistryChangeListener(thingRegistryListener);
+    linkRegistry.getAll().forEach(linkRegistryListener::added);
+    thingRegistry.getAll().forEach(thingRegistryListener::added);
   }
 
   public void deactivate() {
