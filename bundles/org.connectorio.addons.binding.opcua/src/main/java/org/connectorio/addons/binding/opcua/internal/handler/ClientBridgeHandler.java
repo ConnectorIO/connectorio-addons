@@ -108,7 +108,8 @@ public class ClientBridgeHandler extends GenericBridgeHandlerBase<ClientConfig> 
           .setApplicationName(LocalizedText.english("openHAB"))
           .setApplicationUri("urn:connectorio:binding:opcua:client")
           .setEndpoint(endpointDescription)
-          .setRequestTimeout(UInteger.valueOf(100));
+          .setRequestTimeout(UInteger.valueOf(config.requestTimeout == 0 ? 10_000 : config.requestTimeout))
+          .setConnectTimeout(UInteger.valueOf(config.connectTimeout == 0 ? 10_000 : config.connectTimeout));
         if (config.username != null && !config.username.trim().isEmpty()) {
           clientConfig.setIdentityProvider(new UsernameProvider(config.username, config.password));
         }

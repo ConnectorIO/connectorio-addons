@@ -53,6 +53,17 @@
           Password used to authenticate client session.
         </description>
       </parameter>
+
+      <parameter name="connectTimeout" type="integer">
+        <label>Connection timeout</label>
+        <default>10000</default>
+        <unitLabel>ms</unitLabel>
+      </parameter>
+      <parameter name="requestTimeout" type="integer">
+        <label>Request timeout</label>
+        <default>10000</default>
+        <unitLabel>ms</unitLabel>
+      </parameter>
     </config-description>
   </bridge-type>
 

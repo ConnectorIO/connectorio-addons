@@ -27,4 +27,7 @@ public class ClientConfig implements Configuration {
   public String username;
   public String password;
 
+  public int requestTimeout = 10_000;
+  public int connectTimeout = 10_000;
+
 }
