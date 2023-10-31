@@ -181,12 +181,6 @@
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.binding.can</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.binding.fatek</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -301,9 +295,23 @@
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
-        <artifactId>org.connectorio.addons.binding.plc4x.can</artifactId>
+        <artifactId>org.connectorio.addons.binding.can</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.feature.can</artifactId>
+        <version>${project.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.kar.can</artifactId>
+        <version>${project.version}</version>
+        <type>kar</type>
+      </dependency>
+
       <dependency>
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.binding.canopen</artifactId>
@@ -616,6 +624,16 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.network.can</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.network.can.dbus</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.network.core</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -627,6 +645,11 @@
       <dependency>
         <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.network.jvm</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.network.linux</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
