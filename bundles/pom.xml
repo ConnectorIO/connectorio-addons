@@ -68,9 +68,12 @@
     <module>org.connectorio.addons.managed.xstream</module>
     <module>org.connectorio.addons.mqtt</module>
     <module>org.connectorio.addons.network</module>
+    <module>org.connectorio.addons.network.can</module>
+    <module>org.connectorio.addons.network.can.dbus</module>
     <module>org.connectorio.addons.network.core</module>
     <module>org.connectorio.addons.network.ip</module>
     <module>org.connectorio.addons.network.jvm</module>
+    <module>org.connectorio.addons.network.linux</module>
     <module>org.connectorio.addons.network.transmitter</module>
     <module>org.connectorio.addons.network.transmitter.ip</module>
     <module>org.connectorio.addons.norule</module>

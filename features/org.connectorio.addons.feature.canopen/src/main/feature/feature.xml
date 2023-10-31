@@ -19,47 +19,22 @@
 <features name="co7io-binding-canopen-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.6.0">
 
   <repository>mvn:org.connectorio.addons/org.connectorio.addons.feature.plc4x/${project.version}/xml/features</repository>
-
-  <feature name="openhab-binding-co7io-can" description="openHAB CAN Binding" version="${project.version}">
-    <feature>co7io-binding-can</feature>
-  </feature>
-
-  <feature name="dbus" description="DBus transport" version="${project.version}">
-    <feature prerequisite="true">wrap</feature>
-    <bundle>mvn:org.ow2.asm/asm/7.3.1</bundle>
-
-    <bundle>mvn:com.github.jnr/jnr-unixsocket/0.33</bundle>
-    <bundle>mvn:com.github.jnr/jnr-constants/0.9.15</bundle>
-    <bundle>mvn:com.github.jnr/jnr-enxio/0.28</bundle>
-    <bundle>mvn:com.github.jnr/jnr-ffi/2.1.15</bundle>
-    <bundle>mvn:com.github.jnr/jnr-posix/3.0.58</bundle>
-    <bundle>wrap:mvn:com.github.jnr/jnr-a64asm/1.0.0</bundle>
-    <bundle>wrap:mvn:com.github.jnr/jnr-x86asm/1.0.2</bundle>
-    <bundle>mvn:com.github.jnr/jffi/1.2.23/jar/complete</bundle>
-    <bundle>wrap:mvn:com.github.jnr/jffi/1.2.23/jar/native</bundle>
-    <bundle>wrap:mvn:com.github.hypfvieh/dbus-java/3.2.3</bundle>
-    <bundle>wrap:mvn:com.github.hypfvieh/java-utils/1.0.6</bundle>
-  </feature>
-
-  <feature name="co7io-binding-can" description="CAN Binding" version="${project.version}">
-    <feature>openhab-runtime-base</feature>
-    <feature>dbus</feature>
-    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.binding.can/${project.version}</bundle>
-  </feature>
-
+  <repository>mvn:org.connectorio.addons/org.connectorio.addons.feature.network/${project.version}/xml/features</repository>
 
   <feature name="openhab-binding-co7io-canopen" description="openHAB CANopen Binding" version="${project.version}">
-    <feature>co7io-binding-plc4x-canopen</feature>
+    <feature>co7io-binding-canopen</feature>
   </feature>
 
   <feature name="co7io-binding-canopen" description="CANopen Binding" version="${project.version}">
     <feature>openhab-runtime-base</feature>
+    <feature>co7io-network-can</feature>
+
     <feature>plc4j-canopen-driver</feature>
     <feature>co7io-binding-plc4x</feature>
-    <feature>co7io-binding-can</feature>
     <feature>co7io-plc4j-decorator-phase</feature>
     <feature>co7io-plc4j-decorator-retry</feature>
     <feature>co7io-plc4j-decorator-throttle</feature>
+
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.binding.canopen/${project.version}</bundle>
   </feature>
 
@@ -71,5 +46,6 @@
     <feature>co7io-binding-canopen</feature>
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.binding.canopen.ta/${project.version}</bundle>
   </feature>
+
 
 </features>
