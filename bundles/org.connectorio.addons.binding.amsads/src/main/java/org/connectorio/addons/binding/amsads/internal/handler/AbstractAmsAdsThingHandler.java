@@ -206,7 +206,7 @@ public abstract class AbstractAmsAdsThingHandler<B extends AmsBridgeHandler, C e
     }
     initializer.thenAccept((connection) -> {
       try {
-        if (connection.isConnected()) {
+        if (connection != null && connection.isConnected()) {
           connection.close();
         }
       } catch (Exception e) {

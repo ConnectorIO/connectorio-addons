@@ -140,6 +140,10 @@ public class AmsAdsNetworkBridgeHandler extends AbstractAmsAdsThingHandler<AmsBr
 
           PlcConnection connection = driverManager.getConnectionManager().getConnection("ads:tcp://" + config.host + "?" + target + source + extraOpts);
 
+          if (!connection.isConnected()) {
+            connection.connect();
+          }
+
           if (connection.isConnected()) {
             initializer.complete(connection);
           } else {

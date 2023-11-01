@@ -45,13 +45,13 @@ class S7NetworkBridgeHandlerTest {
       .withConfig(new S7NetworkConfiguration())
       .create();
 
-    S7NetworkBridgeHandler handler = new S7NetworkBridgeHandler(bridge, new OsgiDriverManager(Collections.emptyList()));
+    S7NetworkBridgeHandler handler = new S7NetworkBridgeHandler(bridge, new OsgiDriverManager());
     handler.initialize();
 
     CompletableFuture<PlcConnection> initializer = handler.getPlcConnection();
     AbstractThrowableAssert<?, ? extends Throwable> thrownBy = assertThatThrownBy(initializer::join);
     thrownBy.isInstanceOf(CompletionException.class)
-      .hasMessageContaining("Connection is not possible.");
+      .hasMessageContaining("Error creating channel");
   }
 
   @Test
@@ -65,7 +65,7 @@ class S7NetworkBridgeHandlerTest {
       .mockHandler(S7NetworkBridgeHandler.class)
       .withConfig(cfg);
 
-    S7NetworkBridgeHandler handler = new S7NetworkBridgeHandler(bridge.create(), new OsgiDriverManager(Collections.emptyList()));
+    S7NetworkBridgeHandler handler = new S7NetworkBridgeHandler(bridge.create(), new OsgiDriverManager());
     handler.initialize();
 
 //    CompletableFuture<AbstractPlcConnection> initializer = handler.getInitializer();
@@ -77,7 +77,7 @@ class S7NetworkBridgeHandlerTest {
 
     AbstractThrowableAssert<?, ? extends Throwable> thrownBy = assertThatThrownBy(initializer::join);
     thrownBy.isInstanceOf(CompletionException.class)
-      .hasMessageContaining("Connection is not possible.");
+      .hasMessageContaining("Error creating channel");
 
     thrownBy = thrownBy.cause();
     thrownBy.isInstanceOf(PlcConnectionException.class);

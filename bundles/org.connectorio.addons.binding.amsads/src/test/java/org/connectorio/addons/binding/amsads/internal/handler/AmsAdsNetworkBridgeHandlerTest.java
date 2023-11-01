@@ -24,8 +24,10 @@ import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import org.apache.plc4x.java.ads.AdsPlcDriver;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.assertj.core.api.AbstractThrowableAssert;
@@ -68,7 +70,7 @@ class AmsAdsNetworkBridgeHandlerTest {
       .create();
 
     AmsAdsNetworkBridgeHandler handler = new AmsAdsNetworkBridgeHandler(bridge, symbolReaderFactory,
-      channelHandlerFactory, new OsgiDriverManager(Collections.emptyList()), discoveryDriver);
+      channelHandlerFactory, new OsgiDriverManager(), discoveryDriver);
     handler.initialize();
 
     CompletableFuture<PlcConnection> initializer = handler.getPlcConnection();
@@ -99,7 +101,7 @@ class AmsAdsNetworkBridgeHandlerTest {
     Thing thing = thingMock.create();
 
     AmsAdsNetworkBridgeHandler handler = new AmsAdsNetworkBridgeHandler(thing, symbolReaderFactory,
-      channelHandlerFactory, new OsgiDriverManager(Arrays.asList(getClass().getClassLoader())), discoveryDriver);
+      channelHandlerFactory, new OsgiDriverManager(), discoveryDriver);
     handler.setCallback(thingMock.getCallback());
     handler.initialize();
 

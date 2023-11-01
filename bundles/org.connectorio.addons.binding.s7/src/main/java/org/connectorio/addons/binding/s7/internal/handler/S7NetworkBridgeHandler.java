@@ -71,6 +71,10 @@ public class S7NetworkBridgeHandler extends PollingPlc4xBridgeHandler<PlcConnect
           PlcConnection connection = driverManager.getConnectionManager()
             .getConnection("s7://" + config.host + "?" + local + remote + pdu + type);
 
+          if (!connection.isConnected()) {
+            connection.connect();
+          }
+
           if (connection.isConnected()) {
             updateStatus(ThingStatus.ONLINE);
             initializer.complete(connection);
