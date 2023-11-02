@@ -38,11 +38,6 @@
       <artifactId>jrxtx</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>com.neuronrobotics</groupId>
-      <artifactId>nrjavaserial</artifactId>
-      <version>5.2.1.OH1</version>
-    </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -67,10 +62,53 @@
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>com.neuronrobotics</groupId>
+      <artifactId>nrjavaserial</artifactId>
+      <version>5.2.1.OH1</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-project-dependencies</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeArtifactIds>nrjavaserial</includeArtifactIds>
+              <outputDirectory>${project.build.directory}/ant/additional-resources</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>process-project-dependencies</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <ant antfile="${project.basedir}/build.xml" />
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
@@ -82,8 +120,22 @@
             <Private-Package>
               !gnu.io.factory,
               !gnu.io.rfc2217,
-              gnu.io*;-split-package=merge
+              gnu.io*;-split-package=merge,
+              native.**
             </Private-Package>
+            <Bundle-NativeCode>
+              native/linux/x86_32/librxtxSerial.so; osname=Linux; processor=x86_32,
+              native/linux/x86_64/librxtxSerial.so; osname=Linux; processor=x86_64,
+              native/linux/ARM_32/5/librxtxSerial.so; osname=Linux; processor=armv5,
+              native/linux/ARM_32/6/librxtxSerial.so; osname=Linux; processor=armv5,
+              native/linux/ARM_32/7/librxtxSerial.so; osname=Linux; processor=armv7,
+              native/linux/ARM_32/8/librxtxSerial.so; osname=Linux; processor=armv8,
+              native/linux/ARM_64/8/librxtxSerial.so; osname=Linux; processor=AArch64
+              native/linux/PPC/librxtxSerial.so; osname=Linux; processor=PowerPC,
+              native/windows/x86_32/librxtxSerial.dll; osname=Windows; processor=x86_32,
+              native/windows/x86_64/librxtxSerial.dll; osname=Windows; processor=x86_64,
+              native/osx/librxtxSerial.jnilib; osname=osx
+            </Bundle-NativeCode>
           </instructions>
         </configuration>
       </plugin>
