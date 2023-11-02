@@ -63,11 +63,8 @@
             <Export-Package>
               org.connectorio.addons.io.transport.mbus.config,
               org.openmuc.jmbus*;version=${jmbus.version};-split-package:=merge-first,
-              org.openmuc.jrxtx*;resolution:=optional,
             </Export-Package>
             <Import-Package>
-              !org.openmuc.jmbus*,
-              !gnu.io
               *
             </Import-Package>
             <!--
