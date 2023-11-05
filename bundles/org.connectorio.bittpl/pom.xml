@@ -40,6 +40,7 @@
     <dependency>
       <groupId>com.github.jinahya</groupId>
       <artifactId>bit-io</artifactId>
+      <version>${bit-io.version}</version>
     </dependency>
 
     <dependency>

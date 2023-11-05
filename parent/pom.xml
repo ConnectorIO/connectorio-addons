@@ -70,6 +70,7 @@
     <jrxtx.version>1.0.1</jrxtx.version>
     <testcontainers.version>1.17.6</testcontainers.version>
     <antlr4.version>4.13.1</antlr4.version>
+    <!-- unmanaged dependency, since it conflicts with plc4x -->
     <bit-io.version>2.0.5</bit-io.version>
   </properties>
 
@@ -936,11 +937,6 @@
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-runtime</artifactId>
         <version>${antlr4.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.github.jinahya</groupId>
-        <artifactId>bit-io</artifactId>
-        <version>${bit-io.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
