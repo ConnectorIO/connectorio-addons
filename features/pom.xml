@@ -38,7 +38,7 @@
     <module>org.connectorio.addons.feature.amsads</module>
     <module>org.connectorio.addons.feature.askoheat</module>
     <module>org.connectorio.addons.feature.bacnet</module>
-    <module>org.connectorio.addons.feature.can</module>
+    <module>org.connectorio.addons.feature.canbus</module>
     <module>org.connectorio.addons.feature.canopen</module>
     <module>org.connectorio.addons.feature.fatek</module>
     <module>org.connectorio.addons.feature.io</module>
@@ -58,6 +58,7 @@
     <module>org.connectorio.addons.feature.s7</module>
     <module>org.connectorio.addons.feature.smartme</module>
     <module>org.connectorio.addons.feature.wmbus</module>
+    <module>org.connectorio.feature.bittpl</module>
     <module>org.connectorio.feature.chrono</module>
   </modules>
 

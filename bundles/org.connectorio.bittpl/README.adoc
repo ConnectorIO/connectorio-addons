@@ -1,0 +1,79 @@
+= Bit Template
+
+The Bit Template is a basic binary format specifier which rely on combination of hex and binary notation.
+Its main purpose is definition of patterns which match byte payload.
+
+== Template format
+Templates can be constructed from four elements described in table below.
+
+[cols="1,2,1,1"]
+|===
+|Name | Pattern| Size (bit count)| Notes
+
+| Nibble
+| `'0' .. '9' \| 'a' .. 'f' \| 'A' .. 'F'`
+| 4
+|
+
+| Nibble variable
+| `*`
+| 4
+| Written as `0000b`
+
+| Bit
+| `'0' .. '9' \| 'a' .. 'f' \| 'A' .. 'F'`
+| 1
+|
+
+| Bit variable
+| `.`
+| 1
+| Written as `0b`.
+
+|===
+
+When template is turned again into message its variable part always default to `0b`.
+It is duty of caller to fill placeholders with proper values.
+What is notable - writing does not have to follow variable parts.
+
+=== Example templates
+
+Below table list example templates and messages with their match status.
+
+[cols="1,1,2"]
+|===
+|Template | Message | Matching / Notes
+
+| xAA xAB xAC
+| AA AB AC 00
+| Yes / remaining part of message is not interpreted
+
+| xAA xAB xAC **
+| AA AB AC 00
+| Yes
+
+| xAA xAB xAC **
+| AA AB AB 00
+| No / third byte does not match `xAC`
+
+| xAA xAB xAC **
+| AA AB AC 01
+| Yes
+
+| xAA xAB xAC **
+| AA AB AC FF
+| Yes
+
+| xAA xAB xAC b0000000.
+| AA AB AC 00
+| Yes
+
+| xAA xAB xAC b0000000.
+| AA AB AC 01
+| Yes
+
+| xAA xAB xAC b0000000.
+| AA AB AC 02
+| No / bit representation of last byte is `00000010`
+
+|===

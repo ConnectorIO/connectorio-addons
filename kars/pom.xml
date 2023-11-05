@@ -36,7 +36,7 @@
   <modules>
     <module>org.connectorio.addons.kar.amsads</module>
     <module>org.connectorio.addons.kar.bacnet</module>
-    <module>org.connectorio.addons.kar.can</module>
+    <module>org.connectorio.addons.kar.canbus</module>
     <module>org.connectorio.addons.kar.canopen</module>
     <module>org.connectorio.addons.kar.fatek</module>
     <module>org.connectorio.addons.kar.io.transport.serial</module>
