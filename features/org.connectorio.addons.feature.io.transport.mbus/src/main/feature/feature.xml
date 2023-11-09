@@ -24,6 +24,7 @@
 
   <feature name="co7io-transport-mbus" description="M-Bus transport." version="${project.version}">
     <feature>co7io-transport-serial-config</feature>
+    <feature>co7io-transport-serial-jrxtx</feature>
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.io.transport.mbus/${project.version}</bundle>
   </feature>
 
