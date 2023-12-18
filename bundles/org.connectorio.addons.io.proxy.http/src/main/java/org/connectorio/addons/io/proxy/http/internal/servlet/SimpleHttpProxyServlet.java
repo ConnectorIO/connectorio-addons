@@ -19,26 +19,33 @@ package org.connectorio.addons.io.proxy.http.internal.servlet;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import org.connectorio.addons.io.proxy.http.RewriteCustomizer;
 import org.connectorio.addons.io.proxy.http.internal.customizer.NoopRewriteCustomizer;
+import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
 import org.eclipse.jetty.proxy.AsyncMiddleManServlet;
+import org.eclipse.jetty.util.ProcessorUtils;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 public class SimpleHttpProxyServlet extends AsyncMiddleManServlet {
 
   private final String host;
   private final Integer port;
+  private final boolean https;
   private final String rewrite;
   private final RewriteCustomizer customizer;
 
-  public SimpleHttpProxyServlet(String host, Integer port, String rewrite) {
-    this(host, port, rewrite, new NoopRewriteCustomizer());
+  public SimpleHttpProxyServlet(String host, Integer port, boolean https, String rewrite) {
+    this(host, port, https, rewrite, new NoopRewriteCustomizer());
   }
 
-  public SimpleHttpProxyServlet(String host, Integer port, String rewrite, RewriteCustomizer customizer) {
+  public SimpleHttpProxyServlet(String host, Integer port, boolean https, String rewrite, RewriteCustomizer customizer) {
     this.host = host;
     this.port = port;
+    this.https = https;
     this.rewrite = rewrite;
     this.customizer = customizer;
   }
@@ -57,11 +64,27 @@ public class SimpleHttpProxyServlet extends AsyncMiddleManServlet {
     // shifted to customizer
   }
 
+
+  @Override
+  protected HttpClient newHttpClient() {
+    if (!https) {
+      return super.newHttpClient();
+    }
+    int selectors = Math.max(1, ProcessorUtils.availableProcessors() / 2);
+    String value = this.getServletConfig().getInitParameter("selectors");
+    if (value != null) {
+      selectors = Integer.parseInt(value);
+    }
+
+    SslContextFactory factory = new SslContextFactory.Client(true);
+    return new HttpClient(new HttpClientTransportOverHTTP(selectors), factory);
+  }
+
   @Override
   protected String rewriteTarget(HttpServletRequest clientRequest) {
     URL url = null;
     try {
-      url = new URL("http://" + host + (port != null ? ":" + port : ""));
+      url = new URL("http" + (https ? "s" : "") + "://" + host + (port != null ? ":" + port : ""));
 
       if (!validateDestination(url.getHost(), url.getPort() == -1 ? url.getDefaultPort() : url.getPort())) {
         return null;

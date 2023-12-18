@@ -34,6 +34,7 @@ public class Proxy {
   public static final String PATH = "path";
   public static final String HOST = "host";
   public static final String PORT = "port";
+  public static final String HTTPS = "https";
   public static final String REWRITE = "rewrite";
   public static final String CUSTOMIZER = "customizer";
 
@@ -61,6 +62,10 @@ public class Proxy {
           return null;
         }
       }).orElse(null);
+    boolean https = Optional.ofNullable(properties.get(HTTPS))
+      .map(Object::toString)
+      .map(Boolean::valueOf)
+      .orElse(false);
     String rewrite = Optional.ofNullable(properties.get(REWRITE))
       .map(Object::toString)
       .orElse("/");
@@ -74,7 +79,7 @@ public class Proxy {
         return new NamedReferenceRewriteCustomizer(bundleContext, name);
       }).orElseGet(NoopRewriteCustomizer::new);
 
-    AbstractProxyServlet proxyServlet = new SimpleHttpProxyServlet(host, port, rewrite, customizer);
+    AbstractProxyServlet proxyServlet = new SimpleHttpProxyServlet(host, port, https, rewrite, customizer);
     httpService.registerServlet(path, proxyServlet, properties, httpService.createDefaultHttpContext());
   }
 
