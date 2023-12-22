@@ -17,11 +17,8 @@
  - SPDX-License-Identifier: Apache-2.0
  -->
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
-  <system systemId="https://connectorio.com/xmlns/items-1.0.0.xsd" uri="./xsd/co7io/items-1.0.0.xsd"/>
-  <system systemId="https://connectorio.com/xmlns/links-1.0.0.xsd" uri="./xsd/co7io/links-1.0.0.xsd"/>
-  <system systemId="https://connectorio.com/xmlns/things-1.0.0.xsd" uri="./xsd/co7io/things-1.0.0.xsd"/>
-
-  <system systemId="https://connectorio.com/xmlns/1.0.0/items.xsd" uri="./xsd/co7io/items-1.0.0.xsd"/>
-  <system systemId="https://connectorio.com/xmlns/1.0.0/links.xsd" uri="./xsd/co7io/links-1.0.0.xsd"/>
-  <system systemId="https://connectorio.com/xmlns/1.0.0/things.xsd" uri="./xsd/co7io/things-1.0.0.xsd"/>
+  <system systemId="https://connectorio.com/xmlns/managed/items-1.0.0.xsd" uri="./xsd/co7io/items-1.0.0.xsd" />
+  <system systemId="https://connectorio.com/xmlns/managed/links-1.0.0.xsd" uri="./xsd/co7io/links-1.0.0.xsd" />
+  <system systemId="https://connectorio.com/xmlns/managed/things-1.0.0.xsd" uri="./xsd/co7io/things-1.0.0.xsd" />
+  <system systemId="./common-1.0.0.xsd" uri="./xsd/co7io/common-1.0.0.xsd" />
 </catalog>

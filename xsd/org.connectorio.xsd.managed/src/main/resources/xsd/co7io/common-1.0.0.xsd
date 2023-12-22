@@ -25,7 +25,7 @@
 
   <xs:complexType name="typedReference">
     <xs:simpleContent>
-      <xs:restriction base="typedId-2s" />
+      <xs:extension base="typedId-2s" />
     </xs:simpleContent>
   </xs:complexType>
 
@@ -40,7 +40,7 @@
 
   <xs:complexType name="reference">
     <xs:simpleContent>
-      <xs:restriction base="id" />
+      <xs:extension base="id" />
     </xs:simpleContent>
   </xs:complexType>
 
@@ -49,5 +49,17 @@
       <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*" />
     </xs:restriction>
   </xs:simpleType>
+
+  <xs:complexType name="config">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:any processContents="lax" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="metadata">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:any processContents="lax" />
+    </xs:sequence>
+  </xs:complexType>
 
 </xs:schema>
