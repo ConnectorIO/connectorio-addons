@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -
+ - SPDX-License-Identifier: Apache-2.0
+ -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+  targetNamespace="http://connectorio.com/xmlns/managed/items/v1.0.0">
+
+  <xs:include schemaLocation="common-1.0.0.xsd" />
+
+  <xs:complexType name="items">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="item" type="item" />
+      <xs:element name="group" type="group" />
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="item">
+    <xs:sequence>
+      <xs:element name="type" type="xs:string" />
+      <xs:element name="group" type="reference" minOccurs="0" />
+      <xs:element name="tag" type="id" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="metadata" type="metadata" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="name" type="id" use="required" />
+    <xs:attribute name="label" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="group">
+    <xs:sequence>
+      <xs:element name="type" type="xs:string" fixed="Group" />
+      <xs:element name="group" type="reference" minOccurs="0" />
+      <xs:element name="tag" type="id" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="metadata" type="metadata" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="name" type="id" use="required" />
+    <xs:attribute name="label" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="metadata">
+    <xs:sequence>
+      <xs:any minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="items" type="items" />
+
+</xs:schema>
