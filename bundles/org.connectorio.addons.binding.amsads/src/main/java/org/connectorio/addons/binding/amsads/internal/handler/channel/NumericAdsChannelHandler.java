@@ -19,7 +19,10 @@ package org.connectorio.addons.binding.amsads.internal.handler.channel;
 
 import java.math.BigDecimal;
 import java.util.Map;
-import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest.Builder;
+import org.apache.plc4x.java.ads.tag.AdsTag;
+import org.apache.plc4x.java.api.value.PlcValue;
+import org.apache.plc4x.java.spi.values.*;
+import org.connectorio.addons.binding.amsads.internal.config.channel.TypedChannelConfiguration;
 import org.connectorio.addons.binding.amsads.internal.config.channel.binary.BinaryDirectDecimalFieldConfiguration;
 import org.connectorio.addons.binding.amsads.internal.config.channel.binary.BinaryDirectHexFieldConfiguration;
 import org.connectorio.addons.binding.amsads.internal.config.channel.binary.BinarySymbolicFieldConfiguration;
@@ -32,6 +35,8 @@ import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.openhab.core.thing.binding.builder.ChannelBuilder;
+import org.openhab.core.types.Command;
+import org.openhab.core.types.State;
 
 public class NumericAdsChannelHandler extends AdsChannelHandlerBase implements AdsChannelHandler {
 
@@ -68,17 +73,18 @@ public class NumericAdsChannelHandler extends AdsChannelHandlerBase implements A
   }
 
   @Override
-  public void subscribe(Builder subscriptionBuilder, String channelId) {
+  public AdsTag createTag() {
     if (NUMBER_DIRECT_DEC.equals(channel.getChannelTypeUID())) {
       BinaryDirectDecimalFieldConfiguration configuration = channel.getConfiguration().as(BinaryDirectDecimalFieldConfiguration.class);
-      subscribe(subscriptionBuilder, createTag(configuration, configuration), channelId);
+      return createTag(configuration, configuration);
     } else if (NUMBER_DIRECT_HEX.equals(channel.getChannelTypeUID())) {
       BinaryDirectHexFieldConfiguration configuration = channel.getConfiguration().as(BinaryDirectHexFieldConfiguration.class);
-      subscribe(subscriptionBuilder, createTag(configuration, configuration), channelId);
+      return createTag(configuration, configuration);
     } else if (NUMBER_SYMBOL.equals(channel.getChannelTypeUID())) {
       BinarySymbolicFieldConfiguration configuration = channel.getConfiguration().as(BinarySymbolicFieldConfiguration.class);
-      subscribe(subscriptionBuilder, createTag(configuration, configuration), channelId);
+      return createTag(configuration, configuration);
     }
+    return null;
   }
 
   @Override
@@ -100,4 +106,48 @@ public class NumericAdsChannelHandler extends AdsChannelHandlerBase implements A
     }
   }
 
+  @Override
+  public PlcValue update(Command command) {
+    if (!(command instanceof State)) {
+      return null;
+    }
+
+    DecimalType value = ((State) command).as(DecimalType.class);
+    TypedChannelConfiguration config = channel.getConfiguration().as(TypedChannelConfiguration.class);
+    switch (config.type) {
+      case BIT:
+      case BOOL:
+        return new PlcBOOL(value.intValue());
+      case BYTE:
+        return new PlcBYTE(value.shortValue());
+      case WORD:
+        return new PlcWORD(value.intValue());
+      case DWORD:
+      case SINT:
+      case INT8:
+      case USINT:
+      case UINT8:
+      case INT:
+      case INT16:
+      case UINT:
+      case UINT16:
+        return new PlcUINT(value.intValue());
+      case DINT:
+      case INT32:
+      case UDINT:
+      case UINT32:
+      case LINT:
+        return new PlcDINT(value.longValue());
+      case INT64:
+      case ULINT:
+      case UINT64:
+        return new PlcULINT(value.toBigDecimal());
+      case REAL:
+      case FLOAT:
+      case LREAL:
+      case DOUBLE:
+        return new PlcREAL(value.doubleValue());
+    }
+    return null;
+  }
 }

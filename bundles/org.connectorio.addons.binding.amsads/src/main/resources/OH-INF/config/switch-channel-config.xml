@@ -48,16 +48,25 @@
       <description>Inverse logical representation of FALSE/TRUE values.</description>
       <default>false</default>
     </parameter>
+
+    <parameter name="refreshInterval" type="integer" required="false">
+      <label>Refresh interval</label>
+      <description>
+        Default refresh interval specified for entire connection and devices associated with it.
+        Setting refresh interval forces this channel to be polled rather than subscribed.
+        It might help with older devices which do not support subscriptions.
+      </description>
+    </parameter>
   </config-description>
 
   <config-description uri="thing-type:co7io-amsads:switch-direct-dec-tag">
     <parameter name="indexGroup" type="integer">
       <label>Index Group (decimal)</label>
-      <description>Index group in decimal format (excluding 0x prefix). For example F00F.</description>
+      <description>Index group in decimal format (with or without 0x prefix). For example F00F, 0xF00F.</description>
     </parameter>
     <parameter name="indexOffset" type="integer">
       <label>Index Offset (decimal)</label>
-      <description>Offset in given decimal in hex format (excluding 0x prefix). For example 01.</description>
+      <description>Offset in given decimal in hex format (with or without 0x prefix). For example 01, 0x01.</description>
     </parameter>
     <parameter name="type" type="text">
       <label>Value encoding</label>
@@ -78,17 +87,26 @@
       <label>Inverse conversion logic</label>
       <description>Inverse logical representation of FALSE/TRUE values.</description>
       <default>false</default>
+    </parameter>
+
+    <parameter name="refreshInterval" type="integer" required="false">
+      <label>Refresh interval</label>
+      <description>
+        Default refresh interval specified for entire connection and devices associated with it.
+        Setting refresh interval forces this channel to be polled rather than subscribed.
+        It might help with older devices which do not support subscriptions.
+      </description>
     </parameter>
   </config-description>
 
   <config-description uri="thing-type:co7io-amsads:switch-direct-hex-tag">
     <parameter name="indexGroup" type="text">
       <label>Index Group (hex)</label>
-      <description>Index group in hex format (excluding 0x prefix). For example F00F.</description>
+      <description>Index group in hex format (with or without 0x prefix). For example F00F, 0xF00F.</description>
     </parameter>
-    <parameter name="indexOffset" type="integer">
+    <parameter name="indexOffset" type="text">
       <label>Index Offset (hex)</label>
-      <description>Offset in given group in hex format (excluding 0x prefix). For example 01.</description>
+      <description>Offset in given group in hex format (with or without 0x prefix). For example 01, 0x01.</description>
     </parameter>
     <parameter name="type" type="text">
       <label>Value encoding</label>
@@ -109,6 +127,15 @@
       <label>Inverse conversion logic</label>
       <description>Inverse logical representation of FALSE/TRUE values.</description>
       <default>false</default>
+    </parameter>
+
+    <parameter name="refreshInterval" type="integer" required="false">
+      <label>Refresh interval</label>
+      <description>
+        Default refresh interval specified for entire connection and devices associated with it.
+        Setting refresh interval forces this channel to be polled rather than subscribed.
+        It might help with older devices which do not support subscriptions.
+      </description>
     </parameter>
   </config-description>
 

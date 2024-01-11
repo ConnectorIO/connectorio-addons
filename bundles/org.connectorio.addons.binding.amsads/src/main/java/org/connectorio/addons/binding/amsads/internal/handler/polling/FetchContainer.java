@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2024-2024 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,18 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.amsads.internal.config.channel;
+package org.connectorio.addons.binding.amsads.internal.handler.polling;
 
-public class DirectHexFieldConfiguration extends TypedChannelConfiguration implements DirectFieldConfiguration {
-  public String indexGroup;
-  public String indexOffset;
+import java.util.function.Consumer;
+import org.apache.plc4x.java.ads.tag.AdsTag;
 
-  public long getIndexGroup() {
-    return indexGroup.startsWith("0x") ? Long.parseLong(indexGroup.substring(2), 16) : Long.parseLong(indexGroup, 16);
-  }
+public interface FetchContainer {
 
-  public long getIndexOffset() {
-    return indexOffset.startsWith("0x") ? Long.parseLong(indexOffset.substring(2), 16) : Long.parseLong(indexOffset, 16);
-  }
+  void add(Long interval, String channelId, AdsTag tag, Consumer<Object> onChange);
+
+  // indicate if thing was actually started
+  boolean start();
+
+  void stop();
+
 }

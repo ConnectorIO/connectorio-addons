@@ -18,11 +18,14 @@
 package org.connectorio.addons.binding.amsads.internal.handler.channel;
 
 import java.util.Collections;
+import java.util.Optional;
 import org.apache.plc4x.java.ads.readwrite.AdsDataType;
 import org.apache.plc4x.java.ads.tag.AdsTag;
 import org.apache.plc4x.java.ads.tag.DirectAdsTag;
 import org.apache.plc4x.java.ads.tag.SymbolicAdsTag;
-import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest.Builder;
+import org.apache.plc4x.java.api.messages.PlcReadRequest;
+import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest;
+import org.apache.plc4x.java.api.messages.PlcWriteRequest.Builder;
 import org.apache.plc4x.java.api.types.PlcValueType;
 import org.connectorio.addons.binding.amsads.internal.config.channel.DirectFieldConfiguration;
 import org.connectorio.addons.binding.amsads.internal.config.channel.SymbolicFieldConfiguration;
@@ -30,6 +33,7 @@ import org.connectorio.addons.binding.amsads.internal.config.channel.TypedChanne
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.binding.ThingHandlerCallback;
+import org.openhab.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,19 +43,21 @@ public abstract class AdsChannelHandlerBase implements AdsChannelHandler {
   protected final Thing thing;
   protected final ThingHandlerCallback callback;
   protected final Channel channel;
+  protected final Long refreshInterval; // conditional
 
   protected AdsChannelHandlerBase(Thing thing, ThingHandlerCallback callback, Channel channel) {
     this.thing = thing;
     this.callback = callback;
     this.channel = channel;
+    this.refreshInterval = Optional.ofNullable(channel.getConfiguration())
+      .map(cfg -> cfg.get("refreshInterval"))
+      .map(val -> val instanceof Long ? (Long) val : Long.parseLong("" + val))
+      .orElse(null);
   }
 
-  protected void subscribe(Builder subscriptionBuilder, AdsTag tag, String channelId) {
-    if (tag == null) {
-      logger.warn("Could not determine valid subscription kind for channel {} with config {}", channel.getUID(), channel.getConfiguration().getProperties());
-      return;
-    }
-    subscriptionBuilder.addChangeOfStateTag(channelId, tag);
+  @Override
+  public Long getRefreshInterval() {
+    return refreshInterval;
   }
 
   protected AdsTag createTag(TypedChannelConfiguration typeCfg, DirectFieldConfiguration address) {

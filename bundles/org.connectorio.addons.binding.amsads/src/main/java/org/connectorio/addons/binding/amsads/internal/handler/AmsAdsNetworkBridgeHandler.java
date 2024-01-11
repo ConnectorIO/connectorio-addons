@@ -92,10 +92,6 @@ public class AmsAdsNetworkBridgeHandler extends AbstractAmsAdsThingHandler<AmsBr
   }
 
   @Override
-  public void handleCommand(ChannelUID channelUID, Command command) {
-  }
-
-  @Override
   protected Runnable createInitializer(AmsConfiguration amsAds, CompletableFuture<PlcConnection> initializer) {
     return new Runnable() {
       @Override

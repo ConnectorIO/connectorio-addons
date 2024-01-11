@@ -122,6 +122,11 @@ Below table contain configuration parameters which can be assigned to channels o
 | Inverse conversion logic
 | Inverse logical representation of FALSE/TRUE values.
 
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Default refresh interval specified for entire connection and devices associated with it. Setting refresh interval forces this channel to be polled rather than subscribed. It might help with older devices which do not support subscriptions.
+
 |===
 
 
@@ -137,12 +142,12 @@ Below table contain configuration parameters which can be assigned to channels o
 | indexGroup
 | INTEGER
 | Index Group (decimal)
-| Index group in decimal format (excluding 0x prefix). For example F00F.
+| Index group in decimal format (with or without 0x prefix). For example F00F, 0xF00F.
 
 | indexOffset
 | INTEGER
 | Index Offset (decimal)
-| Offset in given decimal in hex format (excluding 0x prefix). For example 01.
+| Offset in given decimal in hex format (with or without 0x prefix). For example 01, 0x01.
 
 | type
 | TEXT
@@ -153,6 +158,11 @@ Below table contain configuration parameters which can be assigned to channels o
 | BOOLEAN
 | Inverse conversion logic
 | Inverse logical representation of FALSE/TRUE values.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Default refresh interval specified for entire connection and devices associated with it. Setting refresh interval forces this channel to be polled rather than subscribed. It might help with older devices which do not support subscriptions.
 
 |===
 
@@ -169,12 +179,12 @@ Below table contain configuration parameters which can be assigned to channels o
 | indexGroup
 | TEXT
 | Index Group (hex)
-| Index group in hex format (excluding 0x prefix). For example F00F.
+| Index group in hex format (with or without 0x prefix). For example F00F, 0xF00F.
 
 | indexOffset
-| INTEGER
+| TEXT
 | Index Offset (hex)
-| Offset in given group in hex format (excluding 0x prefix). For example 01.
+| Offset in given group in hex format (with or without 0x prefix). For example 01, 0x01.
 
 | type
 | TEXT
@@ -185,6 +195,11 @@ Below table contain configuration parameters which can be assigned to channels o
 | BOOLEAN
 | Inverse conversion logic
 | Inverse logical representation of FALSE/TRUE values.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Default refresh interval specified for entire connection and devices associated with it. Setting refresh interval forces this channel to be polled rather than subscribed. It might help with older devices which do not support subscriptions.
 
 |===
 
@@ -213,6 +228,11 @@ Below table contain configuration parameters which can be assigned to channels o
 | Inverse conversion logic
 | Inverse logical representation of FALSE/TRUE values.
 
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Default refresh interval specified for entire connection and devices associated with it. Setting refresh interval forces this channel to be polled rather than subscribed. It might help with older devices which do not support subscriptions.
+
 |===
 
 
@@ -228,12 +248,12 @@ Below table contain configuration parameters which can be assigned to channels o
 | indexGroup
 | INTEGER
 | Index Group (decimal)
-| Index group in decimal format (excluding 0x prefix). For example F00F.
+| Index group in decimal format (with or without 0x prefix). For example F00F, 0xF00F.
 
 | indexOffset
 | INTEGER
 | Index Offset (decimal)
-| Offset in given decimal in hex format (excluding 0x prefix). For example 01.
+| Offset in given decimal in hex format (with or without 0x prefix). For example 01.
 
 | type
 | TEXT
@@ -244,6 +264,11 @@ Below table contain configuration parameters which can be assigned to channels o
 | BOOLEAN
 | Inverse conversion logic
 | Inverse logical representation of FALSE/TRUE values.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Default refresh interval specified for entire connection and devices associated with it. Setting refresh interval forces this channel to be polled rather than subscribed. It might help with older devices which do not support subscriptions.
 
 |===
 
@@ -260,12 +285,12 @@ Below table contain configuration parameters which can be assigned to channels o
 | indexGroup
 | TEXT
 | Index Group (hex)
-| Index group in hex format (excluding 0x prefix). For example F00F.
+| Index group in hex format (with or without 0x prefix). For example F00F, 0xF00F.
 
 | indexOffset
-| INTEGER
+| TEXT
 | Index Offset (hex)
-| Offset in given group in hex format (excluding 0x prefix). For example 01.
+| Offset in given group in hex format (with or without 0x prefix). For example 01, 0x01.
 
 | type
 | TEXT
@@ -276,6 +301,11 @@ Below table contain configuration parameters which can be assigned to channels o
 | BOOLEAN
 | Inverse conversion logic
 | Inverse logical representation of FALSE/TRUE values.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Default refresh interval specified for entire connection and devices associated with it. Setting refresh interval forces this channel to be polled rather than subscribed. It might help with older devices which do not support subscriptions.
 
 |===
 
@@ -299,6 +329,11 @@ Below table contain configuration parameters which can be assigned to channels o
 | Value encoding
 | Encoding of the field. Value in brackets indicate length of type in bytes.
 
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Default refresh interval specified for entire connection and devices associated with it. Setting refresh interval forces this channel to be polled rather than subscribed. It might help with older devices which do not support subscriptions.
+
 |===
 
 
@@ -314,17 +349,22 @@ Below table contain configuration parameters which can be assigned to channels o
 | indexGroup
 | INTEGER
 | Index Group (decimal)
-| Index group in decimal format (excluding 0x prefix). For example F00F.
+| Index group in decimal format (with or without 0x prefix). For example F00F, 0xF00F.
 
 | indexOffset
 | INTEGER
 | Index Offset (decimal)
-| Offset in given decimal in hex format (excluding 0x prefix). For example 01.
+| Offset in given decimal in hex format (with or without 0x prefix). For example 01, 0x01.
 
 | type
 | TEXT
 | Value encoding
 | Encoding of the field. Value in brackets indicate length of type in bytes.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Default refresh interval specified for entire connection and devices associated with it. Setting refresh interval forces this channel to be polled rather than subscribed. It might help with older devices which do not support subscriptions.
 
 |===
 
@@ -341,17 +381,22 @@ Below table contain configuration parameters which can be assigned to channels o
 | indexGroup
 | TEXT
 | Index Group (hex)
-| Index group in hex format (excluding 0x prefix). For example F00F.
+| Index group in hex format (with or without 0x prefix). For example F00F, 0xF00F.
 
 | indexOffset
-| INTEGER
+| TEXT
 | Index Offset (hex)
-| Offset in given group in hex format (excluding 0x prefix). For example 01.
+| Offset in given group in hex format (with or without 0x prefix). For example 01, 0x01.
 
 | type
 | TEXT
 | Value encoding
 | Encoding of the field. Value in brackets indicate length of type in bytes.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Default refresh interval specified for entire connection and devices associated with it. Setting refresh interval forces this channel to be polled rather than subscribed. It might help with older devices which do not support subscriptions.
 
 |===
 
@@ -390,17 +435,22 @@ Below table contain configuration parameters which can be assigned to channels o
 | indexGroup
 | INTEGER
 | Index Group (decimal)
-| Index group in decimal format (excluding 0x prefix). For example F00F.
+| Index group in decimal format (with or without 0x prefix). For example F00F, 0xF00F.
 
 | indexOffset
 | INTEGER
 | Index Offset (decimal)
-| Offset in given decimal in hex format (excluding 0x prefix). For example 01.
+| Offset in given decimal in hex format (with or without 0x prefix). For example 01, 0x01.
 
 | type
 | TEXT
 | Value encoding
 | Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Default refresh interval specified for entire connection and devices associated with it. Setting refresh interval forces this channel to be polled rather than subscribed. It might help with older devices which do not support subscriptions.
 
 |===
 
@@ -417,17 +467,22 @@ Below table contain configuration parameters which can be assigned to channels o
 | indexGroup
 | TEXT
 | Index Group (hex)
-| Index group in hex format (excluding 0x prefix). For example F00F.
+| Index group in hex format (with or without 0x prefix). For example F00F, 0xF00F.
 
 | indexOffset
-| INTEGER
+| TEXT
 | Index Offset (hex)
-| Offset in given group in hex format (excluding 0x prefix). For example 01.
+| Offset in given group in hex format (with or without 0x prefix). For example 01, 0x01.
 
 | type
 | TEXT
 | Value encoding
 | Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Default refresh interval specified for entire connection and devices associated with it. Setting refresh interval forces this channel to be polled rather than subscribed. It might help with older devices which do not support subscriptions.
 
 |===
 
@@ -451,6 +506,11 @@ Below table contain configuration parameters which can be assigned to channels o
 | Value encoding
 | Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
 
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Default refresh interval specified for entire connection and devices associated with it. Setting refresh interval forces this channel to be polled rather than subscribed. It might help with older devices which do not support subscriptions.
+
 |===
 
 
@@ -466,17 +526,22 @@ Below table contain configuration parameters which can be assigned to channels o
 | indexGroup
 | INTEGER
 | Index Group (decimal)
-| Index group in decimal format (excluding 0x prefix). For example F00F.
+| Index group in decimal format (with or without 0x prefix). For example F00F, 0xF00F.
 
 | indexOffset
 | INTEGER
 | Index Offset (decimal)
-| Offset in given decimal in hex format (excluding 0x prefix). For example 01.
+| Offset in given decimal in hex format (with or without 0x prefix). For example 01, 0x01.
 
 | type
 | TEXT
 | Value encoding
 | Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Default refresh interval specified for entire connection and devices associated with it. Setting refresh interval forces this channel to be polled rather than subscribed. It might help with older devices which do not support subscriptions.
 
 |===
 
@@ -493,17 +558,22 @@ Below table contain configuration parameters which can be assigned to channels o
 | indexGroup
 | TEXT
 | Index Group (hex)
-| Index group in hex format (excluding 0x prefix). For example F00F.
+| Index group in hex format (with or without 0x prefix). For example F00F, 0xF00F.
 
 | indexOffset
 | INTEGER
 | Index Offset (hex)
-| Offset in given group in hex format (excluding 0x prefix). For example 01.
+| Offset in given group in hex format (). For example 01.
 
 | type
 | TEXT
 | Value encoding
 | Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Default refresh interval specified for entire connection and devices associated with it. Setting refresh interval forces this channel to be polled rather than subscribed. It might help with older devices which do not support subscriptions.
 
 |===
 

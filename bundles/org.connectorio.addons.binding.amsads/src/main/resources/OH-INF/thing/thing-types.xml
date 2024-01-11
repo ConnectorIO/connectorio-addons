@@ -97,13 +97,7 @@
         <description>This is virtual port which is internally dispatched by PLC controller to running tasks or system services.</description>
       </parameter>
 
-      <parameter name="refreshInterval" type="integer" required="false">
-        <label>Refresh interval</label>
-        <description>Time between next poll cycles.</description>
-        <default>1000</default>
-      </parameter>
-
-      <parameter name="discoverChannels" type="boolean" groupName="discovery" required="false">
+      <parameter name="discoverChannels" type="boolean" required="false">
         <label>Discover channels</label>
         <description>
           Because AMS/ADS enabled PLCs might retain symbol table which can be scanned.

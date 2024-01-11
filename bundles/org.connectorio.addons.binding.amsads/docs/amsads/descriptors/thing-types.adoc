@@ -66,11 +66,6 @@ Supported bridges:
 | Target AMS Network port
 | This is virtual port which is internally dispatched by PLC controller to running tasks or system services.
 
-| refreshInterval
-| INTEGER
-| Refresh interval
-| Time between next poll cycles.
-
 | discoverChannels
 | BOOLEAN
 | Discover channels
