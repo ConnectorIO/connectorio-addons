@@ -216,7 +216,7 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
     } else if (event instanceof ItemStateChangedEvent) {
       ItemStateChangedEvent stateChangeEvent = (ItemStateChangedEvent) event;
       fire((rule, trigger) -> new ItemStateChangeRuleContext(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, stateChangeEvent.getItemName(), stateChangeEvent.getOldItemState(), stateChangeEvent.getItemState()), (trigger) -> {
-        return trigger instanceof StateChangeTrigger && stateChangeEvent.getItemName().equals(((StateChangeTrigger) trigger).getItemName());
+        return trigger instanceof StateChangeTrigger && ((StateChangeTrigger) trigger).matches(stateChangeEvent.getItemName());
       });
       fire((rule, trigger) -> new MemberStateChangeRuleContext(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, ((MemberStateChangeTrigger) trigger).getGroupName(), stateChangeEvent.getItemName(), stateChangeEvent.getOldItemState(), stateChangeEvent.getItemState()), (trigger) -> {
         return trigger instanceof MemberStateChangeTrigger && isMemberOf(((MemberStateChangeTrigger) trigger).getGroupName(), stateChangeEvent.getItemName());
@@ -224,7 +224,7 @@ public class NoRuleManager implements RuleManager, ReadyTracker, EventSubscriber
     } else if (event instanceof ItemStateEvent) {
       ItemStateEvent stateEvent = (ItemStateEvent) event;
       fire((rule, trigger) -> new ItemStateUpdateRuleContext(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, stateEvent.getItemName(), stateEvent.getItemState()), (trigger -> {
-        return trigger instanceof StateUpdateTrigger && stateEvent.getItemName().equals(((StateUpdateTrigger) trigger).getItemName());
+        return trigger instanceof StateUpdateTrigger && ((StateUpdateTrigger) trigger).matches(stateEvent.getItemName());
       }));
       fire((rule, trigger) -> new MemberStateUpdateRuleContext(rule, itemRegistry, actionsRegistry, stateDispatcher, trigger, ((MemberStateUpdateTrigger) trigger).getGroupName(), stateEvent.getItemName(), stateEvent.getItemState()), (trigger) -> {
         return trigger instanceof MemberStateUpdateTrigger && isMemberOf(((MemberStateUpdateTrigger) trigger).getGroupName(), stateEvent.getItemName());

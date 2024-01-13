@@ -33,8 +33,10 @@ public interface TriggerBuilder {
   TriggerBuilder memberStateUpdate(String group);
 
   TriggerBuilder itemStateChange(String item);
+  TriggerBuilder anyItemStateChange();
 
   TriggerBuilder itemStateUpdate(String item);
+  TriggerBuilder anyItemStateUpdate();
 
   TriggerBuilder startLevel(int level);
 

@@ -64,10 +64,23 @@ public class DefaultTriggerBuilder implements TriggerBuilder {
   }
 
   @Override
+  public TriggerBuilder anyItemStateChange() {
+    triggers.add(new StateChangeTrigger());
+    return this;
+  }
+
+  @Override
   public TriggerBuilder itemStateUpdate(String item) {
     triggers.add(new StateUpdateTrigger(item));
     return this;
   }
+
+  @Override
+  public TriggerBuilder anyItemStateUpdate() {
+    triggers.add(new StateUpdateTrigger());
+    return this;
+  }
+
 
   @Override
   public TriggerBuilder schedule(long delay, TimeUnit unit) {

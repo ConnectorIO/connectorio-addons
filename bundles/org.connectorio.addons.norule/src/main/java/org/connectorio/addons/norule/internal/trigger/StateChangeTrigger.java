@@ -19,20 +19,18 @@ package org.connectorio.addons.norule.internal.trigger;
 
 import org.connectorio.addons.norule.Trigger;
 
-public class StateChangeTrigger implements Trigger {
+public class StateChangeTrigger extends BaseItemTrigger implements Trigger {
 
-  private final String item;
-
-  public StateChangeTrigger(String item) {
-    this.item = item;
+  public StateChangeTrigger() {
+    this(ANY);
   }
 
-  public String getItemName() {
-    return item;
+  public StateChangeTrigger(String item) {
+    super(item);
   }
 
   public String toString() {
-    return item + "(state change)";
+    return getItemName() + "(state change)";
   }
 
 }
