@@ -44,11 +44,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>javax.measure</groupId>
-      <artifactId>unit-api</artifactId>
-      <version>${unit-api.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>org.connectorio.addons</groupId>
