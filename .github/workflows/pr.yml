@@ -1,0 +1,20 @@
+name: Build pull request
+
+on:
+  pull_request:
+    branches: [ "master" , "3.*", "4.*" ]
+
+jobs:
+  build:
+    permissions:
+      checks: write
+      contents: read
+    uses: 'connectorio/gh-actions-shared/.github/workflows/maven.yml@master'
+    secrets:
+      CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
+      CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
+    with:
+      openhab: true
+      server_id: co7io-public-snapshots
+      deploy: true
+      master_branch: 3
