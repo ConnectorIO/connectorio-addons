@@ -1,0 +1,39 @@
+name: Release artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'The version to be released from actual HEAD revision'
+        required: false
+        default: 'X.Y.Z'
+      development_version:
+        description: 'Version to be set as next, after release is made (appends commit to HEAD revision)'
+        required: false
+        default: 'X.Y.Z-SNAPSHOT'
+      perform_version:
+        description: 'Tag which should be used to perform release and publish its artifacts'
+        required: false
+      dry_run:
+        description: 'Should execution abstain from mutating repository/remote state?'
+        required: true
+        default: 'true'
+
+jobs:
+  build:
+    permissions:
+      contents: write
+    uses: 'connectorio/gh-actions-shared/.github/workflows/release.yml@master'
+    secrets:
+      GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      CI_RELEASE_USERNAME: ${{ secrets.CI_RELEASE_USERNAME }}
+      CI_RELEASE_PASSWORD: ${{ secrets.CI_RELEASE_PASSWORD }}
+    with:
+      openhab: true
+      server_id: 'co7io-public-releases'
+      release_version: ${{ inputs.release_version }}
+      development_version: ${{ inputs.development_version }}
+      perform_version: ${{ inputs.perform_version }}
+      dry_run: ${{ inputs.dry_run }}
+      additional_profiles: 'thing4,openhab'
