@@ -39,6 +39,16 @@ Almost each and every extension described here offers a complete path needed to 
 The {page-component-title} is compatible with {openhab}, an open source project targeted towards home appliances.
 It is also compatible with other software distributions which embed {openHAB} project.
 
+== Overview
+
+This document describes installation and configuration procedure of {page-component-title}.
+{openHAB} is popular home automation software, however its architecture is extensible through various plugins.
+This architecture permits connectivity with many other solutions - including industrial hardware.
+
+The "HAB" part of above name to us is "Hardware Abstraction Bus" (rather than Home Automation Bus), and we ({publisher}) promote this use through provisioning of extensions described in this document.
+Vanilla {openHAB} connect to devices such as heating boilers, multimedia systems down to small sensors or smart meters.
+It brings also supported for Modbus, various solar inverters, energy meters, some PLC kinds.
+
 == Important notice to reader
 
 include::legal.adoc[]

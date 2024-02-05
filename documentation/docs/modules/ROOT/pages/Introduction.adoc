@@ -1,111 +1,33 @@
-== Why?
+= Introduction
 
-ConnectorIO addons allow plugging typical industrial protocols and hardware to openHAB.
-You might be curious, why bother?
-Well, there are few reasons, but the primary one is really ability to visualize and store received data in a unified way.
-openHAB is quite compact when it is properly installed thus can be used as IoT gateway.
-With ConnectorIO bindings it will not become an IIoT gateway right away, however will gather connectivity abilities typical for these.
+{page-component-title} allow plugging typical industrial protocols and hardware into {openHAB}.
+{openHAB} is compact project which, once properly installed and configured, can be used as IoT gateway.
+With {page-component-title} it will gather connectivity abilities typical for these.
 
-A below legend indicates with dark blue color components developed and solely maintained by ConnectorIO.
-Other colors indicate major dependencies used by us to provide desired functionality.
-To matter of fact, ConnectorIO bindings are third party addons for openHAB.
+== Concepts
 
-[ditaa,"integration-architecture-legend"]
-....
-+---------------------------------------+
-|c049 Maintained by ConnectorIO         |
-+---------------------------------------+
+This documentation describes mainly how to configure industrial integrations supplied by {publisher}.
+In order to fully understand, "how" various assets are organized in {openHAB}, you need to learn some basic terms.
 
-+---------------------------------------+
-|cA25 Apache PLC4x project, open source |
-+---------------------------------------+
+Main concepts which are used in {openHAB} are:
 
-+---------------------------------------+
-|cF41 openHAB project, open source      |
-+---------------------------------------+
-
-+---------------------------------------+
-|c8C5 BACnet, ISO/ASHRAE standard       |
-+---------------------------------------+
-....
-
-[ditaa,"integration-architecture-software-hardware-view"]
-....
-
-                                     User interface level
-+----------------------------------------------------------------------------------------------+
-|                           Web Browser / Mobile Device / IT system                            |
-+----------------------------------------------------------------------------------------------+
-                                           |
-                                           v
-+----------------------------------------------------------------------------------------------+     Azure/Amazon/Google
-|cF41                       openHAB rest / user interface / persistence                        +---> and infrastructure
-+---------+--------------------+------------------+------------------+------------------+------+     provided by them
-          |                    |                  |                  |                  |
-          |                    |                  |                  |                  |
-          v                    v                  v                  v                  v
-+----------------------------------------------------------------------------------------------+
-|cF41                               openHAB binding API                                        |
-+------+---------------+-----------------------------------------------+-----------------------+
-       ^               ^                                               ^
-       |               |                                               |
- +-----------+   +-----------+                                   +-----------+
- |c049       |   |c049       |                                   |c049       |
- |  Siemens  |   | Beckhoff  |                                   |  BACnet   |
- |     S7    |   |    ADS    |                                   |  Binding  |
- |  Binding  |   |  Binding  |                                   |           |
- +-----------+   +-----------+                                   +-----------+
-       |               |                                               |
-       v               v                                               v
-+---------------------------------------------+ +-----------------------------------------------+
-|cA25                                         | |c049                                           |
-|              Apache PLC4X API               | |                BACnet4J Wrapper API           |  Library
-|                                             | |                                               |   Level
-+------+---------------+----------------------+ +--------------+-----------------------+--------+
-       ^               ^                                       |                       |
-       |               |                                       |                       |
-       |               |                                       |                       |
- +-----------+   +-----------+                                 v                       v
- |cA25       |   |cA25       |                            +-----------+          +-----------+   Hardware /
- |  Siemens  |   | Beckhoff  |                            |  BACnet4J |          |  BACnet4J |   Protocol level
- |    S7     |   |    ADS    |                            |    IP     |          |   MSTP    |
- |  Driver   |   |  Driver   |                            +-----+-----+          +-----+-----+
- |           |   |           |                                  |                      |
- +-----+-----+   +-----+-----+                         +--------+------+               |
-       |               |                               |               |               |
-       v               v                               v               v               v
- +-----------+   +-----------+                   +-----------+   +-----------+   +-----+-----+
- |c099       |   |cE00       |                   |c8C5       |   |c8C5       |   |c8C5       |
- |  Siemens  |   | Beckhoff  |                   |  BACnet   |   |  BACnet   |   |   BACnet  |
- |    S7     |   |    ADS    |                   |   HVAC    |   |   Zone    |   |  Enabled  |    Device level
- |    PLC    |   |    PLC    |                   |  Device   |   |Controller |   |    PLC    |
- |           |   |           |                   |           |   |           |   |           |
- +-----------+   +-----------+                   +-----------+   +-----------+   +-----------+
-
-....
-
-== Introduction
-
-This documentation describes mainly how to configure industrial integrations supplied by ConnectorIO.
-In order to fully understand, "how" various assets are organized in openHAB, you need to learn some basic terms.
-
-Main concepts which are used in openHAB are:
-
- * bridges - usually represents a connection or complex element which can have things.
+ * _Bridges_ - usually represents a connection or complex element which can have things.
 Be aware, that bridge can be a child of another bridge too.
- * things - representation of a given functionality, typically representing a piece of hardware or software function.
+ * _Things_ - representation of a given functionality, typically representing a piece of hardware or software function.
 Main responsibility of this element is to group operations of certain asset in one place.
- * channels - each thing might have 0 and more channels which are inputs or outputs, generally speaking functions.
-A channel represents a single, atomic value or switch which can be controlled.
+ * _Channels_ - each thing might have 0 or more channels which are inputs or outputs, generally speaking functions.
+A channel represents a single, atomic value or switch which can be controlled or retrieved.
 One channel can have 0 or more linked items.
- * items - items are elements which are created for visualisation and/or persistence reasons.
+ * _Items_ - items are elements which are created for visualisation and/or persistence purposes.
 Since one "thing" can have multiple "channels" the item allows selecting which channels of a device to track.
- * links - it is a relation between item and channel.
-For each item there is one link.
+ * _Links_ - is a relation between item and channel.
+For each item-channel pair there is exactly one link.
 
 Keep in mind above definitions because they will be referred in this documentation.
-Bindings provided by ConnectorIO give possibility to create bridges and things which do represent industrial hardware.
-First three elements are defined by shipped integration software, while later two are user responsibility.
+Bindings provided by {publisher} give possibility to create bridges and things which do represent industrial hardware.
+First three elements - Bridges, Things, Channels - are defined by shipped integration software.
+Last three - Channels, Items and Links - might heavily depend on user configuration.
+Especially items and its organization is duty of the end user.
 
 If you still look for additional explanation please read more about https://www.openhab.org/docs/concepts/[concepts used in openHAB].
 
