@@ -9,7 +9,7 @@
 | Serial Bridge
 | The M-Bus Serial bridge allows to poll data using compatible serial interfaces.
 
-<<>>
+<<co7io-mbus:openhab-serial>>
 
 |===
 

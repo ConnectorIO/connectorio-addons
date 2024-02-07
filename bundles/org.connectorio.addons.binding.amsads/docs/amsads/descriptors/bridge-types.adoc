@@ -7,9 +7,9 @@
 
 | co7io-amsads:ams
 | AMS/ADS Network
-| Defines AMS network identifier for this instance.
+| Defines AMS network identifier for connection attempts made by child elements.
 
-<<>>
+<<co7io-amsads:ams>>
 
 |===
 

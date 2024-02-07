@@ -9,25 +9,25 @@
 | BACnet/IP device
 | BACnet device.
 
-<<>>
+<<co7io-bacnet:ip-device>>
 
 | co7io-bacnet:mstp-device
 | BACnet/MSTP device
 | BACnet device.
 
-<<>>
+<<co7io-bacnet:mstp-device>>
 
 | co7io-bacnet:ipv4
 | BACnet/IP bridge
 | The BACnet/IP bridge allows to connect devices supporting communication over BACnet/IP.
 
-<<>>
+<<co7io-bacnet:ipv4>>
 
 | co7io-bacnet:mstp
 | BACnet/MSTP Bridge
 | The BACnet mstp bridge allows to connect devices communicating over serial interface (RS485).
 
-<<>>
+<<co7io-bacnet:mstp>>
 
 |===
 

@@ -9,7 +9,7 @@
 | S7 TCP/IP Bridge
 | TCP/IP Connection to S7 PLC.
 
-<<>>
+<<co7io-s7:network>>
 
 |===
 
