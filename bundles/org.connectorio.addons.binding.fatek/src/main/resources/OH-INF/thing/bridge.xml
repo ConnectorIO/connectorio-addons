@@ -26,9 +26,9 @@
     <description>Connection to PLC via network socket.</description>
 
     <config-description>
-      <parameter name="hostAddress" type="text" required="true">
-        <label>Hot address</label>
-        <description>Server address to which binding should connect to receive data.</description>
+      <parameter name="host" type="text" required="true">
+        <label>Host address</label>
+        <description>Server address to which binding should connect to receive data, IP or hostname.</description>
         <context>network</context>
       </parameter>
       <parameter name="port" type="integer" required="true">

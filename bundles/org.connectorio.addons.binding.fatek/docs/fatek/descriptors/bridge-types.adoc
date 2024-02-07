@@ -1,0 +1,41 @@
+
+= Bridge types
+
+[width="100%",cols="1,1,2"]
+|===
+|Bridge | Label ^|Description
+
+| co7io-fatek:tcp
+| TCP Bridge
+| Connection to PLC via network socket.
+
+<<co7io-fatek:tcp>>
+
+| co7io-fatek:serial
+| Serial Bridge
+| Connection through RS232/RS485 or USB interfaces.
+
+<<co7io-fatek:serial>>
+
+|===
+
+
+[[co7io-fatek:tcp]]
+== Bridge `co7io-fatek:tcp`
+
+Below table contains complete configuration of `co7io-fatek:tcp`.
+
+
+
+
+
+[[co7io-fatek:serial]]
+== Bridge `co7io-fatek:serial`
+
+Below table contains complete configuration of `co7io-fatek:serial`.
+
+
+
+
+
+

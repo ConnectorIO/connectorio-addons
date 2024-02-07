@@ -1,0 +1,18 @@
+Bridge co7io-fatek:tcp:my-connection "My PLC#1" [
+    host="10.10.10.2",
+    port=500
+  ] {
+
+  Thing plc station1 "Station 1 of PLC" [
+    stationNumber=1
+  ] {
+    Channels:
+      Type discrete : X1 [ register="X", index=1 ]
+      Type discrete : Y1 [ register="Y", index=1 ]
+      Type discrete : M1 [ register="M", index=1 ]
+      Type discrete : S1 [ register="S", index=1 ]
+      Type discrete : T1 [ register="T", index=1 ]
+      Type discrete : C1 [ register="C", index=1 ]
+  }
+
+}

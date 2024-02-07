@@ -1,0 +1,78 @@
+= Fatek / Facom
+
+This binding integrates Taiwanese brand of PLC called Fatek.
+Fatek is recognized and known worldwide.
+One of this brand uniqueness comes from its own engineering software and programming in leather.
+
+Fatek has its own protocol which description is published.
+This protocol is sometimes (quite rarely) named Facom.
+Since it is used only by this brand it remains proprietary to this firm.
+It is possible to interface Fatek with other systems through Modbus (supported by PLCs at no cost).
+There are several BUS couplers which allow to pair it with other equipment or even modems.
+
+Facom can utilize several transports - most common ones are TCP and serial.
+Protocol payload remains the same.
+
+.Fatek binding capability table
+|===
+|Device discovery| Channel discovery |Read | Write | Subscribe
+
+|Yes
+|No
+|Yes
+|Yes
+|No
+|===
+
+The Facom protocol does not provide a subscription operation.
+All states have to be polled in cyclic manner.
+
+== Device discovery
+Binding supports an undocumented discovery feature of the protocol.
+It is able to detect all compatible devices within IP network through broadcasts.
+Once devices are found binding attempts to scan available station ids to identify reachable endpoints.
+
+== Thing and Channel discovery
+Binding is able to discover _Thing_, with all necessary connection parameters, but it can not discover channels.
+
+== Supported hardware
+While Facom seem to be a common protocol used across different product lines this binding is confirmed to work with Fatek FBs series.
+Other product groups have not been tested.
+Most of Fatek PLCs include serial port which can be used for programming.
+This port can be also used for serial communication and integration with binding.
+
+In order to start reading data you need to create at least one `tcp` or `serial` connection (_Bridge_).
+The `tcp` connection usually rely on port 500, however it can be amended in PLC configuration.
+
+Because of protocol limitations configuration needs to be prepared manually based on known register addresses.
+There are several kinds of addresses defined by protocol.
+
+.Register kinds supported by Fatek binding:
+|===
+|Register |Description |Command/State type
+
+| `X` | (DI) Digital input  | `ON` and `OFF` (`OnOffType`)
+| `Y` | (DO) Digital output | `ON` and `OFF` (`OnOffType`)
+| `M` | Internal relay      | `ON` and `OFF` (`OnOffType`)
+| `S` | Step relay          | `ON` and `OFF` (`OnOffType`)
+| `T` | Timer contact       | `ON` and `OFF` (`OnOffType`)
+| `C` | Counter contact     | `ON` and `OFF` (`OnOffType`)
+|===
+
+== Textual configuration
+
+Below is example of a text configuration which you can use as a started.
+Keeping configuration in a file allows to use a regular version control system to track changes over time.
+The same can be done via user interface.
+
+[source,indent=0,subs="verbatim,attributes",role="primary"]
+.dsl
+----
+include::{examplesdir}/fatek/fatek.things[]
+----
+
+[source,yaml,indent=0,subs="verbatim,attributes",role="secondary"]
+.yaml
+----
+include::{examplesdir}/fatek/fatek.yaml[]
+----

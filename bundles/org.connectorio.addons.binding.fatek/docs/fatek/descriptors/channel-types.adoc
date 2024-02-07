@@ -1,0 +1,44 @@
+
+= Channel types
+
+[cols="1,2,4"]
+|===
+|Channel type | Label ^|Description
+
+| co7io-fatek:discrete
+| Discrete register
+| Discrete register of connected PLC.
+
+<<co7io-fatek:discrete>>
+
+|===
+
+
+[[co7io-fatek:discrete]]
+== Configuration of `co7io-fatek:discrete`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-fatek:discrete`.
+
+[width="100%",caption="Channel type discrete configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| register
+| TEXT
+| Register symbol
+| Symbol (kind) of register to read
+
+| index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| invert
+| BOOLEAN
+| Invert
+| Invert logical representation of related register (0->1, 1->0).
+
+|===
+
+
+

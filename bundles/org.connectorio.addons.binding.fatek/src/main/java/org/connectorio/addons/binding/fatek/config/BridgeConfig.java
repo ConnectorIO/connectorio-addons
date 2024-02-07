@@ -21,6 +21,4 @@ import org.connectorio.addons.binding.config.PollingConfiguration;
 
 public abstract class BridgeConfig extends PollingConfiguration {
 
-  public int discoveryTimeToLive;
-
 }

@@ -1,0 +1,45 @@
+---
+things:
+- kind: "Bridge"
+  UID: "co7io-fatek:tcp:my-connection"
+  label: "My PLC#1"
+  configuration:
+    host: "10.10.10.2"
+    port: 500
+  things:
+  - id: "station1"
+    type: "co7io-fatek:plc"
+    label: "Station 1 of PLC"
+    configuration:
+      stationNumber: 1
+    channels:
+    - id: "X1"
+      type: "discrete"
+      configuration:
+        index: 1
+        register: "X"
+    - id: "Y1"
+      type: "discrete"
+      configuration:
+        index: 1
+        register: "Y"
+    - id: "M1"
+      type: "discrete"
+      configuration:
+        index: 1
+        register: "M"
+    - id: "S1"
+      type: "discrete"
+      configuration:
+        index: 1
+        register: "S"
+    - id: "T1"
+      type: "discrete"
+      configuration:
+        index: 1
+        register: "T"
+    - id: "C1"
+      type: "discrete"
+      configuration:
+        index: 1
+        register: "C"

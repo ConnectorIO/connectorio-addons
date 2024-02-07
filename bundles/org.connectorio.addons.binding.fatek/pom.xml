@@ -32,6 +32,10 @@
   <name>ConnectorIO - Addons - Binding - Fatek</name>
   <description>Fatek PLC integration.</description>
 
+  <properties>
+    <documentation.reference>fatek</documentation.reference>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.connectorio.addons</groupId>

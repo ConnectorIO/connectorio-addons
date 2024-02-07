@@ -17,10 +17,9 @@
  */
 package org.connectorio.addons.binding.fatek.config;
 
-import org.connectorio.addons.binding.config.PollingConfiguration;
 public class TcpBridgeConfig extends BridgeConfig {
 
-  public String hostAddress;
+  public String host;
   public int port;
   public int connectionTimeout;
 }

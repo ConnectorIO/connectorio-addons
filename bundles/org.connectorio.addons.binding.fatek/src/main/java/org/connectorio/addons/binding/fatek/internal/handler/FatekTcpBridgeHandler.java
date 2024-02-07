@@ -20,7 +20,6 @@ package org.connectorio.addons.binding.fatek.internal.handler;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.connectorio.addons.binding.fatek.internal.transport.JFatekTcpFaconConnection;
@@ -28,7 +27,6 @@ import org.connectorio.addons.binding.fatek.transport.FaconConnection;
 import org.connectorio.addons.binding.handler.GenericBridgeHandlerBase;
 import org.connectorio.addons.binding.fatek.config.TcpBridgeConfig;
 import org.connectorio.addons.binding.fatek.internal.discovery.DiscoveryCoordinator;
-import org.openhab.core.common.ThreadPoolManager;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.ThingStatus;
@@ -64,7 +62,7 @@ public class FatekTcpBridgeHandler extends GenericBridgeHandlerBase<TcpBridgeCon
     }
 
     scheduler.execute(() -> {
-      if (config.hostAddress == null || config.hostAddress.trim().isEmpty()) {
+      if (config.host == null || config.host.trim().isEmpty()) {
         updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "Missing host address");
         return;
       }
@@ -73,10 +71,10 @@ public class FatekTcpBridgeHandler extends GenericBridgeHandlerBase<TcpBridgeCon
         return;
       }
       int timeout = config.connectionTimeout != 0 ? config.connectionTimeout : 5000;
-      executor = Executors.newFixedThreadPool(2, (runnable) -> new Thread(runnable, "fatek-connection-" + config.hostAddress));
+      executor = Executors.newFixedThreadPool(2, (runnable) -> new Thread(runnable, "fatek-connection-" + config.host));
 
       try {
-        JFatekTcpFaconConnection faconConnection = new JFatekTcpFaconConnection(executor, config.hostAddress, config.port, timeout);
+        JFatekTcpFaconConnection faconConnection = new JFatekTcpFaconConnection(executor, config.host, config.port, timeout);
         this.refreshInterval = config.refreshInterval;
         connection.complete(faconConnection);
         updateStatus(ThingStatus.ONLINE);

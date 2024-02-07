@@ -1,0 +1,32 @@
+
+= Thing types
+
+[width="100%",cols="1,1,2"]
+|===
+|Thing | Label ^|Description
+
+| co7io-fatek:plc
+| Fatek PLC (FBs)
+| Fatek PLC communicating using facon protocol.
+
+<<co7io-fatek:plc>>
+
+|===
+
+
+[[co7io-fatek:plc]]
+== Thing `co7io-fatek:plc`
+
+Below table contains complete configuration of `co7io-fatek:plc`.
+
+Supported bridges:
+
+* xref:./bridge-types.adoc#co7io-fatek:serial[co7io-fatek:serial]
+
+* xref:./bridge-types.adoc#co7io-fatek:tcp[co7io-fatek:tcp]
+
+
+
+
+
+

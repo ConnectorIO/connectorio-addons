@@ -1,0 +1,28 @@
+
+= Config descriptions
+
+
+[[channel-type:co7io-fatek:binary]]
+== Config `channel-type:co7io-fatek:binary`
+[width="100%",caption="channel-type:co7io-fatek:binary configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| register
+| TEXT
+| Register symbol
+| Symbol (kind) of register to read
+
+| index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| invert
+| BOOLEAN
+| Invert
+| Invert logical representation of related register (0->1, 1->0).
+
+|===
+
+
