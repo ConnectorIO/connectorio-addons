@@ -1,3 +1,4 @@
+:page-layout: wwoh
 = OPC UA - Open Platform Communications Unified Architecture
 
 The Open Platform Communications Unified Architecture binding provides integration with OPC UA-enabled devices and servers.

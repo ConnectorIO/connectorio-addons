@@ -1,3 +1,4 @@
+:page-layout: wwoh
 = WM-Bus - Wireless M-Bus
 
 The Wireless M-Bus is popular metering standard widely deployed within Europe.

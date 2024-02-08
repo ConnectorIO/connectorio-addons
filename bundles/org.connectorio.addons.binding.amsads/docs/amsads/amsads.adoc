@@ -1,3 +1,4 @@
+:page-layout: wwoh
 = AMSADS
 
 This binding integrates popular PLC brand which is adopted in industrial, marine and building automation scenarios.

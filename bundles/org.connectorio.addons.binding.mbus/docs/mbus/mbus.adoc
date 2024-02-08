@@ -1,3 +1,4 @@
+:page-layout: wwoh
 = M-Bus - Meter-Bus
 
 The M-Bus is serial line protocol popular within SCADA and metering deployments within Europe.

@@ -1,3 +1,4 @@
+:page-layout: wwoh
 = BACnet
 
 BACnet is shortcut of "Building Automation and Control Networks".

@@ -1,3 +1,4 @@
+:page-layout: wwoh
 = Fatek / Facom
 
 This binding integrates Taiwanese brand of PLC called Fatek.

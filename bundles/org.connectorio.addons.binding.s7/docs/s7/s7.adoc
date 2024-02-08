@@ -1,3 +1,4 @@
+:page-layout: wwoh
 = S7
 
 The "S7" shortcut stands for "Step 7", depending on context, in other publications they might be also referred as s7comm.
