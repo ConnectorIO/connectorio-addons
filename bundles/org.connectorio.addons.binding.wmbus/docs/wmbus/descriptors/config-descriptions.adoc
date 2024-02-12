@@ -2,6 +2,34 @@
 = Config descriptions
 
 
+[[thing-type:co7io-wmbus:tcp]]
+== Config `thing-type:co7io-wmbus:tcp`
+[width="100%",caption="thing-type:co7io-wmbus:tcp configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| manufacturer
+| TEXT
+| Manufacturer
+| Manufacturer of radio interface.
+
+| hostAddress
+| TEXT
+| Hot address
+| Server address to which binding should connect to receive data.
+
+| port
+| INTEGER
+| Port
+| Port number
+
+| connectionTimeout
+| INTEGER
+| Connection timeout
+| Maximum time required to establish connection with host
+
+|===
+
 [[thing-type:co7io-wmbus:channel]]
 == Config `thing-type:co7io-wmbus:channel`
 [width="100%",caption="thing-type:co7io-wmbus:channel configuration",cols="1,1,1,2"]
@@ -17,6 +45,145 @@
 | TEXT
 | Value Information Block (VIB)
 | Value identification block allows to interpret value.
+
+|===
+
+[[thing-type:co7io-wmbus:serial]]
+== Config `thing-type:co7io-wmbus:serial`
+[width="100%",caption="thing-type:co7io-wmbus:serial configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| mode
+| TEXT
+| WM-Bus receiver mode
+| Frequency and encoding of radio signal from devices.
+
+| manufacturer
+| TEXT
+| Manufacturer
+| Manufacturer of radio interface.
+
+| serialPort
+| TEXT
+| Serial port
+| Serial interface port.
+
+| baudRate
+| INTEGER
+| Baud rate
+| Baud rate for serial connection.
+
+| dataBits
+| TEXT
+| Baud rate
+| Data bits in each serial transmission.
+
+| stopBits
+| TEXT
+| Baud rate
+| Stop bits after transmission.
+
+| parity
+| TEXT
+| Parity
+| Parity of serial transmission.
+
+| discoverDevices
+| BOOLEAN
+| Discover devices
+| Turn on or off discovery of new devices for this interface.
+
+| discoveryTimeToLive
+| INTEGER
+| Time to live
+| Time to live (TTL) in minutes for discovered elements. After passing of TTL element will be removed, possibly re-discovered when appears again. This setting can be used to discard invalid records produced by unstable radio interface. Please note that some devices may have irregular communication schedule. Value of -1 disables time to live. Common values are 60 (one hour) and 1440 (one day).
+
+|===
+
+[[thing-type:co7io-wmbus:serial-jrxtx]]
+== Config `thing-type:co7io-wmbus:serial-jrxtx`
+[width="100%",caption="thing-type:co7io-wmbus:serial-jrxtx configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| mode
+| TEXT
+| WM-Bus receiver mode
+| Frequency and encoding of radio signal from devices.
+
+| manufacturer
+| TEXT
+| Manufacturer
+| Manufacturer of radio interface.
+
+| serialPort
+| TEXT
+| Serial port
+| Serial interface port.
+
+| baudRate
+| INTEGER
+| Baud rate
+| Baud rate for serial connection.
+
+| dataBits
+| TEXT
+| Baud rate
+| Data bits in each serial transmission.
+
+| stopBits
+| TEXT
+| Baud rate
+| Stop bits after transmission.
+
+| discoverDevices
+| BOOLEAN
+| Discover devices
+| Turn on or off discovery of new devices for this interface.
+
+| discoveryTimeToLive
+| INTEGER
+| Time to live
+| Time to live (TTL) in minutes for discovered elements. After passing of TTL element will be removed, possibly re-discovered when appears again. This setting can be used to discard invalid records produced by unstable radio interface. Please note that some devices may have irregular communication schedule. Value of -1 disables time to live. Common values are 60 (one hour) and 1440 (one day).
+
+|===
+
+[[thing-type:co7io-wmbus:device]]
+== Config `thing-type:co7io-wmbus:device`
+[width="100%",caption="thing-type:co7io-wmbus:device configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| discoverChannels
+| BOOLEAN
+| Discover channels
+| Enable automatic creation of channels based on received WM-Bus messages. Some device may use various messages (telegrams) to reports their reading, hence it is advised to keep this option enabled for at least a day.
+
+| serialNumber
+| INTEGER
+| Serial number
+| 
+
+| manufacturerId
+| TEXT
+| Manufacturer identifier
+| Three character identifier of manufacturer, for example 'KAM' for Kamstrup.
+
+| version
+| INTEGER
+| Version
+| 
+
+| deviceType
+| TEXT
+| Device type
+| Type of device according to standard.
+
+| encryptionKey
+| TEXT
+| Encryption key
+| Secret key used to decrypt device payloads. In hex form.
 
 |===
 

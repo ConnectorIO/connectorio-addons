@@ -28,5 +28,46 @@ Supported bridges:
 
 
 
+[width="100%",caption="Thing M-Bus Device configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| address
+| INTEGER
+| Primary address
+| 
+
+| discoverChannels
+| BOOLEAN
+| Discover channels
+| Enable automatic creation of channels based on polled data.
+
+| serialNumber
+| INTEGER
+| Serial number
+| 
+
+| manufacturerId
+| TEXT
+| Manufacturer identifier
+| Three character identifier of manufacturer, for example 'KAM' for Kamstrup.
+
+| version
+| INTEGER
+| Version
+| 
+
+| deviceType
+| TEXT
+| Device type
+| Type of device according to standard.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between poll cycles.
+
+|===
+
 
 

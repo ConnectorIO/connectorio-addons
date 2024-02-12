@@ -28,5 +28,21 @@ Supported bridges:
 
 
 
+[width="100%",caption="Thing Fatek PLC (FBs) configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| stationNumber
+| INTEGER
+| Station number
+| 
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles.
+
+|===
+
 
 

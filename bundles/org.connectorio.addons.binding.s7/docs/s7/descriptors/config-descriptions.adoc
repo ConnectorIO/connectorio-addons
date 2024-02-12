@@ -2,6 +2,72 @@
 = Config descriptions
 
 
+[[thing-type:co7io-s7:switch]]
+== Config `thing-type:co7io-s7:switch`
+[width="100%",caption="thing-type:co7io-s7:switch configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| field
+| TEXT
+| Field
+| Field to be read from PLC. Supported format of field: %I0.1:BOOL %Q0.4:BOOL %M9.0:BOOL %DB1.DBX38.1:BOOL Where %I stand for input, %Q for output, %M for memory and %DB for store.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+[[thing-type:co7io-s7:network]]
+== Config `thing-type:co7io-s7:network`
+[width="100%",caption="thing-type:co7io-s7:network configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| host
+| TEXT
+| Host name or IP address
+| Address of S7 enabled PLC.
+
+| localRack
+| INTEGER
+| Local rack
+| Communication rack to be set in connection string.
+
+| localSlot
+| INTEGER
+| Local slot
+| Communication rack to be set in connection string.
+
+| remoteRack
+| INTEGER
+| Remote rack
+| Communication rack to be set in connection string.
+
+| remoteSlot
+| INTEGER
+| Remote slot
+| Communication rack to be set in connection string.
+
+| pduSize
+| INTEGER
+| PDU size
+| Maximum size of a data-packet sent to and received from the remote PLC.
+
+| controllerType
+| TEXT
+| PDU size
+| Type of remote unit. Please use it if automatic identification during bootstrap fails. Setting this option will disable device identification attempt which might be troublesome for some hardware.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles.
+
+|===
+
 [[thing-type:co7io-s7:number]]
 == Config `thing-type:co7io-s7:number`
 [width="100%",caption="thing-type:co7io-s7:number configuration",cols="1,1,1,2"]
@@ -20,21 +86,16 @@
 
 |===
 
-[[thing-type:co7io-s7:switch]]
-== Config `thing-type:co7io-s7:switch`
-[width="100%",caption="thing-type:co7io-s7:switch configuration",cols="1,1,1,2"]
+[[thing-type:co7io-s7:s7]]
+== Config `thing-type:co7io-s7:s7`
+[width="100%",caption="thing-type:co7io-s7:s7 configuration",cols="1,1,1,2"]
 |===
 |Name | Type | Label ^|Description
-
-| field
-| TEXT
-| Field
-| Field to be read from PLC. Supported format of field: %I0.1:BOOL %Q0.4:BOOL %M9.0:BOOL %DB1.DBX38.1:BOOL Where %I stand for input, %Q for output, %M for memory and %DB for store.
 
 | refreshInterval
 | INTEGER
 | Refresh interval
-| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+| Time between next poll cycles. If no value is given value defined for bridge is used (1000 ms by default).
 
 |===
 

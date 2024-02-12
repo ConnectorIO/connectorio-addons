@@ -21,6 +21,52 @@ Below table contains complete configuration of `co7io-s7:network`.
 
 
 
+[width="100%",caption="Bridge S7 TCP/IP Bridge configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| host
+| TEXT
+| Host name or IP address
+| Address of S7 enabled PLC.
+
+| localRack
+| INTEGER
+| Local rack
+| Communication rack to be set in connection string.
+
+| localSlot
+| INTEGER
+| Local slot
+| Communication rack to be set in connection string.
+
+| remoteRack
+| INTEGER
+| Remote rack
+| Communication rack to be set in connection string.
+
+| remoteSlot
+| INTEGER
+| Remote slot
+| Communication rack to be set in connection string.
+
+| pduSize
+| INTEGER
+| PDU size
+| Maximum size of a data-packet sent to and received from the remote PLC.
+
+| controllerType
+| TEXT
+| PDU size
+| Type of remote unit. Please use it if automatic identification during bootstrap fails. Setting this option will disable device identification attempt which might be troublesome for some hardware.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles.
+
+|===
+
 
 
 

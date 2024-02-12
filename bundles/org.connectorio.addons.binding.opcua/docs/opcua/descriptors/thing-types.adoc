@@ -5,12 +5,6 @@
 |===
 |Thing | Label ^|Description
 
-| co7io-opcua:server
-| OPC UA Server
-| Launches a OPC UA server based on information collected by this system instance (experimental).
-
-<<co7io-opcua:server>>
-
 | co7io-opcua:node
 | Node
 | Instance of an OPC-UA node object.
@@ -18,14 +12,6 @@
 <<co7io-opcua:node>>
 
 |===
-
-
-[[co7io-opcua:server]]
-== Thing `co7io-opcua:server`
-
-Below table contains complete configuration of `co7io-opcua:server`.
-
-
 
 
 [[co7io-opcua:node]]

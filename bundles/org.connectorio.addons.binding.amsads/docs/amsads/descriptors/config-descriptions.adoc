@@ -2,9 +2,9 @@
 = Config descriptions
 
 
-[[thing-type:co7io-amsads:datetime-symbol-tag]]
-== Config `thing-type:co7io-amsads:datetime-symbol-tag`
-[width="100%",caption="thing-type:co7io-amsads:datetime-symbol-tag configuration",cols="1,1,1,2"]
+[[thing-type:co7io-amsads:text-symbol-tag]]
+== Config `thing-type:co7io-amsads:text-symbol-tag`
+[width="100%",caption="thing-type:co7io-amsads:text-symbol-tag configuration",cols="1,1,1,2"]
 |===
 |Name | Type | Label ^|Description
 
@@ -20,67 +20,31 @@
 
 |===
 
-[[thing-type:co7io-amsads:datetime-direct-dec-tag]]
-== Config `thing-type:co7io-amsads:datetime-direct-dec-tag`
-[width="100%",caption="thing-type:co7io-amsads:datetime-direct-dec-tag configuration",cols="1,1,1,2"]
+[[thing-type:co7io-amsads:serial]]
+== Config `thing-type:co7io-amsads:serial`
+[width="100%",caption="thing-type:co7io-amsads:serial configuration",cols="1,1,1,2"]
 |===
 |Name | Type | Label ^|Description
 
-| indexGroup
+| port
+| TEXT
+| Serial port
+| Serial port over which connection is made - ie. /dev/ttyUSB0, /dev/ttyS1 for linux or COM0, COM1 for windows.
+
+| targetAmsId
+| TEXT
+| Target AMS Id
+| 
+
+| targetAmsPort
 | INTEGER
-| Index Group (decimal)
-| Index group in decimal format (excluding 0x prefix). For example F00F.
+| Target AMS port
+| 
 
-| indexOffset
+| refreshInterval
 | INTEGER
-| Index Offset (decimal)
-| Offset in given decimal in hex format (excluding 0x prefix). For example 01.
-
-| type
-| TEXT
-| Value encoding
-| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
-
-|===
-
-[[thing-type:co7io-amsads:datetime-direct-hex-tag]]
-== Config `thing-type:co7io-amsads:datetime-direct-hex-tag`
-[width="100%",caption="thing-type:co7io-amsads:datetime-direct-hex-tag configuration",cols="1,1,1,2"]
-|===
-|Name | Type | Label ^|Description
-
-| indexGroup
-| TEXT
-| Index Group (hex)
-| Index group in hex format (excluding 0x prefix). For example F00F.
-
-| indexOffset
-| INTEGER
-| Index Offset (hex)
-| Offset in given group in hex format (excluding 0x prefix). For example 01.
-
-| type
-| TEXT
-| Value encoding
-| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
-
-|===
-
-[[thing-type:co7io-amsads:number-symbol-tag]]
-== Config `thing-type:co7io-amsads:number-symbol-tag`
-[width="100%",caption="thing-type:co7io-amsads:number-symbol-tag configuration",cols="1,1,1,2"]
-|===
-|Name | Type | Label ^|Description
-
-| symbol
-| TEXT
-| Field symbol
-| Name of field be read from device. For TwinCAT 2 use names such .symbol, for TwinCAT 3 use Task.Name.
-
-| type
-| TEXT
-| Value encoding
-| Encoding of the field. Value in brackets indicate length of type in bytes.
+| Refresh interval
+| Time between next poll cycles.
 
 |===
 
@@ -107,9 +71,37 @@
 
 |===
 
-[[thing-type:co7io-amsads:number-direct-hex-tag]]
-== Config `thing-type:co7io-amsads:number-direct-hex-tag`
-[width="100%",caption="thing-type:co7io-amsads:number-direct-hex-tag configuration",cols="1,1,1,2"]
+[[thing-type:co7io-amsads:ams]]
+== Config `thing-type:co7io-amsads:ams`
+[width="100%",caption="thing-type:co7io-amsads:ams configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| sourceAmsId
+| TEXT
+| Source AMS Network Id
+| Routing information for requests. In order to communicate any PLC a virtual AMS Net Id address must be set.
+
+| sourceAmsPort
+| INTEGER
+| Source AMS port
+| Value for Source AMS port for making requests to other devices (by default 30000).
+
+| ipAddress
+| TEXT
+| Broadcast address
+| Address used to send and receive AMS messages.
+
+| broadcastAddress
+| TEXT
+| Broadcast address
+| Address used to send broadcast messages to discover devices.
+
+|===
+
+[[thing-type:co7io-amsads:datetime-direct-hex-tag]]
+== Config `thing-type:co7io-amsads:datetime-direct-hex-tag`
+[width="100%",caption="thing-type:co7io-amsads:datetime-direct-hex-tag configuration",cols="1,1,1,2"]
 |===
 |Name | Type | Label ^|Description
 
@@ -126,25 +118,30 @@
 | type
 | TEXT
 | Value encoding
-| Encoding of the field. Value in brackets indicate length of type in bytes.
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
 
 |===
 
-[[thing-type:co7io-amsads:contact-symbol-tag]]
-== Config `thing-type:co7io-amsads:contact-symbol-tag`
-[width="100%",caption="thing-type:co7io-amsads:contact-symbol-tag configuration",cols="1,1,1,2"]
+[[thing-type:co7io-amsads:switch-direct-dec-tag]]
+== Config `thing-type:co7io-amsads:switch-direct-dec-tag`
+[width="100%",caption="thing-type:co7io-amsads:switch-direct-dec-tag configuration",cols="1,1,1,2"]
 |===
 |Name | Type | Label ^|Description
 
-| symbol
-| TEXT
-| Field symbol
-| Name of field be read from device. For TwinCAT 2 use names such .symbol, for TwinCAT 3 use Task.Name.
+| indexGroup
+| INTEGER
+| Index Group (decimal)
+| Index group in decimal format (excluding 0x prefix). For example F00F.
+
+| indexOffset
+| INTEGER
+| Index Offset (decimal)
+| Offset in given decimal in hex format (excluding 0x prefix). For example 01.
 
 | type
 | TEXT
 | Value encoding
-| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OFF. Any other value is assumed to represent ON.
 
 | inverse
 | BOOLEAN
@@ -153,9 +150,9 @@
 
 |===
 
-[[thing-type:co7io-amsads:contact-direct-dec-tag]]
-== Config `thing-type:co7io-amsads:contact-direct-dec-tag`
-[width="100%",caption="thing-type:co7io-amsads:contact-direct-dec-tag configuration",cols="1,1,1,2"]
+[[thing-type:co7io-amsads:datetime-direct-dec-tag]]
+== Config `thing-type:co7io-amsads:datetime-direct-dec-tag`
+[width="100%",caption="thing-type:co7io-amsads:datetime-direct-dec-tag configuration",cols="1,1,1,2"]
 |===
 |Name | Type | Label ^|Description
 
@@ -174,10 +171,23 @@
 | Value encoding
 | Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
 
-| inverse
-| BOOLEAN
-| Inverse conversion logic
-| Inverse logical representation of FALSE/TRUE values.
+|===
+
+[[thing-type:co7io-amsads:number-symbol-tag]]
+== Config `thing-type:co7io-amsads:number-symbol-tag`
+[width="100%",caption="thing-type:co7io-amsads:number-symbol-tag configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| symbol
+| TEXT
+| Field symbol
+| Name of field be read from device. For TwinCAT 2 use names such .symbol, for TwinCAT 3 use Task.Name.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes.
 
 |===
 
@@ -232,31 +242,49 @@
 
 |===
 
-[[thing-type:co7io-amsads:switch-direct-dec-tag]]
-== Config `thing-type:co7io-amsads:switch-direct-dec-tag`
-[width="100%",caption="thing-type:co7io-amsads:switch-direct-dec-tag configuration",cols="1,1,1,2"]
+[[thing-type:co7io-amsads:text-direct-hex-tag]]
+== Config `thing-type:co7io-amsads:text-direct-hex-tag`
+[width="100%",caption="thing-type:co7io-amsads:text-direct-hex-tag configuration",cols="1,1,1,2"]
 |===
 |Name | Type | Label ^|Description
 
 | indexGroup
-| INTEGER
-| Index Group (decimal)
-| Index group in decimal format (excluding 0x prefix). For example F00F.
+| TEXT
+| Index Group (hex)
+| Index group in hex format (excluding 0x prefix). For example F00F.
 
 | indexOffset
 | INTEGER
-| Index Offset (decimal)
-| Offset in given decimal in hex format (excluding 0x prefix). For example 01.
+| Index Offset (hex)
+| Offset in given group in hex format (excluding 0x prefix). For example 01.
 
 | type
 | TEXT
 | Value encoding
-| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OFF. Any other value is assumed to represent ON.
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
 
-| inverse
-| BOOLEAN
-| Inverse conversion logic
-| Inverse logical representation of FALSE/TRUE values.
+|===
+
+[[thing-type:co7io-amsads:number-direct-hex-tag]]
+== Config `thing-type:co7io-amsads:number-direct-hex-tag`
+[width="100%",caption="thing-type:co7io-amsads:number-direct-hex-tag configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| indexGroup
+| TEXT
+| Index Group (hex)
+| Index group in hex format (excluding 0x prefix). For example F00F.
+
+| indexOffset
+| INTEGER
+| Index Offset (hex)
+| Offset in given group in hex format (excluding 0x prefix). For example 01.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes.
 
 |===
 
@@ -288,9 +316,37 @@
 
 |===
 
-[[thing-type:co7io-amsads:text-symbol-tag]]
-== Config `thing-type:co7io-amsads:text-symbol-tag`
-[width="100%",caption="thing-type:co7io-amsads:text-symbol-tag configuration",cols="1,1,1,2"]
+[[thing-type:co7io-amsads:contact-direct-dec-tag]]
+== Config `thing-type:co7io-amsads:contact-direct-dec-tag`
+[width="100%",caption="thing-type:co7io-amsads:contact-direct-dec-tag configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| indexGroup
+| INTEGER
+| Index Group (decimal)
+| Index group in decimal format (excluding 0x prefix). For example F00F.
+
+| indexOffset
+| INTEGER
+| Index Offset (decimal)
+| Offset in given decimal in hex format (excluding 0x prefix). For example 01.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+
+| inverse
+| BOOLEAN
+| Inverse conversion logic
+| Inverse logical representation of FALSE/TRUE values.
+
+|===
+
+[[thing-type:co7io-amsads:datetime-symbol-tag]]
+== Config `thing-type:co7io-amsads:datetime-symbol-tag`
+[width="100%",caption="thing-type:co7io-amsads:datetime-symbol-tag configuration",cols="1,1,1,2"]
 |===
 |Name | Type | Label ^|Description
 
@@ -329,26 +385,74 @@
 
 |===
 
-[[thing-type:co7io-amsads:text-direct-hex-tag]]
-== Config `thing-type:co7io-amsads:text-direct-hex-tag`
-[width="100%",caption="thing-type:co7io-amsads:text-direct-hex-tag configuration",cols="1,1,1,2"]
+[[thing-type:co7io-amsads:network]]
+== Config `thing-type:co7io-amsads:network`
+[width="100%",caption="thing-type:co7io-amsads:network configuration",cols="1,1,1,2"]
 |===
 |Name | Type | Label ^|Description
 
-| indexGroup
+| username
 | TEXT
-| Index Group (hex)
-| Index group in hex format (excluding 0x prefix). For example F00F.
+| Username
+| Username used to contact PLC to setup AMS/ADS route.
 
-| indexOffset
+| password
+| TEXT
+| Password
+| Password used to setup AMS/ADS route.
+
+| host
+| TEXT
+| Host name or IP address
+| Address of ADS enabled PLC.
+
+| port
 | INTEGER
-| Index Offset (hex)
-| Offset in given group in hex format (excluding 0x prefix). For example 01.
+| Port number
+| Port number for communication, leave empty for default (48898).
+
+| targetAmsId
+| TEXT
+| Target AMS Network Id
+| Network identifier of destination device.
+
+| targetAmsPort
+| INTEGER
+| Target AMS Network port
+| This is virtual port which is internally dispatched by PLC controller to running tasks or system services.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles.
+
+| discoverChannels
+| BOOLEAN
+| Discover channels
+| Because AMS/ADS enabled PLCs might retain symbol table which can be scanned. This option enabled automatic discovery of channels after connection is established.
+
+|===
+
+[[thing-type:co7io-amsads:contact-symbol-tag]]
+== Config `thing-type:co7io-amsads:contact-symbol-tag`
+[width="100%",caption="thing-type:co7io-amsads:contact-symbol-tag configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| symbol
+| TEXT
+| Field symbol
+| Name of field be read from device. For TwinCAT 2 use names such .symbol, for TwinCAT 3 use Task.Name.
 
 | type
 | TEXT
 | Value encoding
 | Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+
+| inverse
+| BOOLEAN
+| Inverse conversion logic
+| Inverse logical representation of FALSE/TRUE values.
 
 |===
 

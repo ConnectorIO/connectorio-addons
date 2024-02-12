@@ -2,6 +2,90 @@
 = Config descriptions
 
 
+[[thing-type:co7io-fatek:tcp]]
+== Config `thing-type:co7io-fatek:tcp`
+[width="100%",caption="thing-type:co7io-fatek:tcp configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| host
+| TEXT
+| Host address
+| Server address to which binding should connect to receive data, IP or hostname.
+
+| port
+| INTEGER
+| Port
+| Port number
+
+| connectionTimeout
+| INTEGER
+| Connection timeout
+| Maximum time permitted to establish connection with PLC or communication module.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles.
+
+|===
+
+[[thing-type:co7io-fatek:serial]]
+== Config `thing-type:co7io-fatek:serial`
+[width="100%",caption="thing-type:co7io-fatek:serial configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| serialPort
+| TEXT
+| Serial port
+| Serial interface port.
+
+| baudRate
+| INTEGER
+| Baud rate
+| Baud rate for serial connection.
+
+| dataBits
+| TEXT
+| Baud rate
+| Data bits in each serial transmission.
+
+| stopBits
+| TEXT
+| Baud rate
+| Stop bits after transmission.
+
+| parity
+| TEXT
+| Parity
+| Parity of serial transmission.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles.
+
+|===
+
+[[thing-type:co7io-fatek:plc]]
+== Config `thing-type:co7io-fatek:plc`
+[width="100%",caption="thing-type:co7io-fatek:plc configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| stationNumber
+| INTEGER
+| Station number
+| 
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles.
+
+|===
+
 [[channel-type:co7io-fatek:binary]]
 == Config `channel-type:co7io-fatek:binary`
 [width="100%",caption="channel-type:co7io-fatek:binary configuration",cols="1,1,1,2"]

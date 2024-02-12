@@ -26,5 +26,16 @@ Supported bridges:
 
 
 
+[width="100%",caption="Thing S7 device configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given value defined for bridge is used (1000 ms by default).
+
+|===
+
 
 

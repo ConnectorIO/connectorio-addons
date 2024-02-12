@@ -21,11 +21,6 @@
   xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-  <thing-type id="server">
-    <label>OPC UA Server</label>
-    <description>Launches a OPC UA server based on information collected by this system instance (experimental).</description>
-  </thing-type>
-
   <bridge-type id="client">
     <label>OPC UA Client Connection</label>
     <description>

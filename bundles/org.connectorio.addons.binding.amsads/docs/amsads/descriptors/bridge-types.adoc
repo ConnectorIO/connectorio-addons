@@ -21,6 +21,32 @@ Below table contains complete configuration of `co7io-amsads:ams`.
 
 
 
+[width="100%",caption="Bridge AMS/ADS Network configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| sourceAmsId
+| TEXT
+| Source AMS Network Id
+| Routing information for requests. In order to communicate any PLC a virtual AMS Net Id address must be set.
+
+| sourceAmsPort
+| INTEGER
+| Source AMS port
+| Value for Source AMS port for making requests to other devices (by default 30000).
+
+| ipAddress
+| TEXT
+| Broadcast address
+| Address used to send and receive AMS messages.
+
+| broadcastAddress
+| TEXT
+| Broadcast address
+| Address used to send broadcast messages to discover devices.
+
+|===
+
 
 
 

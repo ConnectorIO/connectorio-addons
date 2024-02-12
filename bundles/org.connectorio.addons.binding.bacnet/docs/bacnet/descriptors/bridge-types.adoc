@@ -44,6 +44,47 @@ Supported bridges:
 
 
 
+[width="100%",caption="Bridge BACnet/IP device configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| address
+| TEXT
+| Device IP Address
+| Address of device.
+
+| port
+| INTEGER
+| Port
+| Device port.
+
+| instance
+| INTEGER
+| Device identifier
+| Identifier of device.
+
+| network
+| INTEGER
+| Network number
+| BACnet network number/identifier.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on network.
+
+| discoverChannels
+| BOOLEAN
+| Discover channels
+| Because each BACnet object is linked to a BACnet device, device will know associated objects. Thanks to this setting it is possible to aggregate all objects states (present values) in one place. Please note this is experimental feature and works only if device channel list is empty.
+
+| discoverObjects
+| BOOLEAN
+| Discover objects
+| Enabling this feature will look for BACnet objects which can be mapped to Thing instances. For each supported BACnet object there will be one Thing instance. Please be aware that it most of the situations it will lead to multiplication of things.
+
+|===
+
 
 
 [[co7io-bacnet:mstp-device]]
@@ -60,6 +101,42 @@ Supported bridges:
 
 
 
+[width="100%",caption="Bridge BACnet/MSTP device configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| address
+| INTEGER
+| Device address (node id)
+| Address of device.
+
+| instance
+| INTEGER
+| Device identifier
+| Identifier of device.
+
+| network
+| INTEGER
+| Network number
+| BACnet network number/identifier.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on network.
+
+| discoverChannels
+| BOOLEAN
+| Discover channels
+| Because each BACnet object is linked to a BACnet device, device will know associated objects. Thanks to this setting it is possible to aggregate all objects states (present values) in one place. Please note this is experimental feature and works only if device channel list is empty.
+
+| discoverObjects
+| BOOLEAN
+| Discover objects
+| Enabling this feature will look for BACnet objects which can be mapped to Thing instances. For each supported BACnet object there will be one Thing instance. Please be aware that it most of the situations it will lead to multiplication of things.
+
+|===
+
 
 
 [[co7io-bacnet:ipv4]]
@@ -69,6 +146,47 @@ Below table contains complete configuration of `co7io-bacnet:ipv4`.
 
 
 
+[width="100%",caption="Bridge BACnet/IP bridge configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| localNetworkNumber
+| INTEGER
+| Local network number
+| Identifier of network to which by default this bridge is bound.
+
+| localDeviceId
+| INTEGER
+| Device identifier
+| Identifier of local device which is visible in BACnet network.
+
+| localBindAddress
+| TEXT
+| Local address
+| IP address on which communications to system are expected to take place.
+
+| port
+| INTEGER
+| Port number
+| Port number on which to expect communication. By default 47808 (hex 0xBAC0).
+
+| broadcastAddress
+| TEXT
+| Broadcast address
+| Address used for sending BACnet broadcast messages.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is done 1000 ms (every second).
+
+| networkRouter
+| TEXT
+| Network router
+| This parameter allows to pre-register a network router to BACnet client. Please note that configuration must be entered in specific format: network=ipaddress:port. Binding will work only with IP addresses and will not attempt to resolve hosts.
+
+|===
+
 
 
 [[co7io-bacnet:mstp]]
@@ -77,6 +195,47 @@ Below table contains complete configuration of `co7io-bacnet:ipv4`.
 Below table contains complete configuration of `co7io-bacnet:mstp`.
 
 
+
+[width="100%",caption="Bridge BACnet/MSTP Bridge configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| localNetworkNumber
+| INTEGER
+| Local network number
+| Identifier of network to which by default this bridge is bound.
+
+| serialPort
+| TEXT
+| Serial port
+| Serial interface port.
+
+| baudRate
+| INTEGER
+| Baud rate
+| Baud rate for serial connection.
+
+| parity
+| TEXT
+| Parity setting
+| Parity settings determine detection of frames and communication over serial port.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is done 1000 ms (every second).
+
+| timeout
+| INTEGER
+| Timeout
+| Communication timeout in milliseconds under which devices should answer.
+
+| segTimeout
+| INTEGER
+| Segmentation timeout
+| Maximum time between next segments of segmented communication frame.
+
+|===
 
 
 

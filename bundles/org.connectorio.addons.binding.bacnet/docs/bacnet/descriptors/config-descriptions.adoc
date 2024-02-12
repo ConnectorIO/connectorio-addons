@@ -2,6 +2,19 @@
 = Config descriptions
 
 
+[[profile:co7io-bacnet:reset]]
+== Config `profile:co7io-bacnet:reset`
+[width="100%",caption="profile:co7io-bacnet:reset configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| priority
+| INTEGER
+| Priority
+| Priority of reset command (null value sent to device). When no value is specified default channel priority is used. If no priority is set on channel then device will receive just a null.
+
+|===
+
 [[thing-type:co7io-bacnet:object]]
 == Config `thing-type:co7io-bacnet:object`
 [width="100%",caption="thing-type:co7io-bacnet:object configuration",cols="1,1,1,2"]
@@ -25,6 +38,44 @@
 
 |===
 
+[[thing-type:co7io-bacnet:mstp-device]]
+== Config `thing-type:co7io-bacnet:mstp-device`
+[width="100%",caption="thing-type:co7io-bacnet:mstp-device configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| address
+| INTEGER
+| Device address (node id)
+| Address of device.
+
+| instance
+| INTEGER
+| Device identifier
+| Identifier of device.
+
+| network
+| INTEGER
+| Network number
+| BACnet network number/identifier.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on network.
+
+| discoverChannels
+| BOOLEAN
+| Discover channels
+| Because each BACnet object is linked to a BACnet device, device will know associated objects. Thanks to this setting it is possible to aggregate all objects states (present values) in one place. Please note this is experimental feature and works only if device channel list is empty.
+
+| discoverObjects
+| BOOLEAN
+| Discover objects
+| Enabling this feature will look for BACnet objects which can be mapped to Thing instances. For each supported BACnet object there will be one Thing instance. Please be aware that it most of the situations it will lead to multiplication of things.
+
+|===
+
 [[profile:co7io-bacnet:priority]]
 == Config `profile:co7io-bacnet:priority`
 [width="100%",caption="profile:co7io-bacnet:priority configuration",cols="1,1,1,2"]
@@ -38,9 +89,85 @@
 
 |===
 
-[[thing-type:co7io-bacnet:read-only]]
-== Config `thing-type:co7io-bacnet:read-only`
-[width="100%",caption="thing-type:co7io-bacnet:read-only configuration",cols="1,1,1,2"]
+[[thing-type:co7io-bacnet:device-read-write]]
+== Config `thing-type:co7io-bacnet:device-read-write`
+[width="100%",caption="thing-type:co7io-bacnet:device-read-write configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| instance
+| INTEGER
+| Instance number
+| Object instance
+
+| type
+| TEXT
+| Object type
+| Object kind
+
+| propertyIdentifier
+| TEXT
+| Property identifier
+| Object property identifier to be retrieved.
+
+| readOnly
+| BOOLEAN
+| Read only
+| Determine if channel is commendable or just read only.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+
+|===
+
+[[thing-type:co7io-bacnet:ip-device]]
+== Config `thing-type:co7io-bacnet:ip-device`
+[width="100%",caption="thing-type:co7io-bacnet:ip-device configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| address
+| TEXT
+| Device IP Address
+| Address of device.
+
+| port
+| INTEGER
+| Port
+| Device port.
+
+| instance
+| INTEGER
+| Device identifier
+| Identifier of device.
+
+| network
+| INTEGER
+| Network number
+| BACnet network number/identifier.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is based on value set on network.
+
+| discoverChannels
+| BOOLEAN
+| Discover channels
+| Because each BACnet object is linked to a BACnet device, device will know associated objects. Thanks to this setting it is possible to aggregate all objects states (present values) in one place. Please note this is experimental feature and works only if device channel list is empty.
+
+| discoverObjects
+| BOOLEAN
+| Discover objects
+| Enabling this feature will look for BACnet objects which can be mapped to Thing instances. For each supported BACnet object there will be one Thing instance. Please be aware that it most of the situations it will lead to multiplication of things.
+
+|===
+
+[[thing-type:co7io-bacnet:read-write]]
+== Config `thing-type:co7io-bacnet:read-write`
+[width="100%",caption="thing-type:co7io-bacnet:read-write configuration",cols="1,1,1,2"]
 |===
 |Name | Type | Label ^|Description
 
@@ -56,9 +183,9 @@
 
 |===
 
-[[thing-type:co7io-bacnet:read-write]]
-== Config `thing-type:co7io-bacnet:read-write`
-[width="100%",caption="thing-type:co7io-bacnet:read-write configuration",cols="1,1,1,2"]
+[[thing-type:co7io-bacnet:read-only]]
+== Config `thing-type:co7io-bacnet:read-only`
+[width="100%",caption="thing-type:co7io-bacnet:read-only configuration",cols="1,1,1,2"]
 |===
 |Name | Type | Label ^|Description
 
@@ -107,49 +234,89 @@
 
 |===
 
-[[thing-type:co7io-bacnet:device-read-write]]
-== Config `thing-type:co7io-bacnet:device-read-write`
-[width="100%",caption="thing-type:co7io-bacnet:device-read-write configuration",cols="1,1,1,2"]
+[[thing-type:co7io-bacnet:ipv4]]
+== Config `thing-type:co7io-bacnet:ipv4`
+[width="100%",caption="thing-type:co7io-bacnet:ipv4 configuration",cols="1,1,1,2"]
 |===
 |Name | Type | Label ^|Description
 
-| instance
+| localNetworkNumber
 | INTEGER
-| Instance number
-| Object instance
+| Local network number
+| Identifier of network to which by default this bridge is bound.
 
-| type
+| localDeviceId
+| INTEGER
+| Device identifier
+| Identifier of local device which is visible in BACnet network.
+
+| localBindAddress
 | TEXT
-| Object type
-| Object kind
+| Local address
+| IP address on which communications to system are expected to take place.
 
-| propertyIdentifier
+| port
+| INTEGER
+| Port number
+| Port number on which to expect communication. By default 47808 (hex 0xBAC0).
+
+| broadcastAddress
 | TEXT
-| Property identifier
-| Object property identifier to be retrieved.
-
-| readOnly
-| BOOLEAN
-| Read only
-| Determine if channel is commendable or just read only.
+| Broadcast address
+| Address used for sending BACnet broadcast messages.
 
 | refreshInterval
 | INTEGER
 | Refresh interval
-| Time between next poll cycles. If no value is given polling is based on value set on thing or bridge value.
+| Time between next poll cycles. If no value is given polling is done 1000 ms (every second).
+
+| networkRouter
+| TEXT
+| Network router
+| This parameter allows to pre-register a network router to BACnet client. Please note that configuration must be entered in specific format: network=ipaddress:port. Binding will work only with IP addresses and will not attempt to resolve hosts.
 
 |===
 
-[[profile:co7io-bacnet:reset]]
-== Config `profile:co7io-bacnet:reset`
-[width="100%",caption="profile:co7io-bacnet:reset configuration",cols="1,1,1,2"]
+[[thing-type:co7io-bacnet:mstp]]
+== Config `thing-type:co7io-bacnet:mstp`
+[width="100%",caption="thing-type:co7io-bacnet:mstp configuration",cols="1,1,1,2"]
 |===
 |Name | Type | Label ^|Description
 
-| priority
+| localNetworkNumber
 | INTEGER
-| Priority
-| Priority of reset command (null value sent to device). When no value is specified default channel priority is used. If no priority is set on channel then device will receive just a null.
+| Local network number
+| Identifier of network to which by default this bridge is bound.
+
+| serialPort
+| TEXT
+| Serial port
+| Serial interface port.
+
+| baudRate
+| INTEGER
+| Baud rate
+| Baud rate for serial connection.
+
+| parity
+| TEXT
+| Parity setting
+| Parity settings determine detection of frames and communication over serial port.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles. If no value is given polling is done 1000 ms (every second).
+
+| timeout
+| INTEGER
+| Timeout
+| Communication timeout in milliseconds under which devices should answer.
+
+| segTimeout
+| INTEGER
+| Segmentation timeout
+| Maximum time between next segments of segmented communication frame.
 
 |===
 

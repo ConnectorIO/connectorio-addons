@@ -28,5 +28,41 @@ Supported bridges:
 
 
 
+[width="100%",caption="Thing WM-Bus Device configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| discoverChannels
+| BOOLEAN
+| Discover channels
+| Enable automatic creation of channels based on received WM-Bus messages. Some device may use various messages (telegrams) to reports their reading, hence it is advised to keep this option enabled for at least a day.
+
+| serialNumber
+| INTEGER
+| Serial number
+| 
+
+| manufacturerId
+| TEXT
+| Manufacturer identifier
+| Three character identifier of manufacturer, for example 'KAM' for Kamstrup.
+
+| version
+| INTEGER
+| Version
+| 
+
+| deviceType
+| TEXT
+| Device type
+| Type of device according to standard.
+
+| encryptionKey
+| TEXT
+| Encryption key
+| Secret key used to decrypt device payloads. In hex form.
+
+|===
+
 
 

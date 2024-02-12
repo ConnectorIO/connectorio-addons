@@ -27,6 +27,32 @@ Below table contains complete configuration of `co7io-fatek:tcp`.
 
 
 
+[width="100%",caption="Bridge TCP Bridge configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| host
+| TEXT
+| Host address
+| Server address to which binding should connect to receive data, IP or hostname.
+
+| port
+| INTEGER
+| Port
+| Port number
+
+| connectionTimeout
+| INTEGER
+| Connection timeout
+| Maximum time permitted to establish connection with PLC or communication module.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles.
+
+|===
+
 
 
 [[co7io-fatek:serial]]
@@ -35,6 +61,42 @@ Below table contains complete configuration of `co7io-fatek:tcp`.
 Below table contains complete configuration of `co7io-fatek:serial`.
 
 
+
+[width="100%",caption="Bridge Serial Bridge configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| serialPort
+| TEXT
+| Serial port
+| Serial interface port.
+
+| baudRate
+| INTEGER
+| Baud rate
+| Baud rate for serial connection.
+
+| dataBits
+| TEXT
+| Baud rate
+| Data bits in each serial transmission.
+
+| stopBits
+| TEXT
+| Baud rate
+| Stop bits after transmission.
+
+| parity
+| TEXT
+| Parity
+| Parity of serial transmission.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles.
+
+|===
 
 
 

@@ -32,6 +32,52 @@ Supported bridges:
 
 
 
+[width="100%",caption="Thing AMS/ADS Device (TCP) configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| username
+| TEXT
+| Username
+| Username used to contact PLC to setup AMS/ADS route.
+
+| password
+| TEXT
+| Password
+| Password used to setup AMS/ADS route.
+
+| host
+| TEXT
+| Host name or IP address
+| Address of ADS enabled PLC.
+
+| port
+| INTEGER
+| Port number
+| Port number for communication, leave empty for default (48898).
+
+| targetAmsId
+| TEXT
+| Target AMS Network Id
+| Network identifier of destination device.
+
+| targetAmsPort
+| INTEGER
+| Target AMS Network port
+| This is virtual port which is internally dispatched by PLC controller to running tasks or system services.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles.
+
+| discoverChannels
+| BOOLEAN
+| Discover channels
+| Because AMS/ADS enabled PLCs might retain symbol table which can be scanned. This option enabled automatic discovery of channels after connection is established.
+
+|===
+
 
 [[co7io-amsads:serial]]
 == Thing `co7io-amsads:serial`
@@ -44,6 +90,32 @@ Supported bridges:
 
 
 
+
+[width="100%",caption="Thing AMS/ADS Device (serial) configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| port
+| TEXT
+| Serial port
+| Serial port over which connection is made - ie. /dev/ttyUSB0, /dev/ttyS1 for linux or COM0, COM1 for windows.
+
+| targetAmsId
+| TEXT
+| Target AMS Id
+| 
+
+| targetAmsPort
+| INTEGER
+| Target AMS port
+| 
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles.
+
+|===
 
 
 

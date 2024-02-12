@@ -21,6 +21,62 @@ Below table contains complete configuration of `co7io-mbus:openhab-serial`.
 
 
 
+[width="100%",caption="Bridge Serial Bridge configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| serialPort
+| TEXT
+| Serial port
+| Serial interface port.
+
+| baudRate
+| INTEGER
+| Baud rate
+| Baud rate for serial connection.
+
+| dataBits
+| TEXT
+| Baud rate
+| Data bits in each serial transmission.
+
+| stopBits
+| TEXT
+| Baud rate
+| Stop bits after transmission.
+
+| parity
+| TEXT
+| Parity
+| Parity of serial transmission.
+
+| discoverDevices
+| BOOLEAN
+| Discover devices
+| Turn on or off discovery of new devices for this interface.
+
+| discoveryTimeToLive
+| INTEGER
+| Time to live
+| Time to live (TTL) in minutes for discovered elements. After passing of TTL element will be removed, possibly re-discovered when appears again. This setting can be used to discard invalid records produced by unstable radio interface. Please note that some devices may have irregular communication schedule. Value of -1 disables time to live. Common values are 60 (one hour) and 1440 (one day).
+
+| discoveryMethod
+| TEXT
+| Discovery method
+| Scan method used for discovery of devices connected to this M-Bus bridge.
+
+| wildcardMask
+| TEXT
+| Wildcard mask
+| Address mask (in hex format) used to scan secondary addresses on the bus. Used only if 'Secondary address' scan is enabled.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between poll cycles.
+
+|===
+
 
 
 

@@ -30,4 +30,47 @@
 
 |===
 
+[[thing-type:co7io-opcua:client]]
+== Config `thing-type:co7io-opcua:client`
+[width="100%",caption="thing-type:co7io-opcua:client configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| host
+| TEXT
+| Bind address
+| IP or hostname used to launch server, if none given a primary network interface is being used.
+
+| port
+| INTEGER
+| Server port
+| Port number used to communicate with server.
+
+| username
+| TEXT
+| Username
+| Username used to identify client session.
+
+| password
+| TEXT
+| Password
+| Password used to authenticate client session.
+
+| connectTimeout
+| INTEGER
+| Connection timeout
+| 
+
+| requestTimeout
+| INTEGER
+| Request timeout
+| 
+
+| publishInterval
+| INTEGER
+| Publish interval
+| Default publish interval for all subscriptions made through this connection.
+
+|===
+
 
