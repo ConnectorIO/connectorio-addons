@@ -88,6 +88,7 @@
     <module>org.connectorio.addons.profile.quantity</module>
     <module>org.connectorio.addons.profile.sma</module>
     <module>org.connectorio.addons.profile.timer</module>
+    <module>org.connectorio.addons.startlevel.osgi</module>
     <module>org.connectorio.addons.startlevel.shell</module>
     <module>org.connectorio.addons.temporal</module>
     <module>org.connectorio.addons.temporal.item</module>
