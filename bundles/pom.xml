@@ -74,6 +74,7 @@
     <module>org.connectorio.addons.network.transmitter.ip</module>
     <module>org.connectorio.addons.norule</module>
     <module>org.connectorio.addons.norule.shell</module>
+    <module>org.connectorio.addons.persistence.memory</module>
     <module>org.connectorio.addons.persistence.manager</module>
     <module>org.connectorio.addons.persistence.migrator</module>
     <module>org.connectorio.addons.persistence.migrator.shell</module>

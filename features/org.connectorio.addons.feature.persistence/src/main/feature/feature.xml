@@ -50,4 +50,9 @@
     <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.persistence.shell/${project.version}</bundle>
   </feature>
 
+  <feature name="co7io-persistence-memory" description="Memory Persistence Service" version="${project.version}">
+    <feature>openhab-runtime-base</feature>
+    <bundle start-level="80">mvn:org.connectorio.addons/org.connectorio.addons.persistence.memory/${project.version}</bundle>
+  </feature>
+
 </features>
