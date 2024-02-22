@@ -66,7 +66,7 @@ public class CoThingHandlerFactory extends BaseThingHandlerFactory implements Th
     return null;
   }
 
-  @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
+  @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
   public void addDiscoveryParticipant(CoDiscoveryParticipant participant) {
     participants.add(participant);
   }

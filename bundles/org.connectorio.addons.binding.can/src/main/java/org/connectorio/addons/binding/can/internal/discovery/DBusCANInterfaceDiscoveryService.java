@@ -114,7 +114,7 @@ public class DBusCANInterfaceDiscoveryService extends AbstractDiscoveryService i
     }
   }
 
-  @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
+  @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
   public void addDiscoveryDelegate(CANInterfaceDiscoveryDelegate participant) {
     participants.add(participant);
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2019-2024 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.connectorio.addons.persistence.manager.PersistenceMarker;
 import org.connectorio.addons.persistence.manager.internal.xml.PersistenceXmlReader;
 import org.openhab.core.OpenHAB;
 import org.openhab.core.common.NamedThreadFactory;
@@ -44,7 +45,6 @@ import org.slf4j.LoggerFactory;
 public class PersistenceManagerExtension implements ReadyTracker {
 
   private final Logger logger = LoggerFactory.getLogger(PersistenceManagerExtension.class);
-  private final ReadyMarker marker = new ReadyMarker("co7io-persistence", "configure");
   private final List<PersistenceService> services = new CopyOnWriteArrayList<>();
 
   private final ReadyService readyService;
@@ -55,7 +55,10 @@ public class PersistenceManagerExtension implements ReadyTracker {
     this.readyService = readyService;
     this.manager = manager;
     // wait for retrieval of items which should be set at the same start level of 20.
-    readyService.registerTracker(this, new ReadyMarkerFilter().withType("managed").withIdentifier("item"));
+    readyService.registerTracker(this, new ReadyMarkerFilter()
+      .withType(PersistenceMarker.PERSISTENCE_SERVICES.getType())
+      .withIdentifier(PersistenceMarker.PERSISTENCE_SERVICES.getIdentifier())
+    );
   }
 
   @Override
@@ -70,17 +73,17 @@ public class PersistenceManagerExtension implements ReadyTracker {
           logger.info("No dedicated persistence configuration for service {}. It will rely on own defaults", service.getId());
         }
       }
-      readyService.markReady(marker);
+      readyService.markReady(PersistenceMarker.PERSISTENCE_CONFIGURE);
     });
     scheduler.shutdown();
   }
 
   @Override
   public void onReadyMarkerRemoved(ReadyMarker readyMarker) {
-    readyService.unmarkReady(marker);
+    readyService.unmarkReady(PersistenceMarker.PERSISTENCE_CONFIGURE);
   }
 
-  @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
+  @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
   public void addPersistenceService(PersistenceService service) {
     services.add(service);
   }
