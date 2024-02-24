@@ -17,16 +17,18 @@
  */
 package org.connectorio.addons.persistence.memory.internal;
 
-import java.util.Comparator;
+import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.NavigableSet;
+import java.util.Map.Entry;
+import java.util.NavigableMap;
 import java.util.Objects;
-import java.util.TreeSet;
+import java.util.TreeMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
+import org.openhab.core.types.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +36,7 @@ public class MemoryBucket {
 
   private final Logger logger = LoggerFactory.getLogger(MemoryBucket.class);
 
-  private final NavigableSet<MemoryEntry> entries = new TreeSet<>(
-    Comparator.comparing(MemoryEntry::getTimestamp)
-  );
+  private final NavigableMap<ZonedDateTime, State> entries = new TreeMap<>();
 
   private final Lock lock = new ReentrantLock();
   private int limit;
@@ -45,10 +45,13 @@ public class MemoryBucket {
     this.limit = limit;
   }
 
-  public void append(MemoryEntry entry) {
+  public void append(ZonedDateTime dateTime, State state) {
     apply(myself -> {
-      logger.trace("Inserted entry {}. Stored entries {}, limit {}", entry, entries.size(), limit);
-      myself.entries.add(entry);
+      logger.trace("Inserted entry {}={}. Stored entries {}, limit {}", dateTime, state, entries.size(), limit);
+      entries.put(dateTime, state);
+      if (entries.size() > limit) {
+        entries.pollFirstEntry();
+      }
     });
   }
 
@@ -56,19 +59,19 @@ public class MemoryBucket {
     this.limit = limit;
 
     apply(myself -> {
-      while (myself.entries.size() > limit) {
-        MemoryEntry entry = myself.entries.pollFirst();
+      while (entries.size() > limit) {
+        Entry<ZonedDateTime, State> entry = entries.pollFirstEntry();
         logger.trace("Removed bucket entry {} as it exceeds limit {}", entry, limit);
       }
     });
   }
 
-  public Stream<MemoryEntry> entries() {
-    return entries.stream();
+  public Stream<Entry<ZonedDateTime, State>> entries() {
+    return entries.entrySet().stream();
   }
 
-  public void remove(MemoryEntry entry) {
-    apply(myself -> myself.entries.remove(entry));
+  public void remove(Entry<ZonedDateTime, State> entry) {
+    apply(myself -> myself.entries.remove(entry.getKey()));
   }
 
   public Integer getSize() {
@@ -76,11 +79,11 @@ public class MemoryBucket {
   }
 
   public Date getEarliest() {
-    return entries.isEmpty() ? null : Date.from(entries.first().getTimestamp().toInstant());
+    return entries.isEmpty() ? null : Date.from(entries.firstKey().toInstant());
   }
 
   public Date getOldest() {
-    return entries.isEmpty() ? null : Date.from(entries.last().getTimestamp().toInstant());
+    return entries.isEmpty() ? null : Date.from(entries.lastKey().toInstant());
   }
 
   public <X> X process(Function<MemoryBucket, X> function) {

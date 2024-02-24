@@ -20,7 +20,12 @@ package org.connectorio.addons.persistence.memory.internal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import org.assertj.core.api.IterableAssert;
 import org.connectorio.addons.test.ItemMutation;
 import org.connectorio.addons.test.StubItemBuilder;
@@ -41,16 +46,11 @@ class MemoryPersistenceServiceTest {
 
   public static final String TEST_1 = "test1";
   public static final String TEST_2 = "test2";
-  @Mock
-  TimeZoneProvider tz;
+
+  TimeZoneProvider tz = () -> ZoneOffset.UTC;
 
   Item item1 = StubItemBuilder.createNumber(TEST_1).build();
   Item item2 = StubItemBuilder.createNumber(TEST_2).build();
-
-  @BeforeEach
-  void setup() {
-    when(tz.getTimeZone()).thenReturn(ZoneId.of("GMT"));
-  }
 
   @Test
   void testWriteAndQuery() {
@@ -132,6 +132,33 @@ class MemoryPersistenceServiceTest {
       .hasSize(2)
       .extracting(HistoricItem::getState)
       .containsExactly(new DecimalType(20), new DecimalType(10));
+  }
+
+  @Test
+  void testWriteSameDate() {
+    ZonedDateTime dateTime = createInstant(2024, 2, 22, 19, 7, 30);
+    MemoryPersistenceService service = new MemoryPersistenceService(tz);
+    service.store(item2, Date.from(dateTime.toInstant()), new DecimalType(10));
+    service.store(item2, Date.from(dateTime.toInstant()), new DecimalType(20));
+
+    assertThat(service.getItemInfo())
+      .hasSize(1)
+      .element(0).matches(info -> info.getCount() == 1);
+
+    IterableAssert<HistoricItem> itemAssert = assertThat(service.query(new FilterCriteria().setItemName(TEST_2).setOrdering(Ordering.DESCENDING)))
+      .hasSize(1);
+    itemAssert.element(0).matches(state -> state.getState().equals(new DecimalType(20)));
+
+    assertThat(service.query(new FilterCriteria().setItemName(TEST_1)))
+      .isEmpty();
+  }
+
+  public static ZonedDateTime createInstant(int year, int month, int day, int hour, int minute, int second) {
+    return createInstant(year, month, day, hour, minute, second, 0);
+  }
+
+  public static ZonedDateTime createInstant(int year, int month, int day, int hour, int minute, int second, int nanos) {
+    return ZonedDateTime.of(LocalDate.of(year, month, day), LocalTime.of(hour, minute, second, nanos), ZoneOffset.UTC);
   }
 
 }

@@ -100,7 +100,7 @@ public class MemoryPersistenceService implements ModifiablePersistenceService {
 
     logger.debug("Querying item {} with date range {}-{}", criteria.getItemName(), criteria.getBeginDate(), criteria.getEndDate());
     return buckets.get(criteria.getItemName()).process(bucket -> {
-      Stream<MemoryEntry> entries = filtering(bucket.entries(), criteria);
+      Stream<Entry<ZonedDateTime, State>> entries = filtering(bucket.entries(), criteria);
       entries = sorting(entries, criteria);
       entries = paging(entries, criteria);
 
@@ -158,7 +158,7 @@ public class MemoryPersistenceService implements ModifiablePersistenceService {
 
     logger.trace("Removing entries from bucket {}", criteria.getItemName());
     return buckets.get(criteria.getItemName()).process(bucket -> {
-      Stream<MemoryEntry> entries = filtering(bucket.entries(), criteria);
+      Stream<Entry<ZonedDateTime, State>> entries = filtering(bucket.entries(), criteria);
 
       entries = sorting(entries, criteria);
       entries = paging(entries, criteria);
@@ -178,39 +178,39 @@ public class MemoryPersistenceService implements ModifiablePersistenceService {
     }
 
     MemoryBucket bucket = buckets.computeIfAbsent(name, key -> new MemoryBucket(limit));
-    MemoryEntry entry = new MemoryEntry(time, state);
-    logger.trace("Storing entry {} in bucket {} for item {}", entry, bucket, name);
-    bucket.append(entry);
+    logger.trace("Storing entry {}={} in bucket {} for item {}", time, state, bucket, name);
+    bucket.append(time, state);
   }
-  private HistoricItem toHistoricItem(String name, MemoryEntry entry) {
-    return new MemoryHistoricItem(name, entry.getTimestamp(), entry.getState());
+  private HistoricItem toHistoricItem(String name, Entry<ZonedDateTime, State> entry) {
+    return new MemoryHistoricItem(name, entry.getKey(), entry.getValue());
   }
 
-  private static Stream<MemoryEntry> filtering(Stream<MemoryEntry> entries, FilterCriteria criteria) {
+  private static Stream<Entry<ZonedDateTime, State>> filtering(Stream<Entry<ZonedDateTime, State>> entries, FilterCriteria criteria) {
     return entries.filter(entry -> evaluate(entry, criteria));
   }
 
-  private static Stream<MemoryEntry> sorting(Stream<MemoryEntry> entries, FilterCriteria criteria) {
+  private static Stream<Entry<ZonedDateTime, State>> sorting(Stream<Entry<ZonedDateTime, State>> entries, FilterCriteria criteria) {
     if (criteria.getOrdering() == Ordering.DESCENDING) {
-      entries = entries.sorted(Comparator.comparing(MemoryEntry::getTimestamp).reversed());
+      Comparator<Entry<ZonedDateTime, State>> comparator = Entry.comparingByKey();
+      entries = entries.sorted(comparator.reversed());
     }
     return entries;
   }
 
-  private static Stream<MemoryEntry> paging(Stream<MemoryEntry> stream, FilterCriteria criteria) {
+  private static Stream<Entry<ZonedDateTime, State>> paging(Stream<Entry<ZonedDateTime, State>> stream, FilterCriteria criteria) {
     int offset = criteria.getPageNumber() * criteria.getPageSize();
     return stream.skip(offset)
       .limit(criteria.getPageSize());
   }
 
-  private static boolean evaluate(MemoryEntry entry, FilterCriteria criteria) {
+  private static boolean evaluate(Entry<ZonedDateTime, State> entry, FilterCriteria criteria) {
     ZonedDateTime beginDate = criteria.getBeginDate();
-    if (beginDate != null && entry.getTimestamp().isBefore(beginDate)) {
+    if (beginDate != null && entry.getKey().isBefore(beginDate)) {
       return false;
     }
 
     ZonedDateTime endDate = criteria.getEndDate();
-    if (endDate != null && entry.getTimestamp().isAfter(endDate)) {
+    if (endDate != null && entry.getKey().isAfter(endDate)) {
       return false;
     }
 

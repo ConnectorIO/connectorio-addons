@@ -47,4 +47,8 @@ public class MemoryHistoricItem implements HistoricItem {
     return state;
   }
 
+  public String toString() {
+    return "MemoryHistoricItem [" + name + " " + timestamp + ", " + state + "]";
+  }
+
 }
