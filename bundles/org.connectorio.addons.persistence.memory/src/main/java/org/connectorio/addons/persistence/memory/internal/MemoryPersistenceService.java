@@ -37,29 +37,16 @@ import org.openhab.core.persistence.FilterCriteria.Ordering;
 import org.openhab.core.persistence.HistoricItem;
 import org.openhab.core.persistence.ModifiablePersistenceService;
 import org.openhab.core.persistence.PersistenceItemInfo;
-import org.openhab.core.persistence.PersistenceService;
-import org.openhab.core.persistence.QueryablePersistenceService;
 import org.openhab.core.persistence.strategy.PersistenceStrategy;
 import org.openhab.core.types.State;
 import org.openhab.core.types.UnDefType;
-import org.osgi.framework.Constants;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component(property = {"id=memory",
-  "service.config.label=Memory Persistence Configuration",
-  "service.config.category=ConnectorIO Gateway",
-  "service.config.description.uri=connectorio:memory-persistence-service",
-  Constants.SERVICE_PID + "=" + MemoryPersistenceService.SERVICE_ID
-}, service = {PersistenceService.class, QueryablePersistenceService.class, ModifiablePersistenceService.class})
 public class MemoryPersistenceService implements ModifiablePersistenceService {
 
-  public final static String SERVICE_ID = "org.connectorio.addons.persistence.memory";
-  private static final String ID = "memory";
+  public final static String ID = "memory";
 
   private final Logger logger = LoggerFactory.getLogger(ModifiablePersistenceService.class);
   private final Map<String, MemoryBucket> buckets = new ConcurrentHashMap<>();
@@ -68,9 +55,14 @@ public class MemoryPersistenceService implements ModifiablePersistenceService {
 
   // number of entries for each bucket
   private int limit = 100;
+  private String id = "memory";
+  private String label = "Memory persistence service";
 
-  @Activate
-  public MemoryPersistenceService(@Reference TimeZoneProvider timeZoneProvider) {
+  public MemoryPersistenceService(TimeZoneProvider timeZoneProvider) {
+    this(ID, timeZoneProvider);
+  }
+
+  public MemoryPersistenceService(String id, TimeZoneProvider timeZoneProvider) {
     this.timeZoneProvider = timeZoneProvider;
   }
 
@@ -79,7 +71,7 @@ public class MemoryPersistenceService implements ModifiablePersistenceService {
     if (config.containsKey("limit")) {
       try {
         int newLimit = Integer.parseInt("" + config.get("limit"));
-        this.limit = newLimit > 0 ? newLimit : 1;
+        this.limit = newLimit > 0 ? newLimit : 100;
 
         for (MemoryBucket bucket : buckets.values()) {
           bucket.truncate(limit);
@@ -87,6 +79,15 @@ public class MemoryPersistenceService implements ModifiablePersistenceService {
       } catch (NumberFormatException e) {
         throw new IllegalArgumentException("Invalid value for limit");
       }
+    }
+
+    if (config.containsKey("id")) {
+      this.id = "" + config.get("id");
+    }
+    if (config.containsKey("label")) {
+      this.label = "" + config.get("label");
+    } else {
+      this.label = "Memory Persistence Service (" + this.id + ")";
     }
   }
 
@@ -121,12 +122,12 @@ public class MemoryPersistenceService implements ModifiablePersistenceService {
 
   @Override
   public String getId() {
-    return ID;
+    return id;
   }
 
   @Override
   public String getLabel(Locale locale) {
-    return "Memory";
+    return label;
   }
 
   @Override

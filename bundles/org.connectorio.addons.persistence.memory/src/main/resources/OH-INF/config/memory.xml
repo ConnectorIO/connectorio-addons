@@ -21,9 +21,19 @@
   xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
 
   <config-description uri="connectorio:memory-persistence-service">
+    <parameter name="id" type="text" required="true">
+      <label>Identifier</label>
+      <description>Service identifier.</description>
+      <default>memory</default>
+    </parameter>
+    <parameter name="label" type="text" required="true">
+      <label>Label</label>
+      <description>Label describing purpose or configuration of service.</description>
+      <default>Memory persistence service</default>
+    </parameter>
     <parameter name="limit" type="integer">
       <label>Limit</label>
-      <description>Number of entries kept in memory for each configured item.</description>
+      <description>Number of entries kept in memory for each item.</description>
       <default>100</default>
     </parameter>
   </config-description>
