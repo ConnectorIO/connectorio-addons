@@ -206,12 +206,12 @@ public class MemoryPersistenceService implements ModifiablePersistenceService {
 
   private static boolean evaluate(Entry<ZonedDateTime, State> entry, FilterCriteria criteria) {
     ZonedDateTime beginDate = criteria.getBeginDate();
-    if (beginDate != null && entry.getKey().isBefore(beginDate)) {
+    if (beginDate != null && !(entry.getKey().isAfter(beginDate) || beginDate.isEqual(entry.getKey()))) {
       return false;
     }
 
     ZonedDateTime endDate = criteria.getEndDate();
-    if (endDate != null && entry.getKey().isAfter(endDate)) {
+    if (endDate != null && !(entry.getKey().isBefore(endDate) || endDate.isEqual(entry.getKey()))) {
       return false;
     }
 
