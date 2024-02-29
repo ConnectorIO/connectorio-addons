@@ -43,3 +43,13 @@ things:
       configuration:
         index: 1
         register: "C"
+    - id: "R1x16"
+      type: "data16"
+      configuration:
+        index: 1
+        register: "R"
+    - id: "R1x32"
+      type: "data32"
+      configuration:
+        index: 1
+        register: "DR"

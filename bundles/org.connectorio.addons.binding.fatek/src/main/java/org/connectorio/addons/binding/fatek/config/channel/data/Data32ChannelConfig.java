@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2024-2024 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.fatek.config.channel.binary;
+package org.connectorio.addons.binding.fatek.config.channel.data;
 
-import org.connectorio.addons.binding.fatek.config.channel.BaseChannelConfig;
+public class Data32ChannelConfig extends DataChannelConfig {
 
-public class DiscreteChannelConfig extends BaseChannelConfig {
-
-  public boolean invert;
+  public boolean floating;
 
 }

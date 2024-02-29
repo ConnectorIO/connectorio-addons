@@ -21,12 +21,25 @@
   xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-  <!-- switch to PLC specific channel kinds .. maybe?  -->
   <channel-type id="discrete">
     <item-type>Switch</item-type>
     <label>Discrete register</label>
     <description>Discrete register of connected PLC.</description>
     <config-description-ref uri="channel-type:co7io-fatek:binary"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="data16">
+    <item-type>Number</item-type>
+    <label>Data register (16 bit)</label>
+    <description>Data register of connected PLC encoded using 16 bit registers.</description>
+    <config-description-ref uri="channel-type:co7io-fatek:data16"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="data32">
+    <item-type>Number</item-type>
+    <label>Data register (32 bit)</label>
+    <description>Data register of connected PLC encoded using 32 bit registers.</description>
+    <config-description-ref uri="channel-type:co7io-fatek:data32"></config-description-ref>
   </channel-type>
 
 </thing:thing-descriptions>

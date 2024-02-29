@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2024-2024 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,26 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.fatek.config.channel.binary;
+package org.connectorio.addons.binding.fatek.config.channel;
 
-import org.connectorio.addons.binding.fatek.config.channel.BaseChannelConfig;
+import org.connectorio.addons.binding.fatek.config.channel.RegisterConfig;
+import org.simplify4u.jfatek.registers.RegName;
 
-public class DiscreteChannelConfig extends BaseChannelConfig {
+public abstract class BaseChannelConfig implements RegisterConfig {
 
+  public int index;
+
+  public RegName register;
   public boolean invert;
+
+  @Override
+  public RegName getRegister() {
+    return register;
+  }
+
+  @Override
+  public int getIndex() {
+    return index;
+  }
 
 }

@@ -41,6 +41,8 @@ public interface FatekBindingConstants extends BaseBindingConstants {
 
   // common dynamic channel types
   ChannelTypeUID CHANNEL_TYPE_DISCRETE = new ChannelTypeUID(BINDING_ID, "discrete");
+  ChannelTypeUID CHANNEL_TYPE_DATA16 = new ChannelTypeUID(BINDING_ID, "data16");
+  ChannelTypeUID CHANNEL_TYPE_DATA32 = new ChannelTypeUID(BINDING_ID, "data32");
 
 
 }

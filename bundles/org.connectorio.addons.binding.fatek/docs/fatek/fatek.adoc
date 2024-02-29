@@ -57,7 +57,43 @@ There are several kinds of addresses defined by protocol.
 | `S` | Step relay          | `ON` and `OFF` (`OnOffType`)
 | `T` | Timer contact       | `ON` and `OFF` (`OnOffType`)
 | `C` | Counter contact     | `ON` and `OFF` (`OnOffType`)
+
+| `R` | Data register (16 bit) | `Number` (INT16/UINT16)
+| `D` | Data register (16 bit) | `Number` (INT16/UINT16)
+| `F` | File register (16 bit) | `Number` (INT16/UINT16)
+
+| `DR` | Data Register (32 bit) | `Number` (INT32/UINT32) or `Float`
+| `DD` | Data Register (32 bit) | `Number` (INT32/UINT32) or `Float`
+| `DF` | File register (32 bit) | `Number` (INT32/UINT32)
+
+| `RT` | Timer register (16 bit)    | `Number` (INT16/UINT16)
+| `RC` | Counter register (16 bit)  | `Number` (INT16/UINT16)
+| `DRT` | Timer register (32 bit)   | `Number` (INT32/UINT32) or `Float`
+| `DRC` | Counter register (32 bit) | `Number` (INT32/UINT32) or `Float`
+
+| `WX` | Input discrete data register (16 bit)    | `Number` (INT16/UINT16)
+| `WY` | Output relay data register (16 bit)      | `Number` (INT16/UINT16)
+| `WM` | Internal relay data register (16 bit)    | `Number` (INT16/UINT16)
+| `WS` | Step relay data register (16 bit)        | `Number` (INT16/UINT16)
+| `WT` | Timer discrete data register (16 bit)    | `Number` (INT16/UINT16)
+| `WC` | Counter discrete data register (16 bit)  | `Number` (INT16/UINT16)
+
+| `DWX` | Input discrete data register (32 bit)   | `Number` (INT32/UINT32) or `Float`
+| `DWY` | Output relay data register (32 bit)     | `Number` (INT32/UINT32) or `Float`
+| `DWM` | Internal relay data register (32 bit)   | `Number` (INT32/UINT32) or `Float`
+| `DWS` | Step relay data register (32 bit)       | `Number` (INT32/UINT32) or `Float`
+| `DWT` | Timer discrete data register (32 bit)   | `Number` (INT32/UINT32) or `Float`
+| `DWC` | Counter discrete data register (32 bit) | `Number` (INT32/UINT32) or `Float`
+
 |===
+
+The discrete inputs might be commendable (outputs, relays) or read only (input, contact).
+Binding does not verify read/write access.
+For data registers (`R`, `D`, `F` etc.) encoding of contained data might vary.
+In principle - all registers of 16 bit length will be read and written using integer representation.
+Larger values might be interpreted as integer or floating point number.
+In order to use floating point representation use `data32` channel with `floating=true` option.
+The unsinged representation is always forced for `data16` and `data32` channels using `unsinged=true` option.
 
 == Textual configuration
 

@@ -17,9 +17,14 @@
  */
 package org.connectorio.addons.binding.fatek.internal.channel;
 
+import java.math.BigInteger;
 import org.connectorio.addons.binding.fatek.FatekBindingConstants;
+import org.connectorio.addons.binding.fatek.config.channel.data.Data32ChannelConfig;
+import org.connectorio.addons.binding.fatek.config.channel.data.DataChannelConfig;
 import org.connectorio.addons.binding.fatek.config.channel.binary.DiscreteChannelConfig;
 import org.openhab.core.thing.Channel;
+import org.simplify4u.jfatek.registers.RegValue16;
+import org.simplify4u.jfatek.registers.RegValue32;
 
 public class DefaultChannelHandlerFactory implements FatekChannelHandlerFactory {
 
@@ -28,6 +33,24 @@ public class DefaultChannelHandlerFactory implements FatekChannelHandlerFactory 
     if (FatekBindingConstants.CHANNEL_TYPE_DISCRETE.equals(channel.getChannelTypeUID())) {
       DiscreteChannelConfig config = channel.getConfiguration().as(DiscreteChannelConfig.class);
       return new BinaryChannelHandler(channel, config);
+    }
+    if (FatekBindingConstants.CHANNEL_TYPE_DATA16.equals(channel.getChannelTypeUID())) {
+      DataChannelConfig config = channel.getConfiguration().as(DataChannelConfig.class);
+      return new DataChannelHandler(channel, config, (register, state) -> {
+        int intValue = state.toBigDecimal().intValue();
+        return RegValue16.getForReg(register, config.unsigned ? Integer.toUnsignedLong(intValue) : intValue);
+      });
+    }
+    if (FatekBindingConstants.CHANNEL_TYPE_DATA32.equals(channel.getChannelTypeUID())) {
+      Data32ChannelConfig config = channel.getConfiguration().as(Data32ChannelConfig.class);
+      return new DataChannelHandler(channel, config, (register, state) -> {
+        if (config.floating) {
+          return RegValue32.getForReg(register, state.toBigDecimal().floatValue());
+        }
+
+        long longValue = state.toBigDecimal().longValue();
+        return RegValue32.getForReg(register, config.unsigned ? BigInteger.valueOf(longValue).longValue() : longValue);
+      });
     }
     return null;
   }
