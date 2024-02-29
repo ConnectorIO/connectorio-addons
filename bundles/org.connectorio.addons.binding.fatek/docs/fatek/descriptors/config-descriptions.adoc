@@ -2,6 +2,34 @@
 = Config descriptions
 
 
+[[channel-type:co7io-fatek:data32]]
+== Config `channel-type:co7io-fatek:data32`
+[width="100%",caption="channel-type:co7io-fatek:data32 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| register
+| TEXT
+| Register symbol
+| Symbol (kind) of register to read
+
+| index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| unsigned
+| BOOLEAN
+| Unsigned
+| Values retrieved from and written to device assume unsigned representation. Does not apply if floating option is set.
+
+| floating
+| BOOLEAN
+| floating point
+| Indicate that read/write value is a floating point number. Overrides unsigned flag.
+
+|===
+
 [[thing-type:co7io-fatek:tcp]]
 == Config `thing-type:co7io-fatek:tcp`
 [width="100%",caption="thing-type:co7io-fatek:tcp configuration",cols="1,1,1,2"]
@@ -106,6 +134,29 @@
 | BOOLEAN
 | Invert
 | Invert logical representation of related register (0->1, 1->0).
+
+|===
+
+[[channel-type:co7io-fatek:data16]]
+== Config `channel-type:co7io-fatek:data16`
+[width="100%",caption="channel-type:co7io-fatek:data16 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| register
+| TEXT
+| Register symbol
+| Symbol (kind) of register to read
+
+| index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| unsigned
+| BOOLEAN
+| Unsigned
+| Values retrieved from and written to device assume unsigned representation.
 
 |===
 

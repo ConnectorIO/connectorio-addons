@@ -37,6 +37,8 @@ import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
+import org.openhab.core.types.Type;
+import org.simplify4u.jfatek.FatekCommand;
 import org.simplify4u.jfatek.FatekReadMixDataCmd;
 import org.simplify4u.jfatek.FatekWriteDataCmd;
 import org.simplify4u.jfatek.FatekWriteDiscreteCmd;
@@ -108,32 +110,39 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
     if (handlerMap.containsKey(channelUID)) {
       FatekChannelHandler handler = handlerMap.get(channelUID);
       Reg register = handler.register();
+      RegValue value = handler.prepareWrite(command);
+      if (value == null) {
+        logger.warn("Could not map command {} from channel {} to value supported by PLC. Ignoring this write.", command, channelUID);
+        return;
+      }
+
       if (register instanceof DataReg) {
         FatekWriteDataCmd cmd = new FatekWriteDataCmd(null, (DataReg) register);
-        RegValue value = handler.prepareWrite(command);
-        if (value != null) {
-          cmd.addValue(value.longValue());
-          connection.execute(stationNumber, cmd).whenComplete((r, e) -> {
-            if (e != null) {
-              logger.error("Could not write value {} to register {}", command, register, e);
-              return;
-            }
-            logger.debug("Successful write of value {} mapped from {} for channel {}", value, command, register);
-          });
-        }
+        cmd.addValue(value.longValue());
+        write(channelUID, command, register, value, cmd);
       } else if (register instanceof DisReg) {
-        RegValue value = handler.prepareWrite(command);
-        if (value != null) {
-          FatekWriteDiscreteCmd cmd = new FatekWriteDiscreteCmd(null, (DisReg) register, value.boolValue());
-          connection.execute(stationNumber, cmd).whenComplete((r, e) -> {
-            if (e != null) {
-              logger.error("Could not write value {} to register {}", command, register, e);
-              return;
-            }
-            logger.debug("Successful write of value {} mapped from {} for channel {}", value, command, register);
-          });
-        }
+        FatekWriteDiscreteCmd cmd = new FatekWriteDiscreteCmd(null, (DisReg) register, value.boolValue());
+        write(channelUID, command, register, value, cmd);
+      } else {
+        logger.error("Unsupported value {} mapped from command {} for channel {}", value, command, channelUID);
       }
+    }
+  }
+
+  private void write(ChannelUID channelUID, Command command, Reg register, RegValue value, FatekCommand<?> cmd) {
+    connection.execute(stationNumber, cmd).whenComplete((r, e) -> {
+      if (e != null) {
+        logger.error("Could not write value {} to register {}", command, register, e);
+        return;
+      }
+      logger.debug("Successful write of value {} mapped from {} for channel {}", value, command, register);
+      update(channelUID, command);
+    });
+  }
+
+  private void update(ChannelUID channelUID, Type value) {
+    if (value instanceof State) {
+      getCallback().stateUpdated(channelUID, (State) value);
     }
   }
 
@@ -161,7 +170,7 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
         FatekChannelHandler handler = registerMap.get(entry.getKey());
         State state = handler.state(entry.getValue());
         if (state != null) {
-          getCallback().stateUpdated(handler.channel(), state);
+          update(handler.channel(), state);
         }
       }
     });

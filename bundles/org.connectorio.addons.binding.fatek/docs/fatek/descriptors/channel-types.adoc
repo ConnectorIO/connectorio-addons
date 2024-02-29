@@ -11,6 +11,18 @@
 
 <<co7io-fatek:discrete>>
 
+| co7io-fatek:data16
+| Data register (16 bit)
+| Data register of connected PLC encoded using 16 bit registers.
+
+<<co7io-fatek:data16>>
+
+| co7io-fatek:data32
+| Data register (32 bit)
+| Data register of connected PLC encoded using 32 bit registers.
+
+<<co7io-fatek:data32>>
+
 |===
 
 
@@ -37,6 +49,65 @@ Below table contain configuration parameters which can be assigned to channels o
 | BOOLEAN
 | Invert
 | Invert logical representation of related register (0->1, 1->0).
+
+|===
+
+
+[[co7io-fatek:data16]]
+== Configuration of `co7io-fatek:data16`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-fatek:data16`.
+
+[width="100%",caption="Channel type data16 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| register
+| TEXT
+| Register symbol
+| Symbol (kind) of register to read
+
+| index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| unsigned
+| BOOLEAN
+| Unsigned
+| Values retrieved from and written to device assume unsigned representation.
+
+|===
+
+
+[[co7io-fatek:data32]]
+== Configuration of `co7io-fatek:data32`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-fatek:data32`.
+
+[width="100%",caption="Channel type data32 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| register
+| TEXT
+| Register symbol
+| Symbol (kind) of register to read
+
+| index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| unsigned
+| BOOLEAN
+| Unsigned
+| Values retrieved from and written to device assume unsigned representation. Does not apply if floating option is set.
+
+| floating
+| BOOLEAN
+| floating point
+| Indicate that read/write value is a floating point number. Overrides unsigned flag.
 
 |===
 

@@ -36,7 +36,7 @@ public class BinaryChannelHandler implements FatekChannelHandler {
   private final ChannelUID channel;
   private final boolean invert;
 
-  public <T> BinaryChannelHandler(Channel channel, DiscreteChannelConfig config) {
+  public BinaryChannelHandler(Channel channel, DiscreteChannelConfig config) {
     this.channel = channel.getUID();
     this.invert = config.invert;
     switch (config.getRegister()) {
