@@ -55,7 +55,7 @@ public class MemoryPersistenceService implements ModifiablePersistenceService {
 
   // number of entries for each bucket
   private int limit = 100;
-  private String id = "memory";
+  private final String id;
   private String label = "Memory persistence service";
 
   public MemoryPersistenceService(TimeZoneProvider timeZoneProvider) {
@@ -63,6 +63,7 @@ public class MemoryPersistenceService implements ModifiablePersistenceService {
   }
 
   public MemoryPersistenceService(String id, TimeZoneProvider timeZoneProvider) {
+    this.id = id;
     this.timeZoneProvider = timeZoneProvider;
   }
 
@@ -81,9 +82,6 @@ public class MemoryPersistenceService implements ModifiablePersistenceService {
       }
     }
 
-    if (config.containsKey("id")) {
-      this.id = "" + config.get("id");
-    }
     if (config.containsKey("label")) {
       this.label = "" + config.get("label");
     } else {
