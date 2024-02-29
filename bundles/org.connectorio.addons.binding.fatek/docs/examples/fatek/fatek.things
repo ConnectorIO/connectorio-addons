@@ -13,6 +13,12 @@ Bridge co7io-fatek:tcp:my-connection "My PLC#1" [
       Type discrete : S1 [ register="S", index=1 ]
       Type discrete : T1 [ register="T", index=1 ]
       Type discrete : C1 [ register="C", index=1 ]
+
+      Type data16 : R1x16 [ register="R", index=1 ]
+      Type data32 : R1x32 [ register="DR", index=1 ]
+
+      Type rollershutter16 : rollx16 [ register="R",  index=1, startRegister="M", startIndex=1, stopRegister="M", stopIndex=2 ]
+      Type rollershutter32 : rollx32 [ register="DR", index=1, startRegister="M", startIndex=1, stopRegister="M", stopIndex=2 ]
   }
 
 }

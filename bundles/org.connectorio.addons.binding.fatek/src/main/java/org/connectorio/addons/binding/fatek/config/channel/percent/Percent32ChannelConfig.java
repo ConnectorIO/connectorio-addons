@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2024-2024 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.fatek.internal.channel;
+package org.connectorio.addons.binding.fatek.config.channel.percent;
 
-import org.openhab.core.thing.Channel;
+public class Percent32ChannelConfig extends PercentChannelConfig {
 
-public interface FatekChannelHandlerFactory {
-
-  FatekChannelHandler create(Channel channel);
+  public boolean floating;
 
 }

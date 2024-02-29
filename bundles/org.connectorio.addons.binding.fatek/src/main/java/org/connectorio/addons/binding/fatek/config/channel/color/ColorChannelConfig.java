@@ -1,0 +1,45 @@
+/*
+ * Copyright (C) 2024-2024 ConnectorIO Sp. z o.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+package org.connectorio.addons.binding.fatek.config.channel.color;
+
+import org.connectorio.addons.binding.fatek.config.channel.data.DataChannelConfig;
+import org.simplify4u.jfatek.registers.RegName;
+
+public class ColorChannelConfig extends DataChannelConfig {
+
+  // RGB color control mode
+  public boolean rgb = false;
+
+  public RegName color1register;
+  public int color1index;
+
+  public RegName color2register;
+  public int color2index;
+
+  public RegName color3register;
+  public int color3index;
+
+  // optional
+  public RegName switcherRegister;
+  public int switcherIndex;
+  public boolean switcherInvert;
+
+  // increase decrease step - optional
+  public int step;
+
+}

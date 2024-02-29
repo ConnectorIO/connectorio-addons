@@ -43,3 +43,31 @@ things:
       configuration:
         index: 1
         register: "C"
+    - id: "R1x16"
+      type: "data16"
+      configuration:
+        index: 1
+        register: "R"
+    - id: "R1x32"
+      type: "data32"
+      configuration:
+        index: 1
+        register: "DR"
+    - id: "rollx16"
+      type: "rollershutter16"
+      configuration:
+        stopIndex: 2
+        startIndex: 1
+        stopRegister: "M"
+        index: 1
+        startRegister: "M"
+        register: "R"
+    - id: "rollx32"
+      type: "rollershutter32"
+      configuration:
+        stopIndex: 2
+        startIndex: 1
+        stopRegister: "M"
+        index: 1
+        startRegister: "M"
+        register: "DR"
