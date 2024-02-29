@@ -52,6 +52,7 @@ class RatioStatisticCollectorTest {
     Quantity<?> collectorStatistic = collector.getStatistic();
     assertThat(collectorStatistic)
       .extracting(Quantity::getValue)
+      .extracting(Number::doubleValue)
       .isEqualTo(0.0);
 
     when(clock.get()).thenReturn(2000L);
@@ -59,6 +60,7 @@ class RatioStatisticCollectorTest {
     collectorStatistic = collector.getStatistic();
     assertThat(collectorStatistic)
       .extracting(Quantity::getValue)
+      .extracting(Number::doubleValue)
       .isEqualTo(1.0);
   }
 

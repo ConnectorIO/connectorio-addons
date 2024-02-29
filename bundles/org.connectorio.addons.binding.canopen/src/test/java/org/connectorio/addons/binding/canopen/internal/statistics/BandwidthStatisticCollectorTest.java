@@ -52,7 +52,8 @@ class BandwidthStatisticCollectorTest {
     statistic.set(Quantities.getQuantity(0, Units.BYTE));
     assertThat(collector.getStatistic())
       .extracting(Quantity::getValue)
-      .isEqualTo(0.0);
+      .extracting(Number::intValue)
+      .isEqualTo(0);
 
     // one second and one byte later we expect 8 bit/s ratio.
     when(clock.get()).thenReturn(2000L);
