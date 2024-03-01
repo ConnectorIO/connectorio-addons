@@ -17,6 +17,8 @@
  */
 package org.connectorio.addons.binding.fatek.internal.channel;
 
+import java.util.Collections;
+import java.util.List;
 import org.connectorio.addons.binding.fatek.internal.channel.converter.Converter;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
@@ -41,8 +43,8 @@ public class BinaryChannelHandler implements FatekChannelHandler {
   }
 
   @Override
-  public Reg register() {
-    return register;
+  public List<Reg> registers() {
+    return Collections.singletonList(register);
   }
 
   @Override
@@ -60,8 +62,8 @@ public class BinaryChannelHandler implements FatekChannelHandler {
   }
 
   @Override
-  public State state(RegValue value) {
-    return converter.toState(value);
+  public State state(List<RegValue> value) {
+    return converter.toState(value.get(0));
   }
 
 }

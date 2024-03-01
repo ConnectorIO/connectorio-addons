@@ -54,4 +54,17 @@
     <config-description-ref uri="channel-type:co7io-fatek:rollershutter32"></config-description-ref>
   </channel-type>
 
+  <channel-type id="color16">
+    <item-type>Color</item-type>
+    <label>Color (16-bit)</label>
+    <description>Data register for position will use 16 bit registers.</description>
+    <config-description-ref uri="channel-type:co7io-fatek:color16"></config-description-ref>
+  </channel-type>
+  <channel-type id="color32">
+    <item-type>Color</item-type>
+    <label>Color (32-bit)</label>
+    <description>Data register for position will use 32 bit registers.</description>
+    <config-description-ref uri="channel-type:co7io-fatek:color32"></config-description-ref>
+  </channel-type>
+
 </thing:thing-descriptions>

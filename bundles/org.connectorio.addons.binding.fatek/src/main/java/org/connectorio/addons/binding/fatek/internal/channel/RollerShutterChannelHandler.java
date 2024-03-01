@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2024-2024 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
  */
 package org.connectorio.addons.binding.fatek.internal.channel;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.connectorio.addons.binding.fatek.internal.channel.converter.Converter;
 import org.openhab.core.library.types.OnOffType;
@@ -34,9 +36,12 @@ import org.simplify4u.jfatek.registers.DisReg;
 import org.simplify4u.jfatek.registers.Reg;
 import org.simplify4u.jfatek.registers.RegValue;
 import org.simplify4u.jfatek.registers.RegValueData;
-import org.simplify4u.jfatek.registers.RegValueDis;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RollerShutterChannelHandler implements FatekChannelHandler {
+
+  private final Logger logger = LoggerFactory.getLogger(RollerShutterChannelHandler.class);
 
   private final ChannelUID channel;
   private final DataReg register;
@@ -58,8 +63,8 @@ public class RollerShutterChannelHandler implements FatekChannelHandler {
   }
 
   @Override
-  public Reg register() {
-    return register;
+  public List<Reg> registers() {
+    return Collections.singletonList(register);
   }
 
   @Override
@@ -74,23 +79,21 @@ public class RollerShutterChannelHandler implements FatekChannelHandler {
       return new FatekWriteDataCmd(null, register, (RegValueData) positionValue);
     }
 
-    if (command == UpDownType.UP) {
+    if (UpDownType.UP.equals(command)) {
       RegValue start = startConverter.toValue(OnOffType.ON);
       RegValue stop = stopConverter.toValue(OnOffType.OFF);
       return new FatekWriteMixDataCmd(null, Map.of(
         startReg, start,
         stopReg, stop
       ));
-    }
-    if (command == UpDownType.DOWN) {
+    } else if (UpDownType.DOWN.equals(command)) {
       RegValue start = startConverter.toValue(OnOffType.OFF);
       RegValue stop = stopConverter.toValue(OnOffType.ON);
       return new FatekWriteMixDataCmd(null, Map.of(
         startReg, start,
         stopReg, stop
       ));
-    }
-    if (command == StopMoveType.STOP) {
+    } else if (StopMoveType.STOP.equals(command)) {
       RegValue start = startConverter.toValue(OnOffType.OFF);
       RegValue stop = stopConverter.toValue(OnOffType.OFF);
       return new FatekWriteMixDataCmd(null, Map.of(
@@ -99,12 +102,14 @@ public class RollerShutterChannelHandler implements FatekChannelHandler {
       ));
     }
 
+    logger.warn("Unsupported command {} received by rollershutter channel {}", command, channel);
+
     return null;
   }
 
   @Override
-  public State state(RegValue value) {
-    return positionConverter.toState(value);
+  public State state(List<RegValue> value) {
+    return positionConverter.toState(value.get(0));
   }
 
 }

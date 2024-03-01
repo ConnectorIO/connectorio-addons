@@ -45,6 +45,8 @@ public interface FatekBindingConstants extends BaseBindingConstants {
   ChannelTypeUID CHANNEL_TYPE_DATA32 = new ChannelTypeUID(BINDING_ID, "data32");
   ChannelTypeUID CHANNEL_TYPE_ROLLERSHUTTER16 = new ChannelTypeUID(BINDING_ID, "rollershutter16");
   ChannelTypeUID CHANNEL_TYPE_ROLLERSHUTTER32 = new ChannelTypeUID(BINDING_ID, "rollershutter32");
+  ChannelTypeUID CHANNEL_TYPE_COLOR16 = new ChannelTypeUID(BINDING_ID, "color16");
+  ChannelTypeUID CHANNEL_TYPE_COLOR32 = new ChannelTypeUID(BINDING_ID, "color32");
 
 
 }

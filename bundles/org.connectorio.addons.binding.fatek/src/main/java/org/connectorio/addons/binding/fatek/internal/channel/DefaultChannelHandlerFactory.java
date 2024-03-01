@@ -19,15 +19,20 @@ package org.connectorio.addons.binding.fatek.internal.channel;
 
 import org.connectorio.addons.binding.fatek.FatekBindingConstants;
 import org.connectorio.addons.binding.fatek.config.channel.binary.DiscreteChannelConfig;
+import org.connectorio.addons.binding.fatek.config.channel.color.ColorChannelConfig;
 import org.connectorio.addons.binding.fatek.config.channel.data.Data32ChannelConfig;
 import org.connectorio.addons.binding.fatek.config.channel.data.DataChannelConfig;
 import org.connectorio.addons.binding.fatek.config.channel.rollershutter.RollerShutter32ChannelConfig;
 import org.connectorio.addons.binding.fatek.config.channel.rollershutter.RollerShutterChannelConfig;
 import org.connectorio.addons.binding.fatek.internal.RegisterParser;
+import org.connectorio.addons.binding.fatek.internal.channel.converter.ColorConverter;
+import org.connectorio.addons.binding.fatek.internal.channel.converter.Converter;
 import org.connectorio.addons.binding.fatek.internal.channel.converter.Data16Converter;
 import org.connectorio.addons.binding.fatek.internal.channel.converter.Data32Converter;
 import org.connectorio.addons.binding.fatek.internal.channel.converter.DiscreteConverter;
 import org.openhab.core.thing.Channel;
+import org.simplify4u.jfatek.registers.DataReg;
+import org.simplify4u.jfatek.registers.DisReg;
 
 public class DefaultChannelHandlerFactory implements FatekChannelHandlerFactory {
 
@@ -69,7 +74,36 @@ public class DefaultChannelHandlerFactory implements FatekChannelHandlerFactory 
         new DiscreteConverter(stopCfg)
       );
     }
+    if (FatekBindingConstants.CHANNEL_TYPE_COLOR16.equals(channel.getChannelTypeUID())) {
+      ColorChannelConfig config = channel.getConfiguration().as(ColorChannelConfig.class);
+      DataReg color1cfg = RegisterParser.parseData16(new DataChannelConfig(config.color1register, config.color1index));
+      DataReg color2cfg = RegisterParser.parseData16(new DataChannelConfig(config.color2register, config.color2index));
+      DataReg color3cfg = RegisterParser.parseData16(new DataChannelConfig(config.color3register, config.color3index));
+      return createColorHandler(channel, config, color1cfg, color2cfg, color3cfg);
+    }
+    if (FatekBindingConstants.CHANNEL_TYPE_COLOR32.equals(channel.getChannelTypeUID())) {
+      ColorChannelConfig config = channel.getConfiguration().as(ColorChannelConfig.class);
+      DataReg color1cfg = RegisterParser.parseData32(new DataChannelConfig(config.color1register, config.color1index));
+      DataReg color2cfg = RegisterParser.parseData32(new DataChannelConfig(config.color2register, config.color2index));
+      DataReg color3cfg = RegisterParser.parseData32(new DataChannelConfig(config.color3register, config.color3index));
+      return createColorHandler(channel, config, color1cfg, color2cfg, color3cfg);
+    }
     return null;
+  }
+
+  private FatekChannelHandler createColorHandler(Channel channel, ColorChannelConfig config, DataReg color1, DataReg color2, DataReg color3) {
+    DisReg switcher = null;
+    Converter switcherConverter = null;
+    if (config.switcherRegister != null && config.switcherIndex != 0) {
+      DiscreteChannelConfig switchCfg = new DiscreteChannelConfig(config.switcherRegister, config.switcherIndex, config.switcherInvert);
+      switcher = RegisterParser.parseDiscrete(switchCfg);
+      switcherConverter = new DiscreteConverter(switchCfg);
+    }
+    return new ColorChannelHandler(channel, config,
+      color1, color2, color3,
+      new ColorConverter(color1, color2, color3, config.rgb),
+      switcher, switcherConverter
+    );
   }
 
 }

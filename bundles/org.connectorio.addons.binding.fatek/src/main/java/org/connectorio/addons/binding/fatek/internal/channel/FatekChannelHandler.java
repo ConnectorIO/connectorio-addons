@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.fatek.internal.channel;
 
+import java.util.List;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
@@ -27,12 +28,12 @@ import org.simplify4u.jfatek.registers.RegValue;
 public interface FatekChannelHandler {
 
   // identification
-  Reg register();
+  List<Reg> registers();
   ChannelUID channel();
 
   // write
   FatekCommand<?> prepareWrite(Command command);
   // fetch
-  State state(RegValue value);
+  State state(List<RegValue> value);
 
 }
