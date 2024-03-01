@@ -17,8 +17,12 @@
  */
 package org.connectorio.addons.binding.fatek.internal.handler;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
@@ -40,10 +44,6 @@ import org.openhab.core.types.State;
 import org.openhab.core.types.Type;
 import org.simplify4u.jfatek.FatekCommand;
 import org.simplify4u.jfatek.FatekReadMixDataCmd;
-import org.simplify4u.jfatek.FatekWriteDataCmd;
-import org.simplify4u.jfatek.FatekWriteDiscreteCmd;
-import org.simplify4u.jfatek.registers.DataReg;
-import org.simplify4u.jfatek.registers.DisReg;
 import org.simplify4u.jfatek.registers.Reg;
 import org.simplify4u.jfatek.registers.RegValue;
 import org.slf4j.Logger;
@@ -93,7 +93,9 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
         FatekChannelHandler handler = channelHandlerFactory.create(channel);
         if (handler != null) {
           handlerMap.put(channel.getUID(), handler);
-          registerMap.put(handler.register(), handler);
+          for (Reg register : handler.registers()) {
+            registerMap.put(register, handler);
+          }
         }
       }
       Long interval = getThingConfig().map(cfg -> cfg.refreshInterval)
@@ -109,14 +111,13 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
   public void handleCommand(ChannelUID channelUID, Command command) {
     if (handlerMap.containsKey(channelUID)) {
       FatekChannelHandler handler = handlerMap.get(channelUID);
-      Reg register = handler.register();
-      FatekCommand<?> fatekCmd = null; //handler.prepareWrite(command);
-      if (fatekCmd == null) {
+      FatekCommand<?> cmd = handler.prepareWrite(command);
+      if (cmd == null) {
         logger.warn("Could not map command {} from channel {} to value supported by PLC. Ignoring this write.", command, channelUID);
         return;
       }
 
-      write(channelUID, command, fatekCmd);
+      write(channelUID, command, cmd);
     }
   }
 
@@ -152,18 +153,32 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
 
   @Override
   public void run() {
-    connection.execute(stationNumber, new FatekReadMixDataCmd(null, registerMap.keySet())).whenComplete((r, e) -> {
-      if (e != null) {
-        logger.warn("Failed to retrieve data", e);
+    connection.execute(stationNumber, new FatekReadMixDataCmd(null, registerMap.keySet())).whenComplete((result, error) -> {
+      if (error != null) {
+        logger.warn("Failed to retrieve data", error);
         return;
       }
-      for (Entry<Reg, RegValue> entry : r.entrySet()) {
-        FatekChannelHandler handler = registerMap.get(entry.getKey());
-        State state = handler.state(entry.getValue());
+      callChannelHandlers(result);
+    });
+  }
+
+  private void callChannelHandlers(Map<Reg, RegValue> result) {
+    Set<FatekChannelHandler> called = new HashSet<>();
+    for (Entry<Reg, RegValue> entry : result.entrySet()) {
+      FatekChannelHandler handler = registerMap.get(entry.getKey());
+      if (!called.contains(handler)) {
+        // handler have not been called yet, lets collect its registers and let it parse data
+        List<RegValue> values = new ArrayList<>();
+        for (Reg register : handler.registers()) {
+          values.add(result.get(register));
+        }
+        // convert values to OH state
+        State state = handler.state(values);
         if (state != null) {
           update(handler.channel(), state);
         }
+        called.add(handler);
       }
-    });
+    }
   }
 }

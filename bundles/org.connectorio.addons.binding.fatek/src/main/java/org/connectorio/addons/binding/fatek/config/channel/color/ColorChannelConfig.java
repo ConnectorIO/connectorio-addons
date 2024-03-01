@@ -15,20 +15,31 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.fatek.config.channel.data;
+package org.connectorio.addons.binding.fatek.config.channel.color;
 
-import org.connectorio.addons.binding.fatek.config.channel.BaseChannelConfig;
+import org.connectorio.addons.binding.fatek.config.channel.data.DataChannelConfig;
 import org.simplify4u.jfatek.registers.RegName;
 
-public class DataChannelConfig extends BaseChannelConfig {
+public class ColorChannelConfig extends DataChannelConfig {
 
-  public boolean unsigned;
+  // RGB color control mode
+  public boolean rgb = false;
 
-  public DataChannelConfig() {}
+  public RegName color1register;
+  public int color1index;
 
-  public DataChannelConfig(RegName register, int index) {
-    this.register = register;
-    this.index = index;
-  }
+  public RegName color2register;
+  public int color2index;
+
+  public RegName color3register;
+  public int color3index;
+
+  // optional
+  public RegName switcherRegister;
+  public int switcherIndex;
+  public boolean switcherInvert;
+
+  // increase decrease step - optional
+  public int step;
 
 }

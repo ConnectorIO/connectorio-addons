@@ -35,6 +35,18 @@
 
 <<co7io-fatek:rollershutter32>>
 
+| co7io-fatek:color16
+| Color (16-bit)
+| Data register for position will use 16 bit registers.
+
+<<co7io-fatek:color16>>
+
+| co7io-fatek:color32
+| Color (32-bit)
+| Data register for position will use 32 bit registers.
+
+<<co7io-fatek:color32>>
+
 |===
 
 
@@ -246,6 +258,74 @@ Below table contain configuration parameters which can be assigned to channels o
 | Invert logical representation of related register (0->1, 1->0).
 
 |===
+
+
+[[co7io-fatek:color16]]
+== Configuration of `co7io-fatek:color16`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-fatek:color16`.
+
+[width="100%",caption="Channel type color16 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| color1register
+| TEXT
+| Color 1 register
+| Data register used to retrieve or write Red or Hue part of color information.
+
+| color1index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| color2register
+| TEXT
+| Color 2 register
+| Data register used to retrieve or write Green or Saturation part of color information.
+
+| color2index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| color3register
+| TEXT
+| Color 2 register
+| Data register used to retrieve or write Blue or Brightness part of color information.
+
+| color3index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| rgb
+| BOOLEAN
+| RGB mode
+| Write and interpret read data as RGB code instead of HSB.
+
+| switcherRegister
+| TEXT
+| Register
+| Type of discrete register to write ON or OFF command.
+
+| switcherIndex
+| INTEGER
+| Register index
+| Index of register used to write data.
+
+| switcherInvert
+| BOOLEAN
+| Invert
+| Invert logical representation of related register (0->1, 1->0).
+
+|===
+
+
+[[co7io-fatek:color32]]
+== Configuration of `co7io-fatek:color32`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-fatek:color32`.
 
 
 
