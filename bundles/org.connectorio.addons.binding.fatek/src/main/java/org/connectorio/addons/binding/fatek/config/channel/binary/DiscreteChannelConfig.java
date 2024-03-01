@@ -18,9 +18,16 @@
 package org.connectorio.addons.binding.fatek.config.channel.binary;
 
 import org.connectorio.addons.binding.fatek.config.channel.BaseChannelConfig;
+import org.simplify4u.jfatek.registers.RegName;
 
 public class DiscreteChannelConfig extends BaseChannelConfig {
 
   public boolean invert;
+
+  public DiscreteChannelConfig() {}
+  public DiscreteChannelConfig(RegName register, int index, boolean invert) {
+    super(register, index);
+    this.invert = invert;
+  }
 
 }

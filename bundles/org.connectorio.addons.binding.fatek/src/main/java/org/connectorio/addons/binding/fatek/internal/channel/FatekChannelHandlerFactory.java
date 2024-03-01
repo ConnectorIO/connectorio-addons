@@ -22,4 +22,5 @@ import org.openhab.core.thing.Channel;
 public interface FatekChannelHandlerFactory {
 
   FatekChannelHandler create(Channel channel);
+
 }

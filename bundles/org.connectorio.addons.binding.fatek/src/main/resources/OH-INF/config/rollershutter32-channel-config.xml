@@ -21,10 +21,19 @@
   xmlns:config-description="https://openhab.org/schemas/config-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
 
-  <config-description uri="channel-type:co7io-fatek:data32">
+  <config-description uri="channel-type:co7io-fatek:rollershutter32">
+    <parameter-group name="start">
+      <label>Start command register configuration</label>
+      <description>Settings for discrete register used for sending start command.</description>
+    </parameter-group>
+    <parameter-group name="stop">
+      <label>Stop command register configuration</label>
+      <description>Settings for discrete register used for sending stop command.</description>
+    </parameter-group>
+
     <parameter name="register" type="text" required="true">
       <label>Register</label>
-      <description>Type of data register to read or write.</description>
+      <description>Data register used to retrieve position of roller shutter.</description>
       <options>
         <option value="DR">DR: Data Register (32 bit)</option>
         <option value="DD">DD: Data Register (32 bit)</option>
@@ -57,6 +66,55 @@
       <description>Indicate that read/write value is a floating point number. Overrides unsigned flag.</description>
       <default>false</default>
     </parameter>
+
+    <!-- Start register -->
+    <parameter name="startRegister" type="text" groupName="start">
+      <label>Register</label>
+      <description>Type of discrete register to write UP command.</description>
+      <options>
+        <option value="X">X: (DI) Digital input</option>
+        <option value="Y">Y: (DO) Digital output</option>
+        <option value="M">M: Internal relay</option>
+        <option value="S">S: Step relay</option>
+        <option value="T">T: Timer contact</option>
+        <option value="C">C: Counter contact</option>
+      </options>
+    </parameter>
+    <parameter name="startIndex" type="integer" groupName="start">
+      <label>Register index</label>
+      <description>Index of register used to write data.</description>
+      <default>0</default>
+    </parameter>
+    <parameter name="startInvert" type="boolean" groupName="start">
+      <label>Invert</label>
+      <description>Invert logical representation of related register (0->1, 1->0).</description>
+      <default>false</default>
+    </parameter>
+
+    <!-- Stop register -->
+    <parameter name="stopRegister" type="text" groupName="stop">
+      <label>Register</label>
+      <description>Type of discrete register to write DOWN command.</description>
+      <options>
+        <option value="X">X: (DI) Digital input</option>
+        <option value="Y">Y: (DO) Digital output</option>
+        <option value="M">M: Internal relay</option>
+        <option value="S">S: Step relay</option>
+        <option value="T">T: Timer contact</option>
+        <option value="C">C: Counter contact</option>
+      </options>
+    </parameter>
+    <parameter name="stopIndex" type="integer" groupName="stop">
+      <label>Register index</label>
+      <description>Index of register used to retrieve data.</description>
+      <default>0</default>
+    </parameter>
+    <parameter name="stopInvert" type="boolean" groupName="stop">
+      <label>Invert</label>
+      <description>Invert logical representation of related register (0->1, 1->0).</description>
+      <default>false</default>
+    </parameter>
+
   </config-description>
 
 </config-description:config-descriptions>

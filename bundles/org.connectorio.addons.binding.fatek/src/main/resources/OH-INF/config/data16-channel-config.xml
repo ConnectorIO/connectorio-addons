@@ -23,8 +23,8 @@
 
   <config-description uri="channel-type:co7io-fatek:data16">
     <parameter name="register" type="text" required="true">
-      <label>Register symbol</label>
-      <description>Symbol (kind) of register to read</description>
+      <label>Register</label>
+      <description>Type of data register to read or write.</description>
       <options>
         <option value="R">R: Data register (16 bit)</option>
         <option value="D">D: Data register (16 bit)</option>

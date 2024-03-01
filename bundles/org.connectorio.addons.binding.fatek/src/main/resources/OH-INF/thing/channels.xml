@@ -34,12 +34,24 @@
     <description>Data register of connected PLC encoded using 16 bit registers.</description>
     <config-description-ref uri="channel-type:co7io-fatek:data16"></config-description-ref>
   </channel-type>
-
   <channel-type id="data32">
     <item-type>Number</item-type>
     <label>Data register (32 bit)</label>
     <description>Data register of connected PLC encoded using 32 bit registers.</description>
     <config-description-ref uri="channel-type:co7io-fatek:data32"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="rollershutter16">
+    <item-type>Rollershutter</item-type>
+    <label>Rollershutter (16-bit)</label>
+    <description>Data register for position will use 16 bit registers.</description>
+    <config-description-ref uri="channel-type:co7io-fatek:rollershutter16"></config-description-ref>
+  </channel-type>
+  <channel-type id="rollershutter32">
+    <item-type>Rollershutter</item-type>
+    <label>Rollershutter (32-bit)</label>
+    <description>Data register for position will use 32 bit registers.</description>
+    <config-description-ref uri="channel-type:co7io-fatek:rollershutter32"></config-description-ref>
   </channel-type>
 
 </thing:thing-descriptions>
