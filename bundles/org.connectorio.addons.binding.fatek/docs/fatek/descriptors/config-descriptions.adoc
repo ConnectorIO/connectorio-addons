@@ -10,8 +10,8 @@
 
 | register
 | TEXT
-| Register symbol
-| Symbol (kind) of register to read
+| Register
+| Type of data register to read or write.
 
 | index
 | INTEGER
@@ -122,8 +122,8 @@
 
 | register
 | TEXT
-| Register symbol
-| Symbol (kind) of register to read
+| Register
+| Type of discrete register to read or write.
 
 | index
 | INTEGER
@@ -131,6 +131,64 @@
 | Index of register used to retrieve data.
 
 | invert
+| BOOLEAN
+| Invert
+| Invert logical representation of related register (0->1, 1->0).
+
+|===
+
+[[channel-type:co7io-fatek:rollershutter32]]
+== Config `channel-type:co7io-fatek:rollershutter32`
+[width="100%",caption="channel-type:co7io-fatek:rollershutter32 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| register
+| TEXT
+| Register
+| Data register used to retrieve position of roller shutter.
+
+| index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| unsigned
+| BOOLEAN
+| Unsigned
+| Values retrieved from and written to device assume unsigned representation. Does not apply if floating option is set.
+
+| floating
+| BOOLEAN
+| floating point
+| Indicate that read/write value is a floating point number. Overrides unsigned flag.
+
+| startRegister
+| TEXT
+| Register
+| Type of discrete register to write UP command.
+
+| startIndex
+| INTEGER
+| Register index
+| Index of register used to write data.
+
+| startInvert
+| BOOLEAN
+| Invert
+| Invert logical representation of related register (0->1, 1->0).
+
+| stopRegister
+| TEXT
+| Register
+| Type of discrete register to write DOWN command.
+
+| stopIndex
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| stopInvert
 | BOOLEAN
 | Invert
 | Invert logical representation of related register (0->1, 1->0).
@@ -145,8 +203,8 @@
 
 | register
 | TEXT
-| Register symbol
-| Symbol (kind) of register to read
+| Register
+| Type of data register to read or write.
 
 | index
 | INTEGER
@@ -157,6 +215,67 @@
 | BOOLEAN
 | Unsigned
 | Values retrieved from and written to device assume unsigned representation.
+
+|===
+
+[[channel-type:co7io-fatek:rollershutter16]]
+== Config `channel-type:co7io-fatek:rollershutter16`
+[width="100%",caption="channel-type:co7io-fatek:rollershutter16 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| register
+| TEXT
+| Register
+| Data register used to retrieve position of roller shutter.
+
+| index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| unsigned
+| BOOLEAN
+| Unsigned
+| Values retrieved from and written to device assume unsigned representation. Does not apply if floating option is set.
+
+| floating
+| BOOLEAN
+| floating point
+| Indicate that read/write value is a floating point number. Overrides unsigned flag.
+
+| startRegister
+| TEXT
+| Register
+| Type of discrete register to write UP command.
+
+| startIndex
+| INTEGER
+| Register index
+| Index of register used to write data.
+
+| startInvert
+| BOOLEAN
+| Invert
+| Invert logical representation of related register (0->1, 1->0).
+
+| stopRegister
+| TEXT
+| Register
+| Type of discrete register to write DOWN command.
+
+| stopIndex
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| stopInvert
+| BOOLEAN
+| Invert
+| Invert logical representation of related register (0->1, 1->0).
+| BOOLEAN
+| Invert
+| Invert logical representation of related register (0->1, 1->0).
 
 |===
 

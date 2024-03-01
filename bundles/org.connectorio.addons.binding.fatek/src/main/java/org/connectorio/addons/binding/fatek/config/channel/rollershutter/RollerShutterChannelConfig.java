@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2024-2024 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,19 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.fatek.internal.channel;
+package org.connectorio.addons.binding.fatek.config.channel.rollershutter;
 
-import org.openhab.core.thing.ChannelUID;
-import org.openhab.core.types.Command;
-import org.openhab.core.types.State;
-import org.simplify4u.jfatek.FatekCommand;
-import org.simplify4u.jfatek.registers.Reg;
-import org.simplify4u.jfatek.registers.RegValue;
+import org.connectorio.addons.binding.fatek.config.channel.data.DataChannelConfig;
+import org.simplify4u.jfatek.registers.RegName;
 
-public interface FatekChannelHandler {
+public class RollerShutterChannelConfig extends DataChannelConfig {
 
-  // identification
-  Reg register();
-  ChannelUID channel();
+  public int startIndex;
+  public RegName startRegister;
+  public boolean startInvert;
 
-  // write
-  FatekCommand<?> prepareWrite(Command command);
-  // fetch
-  State state(RegValue value);
+  public int stopIndex;
+  public RegName stopRegister;
+  public boolean stopInvert;
 
 }

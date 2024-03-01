@@ -17,15 +17,13 @@
  */
 package org.connectorio.addons.binding.fatek.internal.channel;
 
-import static org.simplify4u.jfatek.registers.DisReg.*;
-
-import org.connectorio.addons.binding.fatek.config.channel.binary.DiscreteChannelConfig;
-import org.openhab.core.library.types.OnOffType;
-import org.openhab.core.library.types.OpenClosedType;
+import org.connectorio.addons.binding.fatek.internal.channel.converter.Converter;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
+import org.simplify4u.jfatek.FatekCommand;
+import org.simplify4u.jfatek.FatekWriteDiscreteCmd;
 import org.simplify4u.jfatek.registers.DisReg;
 import org.simplify4u.jfatek.registers.Reg;
 import org.simplify4u.jfatek.registers.RegValue;
@@ -33,34 +31,13 @@ import org.simplify4u.jfatek.registers.RegValue;
 public class BinaryChannelHandler implements FatekChannelHandler {
 
   private final DisReg register;
+  private final Converter converter;
   private final ChannelUID channel;
-  private final boolean invert;
 
-  public BinaryChannelHandler(Channel channel, DiscreteChannelConfig config) {
+  public BinaryChannelHandler(Channel channel, DisReg register, Converter converter) {
     this.channel = channel.getUID();
-    this.invert = config.invert;
-    switch (config.getRegister()) {
-      case X:
-        this.register = X(config.getIndex());
-        break;
-      case Y:
-        this.register = Y(config.getIndex());
-        break;
-      case M:
-        this.register = M(config.getIndex());
-        break;
-      case S:
-        this.register = S(config.getIndex());
-        break;
-      case T:
-        this.register = T(config.getIndex());
-        break;
-      case C:
-        this.register = C(config.getIndex());
-        break;
-      default:
-        throw new IllegalArgumentException("Unsupported register kind " + config.getRegister());
-    }
+    this.register = register;
+    this.converter = converter;
   }
 
   @Override
@@ -74,21 +51,17 @@ public class BinaryChannelHandler implements FatekChannelHandler {
   }
 
   @Override
-  public RegValue prepareWrite(Command command) {
-    boolean value;
-    if (command instanceof OpenClosedType) {
-      value = OpenClosedType.CLOSED == command;
-    } else {
-      value = OnOffType.ON == command;
+  public FatekCommand<?> prepareWrite(Command command) {
+    RegValue value = converter.toValue(command);
+    if (value != null) {
+      return new FatekWriteDiscreteCmd(null, register, value.boolValue());
     }
-
-    return RegValue.getForReg(register, !invert ? !value : value);
+    return null;
   }
 
   @Override
   public State state(RegValue value) {
-    boolean status = invert ? !value.boolValue() : value.boolValue();
-    return status ? OnOffType.ON : OnOffType.OFF;
+    return converter.toState(value);
   }
 
 }

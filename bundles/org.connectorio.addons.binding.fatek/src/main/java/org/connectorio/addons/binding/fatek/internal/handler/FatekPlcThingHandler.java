@@ -110,33 +110,24 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
     if (handlerMap.containsKey(channelUID)) {
       FatekChannelHandler handler = handlerMap.get(channelUID);
       Reg register = handler.register();
-      RegValue value = handler.prepareWrite(command);
-      if (value == null) {
+      FatekCommand<?> fatekCmd = null; //handler.prepareWrite(command);
+      if (fatekCmd == null) {
         logger.warn("Could not map command {} from channel {} to value supported by PLC. Ignoring this write.", command, channelUID);
         return;
       }
 
-      if (register instanceof DataReg) {
-        FatekWriteDataCmd cmd = new FatekWriteDataCmd(null, (DataReg) register);
-        cmd.addValue(value.longValue());
-        write(channelUID, command, register, value, cmd);
-      } else if (register instanceof DisReg) {
-        FatekWriteDiscreteCmd cmd = new FatekWriteDiscreteCmd(null, (DisReg) register, value.boolValue());
-        write(channelUID, command, register, value, cmd);
-      } else {
-        logger.error("Unsupported value {} mapped from command {} for channel {}", value, command, channelUID);
-      }
+      write(channelUID, command, fatekCmd);
     }
   }
 
-  private void write(ChannelUID channelUID, Command command, Reg register, RegValue value, FatekCommand<?> cmd) {
+  private void write(ChannelUID channel, Command command, FatekCommand<?> cmd) {
     connection.execute(stationNumber, cmd).whenComplete((r, e) -> {
       if (e != null) {
-        logger.error("Could not write value {} to register {}", command, register, e);
+        logger.error("Could not signal channel {} with command {} by fatek command {}", channel, command, cmd, e);
         return;
       }
-      logger.debug("Successful write of value {} mapped from {} for channel {}", value, command, register);
-      update(channelUID, command);
+      logger.debug("Successful write of channel {} with command {} annd fatek command {}", channel, command, cmd);
+      update(channel, command);
     });
   }
 

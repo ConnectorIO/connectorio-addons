@@ -17,7 +17,6 @@
  */
 package org.connectorio.addons.binding.fatek.config.channel;
 
-import org.connectorio.addons.binding.fatek.config.channel.RegisterConfig;
 import org.simplify4u.jfatek.registers.RegName;
 
 public abstract class BaseChannelConfig implements RegisterConfig {
@@ -25,7 +24,12 @@ public abstract class BaseChannelConfig implements RegisterConfig {
   public int index;
 
   public RegName register;
-  public boolean invert;
+
+  public BaseChannelConfig() {}
+  public BaseChannelConfig(RegName register, int index) {
+    this.register = register;
+    this.index = index;
+  }
 
   @Override
   public RegName getRegister() {
