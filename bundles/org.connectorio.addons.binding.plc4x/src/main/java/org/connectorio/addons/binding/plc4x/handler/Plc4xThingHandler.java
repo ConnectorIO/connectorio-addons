@@ -17,13 +17,13 @@
  */
 package org.connectorio.addons.binding.plc4x.handler;
 
-import org.apache.plc4x.java.api.PlcConnection;
+import org.apache.plc4x.java.api.model.PlcTag;
 import org.connectorio.addons.binding.config.PollingConfiguration;
 import org.connectorio.addons.binding.handler.GenericThingHandler;
 import org.connectorio.addons.binding.handler.polling.PollingThingHandler;
 import org.openhab.core.thing.binding.ThingHandler;
 
-public interface Plc4xThingHandler<T extends PlcConnection, B extends Plc4xBridgeHandler<T, ?>, C extends PollingConfiguration>
+public interface Plc4xThingHandler<T extends PlcTag, B extends Plc4xBridgeHandler<?>, C extends PollingConfiguration>
   extends ThingHandler, GenericThingHandler<B, C>, PollingThingHandler<B, C> {
 
 }

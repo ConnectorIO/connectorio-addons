@@ -39,6 +39,7 @@ import org.connectorio.addons.binding.amsads.AmsAdsBindingConstants;
 import org.connectorio.addons.binding.amsads.internal.config.AmsConfiguration;
 import org.connectorio.addons.binding.amsads.internal.config.NetworkConfiguration;
 import org.connectorio.addons.binding.amsads.internal.discovery.AmsAdsDiscoveryDriver;
+import org.connectorio.addons.binding.plc4x.source.SourceFactory;
 import org.connectorio.addons.binding.test.ThingMock;
 import org.connectorio.plc4x.extras.osgi.core.internal.OsgiDriverManager;
 import org.connectorio.addons.binding.test.BridgeMock;
@@ -62,6 +63,9 @@ class AmsAdsNetworkBridgeHandlerTest {
   ChannelHandlerFactory channelHandlerFactory;
 
   @Mock
+  SourceFactory sourceFactory;
+
+  @Mock
   AmsAdsDiscoveryDriver discoveryDriver;
 
   @Test
@@ -70,7 +74,7 @@ class AmsAdsNetworkBridgeHandlerTest {
       .create();
 
     AmsAdsNetworkBridgeHandler handler = new AmsAdsNetworkBridgeHandler(bridge, symbolReaderFactory,
-      channelHandlerFactory, new OsgiDriverManager(), discoveryDriver);
+      channelHandlerFactory, new OsgiDriverManager(), sourceFactory, discoveryDriver);
     handler.initialize();
 
     CompletableFuture<PlcConnection> initializer = handler.getPlcConnection();
@@ -101,7 +105,7 @@ class AmsAdsNetworkBridgeHandlerTest {
     Thing thing = thingMock.create();
 
     AmsAdsNetworkBridgeHandler handler = new AmsAdsNetworkBridgeHandler(thing, symbolReaderFactory,
-      channelHandlerFactory, new OsgiDriverManager(), discoveryDriver);
+      channelHandlerFactory, new OsgiDriverManager(), sourceFactory, discoveryDriver);
     handler.setCallback(thingMock.getCallback());
     handler.initialize();
 

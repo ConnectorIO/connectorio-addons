@@ -17,16 +17,31 @@
  */
 package org.connectorio.addons.binding.s7.internal.handler;
 
-import org.apache.plc4x.java.api.PlcConnection;
+import org.apache.plc4x.java.s7.readwrite.tag.S7Tag;
 import org.connectorio.addons.binding.config.PollingConfiguration;
+import org.connectorio.addons.binding.plc4x.config.CommonChannelConfiguration;
 import org.connectorio.addons.binding.plc4x.handler.base.PollingPlc4xThingHandler;
+import org.connectorio.addons.binding.plc4x.source.BasicConverter;
+import org.connectorio.addons.binding.plc4x.source.SourceFactory;
 import org.connectorio.addons.binding.s7.S7BindingConstants;
+import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.Thing;
 
-public class S7PlcHandler extends PollingPlc4xThingHandler<PlcConnection, S7NetworkBridgeHandler, PollingConfiguration> {
+public class S7PlcHandler extends PollingPlc4xThingHandler<S7Tag, S7NetworkBridgeHandler, PollingConfiguration> {
 
-  public S7PlcHandler(Thing thing) {
-    super(thing);
+  public S7PlcHandler(Thing thing, SourceFactory sourceFactory) {
+    super(thing, sourceFactory, new BasicConverter());
+  }
+
+  @Override
+  public void initialize() {
+    super.initialize();
+  }
+
+  @Override
+  protected S7Tag createTag(Channel channel) {
+    CommonChannelConfiguration configuration = channel.getConfiguration().as(CommonChannelConfiguration.class);
+    return S7Tag.of(configuration.field);
   }
 
   @Override

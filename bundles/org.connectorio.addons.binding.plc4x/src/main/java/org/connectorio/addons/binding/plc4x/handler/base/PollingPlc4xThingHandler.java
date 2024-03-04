@@ -23,18 +23,25 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
+import org.apache.plc4x.java.api.model.PlcTag;
 import org.connectorio.addons.binding.config.PollingConfiguration;
 import org.connectorio.addons.binding.handler.polling.common.BasePollingThingHandler;
 import org.connectorio.addons.binding.plc4x.handler.Plc4xBridgeHandler;
 import org.connectorio.addons.binding.plc4x.handler.Plc4xThingHandler;
 import org.connectorio.addons.binding.plc4x.handler.task.WriteTask;
 import org.connectorio.addons.binding.plc4x.config.CommonChannelConfiguration;
-import org.connectorio.addons.binding.plc4x.handler.task.ReadTask;
+import org.connectorio.addons.binding.plc4x.sampler.DefaultPlc4xSampler;
+import org.connectorio.addons.binding.plc4x.sampler.DefaultPlc4xSamplerComposer;
+import org.connectorio.addons.binding.plc4x.source.ChannelCallback;
+import org.connectorio.addons.binding.plc4x.source.Converter;
+import org.connectorio.addons.binding.plc4x.source.Plc4xSampler;
+import org.connectorio.addons.binding.plc4x.source.SamplerCallback;
+import org.connectorio.addons.binding.plc4x.source.SourceFactory;
+import org.connectorio.addons.binding.source.sampling.SamplingSource;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
@@ -46,15 +53,19 @@ import org.openhab.core.types.RefreshType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class PollingPlc4xThingHandler<T extends PlcConnection, B extends Plc4xBridgeHandler<T, ?>, C extends PollingConfiguration> extends
+public abstract class PollingPlc4xThingHandler<T extends PlcTag, B extends Plc4xBridgeHandler<?>, C extends PollingConfiguration> extends
   BasePollingThingHandler<B, C> implements Plc4xThingHandler<T, B, C> {
 
-  protected final Map<ChannelUID, ScheduledFuture> futures = new ConcurrentHashMap<>();
   private final Logger logger = LoggerFactory.getLogger(getClass());
-  private T connection;
+  private final Map<Channel, T> channelMapping = new ConcurrentHashMap<>();
+  private final SourceFactory sourceFactory;
+  private final Converter converter;
+  private SamplingSource<Plc4xSampler<T>> source;
 
-  public PollingPlc4xThingHandler(Thing thing) {
+  public PollingPlc4xThingHandler(Thing thing, SourceFactory sourceFactory, Converter converter) {
     super(thing);
+    this.sourceFactory = sourceFactory;
+    this.converter = converter;
   }
 
   @Override
@@ -63,13 +74,14 @@ public abstract class PollingPlc4xThingHandler<T extends PlcConnection, B extend
       .map(future -> future.whenCompleteAsync(this::connect, this.scheduler));
   }
 
-  private void connect(T connection, Throwable e) {
+  private void connect(PlcConnection connection, Throwable e) {
     if (e != null) {
       updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_UNINITIALIZED);
       return;
     }
 
     List<String> configErrors = new ArrayList<>();
+    this.source = this.sourceFactory.sampling(scheduler, new DefaultPlc4xSamplerComposer<>(connection));
     for (Channel channel : thing.getChannels()) {
       final ChannelTypeUID channelTypeUID = channel.getChannelTypeUID();
       if (channelTypeUID == null) {
@@ -80,10 +92,15 @@ public abstract class PollingPlc4xThingHandler<T extends PlcConnection, B extend
         CommonChannelConfiguration.class);
 
       try {
+        T tag = createTag(channel);
+        if (tag == null) {
+          logger.warn("Could not determine tag for channel {}. This channel will be excluded from polling", channel);
+          continue;
+        }
+        channelMapping.put(channel, tag);
         Long cycleTime = channelConfig.refreshInterval == null ? getRefreshInterval() : channelConfig.refreshInterval;
-        ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(new ReadTask(connection, getCallback(), channel), 0,
-          cycleTime, TimeUnit.MILLISECONDS);
-        futures.put(channel.getUID(), future);
+        Consumer<Object> callback = new SamplerCallback(converter, new ChannelCallback(getCallback(), channel));
+        source.add(cycleTime, channel.getUID().getAsString(), new DefaultPlc4xSampler<>(connection, channel.getUID().getAsString(), tag, callback));
       } catch (PlcRuntimeException er) {
         logger.warn("Channel configuration error", er);
         configErrors.add(channel.getLabel() + ": " + er.getMessage());
@@ -100,6 +117,7 @@ public abstract class PollingPlc4xThingHandler<T extends PlcConnection, B extend
       return;
     }
 
+    source.start();
     updateStatus(ThingStatus.ONLINE);
   }
 
@@ -107,16 +125,20 @@ public abstract class PollingPlc4xThingHandler<T extends PlcConnection, B extend
   public void handleCommand(ChannelUID channelUID, Command command) {
     Channel channel = getThing().getChannel(channelUID);
 
-    if (RefreshType.REFRESH == command) {
-      getBridgeConnection().ifPresent(connection -> scheduler.submit(new ReadTask(connection,
-          getCallback(), channel)));
+    T tag = channelMapping.get(channelUID);
+    if (tag == null) {
+      logger.info("Could not determine tag for channel {}", channel);
+    }
+
+    if (RefreshType.REFRESH == command && this.source != null) {
+      Consumer<Object> callback = new SamplerCallback(converter, new ChannelCallback(getCallback(), channel));
+      getBridgeConnection().ifPresent(connection -> source.request(new DefaultPlc4xSampler<>(connection, channelUID.getAsString(), tag, callback)));
     } else {
-      getBridgeConnection()
-          .ifPresent(connection -> scheduler.submit(new WriteTask(connection, channel, command)));
+      getBridgeConnection().ifPresent(connection -> scheduler.submit(new WriteTask(connection, channel, command)));
     }
   }
 
-  protected Optional<T> getBridgeConnection() {
+  protected Optional<PlcConnection> getBridgeConnection() {
     return getBridgeHandler().map(Plc4xBridgeHandler::getConnection).map(CompletableFuture::join);
   }
 
@@ -127,7 +149,11 @@ public abstract class PollingPlc4xThingHandler<T extends PlcConnection, B extend
   }
 
   private void clearTasks() {
-    futures.forEach((k, v) -> v.cancel(false));
+    if (this.source != null) {
+      this.source.stop();
+    }
   }
+
+  protected abstract T createTag(Channel channel);
 
 }

@@ -21,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
+import org.apache.plc4x.java.s7.readwrite.tag.S7Tag;
 import org.connectorio.addons.binding.plc4x.handler.base.PollingPlc4xBridgeHandler;
 import org.connectorio.plc4x.extras.osgi.PlcDriverManager;
 import org.connectorio.addons.binding.s7.S7BindingConstants;
@@ -39,7 +40,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Lukasz Dywicki - Initial contribution
  */
-public class S7NetworkBridgeHandler extends PollingPlc4xBridgeHandler<PlcConnection, S7NetworkConfiguration> {
+public class S7NetworkBridgeHandler extends PollingPlc4xBridgeHandler<S7Tag, S7NetworkConfiguration> {
 
   private final Logger logger = LoggerFactory.getLogger(S7NetworkBridgeHandler.class);
   private final PlcDriverManager driverManager;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 ConnectorIO sp. z o.o.
+ * Copyright (C) 2024-2024 ConnectorIO sp. z o.o.
  *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,24 +19,31 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-package org.connectorio.addons.binding.bacnet.internal.handler.object;
+package org.connectorio.addons.binding.bacnet.internal.handler.source;
 
-import com.serotonin.bacnet4j.obj.AnalogInputObject;
-import org.code_house.bacnet4j.wrapper.api.Type;
-import org.connectorio.addons.binding.bacnet.internal.config.ObjectConfig;
-import org.openhab.core.thing.Thing;
+import java.util.function.Consumer;
+import org.openhab.core.thing.Channel;
+import org.openhab.core.thing.binding.ThingHandlerCallback;
+import org.openhab.core.types.State;
 
-public class AnalogOutputHandler extends
-    BACnetObjectThingHandler<AnalogInputObject, BACnetDeviceBridgeHandler<?, ?>, ObjectConfig> {
+public class ChannelCallback implements Consumer<State> {
 
-  /**
-   * Creates a new instance of this class for the {@link Thing}.
-   *
-   * @param thing the thing that should be handled, not null
-   */
-  public AnalogOutputHandler(Thing thing) {
-    super(thing, Type.ANALOG_OUTPUT);
+  private final ThingHandlerCallback callback;
+  private final Channel channel;
+
+  public ChannelCallback(ThingHandlerCallback callback, Channel channel) {
+    this.callback = callback;
+    this.channel = channel;
   }
 
+  @Override
+  public void accept(State state) {
+    callback.stateUpdated(channel.getUID(), state);
+  }
+
+  @Override
+  public String toString() {
+    return "ChannelCallback [" + channel.getUID() + "]";
+  }
 
 }

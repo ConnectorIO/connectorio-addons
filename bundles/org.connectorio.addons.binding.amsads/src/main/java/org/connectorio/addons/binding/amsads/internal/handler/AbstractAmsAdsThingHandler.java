@@ -36,13 +36,16 @@ import org.connectorio.addons.binding.amsads.internal.config.AdsConfiguration;
 import org.connectorio.addons.binding.amsads.internal.config.AmsConfiguration;
 import org.connectorio.addons.binding.amsads.internal.handler.channel.AdsChannelHandler;
 import org.connectorio.addons.binding.amsads.internal.handler.channel.ChannelHandlerFactory;
-import org.connectorio.addons.binding.amsads.internal.handler.polling.FetchContainer;
-import org.connectorio.addons.binding.amsads.internal.handler.polling.PollFetchContainer;
-import org.connectorio.addons.binding.amsads.internal.handler.polling.SubscribeFetchContainer;
 import org.connectorio.addons.binding.amsads.internal.symbol.SymbolEntry;
 import org.connectorio.addons.binding.amsads.internal.symbol.SymbolReader;
 import org.connectorio.addons.binding.amsads.internal.symbol.SymbolReaderFactory;
 import org.connectorio.addons.binding.handler.GenericThingHandlerBase;
+import org.connectorio.addons.binding.plc4x.sampler.DefaultPlc4xSampler;
+import org.connectorio.addons.binding.plc4x.sampler.DefaultPlc4xSamplerComposer;
+import org.connectorio.addons.binding.plc4x.source.Plc4xSampler;
+import org.connectorio.addons.binding.plc4x.source.SourceFactory;
+import org.connectorio.addons.binding.plc4x.source.SubscriberSource;
+import org.connectorio.addons.binding.source.sampling.SamplingSource;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
@@ -62,17 +65,20 @@ public abstract class AbstractAmsAdsThingHandler<B extends AmsBridgeHandler, C e
   private final Logger logger = LoggerFactory.getLogger(AbstractAmsAdsThingHandler.class);
   private final SymbolReaderFactory symbolReaderFactory;
   private final ChannelHandlerFactory channelHandlerFactory;
+  private final SourceFactory sourceFactory;
 
   private final Map<String, Entry<AdsTag, AdsChannelHandler>> handlerMap = new ConcurrentHashMap<>();
   private final CompletableFuture<PlcConnection> initializer = new CompletableFuture<>();;
 
-  private FetchContainer subscriber;
-  private FetchContainer poller;
+  private SubscriberSource<AdsTag> subscriber;
+  private SamplingSource<Plc4xSampler<AdsTag>> poller;
 
-  public AbstractAmsAdsThingHandler(Thing thing, SymbolReaderFactory symbolReaderFactory, ChannelHandlerFactory channelHandlerFactory) {
+  public AbstractAmsAdsThingHandler(Thing thing, SymbolReaderFactory symbolReaderFactory,
+      ChannelHandlerFactory channelHandlerFactory, SourceFactory sourceFactory) {
     super(thing);
     this.symbolReaderFactory = symbolReaderFactory;
     this.channelHandlerFactory = channelHandlerFactory;
+    this.sourceFactory = sourceFactory;
   }
 
   @Override
@@ -160,8 +166,8 @@ public abstract class AbstractAmsAdsThingHandler<B extends AmsBridgeHandler, C e
       }
 
       List<Channel> channels = getThing().getChannels();
-      poller = new PollFetchContainer(scheduler, connection);
-      subscriber = new SubscribeFetchContainer(connection);
+      poller = sourceFactory.sampling(scheduler, new DefaultPlc4xSamplerComposer<>(connection));
+      subscriber = sourceFactory.subscriber(connection);
       for (Channel channel : channels) {
         AdsChannelHandler handler = channelHandlerFactory.map(thing, getCallback(), channel);
         if (handler != null) {
@@ -172,9 +178,9 @@ public abstract class AbstractAmsAdsThingHandler<B extends AmsBridgeHandler, C e
             continue;
           }
           if (handler.getRefreshInterval() != null) {
-            poller.add(handler.getRefreshInterval(), channelId, tag, handler::onChange);
+            poller.add(handler.getRefreshInterval(), channelId, new DefaultPlc4xSampler<>(connection, channelId, tag, handler::onChange));
           } else {
-            subscriber.add(null, channelId, tag, handler::onChange);
+            subscriber.add(channelId, tag, handler::onChange);
           }
           // register handler so we can dispatch commands
           handlerMap.put(channelId, new SimpleEntry<>(tag, handler));

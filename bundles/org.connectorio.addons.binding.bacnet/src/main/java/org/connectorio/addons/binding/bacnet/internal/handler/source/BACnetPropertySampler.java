@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 ConnectorIO sp. z o.o.
+ * Copyright (C) 2024-2024 ConnectorIO sp. z o.o.
  *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,24 +19,19 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-package org.connectorio.addons.binding.bacnet.internal.handler.object;
+package org.connectorio.addons.binding.bacnet.internal.handler.source;
 
-import com.serotonin.bacnet4j.obj.AnalogInputObject;
-import org.code_house.bacnet4j.wrapper.api.Type;
-import org.connectorio.addons.binding.bacnet.internal.config.ObjectConfig;
-import org.openhab.core.thing.Thing;
+import com.serotonin.bacnet4j.type.Encodable;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import org.code_house.bacnet4j.wrapper.api.BacNetObject;
+import org.connectorio.addons.binding.source.sampling.Sampler;
 
-public class AnalogInputHandler extends
-    BACnetObjectThingHandler<AnalogInputObject, BACnetDeviceBridgeHandler<?, ?>, ObjectConfig> {
+public interface BACnetPropertySampler extends Sampler {
 
-  /**
-   * Creates a new instance of this class for the {@link Thing}.
-   *
-   * @param thing the thing that should be handled, not null
-   */
-  public AnalogInputHandler(Thing thing) {
-    super(thing, Type.ANALOG_INPUT);
-  }
+  Map<BacNetObject, List<String>> getSamples();
 
+  Consumer<Map<Sample, Encodable>> getCallback();
 
 }

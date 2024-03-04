@@ -23,6 +23,8 @@ package org.connectorio.addons.binding.bacnet.internal.handler.object.task;
 
 public class Names {
 
+  public final static String PRESENT_VALUE = "present-value";
+
   public static String dashed(String channel) {
     StringBuilder name = new StringBuilder();
     for (char ch : channel.toCharArray()) {

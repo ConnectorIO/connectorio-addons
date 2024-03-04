@@ -26,6 +26,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.canopen.readwrite.CANOpenDataType;
+import org.apache.plc4x.java.canopen.tag.CANOpenTag;
 import org.connectorio.addons.binding.canopen.CANopenBindingConstants;
 import org.connectorio.addons.binding.canopen.api.CoConnection;
 import org.connectorio.addons.binding.canopen.api.CoNode;
@@ -48,7 +49,7 @@ import org.openhab.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CoNodeBridgeHandler extends PollingPlc4xBridgeHandler<PlcConnection, CoNodeBridgeConfig> {
+public class CoNodeBridgeHandler extends PollingPlc4xBridgeHandler<CANOpenTag, CoNodeBridgeConfig> {
 
   private final Logger logger = LoggerFactory.getLogger(CoNodeBridgeHandler.class);
 

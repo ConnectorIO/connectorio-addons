@@ -31,15 +31,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.api.BacNetObject;
 import org.code_house.bacnet4j.wrapper.api.Device;
@@ -51,17 +46,21 @@ import org.connectorio.addons.binding.bacnet.internal.BACnetBindingConstants;
 import org.connectorio.addons.binding.bacnet.internal.command.PrioritizedCommand;
 import org.connectorio.addons.binding.bacnet.internal.command.ResetCommand;
 import org.connectorio.addons.binding.bacnet.internal.config.DeviceChannelConfig;
-import org.connectorio.addons.binding.bacnet.internal.discovery.BACnetPropertyDiscoveryService;
 import org.connectorio.addons.binding.bacnet.internal.config.DeviceConfig;
+import org.connectorio.addons.binding.bacnet.internal.discovery.BACnetPropertyDiscoveryService;
 import org.connectorio.addons.binding.bacnet.internal.handler.BACnetObjectBridgeHandler;
+import org.connectorio.addons.binding.bacnet.internal.handler.channel.converter.CompositeConverter;
 import org.connectorio.addons.binding.bacnet.internal.handler.network.BACnetNetworkBridgeHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.object.task.ReadObjectTask;
-import org.connectorio.addons.binding.bacnet.internal.handler.object.task.Readout;
-import org.connectorio.addons.binding.bacnet.internal.handler.object.task.RefreshDeviceTask;
+import org.connectorio.addons.binding.bacnet.internal.handler.source.BACnetObjectsSampler;
+import org.connectorio.addons.binding.bacnet.internal.handler.source.BACnetPropertySampler;
+import org.connectorio.addons.binding.bacnet.internal.handler.source.BACnetSamplerComposer;
+import org.connectorio.addons.binding.bacnet.internal.handler.source.ChannelCallback;
+import org.connectorio.addons.binding.bacnet.internal.handler.source.SamplerCallback;
+import org.connectorio.addons.binding.source.SourceFactory;
+import org.connectorio.addons.binding.source.sampling.SamplingSource;
 import org.connectorio.addons.communication.watchdog.Watchdog;
-import org.connectorio.addons.communication.watchdog.contrib.ThingStatusWatchdogListener;
-import org.connectorio.addons.communication.watchdog.WatchdogBuilder;
 import org.connectorio.addons.communication.watchdog.WatchdogManager;
+import org.connectorio.addons.link.LinkListener;
 import org.connectorio.addons.link.LinkManager;
 import org.connectorio.addons.temporal.item.TemporalItemFactory;
 import org.openhab.core.config.core.Configuration;
@@ -75,7 +74,6 @@ import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.thing.binding.ThingHandlerService;
 import org.openhab.core.thing.binding.builder.BridgeBuilder;
 import org.openhab.core.thing.binding.builder.ChannelBuilder;
-import org.openhab.core.thing.link.ItemChannelLinkRegistry;
 import org.openhab.core.thing.type.ChannelTypeUID;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.RefreshType;
@@ -83,27 +81,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnetObjectBridgeHandler<DeviceObject, BACnetNetworkBridgeHandler<?>, C>
-  implements BACnetDeviceBridgeHandler<BACnetNetworkBridgeHandler<?>, C> {
+    implements BACnetDeviceBridgeHandler<BACnetNetworkBridgeHandler<?>, C>, LinkListener {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
   private final LinkManager linkManager;
+  private final SourceFactory sourceFactory;
   private WatchdogManager watchdogManager;
 
   private Device device;
   private CompletableFuture<BacNetClient> clientFuture = new CompletableFuture<>();
-  private Map<Long, ScheduledFuture<?>> pollers = new LinkedHashMap<>();
   private boolean discoverObjects;
   private Watchdog watchdog;
+  private SamplingSource<BACnetPropertySampler> source;
 
   /**
    * Creates a new instance of this class for the {@link Thing}.
    *
    * @param bridge the thing that should be handled, not null
    */
-  public BACnetDeviceHandler(Bridge bridge, LinkManager linkManager, WatchdogManager watchdogManager) {
+  public BACnetDeviceHandler(Bridge bridge, LinkManager linkManager, SourceFactory sourceFactory, WatchdogManager watchdogManager) {
     super(bridge);
     this.linkManager = linkManager;
+    this.sourceFactory = sourceFactory;
     this.watchdogManager = watchdogManager;
   }
 
@@ -137,7 +137,7 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
   }
 
   protected void initializeChannels(BacNetClient client) {
-    WatchdogBuilder watchdogBuilder = watchdogManager.builder(getThing());
+    //WatchdogBuilder watchdogBuilder = watchdogManager.builder(getThing());
 
     DeviceConfig deviceConfig = getConfigAs(DeviceConfig.class);
     discoverObjects = deviceConfig.discoverObjects;
@@ -145,48 +145,26 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
       updateChannels(client);
     }
 
-    Map<Long, Set<Readout>> pollingMap = new LinkedHashMap<>();
-    for (Channel channel : thing.getChannels()) {
-      DeviceChannelConfig deviceChannelConfig = channel.getConfiguration().as(DeviceChannelConfig.class);
-      Long refreshInterval = Optional.ofNullable(deviceChannelConfig.refreshInterval)
-        .filter(value -> value != 0)
-        .orElse(getRefreshInterval());
-      watchdogBuilder.withChannel(channel.getUID(), refreshInterval);
-      if (!pollingMap.containsKey(refreshInterval)) {
-        pollingMap.put(refreshInterval, new LinkedHashSet<>());
-      }
-      BacNetObject object = new BacNetObject(device, deviceChannelConfig.instance, deviceChannelConfig.type);
-      PropertyIdentifier propertyIdentifier = PropertyIdentifier.forName(deviceChannelConfig.propertyIdentifier);
-      Readout readout = new Readout(channel.getUID(), object, propertyIdentifier);
-      pollingMap.get(refreshInterval).add(readout);
-    }
+    this.source = sourceFactory.sampling(scheduler, new BACnetSamplerComposer(client));
+    configureSource(client);
 
     //this.watchdog = watchdogBuilder.build(getCallback(), new ThingStatusWatchdogListener(getThing(), getCallback()));
-    for (Entry<Long, Set<Readout>> entry : pollingMap.entrySet()) {
-      ScheduledFuture<?> poller = scheduler.scheduleAtFixedRate(new RefreshDeviceTask(() -> clientFuture, thing, getCallback(), device, entry.getValue(), linkManager),
-          0, entry.getKey(), TimeUnit.MILLISECONDS);
-      pollers.put(entry.getKey(), poller);
-    }
+    source.start();
+    linkManager.registerListener(thing, this);
     updateStatus(ThingStatus.ONLINE);
     clientFuture.complete(client);
   }
 
   @Override
   public void dispose() {
+    linkManager.deregisterListener(thing, this);
+
     if (watchdog != null) {
       watchdog.close();
     }
 
-    if (pollers != null) {
-      for (Entry<Long, ScheduledFuture<?>> entry : pollers.entrySet()) {
-        try {
-          ScheduledFuture<?> value = entry.getValue();
-          value.cancel(true);
-        } catch (Exception e) {
-          logger.warn("Error during shutdown of poller checking device {} every {}ms", device, entry.getKey());
-        }
-      }
-      pollers = null;
+    if (source != null) {
+      source.stop();
     }
     super.dispose();
   }
@@ -346,14 +324,20 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
       return;
     }
 
-    final CompletableFuture<BacNetClient> client = getBridgeHandler().get().getClient();
-    DeviceChannelConfig config = getThing().getChannel(channelUID).getConfiguration().as(DeviceChannelConfig.class);
+    final CompletableFuture<BacNetClient> clientFuture = getBridgeHandler().get().getClient();
+    Channel channel = getThing().getChannel(channelUID);
+    DeviceChannelConfig config = channel.getConfiguration().as(DeviceChannelConfig.class);
     BacNetObject object = new BacNetObject(device, config.instance, config.type);
     String attribute = config.propertyIdentifier;
     //Integer writePriority = config.writePriority;
 
     if (command == RefreshType.REFRESH) {
-      scheduler.execute(new ReadObjectTask(() -> client, getCallback(), object, Collections.singleton(channelUID)));
+      if (source != null) {
+        clientFuture.thenAccept(client -> {
+          source.request(new BACnetObjectsSampler(client, object, attribute, new SamplerCallback(
+            CompositeConverter.INSTANCE, new ChannelCallback(getCallback(), channel))));
+        });
+      }
     } else if (command instanceof ResetCommand) {
       ResetCommand reset = (ResetCommand) command;
       JavaToBacNetConverter<Object> converter = (value) -> {
@@ -363,16 +347,16 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
       if (reset.getPriority() == null) {
         if (config.writePriority == null) {
           logger.debug("Submitting NULL value for channel {} to {}", channelUID, object);
-          client.join().setObjectPropertyValue(object, attribute, null, converter);
+          clientFuture.join().setObjectPropertyValue(object, attribute, null, converter);
         } else {
           logger.debug("Submitting NULL value for channel {} to {} with priority {}", channelUID,
             object, config.writePriority);
-          client.join().setObjectPropertyValue(object, attribute, null, converter, config.writePriority);
+          clientFuture.join().setObjectPropertyValue(object, attribute, null, converter, config.writePriority);
         }
       } else {
         logger.debug("Submitting NULL value for channel {} to {} with custom reset priority {}", channelUID,
           object, config.writePriority);
-        client.join().setObjectPropertyValue(object, attribute, null, converter, reset.getPriority());
+        clientFuture.join().setObjectPropertyValue(object, attribute, null, converter, reset.getPriority());
       }
     } else {
       Priority priority = config.writePriority == null ? null : Priorities.get(config.writePriority)
@@ -389,10 +373,10 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
       };
       if (priority == null) {
         logger.debug("Submitting write {} from channel {} to {}", channelUID, command, object);
-        client.join().setObjectPropertyValue(object, attribute, command, converter);
+        clientFuture.join().setObjectPropertyValue(object, attribute, command, converter);
       } else {
         logger.debug("Submitting write {} from channel {} to {} with priority {}", channelUID, command, object, priority);
-        client.join().setObjectPropertyValue(object, attribute, command, converter, priority);
+        clientFuture.join().setObjectPropertyValue(object, attribute, command, converter, priority);
       }
       logger.debug("Command {} for property {} executed successfully", command, object);
     }
@@ -415,5 +399,45 @@ public abstract class BACnetDeviceHandler<C extends DeviceConfig> extends BACnet
   public Device getDevice() {
     return device;
   }
+
+  @Override
+  public void linked(ChannelUID channelUID) {
+    reconfigureSource();
+  }
+
+  @Override
+  public void unlinked(ChannelUID channelUID) {
+    reconfigureSource();
+  }
+
+
+  private void reconfigureSource() {
+    if (this.source != null) {
+      // if source is non-null then it was started before
+      getClient().thenAccept(client -> {
+        this.source.stop();
+        configureSource(client);
+        this.source.start();
+      });
+    }
+  }
+
+  private void configureSource(BacNetClient client) {
+    for (Channel channel : thing.getChannels()) {
+      if (!linkManager.isLinked(channel.getUID())) {
+        // do not poll unlinked channels
+        continue;
+      }
+
+      DeviceChannelConfig deviceChannelConfig = channel.getConfiguration().as(DeviceChannelConfig.class);
+      Long refreshInterval = Optional.ofNullable(deviceChannelConfig.refreshInterval)
+        .filter(value -> value != 0)
+        .orElse(getRefreshInterval());
+      BacNetObject object = new BacNetObject(device, deviceChannelConfig.instance, deviceChannelConfig.type);
+      Consumer<Encodable> consumer = new SamplerCallback(CompositeConverter.INSTANCE, new ChannelCallback(getCallback(), channel));
+      source.add(refreshInterval, channel.getUID().getAsString(), new BACnetObjectsSampler(client, object, deviceChannelConfig.propertyIdentifier, consumer));
+    }
+  }
+
 
 }

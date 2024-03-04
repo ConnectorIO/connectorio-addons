@@ -25,6 +25,7 @@ import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import org.code_house.bacnet4j.wrapper.api.BacNetObject;
 import org.openhab.core.thing.ChannelUID;
 
+@Deprecated
 public class Readout {
 
   public final ChannelUID channel;

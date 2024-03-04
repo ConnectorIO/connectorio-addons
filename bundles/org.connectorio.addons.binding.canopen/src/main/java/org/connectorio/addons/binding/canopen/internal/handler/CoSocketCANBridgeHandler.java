@@ -27,6 +27,7 @@ import javax.measure.Quantity;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
+import org.apache.plc4x.java.canopen.tag.CANOpenTag;
 import org.apache.plc4x.java.spi.connection.AbstractPlcConnection;
 import org.connectorio.addons.binding.can.statistic.CANStatisticCollector;
 import org.connectorio.addons.binding.canopen.api.CoConnection;
@@ -55,7 +56,7 @@ import org.openhab.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CoSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<PlcConnection, SocketCANConfiguration>
+public class CoSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<CANOpenTag, SocketCANConfiguration>
   implements CoBridgeHandler<SocketCANConfiguration> {
 
   private final Logger logger = LoggerFactory.getLogger(CoSocketCANBridgeHandler.class);

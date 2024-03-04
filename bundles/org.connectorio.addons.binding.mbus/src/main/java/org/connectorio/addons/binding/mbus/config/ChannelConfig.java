@@ -15,18 +15,13 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.amsads.internal.handler.polling;
+package org.connectorio.addons.binding.mbus.config;
 
-import java.util.function.Consumer;
-import org.apache.plc4x.java.ads.tag.AdsTag;
+import org.connectorio.addons.binding.config.Configuration;
 
-public interface FetchContainer {
+public class ChannelConfig implements Configuration {
 
-  void add(Long interval, String channelId, AdsTag tag, Consumer<Object> onChange);
-
-  // indicate if thing was actually started
-  boolean start();
-
-  void stop();
+  public String dib;
+  public String vib;
 
 }

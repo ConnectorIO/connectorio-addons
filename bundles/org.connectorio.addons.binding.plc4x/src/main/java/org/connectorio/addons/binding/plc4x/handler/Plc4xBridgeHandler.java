@@ -24,8 +24,8 @@ import org.connectorio.addons.binding.handler.GenericBridgeHandler;
 import org.connectorio.addons.binding.handler.polling.PollingBridgeHandler;
 import org.openhab.core.thing.binding.BridgeHandler;
 
-public interface Plc4xBridgeHandler<T extends PlcConnection, C extends PollingConfiguration> extends GenericBridgeHandler<C>, PollingBridgeHandler<C>, BridgeHandler {
+public interface Plc4xBridgeHandler<C extends PollingConfiguration> extends GenericBridgeHandler<C>, PollingBridgeHandler<C>, BridgeHandler {
 
-  CompletableFuture<T> getConnection();
+  CompletableFuture<PlcConnection> getConnection();
 
 }

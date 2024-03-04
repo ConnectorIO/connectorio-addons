@@ -21,6 +21,7 @@ import static org.connectorio.addons.binding.s7.S7BindingConstants.THING_TYPE_S7
 import static org.connectorio.addons.binding.s7.S7BindingConstants.THING_TYPE_TCP_IP;
 
 import org.connectorio.addons.binding.plc4x.Plc4xHandlerFactory;
+import org.connectorio.addons.binding.plc4x.source.SourceFactory;
 import org.connectorio.plc4x.extras.osgi.PlcDriverManager;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
@@ -40,11 +41,13 @@ import org.osgi.service.component.annotations.Reference;
 public class S7HandlerFactory extends Plc4xHandlerFactory {
 
   private final PlcDriverManager driverManager;
+  private final SourceFactory sourceFactory;
 
   @Activate
-  public S7HandlerFactory(@Reference  PlcDriverManager driverManager) {
+  public S7HandlerFactory(@Reference PlcDriverManager driverManager, @Reference SourceFactory sourceFactory) {
     super(THING_TYPE_TCP_IP, THING_TYPE_S7);
     this.driverManager = driverManager;
+    this.sourceFactory = sourceFactory;
   }
 
   @Override
@@ -54,7 +57,7 @@ public class S7HandlerFactory extends Plc4xHandlerFactory {
     if (THING_TYPE_TCP_IP.equals(thingTypeUID)) {
       return new S7NetworkBridgeHandler((Bridge) thing, driverManager);
     } else if (THING_TYPE_S7.equals(thingTypeUID)) {
-      return new S7PlcHandler(thing);
+      return new S7PlcHandler(thing, sourceFactory);
     }
 
     return null;

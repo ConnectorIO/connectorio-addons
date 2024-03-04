@@ -19,6 +19,7 @@ package org.connectorio.addons.binding.plc4x.handler.base;
 
 import java.util.concurrent.CompletableFuture;
 import org.apache.plc4x.java.api.PlcConnection;
+import org.apache.plc4x.java.api.model.PlcTag;
 import org.connectorio.addons.binding.config.PollingConfiguration;
 import org.connectorio.addons.binding.handler.polling.common.BasePollingBridgeHandler;
 import org.connectorio.addons.binding.plc4x.handler.Plc4xBridgeHandler;
@@ -26,18 +27,18 @@ import org.openhab.core.thing.Bridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class PollingPlc4xBridgeHandler<T extends PlcConnection, C extends PollingConfiguration> extends BasePollingBridgeHandler<C>
-  implements Plc4xBridgeHandler<T, C> {
+public abstract class PollingPlc4xBridgeHandler<T extends PlcTag, C extends PollingConfiguration> extends BasePollingBridgeHandler<C>
+  implements Plc4xBridgeHandler<C> {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
-  private CompletableFuture<T> connection;
+  private CompletableFuture<PlcConnection> connection;
 
   public PollingPlc4xBridgeHandler(Bridge bridge) {
     super(bridge);
   }
 
   @Override
-  public CompletableFuture<T> getConnection() {
+  public CompletableFuture<PlcConnection> getConnection() {
     // make sure we create new connection only if there is none.
     if (connection == null) {
       logger.debug("Opening new connection to device");
@@ -46,13 +47,13 @@ public abstract class PollingPlc4xBridgeHandler<T extends PlcConnection, C exten
     return connection;
   }
 
-  protected abstract CompletableFuture<T> getPlcConnection();
+  protected abstract CompletableFuture<PlcConnection> getPlcConnection();
 
   @Override
   public void dispose() {
     if (connection != null && connection.isDone()) {
       try {
-        final T deviceConnection = connection.get();
+        final PlcConnection deviceConnection = connection.get();
         if (deviceConnection.isConnected()) {
           deviceConnection.close();
           logger.debug("Closed connection to device");

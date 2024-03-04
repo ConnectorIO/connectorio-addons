@@ -65,9 +65,6 @@ public interface TACANopenBindingConstants extends CANopenBindingConstants {
   String TA_DIGITAL_SWITCH = TA_DIGITAL_PREFIX + "-switch";
   String TA_DIGITAL_CONTACT = TA_DIGITAL_PREFIX + "-contact";
 
-  @Deprecated
-  ThingTypeUID TA_UVR_16x2_THING_TYPE = new ThingTypeUID(BINDING_ID, TA_UVR_16x2);
-
   ThingTypeUID TA_DEVICE_THING_TYPE = new ThingTypeUID(BINDING_ID, TA_DEVICE);
 
   ChannelTypeUID TA_ANALOG_RAS_MODE_CHANNEL_TYPE = new ChannelTypeUID(BINDING_ID, TA_ANALOG_RAS_MODE);
@@ -97,7 +94,7 @@ public interface TACANopenBindingConstants extends CANopenBindingConstants {
 
   ThingTypeUID TA_FUNCTION_THING_TYPE = new ThingTypeUID(BINDING_ID, TA_FUNCTION);
 
-  Set<ThingTypeUID> SUPPORTED_DEVICES = new HashSet<>(Arrays.asList(TA_UVR_16x2_THING_TYPE, TA_DEVICE_THING_TYPE));
+  Set<ThingTypeUID> SUPPORTED_DEVICES = new HashSet<>(Arrays.asList(TA_DEVICE_THING_TYPE));
 
   Set<ThingTypeUID> DISCOVERABLE_CAN_THINGS = new HashSet<>(Arrays.asList(TA_FUNCTION_THING_TYPE
 //    TA_ANALOG_RAS_THING_TYPE, TA_ANALOG_TEMPERATURE_THING_TYPE, TA_ANALOG_LENGTH_THING_TYPE,

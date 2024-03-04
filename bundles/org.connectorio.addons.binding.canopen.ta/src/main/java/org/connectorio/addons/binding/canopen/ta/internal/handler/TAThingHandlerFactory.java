@@ -45,10 +45,6 @@ public class TAThingHandlerFactory extends BaseThingHandlerFactory {
       }
     }
 
-    if (TA_UVR_16x2_THING_TYPE.equals(thing.getThingTypeUID())) {
-      return new TAUVR16x2ThingHandler(thing, semaphore);
-    }
-
     return null;
   }
 }

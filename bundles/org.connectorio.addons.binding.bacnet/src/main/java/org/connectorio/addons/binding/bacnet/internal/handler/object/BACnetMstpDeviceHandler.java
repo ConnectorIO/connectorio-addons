@@ -24,6 +24,7 @@ package org.connectorio.addons.binding.bacnet.internal.handler.object;
 import org.code_house.bacnet4j.wrapper.api.Device;
 import org.code_house.bacnet4j.wrapper.device.mstp.MstpDevice;
 import org.connectorio.addons.binding.bacnet.internal.config.MstpDeviceConfig;
+import org.connectorio.addons.binding.source.SourceFactory;
 import org.connectorio.addons.communication.watchdog.WatchdogManager;
 import org.connectorio.addons.link.LinkManager;
 import org.openhab.core.thing.Bridge;
@@ -36,10 +37,11 @@ public class BACnetMstpDeviceHandler extends BACnetDeviceHandler<MstpDeviceConfi
    *
    * @param bridge the thing that should be handled, not null
    * @param linkManager manager to track channel links
+   * @param sourceFactory source factory used to sample BACnet devices
    * @param watchdogManager communication watchdog
    */
-  public BACnetMstpDeviceHandler(Bridge bridge, LinkManager linkManager, WatchdogManager watchdogManager) {
-    super(bridge, linkManager, watchdogManager);
+  public BACnetMstpDeviceHandler(Bridge bridge, LinkManager linkManager, SourceFactory sourceFactory, WatchdogManager watchdogManager) {
+    super(bridge, linkManager, sourceFactory, watchdogManager);
   }
 
   @Override

@@ -21,20 +21,13 @@
  */
 package org.connectorio.addons.binding.bacnet.internal;
 
+import org.code_house.bacnet4j.wrapper.api.Type;
 import org.connectorio.addons.binding.bacnet.internal.handler.network.BACnetIpv4BridgeHandler;
 import org.connectorio.addons.binding.bacnet.internal.handler.network.BACnetMstpBridgeHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.object.AnalogInputHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.object.AnalogOutputHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.object.AnalogValueHandler;
 import org.connectorio.addons.binding.bacnet.internal.handler.object.BACnetIpDeviceHandler;
 import org.connectorio.addons.binding.bacnet.internal.handler.object.BACnetMstpDeviceHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.object.BinaryInputHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.object.BinaryOutputHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.object.BinaryValueHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.object.MultiStateInputHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.object.MultiStateOutputHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.object.MultiStateValueHandler;
-import org.connectorio.addons.binding.bacnet.internal.handler.object.ScheduleHandler;
+import org.connectorio.addons.binding.bacnet.internal.handler.object.BACnetObjectThingHandler;
+import org.connectorio.addons.binding.source.SourceFactory;
 import org.connectorio.addons.communication.watchdog.WatchdogManager;
 import org.connectorio.addons.link.LinkManager;
 import org.openhab.core.thing.Bridge;
@@ -44,7 +37,6 @@ import org.openhab.core.thing.binding.BaseThingHandlerFactory;
 import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.binding.ThingHandlerFactory;
 import org.openhab.core.io.transport.serial.SerialPortManager;
-import org.openhab.core.thing.link.ItemChannelLinkRegistry;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -59,12 +51,15 @@ public class BACnetThingHandlerFactory extends BaseThingHandlerFactory implement
   private final SerialPortManager serialPortManager;
   private final LinkManager linkManager;
   private final WatchdogManager watchdogManager;
+  private final SourceFactory sourceFactory;
 
   @Activate
   public BACnetThingHandlerFactory(@Reference SerialPortManager serialPortManager, @Reference LinkManager linkManager,
+      @Reference(target = "(default=true)") SourceFactory sourceFactory,
       @Reference WatchdogManager watchdogManager) {
     this.serialPortManager = serialPortManager;
     this.linkManager = linkManager;
+    this.sourceFactory = sourceFactory;
     this.watchdogManager = watchdogManager;
   }
 
@@ -74,9 +69,9 @@ public class BACnetThingHandlerFactory extends BaseThingHandlerFactory implement
 
     if (thing instanceof Bridge) {
       if (IP_DEVICE_THING_TYPE.equals(thingTypeUID)) {
-        return new BACnetIpDeviceHandler((Bridge) thing, linkManager, watchdogManager);
+        return new BACnetIpDeviceHandler((Bridge) thing, linkManager, sourceFactory, watchdogManager);
       } else if (MSTP_DEVICE_THING_TYPE.equals(thingTypeUID)) {
-          return new BACnetMstpDeviceHandler((Bridge) thing, linkManager, watchdogManager);
+          return new BACnetMstpDeviceHandler((Bridge) thing, linkManager, sourceFactory, watchdogManager);
       } else if (IPV4_BRIDGE_THING_TYPE.equals(thingTypeUID)) {
         return new BACnetIpv4BridgeHandler((Bridge) thing);
 //      } else if (IPV6_BRIDGE_THING_TYPE.equals(thingTypeUID)) {
@@ -87,25 +82,25 @@ public class BACnetThingHandlerFactory extends BaseThingHandlerFactory implement
     }
 
     if (ANALOG_INPUT_THING_TYPE.equals(thingTypeUID)) {
-      return new AnalogInputHandler(thing);
+      return new BACnetObjectThingHandler<>(thing, Type.ANALOG_INPUT, sourceFactory);
     } else if (ANALOG_OUTPUT_THING_TYPE.equals(thingTypeUID)) {
-      return new AnalogOutputHandler(thing);
+      return new BACnetObjectThingHandler<>(thing, Type.ANALOG_OUTPUT, sourceFactory);
     } else if (ANALOG_VALUE_THING_TYPE.equals(thingTypeUID)) {
-      return new AnalogValueHandler(thing);
+      return new BACnetObjectThingHandler<>(thing, Type.ANALOG_VALUE, sourceFactory);
     } else if (BINARY_INPUT_THING_TYPE.equals(thingTypeUID)) {
-      return new BinaryInputHandler(thing);
+      return new BACnetObjectThingHandler<>(thing, Type.BINARY_INPUT, sourceFactory);
     } else if (BINARY_OUTPUT_THING_TYPE.equals(thingTypeUID)) {
-      return new BinaryOutputHandler(thing);
+      return new BACnetObjectThingHandler<>(thing, Type.BINARY_OUTPUT, sourceFactory);
     } else if (BINARY_VALUE_THING_TYPE.equals(thingTypeUID)) {
-      return new BinaryValueHandler(thing);
+      return new BACnetObjectThingHandler<>(thing, Type.BINARY_VALUE, sourceFactory);
     } else if (MULTISTATE_INPUT_THING_TYPE.equals(thingTypeUID)) {
-      return new MultiStateInputHandler(thing);
+      return new BACnetObjectThingHandler<>(thing, Type.MULTISTATE_INPUT, sourceFactory);
     } else if (MULTISTATE_OUTPUT_THING_TYPE.equals(thingTypeUID)) {
-      return new MultiStateOutputHandler(thing);
+      return new BACnetObjectThingHandler<>(thing, Type.MULTISTATE_OUTPUT, sourceFactory);
     } else if (MULTISTATE_VALUE_THING_TYPE.equals(thingTypeUID)) {
-      return new MultiStateValueHandler(thing);
+      return new BACnetObjectThingHandler<>(thing, Type.MULTISTATE_VALUE, sourceFactory);
     } else if (SCHEDULE_THING_TYPE.equals(thingTypeUID)) {
-      return new ScheduleHandler(thing);
+      return new BACnetObjectThingHandler<>(thing, Type.SCHEDULE, sourceFactory);
     }
 
     return null;

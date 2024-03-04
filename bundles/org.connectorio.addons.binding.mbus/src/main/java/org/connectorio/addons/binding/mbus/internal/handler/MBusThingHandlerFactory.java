@@ -20,6 +20,8 @@ package org.connectorio.addons.binding.mbus.internal.handler;
 import org.connectorio.addons.binding.handler.factory.BaseThingHandlerFactory;
 import org.connectorio.addons.binding.mbus.MBusBindingConstants;
 import org.connectorio.addons.binding.mbus.internal.discovery.DiscoveryCoordinator;
+import org.connectorio.addons.binding.mbus.internal.handler.converter.Converter;
+import org.connectorio.addons.binding.source.SourceFactory;
 import org.openhab.core.io.transport.serial.SerialPortManager;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
@@ -33,12 +35,17 @@ import org.osgi.service.component.annotations.Reference;
 public class MBusThingHandlerFactory extends BaseThingHandlerFactory {
 
   private final SerialPortManager serialPortManager;
+  private final SourceFactory sourceFactory;
+  private final Converter converter;
   private final DiscoveryCoordinator discoveryCoordinator;
 
   @Activate
-  public MBusThingHandlerFactory(@Reference SerialPortManager serialPortManager, @Reference DiscoveryCoordinator discoveryCoordinator) {
+  public MBusThingHandlerFactory(@Reference SerialPortManager serialPortManager, @Reference(target = "(default=true)") SourceFactory sourceFactory,
+    @Reference Converter converter, @Reference DiscoveryCoordinator discoveryCoordinator) {
     super(MBusBindingConstants.SUPPORTED_THING_TYPES);
     this.serialPortManager = serialPortManager;
+    this.sourceFactory = sourceFactory;
+    this.converter = converter;
     this.discoveryCoordinator = discoveryCoordinator;
   }
 
@@ -54,7 +61,7 @@ public class MBusThingHandlerFactory extends BaseThingHandlerFactory {
     }
 
     if (MBusBindingConstants.DEVICE_THING_TYPE.equals(thing.getThingTypeUID())) {
-      return new MBusDeviceThingHandler(thing);
+      return new MBusDeviceThingHandler(thing, converter, sourceFactory);
     }
 
     return null;

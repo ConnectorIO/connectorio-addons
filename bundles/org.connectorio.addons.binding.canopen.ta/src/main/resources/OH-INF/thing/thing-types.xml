@@ -88,29 +88,4 @@
     </config-description>
   </bridge-type>
 
-  <thing-type id="ta-uvr16x2">
-    <supported-bridge-type-refs>
-      <bridge-type-ref id="socketcan"/>
-    </supported-bridge-type-refs>
-
-    <label>Technische Alternative UVR 16x2</label>
-    <description>Freely programmable logic controller.</description>
-
-    <config-description>
-      <parameter name="nodeId" type="integer" required="true">
-        <label>CANopen Node ID</label>
-        <description>
-          Identifier of device in CANopen network.
-        </description>
-      </parameter>
-      <parameter name="ignoreLoginFailure" type="boolean" required="true">
-        <label>Ignore login failure</label>
-        <description>
-          Determine if channel configuration should be refreshed even if controller refused "login" registration of this node.
-        </description>
-        <default>false</default>
-      </parameter>
-    </config-description>
-  </thing-type>
-
 </thing:thing-descriptions>

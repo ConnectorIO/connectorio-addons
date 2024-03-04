@@ -25,10 +25,9 @@ import org.connectorio.addons.binding.amsads.internal.config.AmsConfiguration;
 import org.connectorio.addons.binding.amsads.internal.config.SerialConfiguration;
 import org.connectorio.addons.binding.amsads.internal.handler.channel.ChannelHandlerFactory;
 import org.connectorio.addons.binding.amsads.internal.symbol.SymbolReaderFactory;
+import org.connectorio.addons.binding.plc4x.source.SourceFactory;
 import org.connectorio.plc4x.extras.osgi.PlcDriverManager;
-import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
-import org.openhab.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +43,8 @@ public class AmsAdsSerialBridgeHandler extends AbstractAmsAdsThingHandler<AmsBri
   private final PlcDriverManager driverManager;
 
   public AmsAdsSerialBridgeHandler(Thing thing, SymbolReaderFactory symbolReaderFactory, ChannelHandlerFactory channelHandlerFactory,
-    PlcDriverManager driverManager) {
-    super(thing, symbolReaderFactory, channelHandlerFactory);
+    PlcDriverManager driverManager, SourceFactory sourceFactory) {
+    super(thing, symbolReaderFactory, channelHandlerFactory, sourceFactory);
     this.driverManager = driverManager;
   }
 

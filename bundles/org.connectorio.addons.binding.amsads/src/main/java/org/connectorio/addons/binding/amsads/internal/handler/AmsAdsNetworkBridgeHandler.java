@@ -36,7 +36,6 @@ import org.apache.plc4x.java.ads.discovery.readwrite.Operation;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
-import org.apache.plc4x.java.transport.serial.SerialTransport;
 import org.connectorio.addons.binding.amsads.internal.AmsConverter;
 import org.connectorio.addons.binding.amsads.internal.config.AmsConfiguration;
 import org.connectorio.addons.binding.amsads.internal.config.NetworkConfiguration;
@@ -45,12 +44,11 @@ import org.connectorio.addons.binding.amsads.internal.discovery.AmsAdsRouteListe
 import org.connectorio.addons.binding.amsads.internal.discovery.DiscoverySender.Envelope;
 import org.connectorio.addons.binding.amsads.internal.handler.channel.ChannelHandlerFactory;
 import org.connectorio.addons.binding.amsads.internal.symbol.SymbolReaderFactory;
+import org.connectorio.addons.binding.plc4x.source.SourceFactory;
 import org.connectorio.plc4x.extras.osgi.PlcDriverManager;
-import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
-import org.openhab.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,8 +67,8 @@ public class AmsAdsNetworkBridgeHandler extends AbstractAmsAdsThingHandler<AmsBr
   private final AmsAdsDiscoveryDriver discoveryDriver;
 
   public AmsAdsNetworkBridgeHandler(Thing thing, SymbolReaderFactory symbolReaderFactory, ChannelHandlerFactory channelHandlerFactory,
-    PlcDriverManager driverManager, AmsAdsDiscoveryDriver discoveryDriver) {
-    super(thing, symbolReaderFactory, channelHandlerFactory);
+    PlcDriverManager driverManager, SourceFactory sourceFactory, AmsAdsDiscoveryDriver discoveryDriver) {
+    super(thing, symbolReaderFactory, channelHandlerFactory, sourceFactory);
     this.driverManager = driverManager;
     this.discoveryDriver = discoveryDriver;
   }

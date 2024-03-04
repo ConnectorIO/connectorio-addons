@@ -36,14 +36,18 @@ import java.util.stream.Collectors;
 import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.api.BacNetClientException;
 import org.code_house.bacnet4j.wrapper.api.BacNetObject;
+import org.code_house.bacnet4j.wrapper.api.BacNetToJavaConverter;
+import org.connectorio.addons.binding.bacnet.internal.handler.channel.converter.CompositeConverter;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.openhab.core.types.State;
 import org.openhab.core.types.UnDefType;
+import org.osgi.util.converter.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ReadObjectTask extends AbstractTask {
+@Deprecated
+public class ReadObjectTask implements Runnable {
 
   private final Logger logger = LoggerFactory.getLogger(ReadObjectTask.class);
   private final Supplier<CompletableFuture<BacNetClient>> client;
@@ -76,7 +80,7 @@ public class ReadObjectTask extends AbstractTask {
               Object state = states.get(index++);
               State channelState = UnDefType.UNDEF;
               if (state instanceof Encodable) {
-                channelState = fromBacNet((Encodable) state);
+                channelState = CompositeConverter.INSTANCE.fromBacNet((Encodable) state);
               }
 
               logger.debug("Retrieved state for property {} attribute {}: {}", object, entry, channelState);

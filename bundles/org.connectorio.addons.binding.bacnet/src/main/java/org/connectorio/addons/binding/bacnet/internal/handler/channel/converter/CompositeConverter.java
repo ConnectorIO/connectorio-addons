@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 ConnectorIO sp. z o.o.
+ * Copyright (C) 2019-2024 ConnectorIO sp. z o.o.
  *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-package org.connectorio.addons.binding.bacnet.internal.handler.object.task;
+package org.connectorio.addons.binding.bacnet.internal.handler.channel.converter;
 
 import com.serotonin.bacnet4j.enums.DayOfWeek;
 import com.serotonin.bacnet4j.enums.Month;
@@ -50,21 +50,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import org.code_house.bacnet4j.wrapper.api.BacNetToJavaConverter;
-import org.connectorio.addons.temporal.calendar.CalendarEntryType;
-import org.connectorio.addons.temporal.calendar.CalendarType;
-import org.connectorio.addons.temporal.calendar.DateCalendarEntryType;
 import org.connectorio.addons.temporal.DayOfWeekType;
 import org.connectorio.addons.temporal.DayScheduleType;
 import org.connectorio.addons.temporal.LocalDateRangeType;
 import org.connectorio.addons.temporal.LocalDateType;
 import org.connectorio.addons.temporal.LocalTimeType;
+import org.connectorio.addons.temporal.WeekInMonthType;
+import org.connectorio.addons.temporal.WeeklyScheduleType;
+import org.connectorio.addons.temporal.calendar.CalendarEntryType;
+import org.connectorio.addons.temporal.calendar.CalendarType;
+import org.connectorio.addons.temporal.calendar.CompositeCalendarEntryType;
+import org.connectorio.addons.temporal.calendar.DateCalendarEntryType;
+import org.connectorio.addons.temporal.calendar.RangeCalendarEntryType;
 import org.connectorio.addons.temporal.month.BasicMonthType;
 import org.connectorio.addons.temporal.month.ExtendedMonthType;
 import org.connectorio.addons.temporal.month.MonthType;
-import org.connectorio.addons.temporal.calendar.RangeCalendarEntryType;
-import org.connectorio.addons.temporal.calendar.CompositeCalendarEntryType;
-import org.connectorio.addons.temporal.WeekInMonthType;
-import org.connectorio.addons.temporal.WeeklyScheduleType;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.StringListType;
@@ -73,9 +73,16 @@ import org.openhab.core.types.UnDefType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractTask implements Runnable, BacNetToJavaConverter<State> {
+/**
+ * Converter which attempts to map all known types of BACnet value kinds.
+ */
+public class CompositeConverter implements BacNetToJavaConverter<State> {
 
-  private final Logger logger = LoggerFactory.getLogger(AbstractTask.class);
+  public static final BacNetToJavaConverter<State> INSTANCE = new CompositeConverter();
+
+  private final Logger logger = LoggerFactory.getLogger(CompositeConverter.class);
+
+  private CompositeConverter() {}
 
   @Override
   public State fromBacNet(Encodable encodable) {
@@ -102,7 +109,7 @@ public abstract class AbstractTask implements Runnable, BacNetToJavaConverter<St
       return new LocalDateType(date.calculateGC().toZonedDateTime());
     } else if (encodable instanceof Enumerated) {
       return new DecimalType(((Enumerated) encodable).intValue());
-    } else if (encodable instanceof SequenceOf) {
+    } else if (encodable instanceof SequenceOf<?>) {
       SequenceOf<?> sequence = (SequenceOf<?>) encodable;
       if (sequence.getCount() > 0) {
         Encodable value = sequence.get(0);

@@ -38,6 +38,7 @@ import org.code_house.bacnet4j.wrapper.api.BacNetClient;
 import org.code_house.bacnet4j.wrapper.api.BacNetClientException;
 import org.code_house.bacnet4j.wrapper.api.BacNetObject;
 import org.code_house.bacnet4j.wrapper.api.Device;
+import org.connectorio.addons.binding.bacnet.internal.handler.channel.converter.CompositeConverter;
 import org.connectorio.addons.link.LinkManager;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
@@ -46,7 +47,8 @@ import org.openhab.core.types.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RefreshDeviceTask extends AbstractTask {
+@Deprecated
+public class RefreshDeviceTask implements Runnable {
 
   private final Logger logger = LoggerFactory.getLogger(RefreshDeviceTask.class);
   private final Supplier<CompletableFuture<BacNetClient>> client;
@@ -129,7 +131,7 @@ public class RefreshDeviceTask extends AbstractTask {
     for (int index = 0; index < values.size(); index++) {
       Object value = values.get(index);
       if (value instanceof Encodable) {
-        State state = fromBacNet((Encodable) value);
+        State state = CompositeConverter.INSTANCE.fromBacNet((Encodable) value);
 
         ChannelUID channel = channels.get(index);
         logger.debug("Retrieved state for property {} attribute {}: {}", device, channel, state);

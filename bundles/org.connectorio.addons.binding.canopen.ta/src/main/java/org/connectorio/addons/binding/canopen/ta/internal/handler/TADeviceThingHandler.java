@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import org.apache.plc4x.java.api.PlcConnection;
+import org.apache.plc4x.java.canopen.tag.CANOpenTag;
 import org.connectorio.addons.binding.canopen.api.CoConnection;
 import org.connectorio.addons.binding.canopen.api.CoNode;
 import org.connectorio.addons.binding.canopen.handler.CoBridgeHandler;
@@ -61,8 +62,8 @@ import org.openhab.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<PlcConnection, DeviceConfig>
-  implements Plc4xBridgeHandler<PlcConnection, DeviceConfig>, Consumer<Boolean>, Runnable {
+public class TADeviceThingHandler extends PollingPlc4xBridgeHandler<CANOpenTag, DeviceConfig>
+  implements Plc4xBridgeHandler<DeviceConfig>, Consumer<Boolean>, Runnable {
 
   // no safe caller since initialization might wait much longer than default 5000 ms
   private final static ExecutorService initializer = Executors.newSingleThreadExecutor(new NamedThreadFactory("initializer"));
