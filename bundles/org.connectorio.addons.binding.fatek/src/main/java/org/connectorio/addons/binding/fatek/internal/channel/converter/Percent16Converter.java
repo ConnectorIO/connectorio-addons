@@ -17,34 +17,39 @@
  */
 package org.connectorio.addons.binding.fatek.internal.channel.converter;
 
-import org.connectorio.addons.binding.fatek.config.channel.binary.DiscreteChannelConfig;
-import org.openhab.core.library.types.OnOffType;
-import org.openhab.core.library.types.OpenClosedType;
+import java.math.BigInteger;
+import org.connectorio.addons.binding.fatek.config.channel.data.DataChannelConfig;
+import org.connectorio.addons.binding.fatek.config.channel.percent.PercentChannelConfig;
+import org.openhab.core.library.types.PercentType;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
 import org.simplify4u.jfatek.registers.RegValue;
-import org.simplify4u.jfatek.registers.RegValueDis;
+import org.simplify4u.jfatek.registers.RegValue32;
 
-public class DiscreteConverter implements Converter {
+public class Percent16Converter implements Converter {
 
-  private final DiscreteChannelConfig config;
+  private final PercentChannelConfig config;
 
-  public DiscreteConverter(DiscreteChannelConfig config) {
+  public Percent16Converter(PercentChannelConfig config) {
     this.config = config;
   }
 
   @Override
   public RegValue toValue(Command command) {
-    boolean value = OnOffType.ON == command;
-    if (value) {
-      return config.invert ? RegValueDis.FALSE : RegValueDis.TRUE;
+    if (!(command instanceof PercentType)) {
+      return null;
     }
-    return config.invert ? RegValueDis.TRUE : RegValueDis.FALSE;
+
+    PercentType percentType = (PercentType) command;
+    long longValue = percentType.toBigDecimal().longValue();
+    return new RegValue32(config.unsigned ? BigInteger.valueOf(longValue).longValue() : longValue);
   }
 
   @Override
   public State toState(RegValue value) {
-    boolean status = config.invert ? !value.boolValue() : value.boolValue();
-    return status ? OnOffType.ON : OnOffType.OFF;
+    int number = config.unsigned ? value.intValueUnsigned() : value.intValue();
+    number = Math.min(number, 100);
+    number = Math.max(number, 0);
+    return new PercentType(number);
   }
 }

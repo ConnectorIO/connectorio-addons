@@ -15,31 +15,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.fatek.config.channel;
+package org.connectorio.addons.binding.fatek.config.channel.percent;
 
-import org.connectorio.addons.binding.config.PollingConfiguration;
-import org.simplify4u.jfatek.registers.RegName;
+public class Percent32ChannelConfig extends PercentChannelConfig {
 
-public abstract class BaseChannelConfig extends PollingConfiguration implements RegisterConfig {
-
-  public int index;
-
-  public RegName register;
-
-  public BaseChannelConfig() {}
-  public BaseChannelConfig(RegName register, int index) {
-    this.register = register;
-    this.index = index;
-  }
-
-  @Override
-  public RegName getRegister() {
-    return register;
-  }
-
-  @Override
-  public int getIndex() {
-    return index;
-  }
+  public boolean floating;
 
 }

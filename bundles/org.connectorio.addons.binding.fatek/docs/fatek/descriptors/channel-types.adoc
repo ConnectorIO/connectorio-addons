@@ -5,9 +5,15 @@
 |===
 |Channel type | Label ^|Description
 
+| co7io-fatek:contact
+| Contact
+| A read only channel which represent state of input or output.
+
+<<co7io-fatek:contact>>
+
 | co7io-fatek:discrete
-| Discrete register
-| Discrete register of connected PLC.
+| Switchable discrete register
+| Discrete register of connected PLC which can be commanded.
 
 <<co7io-fatek:discrete>>
 
@@ -22,6 +28,18 @@
 | Data register of connected PLC encoded using 32 bit registers.
 
 <<co7io-fatek:data32>>
+
+| co7io-fatek:percent16
+| Percent (16-bit)
+| Data register for representing percentage expressed as integer (0 ... 100) based on 16 bit register.
+
+<<co7io-fatek:percent16>>
+
+| co7io-fatek:percent32
+| Percent (32-bit)
+| Data register for representing percentage in range as integer or floating point number based on 32 bit register.
+
+<<co7io-fatek:percent32>>
 
 | co7io-fatek:rollershutter16
 | Rollershutter (16-bit)
@@ -50,6 +68,38 @@
 |===
 
 
+[[co7io-fatek:contact]]
+== Configuration of `co7io-fatek:contact`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-fatek:contact`.
+
+[width="100%",caption="Channel type contact configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| register
+| TEXT
+| Register
+| Type of discrete register to read or write.
+
+| index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| invert
+| BOOLEAN
+| Invert
+| Invert logical representation of related register (0->1, 1->0).
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.
+
+|===
+
+
 [[co7io-fatek:discrete]]
 == Configuration of `co7io-fatek:discrete`
 
@@ -73,6 +123,11 @@ Below table contain configuration parameters which can be assigned to channels o
 | BOOLEAN
 | Invert
 | Invert logical representation of related register (0->1, 1->0).
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.
 
 |===
 
@@ -101,6 +156,11 @@ Below table contain configuration parameters which can be assigned to channels o
 | Unsigned
 | Values retrieved from and written to device assume unsigned representation.
 
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.
+
 |===
 
 
@@ -123,17 +183,60 @@ Below table contain configuration parameters which can be assigned to channels o
 | Register index
 | Index of register used to retrieve data.
 
-| unsigned
-| BOOLEAN
-| Unsigned
-| Values retrieved from and written to device assume unsigned representation. Does not apply if floating option is set.
-
 | floating
 | BOOLEAN
 | floating point
 | Indicate that read/write value is a floating point number. Overrides unsigned flag.
 
+| step
+| DECIMAL
+| Step
+| Value assumed for increase/decrease command.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.
+
 |===
+
+
+[[co7io-fatek:percent16]]
+== Configuration of `co7io-fatek:percent16`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-fatek:percent16`.
+
+[width="100%",caption="Channel type percent16 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| register
+| TEXT
+| Register
+| Type of data register to read or write.
+
+| index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| step
+| INTEGER
+| Step
+| Value assumed for increase/decrease command.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.
+
+|===
+
+
+[[co7io-fatek:percent32]]
+== Configuration of `co7io-fatek:percent32`
+
+Below table contain configuration parameters which can be assigned to channels of type `co7io-fatek:percent32`.
 
 
 [[co7io-fatek:rollershutter16]]
@@ -194,6 +297,11 @@ Below table contain configuration parameters which can be assigned to channels o
 | BOOLEAN
 | Invert
 | Invert logical representation of related register (0->1, 1->0).
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.
 
 |===
 
@@ -257,6 +365,11 @@ Below table contain configuration parameters which can be assigned to channels o
 | Invert
 | Invert logical representation of related register (0->1, 1->0).
 
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.
+
 |===
 
 
@@ -299,10 +412,20 @@ Below table contain configuration parameters which can be assigned to channels o
 | Register index
 | Index of register used to retrieve data.
 
+| step
+| DECIMAL
+| Step
+| Value assumed for increase/decrease command.
+
 | rgb
 | BOOLEAN
 | RGB mode
 | Write and interpret read data as RGB code instead of HSB.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.
 
 | switcherRegister
 | TEXT

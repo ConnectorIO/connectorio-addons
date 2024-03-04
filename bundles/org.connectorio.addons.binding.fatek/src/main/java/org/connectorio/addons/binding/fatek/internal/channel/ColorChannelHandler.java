@@ -133,5 +133,12 @@ public class ColorChannelHandler implements FatekChannelHandler {
     return convertedState;
   }
 
+  @Override
+  public String validateConfiguration() {
+    if (color1.equals(color2) || color1.equals(color3) || color2.equals(color3)) {
+      return "Color registers must be distinct!";
+    }
+    return null;
+  }
 
 }

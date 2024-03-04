@@ -17,51 +17,52 @@
  */
 package org.connectorio.addons.binding.fatek.internal.handler;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import org.connectorio.addons.binding.config.PollingConfiguration;
 import org.connectorio.addons.binding.fatek.config.BridgeConfig;
 import org.connectorio.addons.binding.fatek.config.DeviceConfig;
 import org.connectorio.addons.binding.fatek.internal.channel.FatekChannelHandler;
 import org.connectorio.addons.binding.fatek.internal.channel.FatekChannelHandlerFactory;
+import org.connectorio.addons.binding.fatek.internal.handler.source.FatekSamplerComposer;
+import org.connectorio.addons.binding.fatek.internal.handler.source.FatekRegisterSampler;
+import org.connectorio.addons.binding.fatek.internal.handler.source.FatekSampler;
 import org.connectorio.addons.binding.fatek.transport.FaconConnection;
-import org.connectorio.addons.binding.handler.PollingHandler;
 import org.connectorio.addons.binding.handler.polling.common.BasePollingThingHandler;
+import org.connectorio.addons.binding.source.SourceFactory;
+import org.connectorio.addons.binding.source.sampling.SamplingSource;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.types.Command;
+import org.openhab.core.types.RefreshType;
 import org.openhab.core.types.State;
 import org.openhab.core.types.Type;
 import org.simplify4u.jfatek.FatekCommand;
-import org.simplify4u.jfatek.FatekReadMixDataCmd;
 import org.simplify4u.jfatek.registers.Reg;
 import org.simplify4u.jfatek.registers.RegValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHandler<BridgeConfig>, DeviceConfig>
-  implements Runnable {
+public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHandler<BridgeConfig>, DeviceConfig> {
 
   private final Logger logger = LoggerFactory.getLogger(FatekPlcThingHandler.class);
+  private final SourceFactory sourceFactory;
   private final FatekChannelHandlerFactory channelHandlerFactory;
   private final Map<ChannelUID, FatekChannelHandler> handlerMap = new ConcurrentHashMap<>();
-  private final Map<Reg, FatekChannelHandler> registerMap = new ConcurrentHashMap<>();
   private FaconConnection connection;
   private Integer stationNumber;
-  private ScheduledFuture<?> future;
+  private SamplingSource<FatekSampler> source;
 
-  public FatekPlcThingHandler(Thing thing, FatekChannelHandlerFactory channelHandlerFactory) {
+  public FatekPlcThingHandler(Thing thing, SourceFactory sourceFactory, FatekChannelHandlerFactory channelHandlerFactory) {
     super(thing);
+    this.sourceFactory = sourceFactory;
     this.channelHandlerFactory = channelHandlerFactory;
   }
 
@@ -89,19 +90,28 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
       }
       this.connection = result;
 
+      this.source = sourceFactory.sampling(scheduler, new FatekSamplerComposer(connection, stationNumber));
+      StringBuilder validation = new StringBuilder();
       for (Channel channel : getThing().getChannels()) {
         FatekChannelHandler handler = channelHandlerFactory.create(channel);
-        if (handler != null) {
-          handlerMap.put(channel.getUID(), handler);
-          for (Reg register : handler.registers()) {
-            registerMap.put(register, handler);
+        if (handler != null) {String validationMsg = handler.validateConfiguration();
+          if (validationMsg != null && !validationMsg.isEmpty()) {
+            validation.append(validationMsg);
           }
+          Long refreshInterval = Optional.ofNullable(channel.getConfiguration().as(PollingConfiguration.class))
+            .map(cfg -> cfg.refreshInterval)
+            .filter(interval -> interval != 0)
+            .orElseGet(this::getRefreshInterval);
+          source.add(refreshInterval, channel.getUID().getAsString(), new FatekRegisterSampler(connection, stationNumber, handler.registers(), new HandlerCallback(handler, this::update)));
+          handlerMap.put(channel.getUID(), handler);
         }
       }
-      Long interval = getThingConfig().map(cfg -> cfg.refreshInterval)
-        .orElseGet(() -> getBridgeHandler().map(PollingHandler::getRefreshInterval)
-          .orElseGet(this::getDefaultPollingInterval));
-      future = scheduler.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
+
+      if (validation.length() != 0) {
+        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, validation.toString());
+        return;
+      }
+      source.start();
 
       updateStatus(ThingStatus.ONLINE);
     });
@@ -111,6 +121,11 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
   public void handleCommand(ChannelUID channelUID, Command command) {
     if (handlerMap.containsKey(channelUID)) {
       FatekChannelHandler handler = handlerMap.get(channelUID);
+      if (RefreshType.REFRESH.equals(command) && this.source != null) {
+        // read channel status independently of scheduled tasks
+        source.request(new FatekRegisterSampler(connection, stationNumber, handler.registers(), new HandlerCallback(handler, this::update)));
+        return;
+      }
       FatekCommand<?> cmd = handler.prepareWrite(command);
       if (cmd == null) {
         logger.warn("Could not map command {} from channel {} to value supported by PLC. Ignoring this write.", command, channelUID);
@@ -128,7 +143,6 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
         return;
       }
       logger.debug("Successful write of channel {} with command {} annd fatek command {}", channel, command, cmd);
-      update(channel, command);
     });
   }
 
@@ -140,8 +154,8 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
 
   @Override
   public void dispose() {
-    if (future != null) {
-      future.cancel(false);
+    if (source != null) {
+      source.stop();
     }
     super.dispose();
   }
@@ -151,33 +165,21 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
     return 1000L;
   }
 
-  @Override
-  public void run() {
-    connection.execute(stationNumber, new FatekReadMixDataCmd(null, registerMap.keySet())).whenComplete((result, error) -> {
-      if (error != null) {
-        logger.warn("Failed to retrieve data", error);
-        return;
-      }
-      callChannelHandlers(result);
-    });
-  }
+  static class HandlerCallback implements Consumer<Map<Reg, RegValue>> {
 
-  private void callChannelHandlers(Map<Reg, RegValue> result) {
-    Set<FatekChannelHandler> called = new HashSet<>();
-    for (Entry<Reg, RegValue> entry : result.entrySet()) {
-      FatekChannelHandler handler = registerMap.get(entry.getKey());
-      if (!called.contains(handler)) {
-        // handler have not been called yet, lets collect its registers and let it parse data
-        List<RegValue> values = new ArrayList<>();
-        for (Reg register : handler.registers()) {
-          values.add(result.get(register));
-        }
-        // convert values to OH state
-        State state = handler.state(values);
-        if (state != null) {
-          update(handler.channel(), state);
-        }
-        called.add(handler);
+    private final FatekChannelHandler handler;
+    private final BiConsumer<ChannelUID, State> callback;
+
+    public HandlerCallback(FatekChannelHandler handler, BiConsumer<ChannelUID, State> callback) {
+      this.handler = handler;
+      this.callback = callback;
+    }
+
+    @Override
+    public void accept(Map<Reg, RegValue> regValues) {
+      State state = handler.state(new ArrayList<>(regValues.values()));
+      if (state != null) {
+        callback.accept(handler.channel(), state);
       }
     }
   }

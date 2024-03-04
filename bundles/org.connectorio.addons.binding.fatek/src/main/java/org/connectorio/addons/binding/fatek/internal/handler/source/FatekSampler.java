@@ -15,31 +15,21 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.fatek.config.channel;
+package org.connectorio.addons.binding.fatek.internal.handler.source;
 
-import org.connectorio.addons.binding.config.PollingConfiguration;
-import org.simplify4u.jfatek.registers.RegName;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import org.connectorio.addons.binding.source.sampling.Sampler;
+import org.simplify4u.jfatek.registers.Reg;
+import org.simplify4u.jfatek.registers.RegValue;
 
-public abstract class BaseChannelConfig extends PollingConfiguration implements RegisterConfig {
+/**
+ * Dedicated interface for sampler which interacts with Fatek PLCs.
+ */
+public interface FatekSampler extends Sampler {
 
-  public int index;
-
-  public RegName register;
-
-  public BaseChannelConfig() {}
-  public BaseChannelConfig(RegName register, int index) {
-    this.register = register;
-    this.index = index;
-  }
-
-  @Override
-  public RegName getRegister() {
-    return register;
-  }
-
-  @Override
-  public int getIndex() {
-    return index;
-  }
+  List<Reg> getRegisters();
+  Consumer<Map<Reg, RegValue>> getCallback();
 
 }

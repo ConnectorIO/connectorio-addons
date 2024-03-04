@@ -22,14 +22,19 @@ import org.connectorio.addons.binding.fatek.config.channel.binary.DiscreteChanne
 import org.connectorio.addons.binding.fatek.config.channel.color.ColorChannelConfig;
 import org.connectorio.addons.binding.fatek.config.channel.data.Data32ChannelConfig;
 import org.connectorio.addons.binding.fatek.config.channel.data.DataChannelConfig;
+import org.connectorio.addons.binding.fatek.config.channel.percent.Percent32ChannelConfig;
+import org.connectorio.addons.binding.fatek.config.channel.percent.PercentChannelConfig;
 import org.connectorio.addons.binding.fatek.config.channel.rollershutter.RollerShutter32ChannelConfig;
 import org.connectorio.addons.binding.fatek.config.channel.rollershutter.RollerShutterChannelConfig;
 import org.connectorio.addons.binding.fatek.internal.RegisterParser;
 import org.connectorio.addons.binding.fatek.internal.channel.converter.ColorConverter;
+import org.connectorio.addons.binding.fatek.internal.channel.converter.ContactConverter;
 import org.connectorio.addons.binding.fatek.internal.channel.converter.Converter;
 import org.connectorio.addons.binding.fatek.internal.channel.converter.Data16Converter;
 import org.connectorio.addons.binding.fatek.internal.channel.converter.Data32Converter;
 import org.connectorio.addons.binding.fatek.internal.channel.converter.DiscreteConverter;
+import org.connectorio.addons.binding.fatek.internal.channel.converter.Percent16Converter;
+import org.connectorio.addons.binding.fatek.internal.channel.converter.Percent32Converter;
 import org.openhab.core.thing.Channel;
 import org.simplify4u.jfatek.registers.DataReg;
 import org.simplify4u.jfatek.registers.DisReg;
@@ -38,7 +43,10 @@ public class DefaultChannelHandlerFactory implements FatekChannelHandlerFactory 
 
   @Override
   public FatekChannelHandler create(Channel channel) {
-    if (FatekBindingConstants.CHANNEL_TYPE_DISCRETE.equals(channel.getChannelTypeUID())) {
+    if (FatekBindingConstants.CHANNEL_TYPE_CONTACT.equals(channel.getChannelTypeUID())) {
+      DiscreteChannelConfig config = channel.getConfiguration().as(DiscreteChannelConfig.class);
+      return new BinaryChannelHandler(channel, RegisterParser.parseDiscrete(config), new ContactConverter(config));
+    } else if (FatekBindingConstants.CHANNEL_TYPE_DISCRETE.equals(channel.getChannelTypeUID())) {
       DiscreteChannelConfig config = channel.getConfiguration().as(DiscreteChannelConfig.class);
       return new BinaryChannelHandler(channel, RegisterParser.parseDiscrete(config), new DiscreteConverter(config));
     }
@@ -49,6 +57,18 @@ public class DefaultChannelHandlerFactory implements FatekChannelHandlerFactory 
     if (FatekBindingConstants.CHANNEL_TYPE_DATA32.equals(channel.getChannelTypeUID())) {
       Data32ChannelConfig config = channel.getConfiguration().as(Data32ChannelConfig.class);
       return new DataChannelHandler(channel, RegisterParser.parseData32(config), new Data32Converter(config));
+    }
+    if (FatekBindingConstants.CHANNEL_TYPE_PERCENT16.equals(channel.getChannelTypeUID())) {
+      PercentChannelConfig config = channel.getConfiguration().as(PercentChannelConfig.class);
+      return new PercentChannelHandler(channel, config.step, RegisterParser.parseData16(config),
+          new Percent16Converter(config)
+      );
+    }
+    if (FatekBindingConstants.CHANNEL_TYPE_PERCENT32.equals(channel.getChannelTypeUID())) {
+      Percent32ChannelConfig config = channel.getConfiguration().as(Percent32ChannelConfig.class);
+      return new PercentChannelHandler(channel, config.step, RegisterParser.parseData16(config),
+        new Percent32Converter(config)
+      );
     }
     if (FatekBindingConstants.CHANNEL_TYPE_ROLLERSHUTTER16.equals(channel.getChannelTypeUID())) {
       RollerShutterChannelConfig config = channel.getConfiguration().as(RollerShutterChannelConfig.class);

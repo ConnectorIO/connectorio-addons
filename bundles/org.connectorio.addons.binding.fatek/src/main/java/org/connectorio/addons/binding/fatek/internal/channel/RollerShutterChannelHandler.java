@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.connectorio.addons.binding.fatek.internal.channel.converter.Converter;
+import org.openhab.core.library.types.IncreaseDecreaseType;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.StopMoveType;
 import org.openhab.core.library.types.UpDownType;
@@ -110,6 +111,14 @@ public class RollerShutterChannelHandler implements FatekChannelHandler {
   @Override
   public State state(List<RegValue> value) {
     return positionConverter.toState(value.get(0));
+  }
+
+  @Override
+  public String validateConfiguration() {
+    if (startReg == stopReg) {
+      return "Start and stop registers must differ!";
+    }
+    return null;
   }
 
 }

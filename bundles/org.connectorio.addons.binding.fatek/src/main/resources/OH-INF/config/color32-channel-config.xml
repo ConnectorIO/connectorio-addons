@@ -108,10 +108,20 @@
       <default>0</default>
     </parameter>
 
-    <parameter name="rgb" type="boolean">
+    <parameter name="step" type="decimal" required="false">
+      <label>Step</label>
+      <description>Value assumed for increase/decrease command.</description>
+      <default>5</default>
+    </parameter>
+    <parameter name="rgb" type="boolean" required="false">
       <label>RGB mode</label>
       <description>Write and interpret read data as RGB code instead of HSB.</description>
       <default>false</default>
+    </parameter>
+    <parameter name="refreshInterval" type="integer" required="false">
+      <label>Refresh interval</label>
+      <description>Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.</description>
+      <default>0</default>
     </parameter>
 
     <!-- switcher register -->

@@ -15,31 +15,19 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.fatek.config.channel;
+package org.connectorio.addons.binding.fatek.internal.channel;
 
-import org.connectorio.addons.binding.config.PollingConfiguration;
-import org.simplify4u.jfatek.registers.RegName;
+import java.math.BigDecimal;
+import org.openhab.core.library.types.PercentType;
 
-public abstract class BaseChannelConfig extends PollingConfiguration implements RegisterConfig {
+public interface Percentage {
 
-  public int index;
+  BigDecimal ZERO = BigDecimal.ZERO;
 
-  public RegName register;
+  BigDecimal HUNDRED = BigDecimal.valueOf(100);
 
-  public BaseChannelConfig() {}
-  public BaseChannelConfig(RegName register, int index) {
-    this.register = register;
-    this.index = index;
-  }
-
-  @Override
-  public RegName getRegister() {
-    return register;
-  }
-
-  @Override
-  public int getIndex() {
-    return index;
+  static PercentType from(BigDecimal decimal) {
+    return new PercentType(decimal.min(HUNDRED).max(ZERO));
   }
 
 }

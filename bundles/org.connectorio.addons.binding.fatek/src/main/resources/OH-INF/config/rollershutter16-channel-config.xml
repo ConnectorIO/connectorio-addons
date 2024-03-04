@@ -115,6 +115,11 @@
       <default>false</default>
     </parameter>
 
+    <parameter name="refreshInterval" type="integer" required="false">
+      <label>Refresh interval</label>
+      <description>Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.</description>
+      <default>0</default>
+    </parameter>
   </config-description>
 
 </config-description:config-descriptions>

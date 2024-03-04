@@ -66,4 +66,9 @@ public class BinaryChannelHandler implements FatekChannelHandler {
     return converter.toState(value.get(0));
   }
 
+  @Override
+  public String validateConfiguration() {
+    return null;
+  }
+
 }

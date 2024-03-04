@@ -40,9 +40,12 @@ public interface FatekBindingConstants extends BaseBindingConstants {
   ));
 
   // common dynamic channel types
+  ChannelTypeUID CHANNEL_TYPE_CONTACT = new ChannelTypeUID(BINDING_ID, "contact");
   ChannelTypeUID CHANNEL_TYPE_DISCRETE = new ChannelTypeUID(BINDING_ID, "discrete");
   ChannelTypeUID CHANNEL_TYPE_DATA16 = new ChannelTypeUID(BINDING_ID, "data16");
   ChannelTypeUID CHANNEL_TYPE_DATA32 = new ChannelTypeUID(BINDING_ID, "data32");
+  ChannelTypeUID CHANNEL_TYPE_PERCENT16 = new ChannelTypeUID(BINDING_ID, "percent16");
+  ChannelTypeUID CHANNEL_TYPE_PERCENT32 = new ChannelTypeUID(BINDING_ID, "percent32");
   ChannelTypeUID CHANNEL_TYPE_ROLLERSHUTTER16 = new ChannelTypeUID(BINDING_ID, "rollershutter16");
   ChannelTypeUID CHANNEL_TYPE_ROLLERSHUTTER32 = new ChannelTypeUID(BINDING_ID, "rollershutter32");
   ChannelTypeUID CHANNEL_TYPE_COLOR16 = new ChannelTypeUID(BINDING_ID, "color16");

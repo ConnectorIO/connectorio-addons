@@ -25,26 +25,22 @@ import org.openhab.core.types.State;
 import org.simplify4u.jfatek.registers.RegValue;
 import org.simplify4u.jfatek.registers.RegValueDis;
 
-public class DiscreteConverter implements Converter {
+public class ContactConverter implements Converter {
 
   private final DiscreteChannelConfig config;
 
-  public DiscreteConverter(DiscreteChannelConfig config) {
+  public ContactConverter(DiscreteChannelConfig config) {
     this.config = config;
   }
 
   @Override
   public RegValue toValue(Command command) {
-    boolean value = OnOffType.ON == command;
-    if (value) {
-      return config.invert ? RegValueDis.FALSE : RegValueDis.TRUE;
-    }
-    return config.invert ? RegValueDis.TRUE : RegValueDis.FALSE;
+    return null;
   }
 
   @Override
   public State toState(RegValue value) {
     boolean status = config.invert ? !value.boolValue() : value.boolValue();
-    return status ? OnOffType.ON : OnOffType.OFF;
+    return status ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
   }
 }

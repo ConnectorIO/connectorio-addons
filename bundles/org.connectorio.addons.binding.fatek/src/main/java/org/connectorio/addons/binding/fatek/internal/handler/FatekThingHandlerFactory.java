@@ -22,6 +22,7 @@ import org.connectorio.addons.binding.fatek.internal.channel.DefaultChannelHandl
 import org.connectorio.addons.binding.fatek.internal.channel.FatekChannelHandlerFactory;
 import org.connectorio.addons.binding.handler.factory.BaseThingHandlerFactory;
 import org.connectorio.addons.binding.fatek.internal.discovery.DiscoveryCoordinator;
+import org.connectorio.addons.binding.source.SourceFactory;
 import org.openhab.core.io.transport.serial.SerialPortManager;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
@@ -38,13 +39,16 @@ public class FatekThingHandlerFactory extends BaseThingHandlerFactory {
   private final FatekChannelHandlerFactory channelHandlerFactory = new DefaultChannelHandlerFactory();
   private final FatekConnectionFactory serialConnectionFactory;
   private final DiscoveryCoordinator discoveryCoordinator;
+  private final SourceFactory sourceFactory;
 
   // The connection factory argument is artificial, its here just to force proper initialization order
   @Activate
-  public FatekThingHandlerFactory(@Reference FatekConnectionFactory connectionFactory, @Reference DiscoveryCoordinator discoveryCoordinator) {
+  public FatekThingHandlerFactory(@Reference FatekConnectionFactory connectionFactory, @Reference DiscoveryCoordinator discoveryCoordinator,
+    @Reference(target = "(default=true)") SourceFactory sourceFactory) {
     super(FatekBindingConstants.SUPPORTED_THING_TYPES);
     this.serialConnectionFactory = connectionFactory;
     this.discoveryCoordinator = discoveryCoordinator;
+    this.sourceFactory = sourceFactory;
   }
 
   @Override
@@ -59,7 +63,7 @@ public class FatekThingHandlerFactory extends BaseThingHandlerFactory {
     }
 
     if (FatekBindingConstants.PLC_THING_TYPE.equals(thing.getThingTypeUID())) {
-      return new FatekPlcThingHandler(thing, channelHandlerFactory);
+      return new FatekPlcThingHandler(thing, sourceFactory, channelHandlerFactory);
     }
 
     return null;

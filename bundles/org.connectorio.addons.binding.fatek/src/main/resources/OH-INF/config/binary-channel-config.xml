@@ -27,7 +27,6 @@
       <description>Type of discrete register to read or write.</description>
       <options>
         <option value="X">X: (DI) Digital input</option>
-        <option value="Y">Y: (DO) Digital output</option>
         <option value="M">M: Internal relay</option>
         <option value="S">S: Step relay</option>
         <option value="T">T: Timer contact</option>
@@ -43,6 +42,11 @@
       <label>Invert</label>
       <description>Invert logical representation of related register (0->1, 1->0).</description>
       <default>false</default>
+    </parameter>
+    <parameter name="refreshInterval" type="integer" required="false">
+      <label>Refresh interval</label>
+      <description>Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.</description>
+      <default>0</default>
     </parameter>
   </config-description>
 

@@ -36,4 +36,5 @@ public interface FatekChannelHandler {
   // fetch
   State state(List<RegValue> value);
 
+  String validateConfiguration();
 }
