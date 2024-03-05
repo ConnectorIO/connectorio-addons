@@ -134,8 +134,8 @@ public class AmsAdsNetworkBridgeHandler extends AbstractAmsAdsThingHandler<AmsBr
             }
           }
 
-          String target = "targetAmsNetId=" + config.targetAmsId + "&targetAmsPort=" + config.targetAmsPort;
-          String source = "&sourceAmsNetId=" + amsAds.sourceAmsId + "&sourceAmsPort=" + amsAds.sourceAmsPort;
+          String target = "target-ams-net-id=" + config.targetAmsId + "&target-ams-port=" + config.targetAmsPort;
+          String source = "&source-ams-net-id=" + amsAds.sourceAmsId + "&source-ams-port=" + amsAds.sourceAmsPort;
           String extraOpts = "&load-symbol-and-data-type-tables=false";
 
           PlcConnection connection = driverManager.getConnectionManager().getConnection("ads:tcp://" + config.host + "?" + target + source + extraOpts);
