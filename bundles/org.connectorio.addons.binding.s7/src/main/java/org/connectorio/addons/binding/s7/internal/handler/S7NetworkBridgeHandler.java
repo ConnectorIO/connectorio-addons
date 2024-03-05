@@ -67,7 +67,7 @@ public class S7NetworkBridgeHandler extends PollingPlc4xBridgeHandler<PlcConnect
           String local = "local-slot=" + config.localSlot + "&local-rack=" + config.localRack;
           String remote = "&remote-slot=" + config.remoteSlot + "&remote-rack=" + config.remoteRack;
           String pdu = config.pduSize != null ? "&pdu-size=" + config.pduSize : "";
-          String type = config.controllerType != null ? "&controller-type=" + config.controllerType.getType().name() : "";
+          String type = config.controllerType != null ? "&controller-type=" + config.controllerType.name() : "";
           PlcConnection connection = driverManager.getConnectionManager()
             .getConnection("s7://" + config.host + "?" + local + remote + pdu + type);
 
