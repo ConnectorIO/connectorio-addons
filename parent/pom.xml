@@ -549,6 +549,12 @@
         <classifier>features</classifier>
         <type>xml</type>
       </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.kar.profile</artifactId>
+        <version>${project.version}</version>
+        <type>kar</type>
+      </dependency>
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
