@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.s7.internal.config;
 
+import org.apache.plc4x.java.s7.readwrite.ControllerType;
 import org.connectorio.addons.binding.config.PollingConfiguration;
 
 /**
