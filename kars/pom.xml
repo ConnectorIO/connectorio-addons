@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- - Copyright (C) 2022-2022 ConnectorIO Sp. z o.o.
+ - Copyright (C) 2022-2024 ConnectorIO Sp. z o.o.
  -
  - Licensed under the Apache License, Version 2.0 (the "License");
  - you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@
     <module>org.connectorio.addons.kar.bacnet</module>
     <module>org.connectorio.addons.kar.canopen</module>
     <module>org.connectorio.addons.kar.fatek</module>
+    <module>org.connectorio.addons.kar.io.transport.serial</module>
     <module>org.connectorio.addons.kar.managed</module>
     <module>org.connectorio.addons.kar.mbus</module>
     <module>org.connectorio.addons.kar.network</module>
