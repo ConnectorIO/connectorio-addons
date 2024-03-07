@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2024-2024 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,18 +25,20 @@ import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
 import org.simplify4u.jfatek.FatekCommand;
-import org.simplify4u.jfatek.FatekWriteDiscreteCmd;
-import org.simplify4u.jfatek.registers.DisReg;
+import org.simplify4u.jfatek.FatekPLC;
+import org.simplify4u.jfatek.FatekWriteDataCmd;
+import org.simplify4u.jfatek.registers.DataReg;
 import org.simplify4u.jfatek.registers.Reg;
 import org.simplify4u.jfatek.registers.RegValue;
+import org.simplify4u.jfatek.registers.RegValueData;
 
-public class BinaryChannelHandler implements FatekChannelHandler {
+public class DataChannelHandler implements FatekChannelHandler {
 
-  private final DisReg register;
-  private final Converter converter;
   private final ChannelUID channel;
+  private final DataReg register;
+  private final Converter converter;
 
-  public BinaryChannelHandler(Channel channel, DisReg register, Converter converter) {
+  public DataChannelHandler(Channel channel, DataReg register, Converter converter) {
     this.channel = channel.getUID();
     this.register = register;
     this.converter = converter;
@@ -55,8 +57,8 @@ public class BinaryChannelHandler implements FatekChannelHandler {
   @Override
   public FatekCommand<?> prepareWrite(Command command) {
     RegValue value = converter.toValue(command);
-    if (value != null) {
-      return new FatekWriteDiscreteCmd(null, register, value.boolValue());
+    if (value instanceof RegValueData) {
+      return new FatekWriteDataCmd((FatekPLC) null, register, (RegValueData) value);
     }
     return null;
   }

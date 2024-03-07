@@ -21,12 +21,72 @@
   xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-  <!-- switch to PLC specific channel kinds .. maybe?  -->
+  <channel-type id="contact">
+    <item-type>Contact</item-type>
+    <label>Contact</label>
+    <description>A read only channel which represent state of input or output.</description>
+    <state readOnly="true" />
+    <config-description-ref uri="channel-type:co7io-fatek:contact"></config-description-ref>
+  </channel-type>
   <channel-type id="discrete">
     <item-type>Switch</item-type>
-    <label>Discrete register</label>
-    <description>Discrete register of connected PLC.</description>
+    <label>Switchable discrete register</label>
+    <description>Discrete register of connected PLC which can be commanded.</description>
     <config-description-ref uri="channel-type:co7io-fatek:binary"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="data16">
+    <item-type>Number</item-type>
+    <label>Data register (16 bit)</label>
+    <description>Data register of connected PLC encoded using 16 bit registers.</description>
+    <config-description-ref uri="channel-type:co7io-fatek:data16"></config-description-ref>
+  </channel-type>
+  <channel-type id="data32">
+    <item-type>Number</item-type>
+    <label>Data register (32 bit)</label>
+    <description>Data register of connected PLC encoded using 32 bit registers.</description>
+    <config-description-ref uri="channel-type:co7io-fatek:data32"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="percent16">
+    <item-type>Dimmer</item-type>
+    <label>Percent (16-bit)</label>
+    <description>Data register for representing percentage expressed as integer (0 ... 100) based on 16 bit register.</description>
+    <state min="0" max="100" />
+    <config-description-ref uri="channel-type:co7io-fatek:percent16"></config-description-ref>
+  </channel-type>
+  <channel-type id="percent32">
+    <item-type>Dimmer</item-type>
+    <label>Percent (32-bit)</label>
+    <description>Data register for representing percentage in range as integer or floating point number based on 32 bit register.</description>
+    <state min="0" max="100" />
+    <config-description-ref uri="channel-type:co7io-fatek:percent32"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="rollershutter16">
+    <item-type>Rollershutter</item-type>
+    <label>Rollershutter (16-bit)</label>
+    <description>Data register for position will use 16 bit registers.</description>
+    <config-description-ref uri="channel-type:co7io-fatek:rollershutter16"></config-description-ref>
+  </channel-type>
+  <channel-type id="rollershutter32">
+    <item-type>Rollershutter</item-type>
+    <label>Rollershutter (32-bit)</label>
+    <description>Data register for position will use 32 bit registers.</description>
+    <config-description-ref uri="channel-type:co7io-fatek:rollershutter32"></config-description-ref>
+  </channel-type>
+
+  <channel-type id="color16">
+    <item-type>Color</item-type>
+    <label>Color (16-bit)</label>
+    <description>Data register for position will use 16 bit registers.</description>
+    <config-description-ref uri="channel-type:co7io-fatek:color16"></config-description-ref>
+  </channel-type>
+  <channel-type id="color32">
+    <item-type>Color</item-type>
+    <label>Color (32-bit)</label>
+    <description>Data register for position will use 32 bit registers.</description>
+    <config-description-ref uri="channel-type:co7io-fatek:color32"></config-description-ref>
   </channel-type>
 
 </thing:thing-descriptions>

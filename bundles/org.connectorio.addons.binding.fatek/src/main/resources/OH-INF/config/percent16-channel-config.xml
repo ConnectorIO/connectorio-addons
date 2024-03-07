@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- - Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ - Copyright (C) 2024-2024 ConnectorIO Sp. z o.o.
  -
  - Licensed under the Apache License, Version 2.0 (the "License");
  - you may not use this file except in compliance with the License.
@@ -21,27 +21,36 @@
   xmlns:config-description="https://openhab.org/schemas/config-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
 
-  <config-description uri="channel-type:co7io-fatek:binary">
+  <config-description uri="channel-type:co7io-fatek:percent16">
     <parameter name="register" type="text" required="true">
       <label>Register</label>
-      <description>Type of discrete register to read or write.</description>
+      <description>Type of data register to read or write.</description>
       <options>
-        <option value="X">X: (DI) Digital input</option>
-        <option value="M">M: Internal relay</option>
-        <option value="S">S: Step relay</option>
-        <option value="T">T: Timer contact</option>
-        <option value="C">C: Counter contact</option>
-      </options>
+        <option value="R">R: Data register (16 bit)</option>
+        <option value="D">D: Data register (16 bit)</option>
+        <option value="F">F: File register (16 bit)</option>
+
+        <option value="RT">RT: Timer register (16 bit)</option>
+        <option value="RC">RC: Counter register (16 bit)</option>
+
+        <!-- registers with discrete variant -->
+        <option value="WX">WX: Input discrete data register (16 bit)</option>
+        <option value="WY">WY: Output relay data register (16 bit)</option>
+        <option value="WM">WM: Internal relay data register (16 bit)</option>
+        <option value="WS">WS: Step relay data register (16 bit)</option>
+        <option value="WT">WT: Timer discrete data register (16 bit)</option>
+        <option value="WC">WC: Counter discrete data register (16 bit)</option>
+     </options>
     </parameter>
     <parameter name="index" type="integer" required="true">
       <label>Register index</label>
       <description>Index of register used to retrieve data.</description>
       <default>0</default>
     </parameter>
-    <parameter name="invert" type="boolean">
-      <label>Invert</label>
-      <description>Invert logical representation of related register (0->1, 1->0).</description>
-      <default>false</default>
+    <parameter name="step" type="integer" required="false">
+      <label>Step</label>
+      <description>Value assumed for increase/decrease command.</description>
+      <default>5</default>
     </parameter>
     <parameter name="refreshInterval" type="integer" required="false">
       <label>Refresh interval</label>

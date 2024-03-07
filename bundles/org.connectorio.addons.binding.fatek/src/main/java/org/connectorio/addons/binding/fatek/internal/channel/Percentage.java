@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2024-2024 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,17 @@
  */
 package org.connectorio.addons.binding.fatek.internal.channel;
 
-import java.util.List;
-import org.openhab.core.thing.ChannelUID;
-import org.openhab.core.types.Command;
-import org.openhab.core.types.State;
-import org.simplify4u.jfatek.FatekCommand;
-import org.simplify4u.jfatek.registers.Reg;
-import org.simplify4u.jfatek.registers.RegValue;
+import java.math.BigDecimal;
+import org.openhab.core.library.types.PercentType;
 
-public interface FatekChannelHandler {
+public interface Percentage {
 
-  // identification
-  List<Reg> registers();
-  ChannelUID channel();
+  BigDecimal ZERO = BigDecimal.ZERO;
 
-  // write
-  FatekCommand<?> prepareWrite(Command command);
-  // fetch
-  State state(List<RegValue> value);
+  BigDecimal HUNDRED = BigDecimal.valueOf(100);
 
-  String validateConfiguration();
+  static PercentType from(BigDecimal decimal) {
+    return new PercentType(decimal.min(HUNDRED).max(ZERO));
+  }
+
 }
