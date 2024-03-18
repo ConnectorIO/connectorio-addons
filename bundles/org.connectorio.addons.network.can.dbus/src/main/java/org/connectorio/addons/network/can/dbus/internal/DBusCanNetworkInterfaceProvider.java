@@ -55,7 +55,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component(service = NetworkInterfaceProvider.class)
+@Component(service = NetworkInterfaceProvider.class, immediate = true)
 public class DBusCanNetworkInterfaceProvider implements NetworkInterfaceProvider, DBusSigHandler<PropertiesChanged> {
 
   public static final String PROPERTIES_TYPE = "org.freedesktop.DBus.Properties";
