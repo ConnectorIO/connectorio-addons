@@ -48,6 +48,7 @@ import org.apache.plc4x.java.spi.generation.ByteOrder;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
 import org.apache.plc4x.java.spi.generation.ReadBufferByteBased;
+import org.apache.plc4x.java.spi.values.PlcRawByteArray;
 import org.apache.plc4x.java.spi.values.PlcUSINT;
 import org.apache.plc4x.java.spi.values.PlcValues;
 import org.connectorio.addons.binding.canopen.ta.internal.type.TAString;
@@ -144,31 +145,31 @@ public class TAOperations {
   }
 
   public CompletableFuture<? extends PlcWriteResponse> login(int nodeId, int clientId) {
-    return connection.writeRequestBuilder().addTag("mpdo", new CANOpenPDOTag(clientId, CANOpenService.RECEIVE_PDO_3, CANOpenDataType.RECORD), PlcValues.of(
-      new PlcUSINT((0x80 + nodeId)),
-      new PlcUSINT(0x00),
-      new PlcUSINT(0x1F),
-      new PlcUSINT(0x00),
-      new PlcUSINT(nodeId),
-      new PlcUSINT(clientId),
-      new PlcUSINT(0x80),
-      new PlcUSINT(0x12)
-    )).build().execute().whenComplete((response, error) -> {
+    return connection.writeRequestBuilder().addTag("mpdo", new CANOpenPDOTag(clientId, CANOpenService.RECEIVE_PDO_3, CANOpenDataType.RECORD), new PlcRawByteArray(new byte[] {
+      (byte) (0x80 + nodeId),
+      (byte) 0x00,
+      (byte) 0x1F,
+      (byte) 0x00,
+      (byte) nodeId,
+      (byte) clientId,
+      (byte) 0x80,
+      (byte) 0x12
+    })).build().execute().whenComplete((response, error) -> {
       logger.debug("Dispatched login request to node {}", nodeId, error);
     });
   }
 
   public CompletableFuture<? extends PlcWriteResponse> logout(int nodeId, int clientId) {
-    return connection.writeRequestBuilder().addTagAddress("mpdo", "RECEIVE_PDO_3:" + clientId + ":RECORD", PlcValues.of(
-      new PlcUSINT((0x80 + nodeId)),
-      new PlcUSINT(0x01),
-      new PlcUSINT(0x1F),
-      new PlcUSINT(0x00),
-      new PlcUSINT(nodeId),
-      new PlcUSINT(clientId),
-      new PlcUSINT(0x80),
-      new PlcUSINT(0x12)
-    )).build().execute().whenComplete((response, error) -> {
+    return connection.writeRequestBuilder().addTagAddress("mpdo", "RECEIVE_PDO_3:" + clientId + ":RECORD", new PlcRawByteArray(new byte[]{
+        (byte) (0x80 + nodeId),
+        (byte) 0x01,
+        (byte) 0x1F,
+        (byte) 0x00,
+        (byte) nodeId,
+        (byte) clientId,
+        (byte) 0x80,
+        (byte) 0x12
+    })).build().execute().whenComplete((response, error) -> {
       logger.debug("Dispatched logout request to node {}", nodeId, error);
     });
   }

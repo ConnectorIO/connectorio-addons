@@ -37,8 +37,8 @@
     <compiler.source>11</compiler.source>
     <compiler.target>11</compiler.target>
 
-    <plc4x-extras.version>0.12.0</plc4x-extras.version>
-    <bacnet4j-wrapper.version>1.3.0-beta1</bacnet4j-wrapper.version>
+    <plc4x-extras.version>0.13.0-connectorio-1</plc4x-extras.version>
+    <bacnet4j-wrapper.version>1.3.0-beta3</bacnet4j-wrapper.version>
 
     <openhab.version>3.0.4</openhab.version>
     <thing4.version>3.0.0-alpha-4</thing4.version>

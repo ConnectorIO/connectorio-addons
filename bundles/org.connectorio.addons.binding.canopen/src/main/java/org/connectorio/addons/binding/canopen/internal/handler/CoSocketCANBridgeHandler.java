@@ -76,10 +76,24 @@ public class CoSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<CANOpenT
           config = getBridgeConfig().get();
           String nodeId = "nodeId=" + config.nodeId;
           String heartbeat = "&heartbeat=" + config.heartbeat;
-          AbstractPlcConnection connection = (AbstractPlcConnection) driverManager
-            .getConnectionManager().getConnection("canopen:socketcan://" + config.name + "?" + nodeId + heartbeat);
 
-          if (connection.isConnected()) {
+          AbstractPlcConnection connection = null;
+          ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+          try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+//            List<Provider<Transport>> transports = ServiceLoader.load(Transport.class, getClass().getClassLoader()).stream().collect(Collectors.toList());
+//            transports = ServiceLoader.load(Transport.class, SocketCANTransport.class.getClassLoader()).stream().collect(Collectors.toList());
+            connection = (AbstractPlcConnection) driverManager.getConnectionManager().getConnection("canopen:socketcan://" + config.name + "?" + nodeId + heartbeat);
+          } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
+          }
+
+          if (connection != null && !connection.isConnected()) {
+            // force connection attempt
+            connection.connect();
+          }
+
+          if (connection != null && connection.isConnected()) {
             updateStatus(ThingStatus.ONLINE);
             initializer.complete(connection);
           } else {
@@ -105,6 +119,15 @@ public class CoSocketCANBridgeHandler extends PollingPlc4xBridgeHandler<CANOpenT
     if (statisticPoller != null) {
       statisticPoller.cancel(true);
     }
+    initializer.thenAccept(connection -> {
+      if (connection.isConnected()) {
+        try {
+          connection.close();
+        } catch (Exception e) {
+          logger.warn("Failure while closing connection", e);
+        }
+      }
+    });
   }
 
   @Override

@@ -41,7 +41,7 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * Basic discovery service which rely on network API to discover CAN interface.
  */
-@Component(service = {DiscoveryService.class, NetworkInterfaceStateCallback.class})
+@Component(service = {DiscoveryService.class, NetworkInterfaceStateCallback.class}, immediate = true)
 public class CANInterfaceDiscoveryDelegate extends AbstractDiscoveryService implements DiscoveryService,
   NetworkInterfaceStateCallback {
 

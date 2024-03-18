@@ -13,6 +13,7 @@ import org.apache.plc4x.java.api.model.PlcConsumerRegistration;
 import org.apache.plc4x.java.api.value.PlcValue;
 import org.apache.plc4x.java.can.generic.tag.GenericCANTag;
 import org.apache.plc4x.java.genericcan.readwrite.GenericCANDataType;
+import org.apache.plc4x.java.spi.values.PlcRawByteArray;
 import org.apache.plc4x.java.spi.values.PlcUSINT;
 import org.apache.plc4x.java.spi.values.PlcValues;
 import org.connectorio.addons.binding.canbus.CanConnection;
@@ -35,12 +36,7 @@ public class DefaultCanConnection implements CanConnection {
   }
 
   private PlcValue encode(byte[] data) {
-    List<PlcUSINT> values = new ArrayList<>();
-    for (byte b : data) {
-      values.add(new PlcUSINT(b));
-    }
-
-    return PlcValues.of(values);
+    return new PlcRawByteArray(data);
   }
 
   @Override
