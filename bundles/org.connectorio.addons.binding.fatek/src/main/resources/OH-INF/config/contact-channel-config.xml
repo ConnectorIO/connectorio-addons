@@ -21,12 +21,13 @@
   xmlns:config-description="https://openhab.org/schemas/config-description/v1.0.0"
   xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
 
-  <config-description uri="channel-type:co7io-fatek:binary">
+  <config-description uri="channel-type:co7io-fatek:contact">
     <parameter name="register" type="text" required="true">
       <label>Register</label>
       <description>Type of discrete register to read or write.</description>
       <options>
         <option value="X">X: (DI) Digital input</option>
+        <option value="Y">Y: (DO) Digital output</option>
         <option value="M">M: Internal relay</option>
         <option value="S">S: Step relay</option>
         <option value="T">T: Timer contact</option>

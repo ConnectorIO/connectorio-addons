@@ -22,7 +22,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import org.connectorio.addons.binding.fatek.internal.transport.command.MultiplexCmd;
 import org.connectorio.addons.binding.fatek.transport.FaconConnection;
-import org.openhab.core.config.core.status.ConfigStatusMessage.Builder;
 import org.simplify4u.jfatek.FatekCommand;
 import org.simplify4u.jfatek.FatekException;
 import org.simplify4u.jfatek.FatekPLC;

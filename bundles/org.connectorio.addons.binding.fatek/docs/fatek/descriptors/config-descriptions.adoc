@@ -2,6 +2,39 @@
 = Config descriptions
 
 
+[[channel-type:co7io-fatek:data32]]
+== Config `channel-type:co7io-fatek:data32`
+[width="100%",caption="channel-type:co7io-fatek:data32 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| register
+| TEXT
+| Register
+| Type of data register to read or write.
+
+| index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| floating
+| BOOLEAN
+| floating point
+| Indicate that read/write value is a floating point number. Overrides unsigned flag.
+
+| step
+| DECIMAL
+| Step
+| Value assumed for increase/decrease command.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.
+
+|===
+
 [[thing-type:co7io-fatek:tcp]]
 == Config `thing-type:co7io-fatek:tcp`
 [width="100%",caption="thing-type:co7io-fatek:tcp configuration",cols="1,1,1,2"]
@@ -86,6 +119,34 @@
 
 |===
 
+[[channel-type:co7io-fatek:contact]]
+== Config `channel-type:co7io-fatek:contact`
+[width="100%",caption="channel-type:co7io-fatek:contact configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| register
+| TEXT
+| Register
+| Type of discrete register to read or write.
+
+| index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| invert
+| BOOLEAN
+| Invert
+| Invert logical representation of related register (0->1, 1->0).
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.
+
+|===
+
 [[channel-type:co7io-fatek:binary]]
 == Config `channel-type:co7io-fatek:binary`
 [width="100%",caption="channel-type:co7io-fatek:binary configuration",cols="1,1,1,2"]
@@ -94,8 +155,8 @@
 
 | register
 | TEXT
-| Register symbol
-| Symbol (kind) of register to read
+| Register
+| Type of discrete register to read or write.
 
 | index
 | INTEGER
@@ -103,6 +164,261 @@
 | Index of register used to retrieve data.
 
 | invert
+| BOOLEAN
+| Invert
+| Invert logical representation of related register (0->1, 1->0).
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.
+
+|===
+
+[[channel-type:co7io-fatek:percent16]]
+== Config `channel-type:co7io-fatek:percent16`
+[width="100%",caption="channel-type:co7io-fatek:percent16 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| register
+| TEXT
+| Register
+| Type of data register to read or write.
+
+| index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| step
+| INTEGER
+| Step
+| Value assumed for increase/decrease command.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.
+
+|===
+
+[[channel-type:co7io-fatek:rollershutter32]]
+== Config `channel-type:co7io-fatek:rollershutter32`
+[width="100%",caption="channel-type:co7io-fatek:rollershutter32 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| register
+| TEXT
+| Register
+| Data register used to retrieve position of roller shutter.
+
+| index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| unsigned
+| BOOLEAN
+| Unsigned
+| Values retrieved from and written to device assume unsigned representation. Does not apply if floating option is set.
+
+| floating
+| BOOLEAN
+| floating point
+| Indicate that read/write value is a floating point number. Overrides unsigned flag.
+
+| startRegister
+| TEXT
+| Register
+| Type of discrete register to write UP command.
+
+| startIndex
+| INTEGER
+| Register index
+| Index of register used to write data.
+
+| startInvert
+| BOOLEAN
+| Invert
+| Invert logical representation of related register (0->1, 1->0).
+
+| stopRegister
+| TEXT
+| Register
+| Type of discrete register to write DOWN command.
+
+| stopIndex
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| stopInvert
+| BOOLEAN
+| Invert
+| Invert logical representation of related register (0->1, 1->0).
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.
+
+|===
+
+[[channel-type:co7io-fatek:data16]]
+== Config `channel-type:co7io-fatek:data16`
+[width="100%",caption="channel-type:co7io-fatek:data16 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| register
+| TEXT
+| Register
+| Type of data register to read or write.
+
+| index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| unsigned
+| BOOLEAN
+| Unsigned
+| Values retrieved from and written to device assume unsigned representation.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.
+
+|===
+
+[[channel-type:co7io-fatek:rollershutter16]]
+== Config `channel-type:co7io-fatek:rollershutter16`
+[width="100%",caption="channel-type:co7io-fatek:rollershutter16 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| register
+| TEXT
+| Register
+| Data register used to retrieve position of roller shutter.
+
+| index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| unsigned
+| BOOLEAN
+| Unsigned
+| Values retrieved from and written to device assume unsigned representation. Does not apply if floating option is set.
+
+| floating
+| BOOLEAN
+| floating point
+| Indicate that read/write value is a floating point number. Overrides unsigned flag.
+
+| startRegister
+| TEXT
+| Register
+| Type of discrete register to write UP command.
+
+| startIndex
+| INTEGER
+| Register index
+| Index of register used to write data.
+
+| startInvert
+| BOOLEAN
+| Invert
+| Invert logical representation of related register (0->1, 1->0).
+
+| stopRegister
+| TEXT
+| Register
+| Type of discrete register to write DOWN command.
+
+| stopIndex
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| stopInvert
+| BOOLEAN
+| Invert
+| Invert logical representation of related register (0->1, 1->0).
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.
+
+|===
+
+[[channel-type:co7io-fatek:color16]]
+== Config `channel-type:co7io-fatek:color16`
+[width="100%",caption="channel-type:co7io-fatek:color16 configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| color1register
+| TEXT
+| Color 1 register
+| Data register used to retrieve or write Red or Hue part of color information.
+
+| color1index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| color2register
+| TEXT
+| Color 2 register
+| Data register used to retrieve or write Green or Saturation part of color information.
+
+| color2index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| color3register
+| TEXT
+| Color 2 register
+| Data register used to retrieve or write Blue or Brightness part of color information.
+
+| color3index
+| INTEGER
+| Register index
+| Index of register used to retrieve data.
+
+| step
+| DECIMAL
+| Step
+| Value assumed for increase/decrease command.
+
+| rgb
+| BOOLEAN
+| RGB mode
+| Write and interpret read data as RGB code instead of HSB.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between next poll cycles, 0 assumes same value as Thing for which this channel is defined.
+
+| switcherRegister
+| TEXT
+| Register
+| Type of discrete register to write ON or OFF command.
+
+| switcherIndex
+| INTEGER
+| Register index
+| Index of register used to write data.
+
+| switcherInvert
 | BOOLEAN
 | Invert
 | Invert logical representation of related register (0->1, 1->0).

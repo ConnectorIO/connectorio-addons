@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ * Copyright (C) 2024-2024 ConnectorIO Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,26 +15,21 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.connectorio.addons.binding.fatek.internal.channel;
+package org.connectorio.addons.binding.fatek.internal.handler.source;
 
 import java.util.List;
-import org.openhab.core.thing.ChannelUID;
-import org.openhab.core.types.Command;
-import org.openhab.core.types.State;
-import org.simplify4u.jfatek.FatekCommand;
+import java.util.Map;
+import java.util.function.Consumer;
+import org.connectorio.addons.binding.source.sampling.Sampler;
 import org.simplify4u.jfatek.registers.Reg;
 import org.simplify4u.jfatek.registers.RegValue;
 
-public interface FatekChannelHandler {
+/**
+ * Dedicated interface for sampler which interacts with Fatek PLCs.
+ */
+public interface FatekSampler extends Sampler {
 
-  // identification
-  List<Reg> registers();
-  ChannelUID channel();
+  List<Reg> getRegisters();
+  Consumer<Map<Reg, RegValue>> getCallback();
 
-  // write
-  FatekCommand<?> prepareWrite(Command command);
-  // fetch
-  State state(List<RegValue> value);
-
-  String validateConfiguration();
 }
