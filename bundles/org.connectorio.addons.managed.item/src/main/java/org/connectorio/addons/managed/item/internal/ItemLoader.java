@@ -77,6 +77,7 @@ public class ItemLoader {
 
     File[] files = managed.listFiles(f -> f.getName().contains("item"));
     if (files == null) {
+      logger.info("No files containing 'item' in name found in {}", managed);
       return;
     }
 

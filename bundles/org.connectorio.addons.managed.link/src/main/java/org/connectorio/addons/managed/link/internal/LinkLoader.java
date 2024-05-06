@@ -61,7 +61,7 @@ public class LinkLoader {
 
     File[] files = managed.listFiles(f -> f.getName().contains("link"));
     if (files == null) {
-      logger.info("No files matching *thing* name found in {}", managed);
+      logger.info("No files containing 'link' in name found in {}", managed);
       return;
     }
 

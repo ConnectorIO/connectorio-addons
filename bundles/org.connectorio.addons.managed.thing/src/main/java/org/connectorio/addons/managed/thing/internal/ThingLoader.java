@@ -92,7 +92,7 @@ public class ThingLoader {
 
     File[] files = managed.listFiles(f -> f.getName().contains("thing"));
     if (files == null) {
-      logger.info("No files matching *thing* name found in {}", managed);
+      logger.info("No files containing 'thing' in name found in {}", managed);
       return;
     }
 
