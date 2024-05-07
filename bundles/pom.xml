@@ -66,6 +66,7 @@
     <module>org.connectorio.addons.managed.link</module>
     <module>org.connectorio.addons.managed.thing</module>
     <module>org.connectorio.addons.managed.xstream</module>
+    <module>org.connectorio.addons.mqtt</module>
     <module>org.connectorio.addons.network</module>
     <module>org.connectorio.addons.network.core</module>
     <module>org.connectorio.addons.network.ip</module>

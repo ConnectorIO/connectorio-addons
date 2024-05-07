@@ -592,6 +592,25 @@
 
       <dependency>
         <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.mqtt</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.feature.mqtt</artifactId>
+        <version>${project.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.kar.mqtt</artifactId>
+        <version>${project.version}</version>
+        <type>kar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.network</artifactId>
         <version>${project.version}</version>
       </dependency>

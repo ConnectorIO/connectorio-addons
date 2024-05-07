@@ -28,7 +28,7 @@
 
   <artifactId>org.connectorio.addons.itest</artifactId>
 
-  <name>ConnectorIO - Addons - ITests</name>
+  <name>ConnectorIO - Addons - ITests (base)</name>
   <description>Base classes for integration tests.</description>
 
   <dependencies>

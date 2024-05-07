@@ -45,6 +45,7 @@
     <module>org.connectorio.addons.feature.io.transport.serial</module>
     <module>org.connectorio.addons.feature.managed</module>
     <module>org.connectorio.addons.feature.mbus</module>
+    <module>org.connectorio.addons.feature.mqtt</module>
     <module>org.connectorio.addons.feature.network</module>
     <module>org.connectorio.addons.feature.norule</module>
     <module>org.connectorio.addons.feature.opcua</module>

@@ -41,6 +41,7 @@
     <module>org.connectorio.addons.kar.io.transport.serial</module>
     <module>org.connectorio.addons.kar.managed</module>
     <module>org.connectorio.addons.kar.mbus</module>
+    <module>org.connectorio.addons.kar.mqtt</module>
     <module>org.connectorio.addons.kar.network</module>
     <module>org.connectorio.addons.kar.norule</module>
     <module>org.connectorio.addons.kar.ocpp</module>
