@@ -35,7 +35,7 @@ import org.openhab.core.types.Type;
 
 /**
  * A profile which makes sure that item receives only increasing values. It also makes sure that
- * received value is not to great.
+ * received value is not too great.
  *
  * @author Lukasz Dywicki - Initial contribution
  */
@@ -79,7 +79,7 @@ class LimitCounterTopProfile extends BaseCounterProfile {
     BigDecimal lastReading = last.toBigDecimal();
     BigDecimal maxIncrease = lastReading.multiply(anomaly).divide(_100, RoundingMode.HALF_UP);
     logger.trace("Verify value {} is smaller than {} + {} ({})%", val, last, maxIncrease, anomaly);
-    if (currentReading.compareTo(lastReading.add(maxIncrease)) <= 0) {
+    if (isSmaller(currentReading, lastReading.add(maxIncrease))) {
       value.accept(val);
       return;
     }
@@ -95,7 +95,7 @@ class LimitCounterTopProfile extends BaseCounterProfile {
     }
     BigDecimal maxIncrease = lastReading.multiply(anomaly).divide(_100, RoundingMode.HALF_UP);
     logger.trace("Verify value {} is smaller than {} + {} ({})%", val, last, maxIncrease, anomaly);
-    if (currentReading.compareTo(lastReading.add(maxIncrease)) <= 0) {
+    if (isSmaller(currentReading, lastReading.add(maxIncrease))) {
       value.accept(val);
       return;
     }

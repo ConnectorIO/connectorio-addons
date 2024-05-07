@@ -104,10 +104,9 @@ class LimitCounterTopProfileTest {
   }
 
   @Test
-  @SuppressWarnings("null")
   void checkDecimalValueFromPersistence() {
     HashMap<String, Object> cfgMap = new HashMap<>();
-    cfgMap.put("anomaly", "10");
+    cfgMap.put("anomaly", "10"); // max change is 10%
     cfgMap.put("uninitializedBehavior", UninitializedBehavior.RESTORE_FROM_PERSISTENCE.name());
     Configuration config = new Configuration(cfgMap);
 
@@ -115,7 +114,7 @@ class LimitCounterTopProfileTest {
     when(itemStateRetriever.getItemName(callback)).thenReturn("foo");
     when(itemStateRetriever.retrieveState("foo")).thenReturn(new DecimalType(10.0));
 
-    // we shall start with 10.0 retrieved from persistence
+    // we shall start with 10.0 retrieved from persistence, so we should only accept values below 11
     LimitCounterTopProfile profile = new LimitCounterTopProfile(callback, context, itemStateRetriever);
 
     // update from item above accepted level

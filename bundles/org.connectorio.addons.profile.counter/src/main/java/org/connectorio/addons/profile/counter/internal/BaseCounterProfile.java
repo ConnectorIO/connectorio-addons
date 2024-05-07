@@ -31,12 +31,18 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseCounterProfile implements StateProfile {
 
   protected final Logger logger = LoggerFactory.getLogger(BaseCounterProfile.class);
+  private final boolean lazyInitialization;
   protected final ProfileCallback callback;
   protected final UninitializedBehavior uninitializedBehavior;
   protected final ProfileContext context;
   protected Type last;
 
   protected BaseCounterProfile(ProfileCallback callback, ProfileContext context, LinkedItemStateRetriever linkedItemStateRetriever) {
+    this(false, callback, context, linkedItemStateRetriever);
+  }
+
+  protected BaseCounterProfile(boolean lazyInitialization, ProfileCallback callback, ProfileContext context, LinkedItemStateRetriever linkedItemStateRetriever) {
+    this.lazyInitialization = lazyInitialization;
     this.callback = callback;
     this.uninitializedBehavior = UninitializedBehavior.parse(context.getConfiguration().get("uninitializedBehavior"));
     this.context = context;
@@ -83,8 +89,8 @@ public abstract class BaseCounterProfile implements StateProfile {
   }
 
   private void handleReading(Type val, boolean incoming) {
-    logger.trace("Verify reading {} vs {}. Value received from handler: {}", val, last, incoming);
-    if (last == null) {
+    logger.trace("Verify reading {} vs {}. Value received from {}", val, last, incoming ? "handler" : "item");
+    if (!lazyInitialization && last == null) {
       if (uninitializedBehavior == UninitializedBehavior.RESTORE_FROM_ITEM) {
         if (!incoming && val instanceof Command) {
           last = val;
@@ -126,4 +132,13 @@ public abstract class BaseCounterProfile implements StateProfile {
       return RESTORE_FROM_ITEM;
     }
   }
+
+  static <T> boolean isLargerOrEqual(Comparable<T> current, T previous) {
+    return current.compareTo(previous) >= 0;
+  }
+
+  static <T> boolean isSmaller(Comparable<T> current, T previous) {
+    return current.compareTo(previous) < 0;
+  }
+
 }

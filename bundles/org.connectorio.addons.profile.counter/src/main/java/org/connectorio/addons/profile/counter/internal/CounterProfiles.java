@@ -36,9 +36,14 @@ public interface CounterProfiles {
     .build();
 
   ProfileTypeUID PULSE_COUNTER = new ProfileTypeUID("connectorio", "pulse-counter");
-  StateProfileType PULSE_PROFILE_TYPE = ProfileTypeBuilder.newState(LIMIT_COUNTER_TOP, "Pulse (tick) counter.")
+  StateProfileType PULSE_PROFILE_TYPE = ProfileTypeBuilder.newState(LIMIT_COUNTER_TOP, "Pulse (tick) counter")
     .withSupportedItemTypes("Number")
     .withSupportedItemTypesOfChannel("Switch", "Contact")
     .build();
 
+  ProfileTypeUID SUSTAINED_COUNTER = new ProfileTypeUID("connectorio", "sustained-counter");
+  StateProfileType SUSTAINED_COUNTER_PROFILE_TYPE = ProfileTypeBuilder.newState(SUSTAINED_COUNTER, "Sustained counter")
+    .withSupportedItemTypes("Number")
+    .withSupportedItemTypesOfChannel("Number")
+    .build();
 }

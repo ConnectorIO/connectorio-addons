@@ -53,13 +53,12 @@ class LimitCounterBottomProfileTest {
   @Test
   void checkDecimalValueFromItem() {
     HashMap<String, Object> cfgMap = new HashMap<>();
-    cfgMap.put("anomaly", "10");
     Configuration config = new Configuration(cfgMap);
 
     when(context.getConfiguration()).thenReturn(config);
 
     // default -> first state from item!
-    LimitCounterTopProfile profile = new LimitCounterTopProfile(callback, context, itemStateRetriever);
+    LimitCounterBottomProfile profile = new LimitCounterBottomProfile(callback, context, itemStateRetriever);
 
     // update from handler before item state is set -> no interactions
     profile.onStateUpdateFromHandler(new DecimalType(13.0));
@@ -72,23 +71,22 @@ class LimitCounterBottomProfileTest {
     Mockito.verify(callback).sendUpdate(new DecimalType(10.1));
 
     profile.onStateUpdateFromHandler(new DecimalType(13.0));
-    Mockito.verifyNoMoreInteractions(callback);
+    Mockito.verify(callback).sendUpdate(new DecimalType(13.0));
 
     profile.onStateUpdateFromHandler(new DecimalType(11.0));
-    Mockito.verify(callback).sendUpdate(new DecimalType(11.0));
+    Mockito.verifyNoMoreInteractions(callback);
   }
 
   @Test
   void checkDecimalValueFromHandler() {
     HashMap<String, Object> cfgMap = new HashMap<>();
-    cfgMap.put("anomaly", "10");
     cfgMap.put("uninitializedBehavior", UninitializedBehavior.RESTORE_FROM_HANDLER.name());
     Configuration config = new Configuration(cfgMap);
 
     when(context.getConfiguration()).thenReturn(config);
 
     // default -> first state from item!
-    LimitCounterTopProfile profile = new LimitCounterTopProfile(callback, context, itemStateRetriever);
+    LimitCounterBottomProfile profile = new LimitCounterBottomProfile(callback, context, itemStateRetriever);
 
     // update from handler before item state is set -> no interactions
     profile.onStateUpdateFromItem(new DecimalType(13.0));
@@ -102,34 +100,35 @@ class LimitCounterBottomProfileTest {
   }
 
   @Test
-  @SuppressWarnings("null")
   void checkDecimalValueFromPersistence() {
     HashMap<String, Object> cfgMap = new HashMap<>();
-    cfgMap.put("anomaly", "10");
     cfgMap.put("uninitializedBehavior", UninitializedBehavior.RESTORE_FROM_PERSISTENCE.name());
     Configuration config = new Configuration(cfgMap);
 
     when(context.getConfiguration()).thenReturn(config);
+    when(itemStateRetriever.getItemName(callback)).thenReturn("foo");
+    when(itemStateRetriever.retrieveState("foo")).thenReturn(new DecimalType(10));
 
-    // we shall start with 10.0 retrieved from persistence
+    // we shall start with 10.0 retrieved from persistence, so we should accept values below 11
     LimitCounterBottomProfile profile = new LimitCounterBottomProfile(callback, context, itemStateRetriever);
 
     // update from item above accepted level
     profile.onStateUpdateFromItem(new DecimalType(13.0));
-    Mockito.verifyNoInteractions(callback);
+    Mockito.verify(callback).handleCommand(new DecimalType(13.0));
 
-    // anomaly call
+    // ??
     profile.onStateUpdateFromHandler(new DecimalType(13.0));
-    Mockito.verifyNoInteractions(callback);
+    Mockito.verify(callback).sendUpdate(new DecimalType(13.0));
+
     // accepted call
     profile.onStateUpdateFromHandler(new DecimalType(10.1));
-    Mockito.verifyNoInteractions(callback);
+
+    Mockito.verifyNoMoreInteractions(callback);
   }
 
   @Test
   void checkQuantityValueFromItem() {
     HashMap<String, Object> cfgMap = new HashMap<>();
-    cfgMap.put("anomaly", "10");
     Configuration config = new Configuration(cfgMap);
 
     when(context.getConfiguration()).thenReturn(config);

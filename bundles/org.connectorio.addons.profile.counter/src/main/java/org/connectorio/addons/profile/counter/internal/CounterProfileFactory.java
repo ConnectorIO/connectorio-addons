@@ -53,17 +53,22 @@ public class CounterProfileFactory implements ProfileFactory, ProfileTypeProvide
     if (CounterProfiles.PULSE_COUNTER.equals(profileTypeUID)) {
       return new PulseCounterProfile(callback, profileContext, linkedItemStateRetriever);
     }
+    if (CounterProfiles.SUSTAINED_COUNTER.equals(profileTypeUID)) {
+      return new SustainedCounterProfile(callback, profileContext, linkedItemStateRetriever);
+    }
     return null;
   }
 
   @Override
   public Collection<ProfileTypeUID> getSupportedProfileTypeUIDs() {
-    return Arrays.asList(CounterProfiles.LIMIT_COUNTER_TOP, CounterProfiles.LIMIT_COUNTER_BOTTOM, CounterProfiles.PULSE_COUNTER);
+    return Arrays.asList(CounterProfiles.LIMIT_COUNTER_TOP, CounterProfiles.LIMIT_COUNTER_BOTTOM,
+      CounterProfiles.PULSE_COUNTER, CounterProfiles.SUSTAINED_COUNTER);
   }
 
   @Override
   public Collection<ProfileType> getProfileTypes(Locale locale) {
-    return Arrays.asList(CounterProfiles.LIMIT_COUNTER_TOP_PROFILE_TYPE, CounterProfiles.LIMIT_COUNTER_BOTTOM_PROFILE_TYPE, CounterProfiles.PULSE_PROFILE_TYPE);
+    return Arrays.asList(CounterProfiles.LIMIT_COUNTER_TOP_PROFILE_TYPE, CounterProfiles.LIMIT_COUNTER_BOTTOM_PROFILE_TYPE,
+      CounterProfiles.PULSE_PROFILE_TYPE, CounterProfiles.SUSTAINED_COUNTER_PROFILE_TYPE);
   }
 
 }
