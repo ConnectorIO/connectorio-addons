@@ -127,7 +127,7 @@ class LimitCounterTopProfile extends BaseCounterProfile {
   }
 
   public String toString() {
-    return "LimitCounterTop [" + last + " " + anomaly + "]";
+    return "LimitCounterTop [" + last() + " " + anomaly + "]";
   }
 
 }

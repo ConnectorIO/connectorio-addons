@@ -35,7 +35,7 @@ public abstract class BaseCounterProfile implements StateProfile {
   protected final ProfileCallback callback;
   protected final UninitializedBehavior uninitializedBehavior;
   protected final ProfileContext context;
-  protected Type last;
+  private Type last;
 
   protected BaseCounterProfile(ProfileCallback callback, ProfileContext context, LinkedItemStateRetriever linkedItemStateRetriever) {
     this(false, callback, context, linkedItemStateRetriever);
@@ -112,6 +112,10 @@ public abstract class BaseCounterProfile implements StateProfile {
   }
 
   protected abstract void handleReading(Type current, Type previous, boolean incoming);
+
+  Type last() {
+    return last;
+  }
 
   enum UninitializedBehavior {
     RESTORE_FROM_ITEM, RESTORE_FROM_PERSISTENCE, RESTORE_FROM_HANDLER;

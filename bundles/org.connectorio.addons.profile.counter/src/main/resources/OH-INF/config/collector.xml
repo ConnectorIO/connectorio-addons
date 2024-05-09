@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright (C) 2024-2024 ConnectorIO Sp. z o.o.
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -
+ - SPDX-License-Identifier: Apache-2.0
+ -->
+<config-descriptions
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
+
+  <config-description uri="profile:connectorio:collector">
+    <parameter name="uninitializedBehavior" type="text" required="true">
+      <label>Uninitialized behavior</label>
+      <description>
+        Defines behavior when first value arrive and what to do with it. There are two cases which needs to be considered:
+      </description>
+      <options>
+        <option value="RESTORE_FROM_ITEM">Require receiving of item state first</option>
+        <option value="RESTORE_FROM_PERSISTENCE">Restore last value from default persistence</option>
+        <option value="RESTORE_FROM_HANDLER">Require receiving of state from device.</option>
+      </options>
+      <default>RESTORE_FROM_ITEM</default>
+    </parameter>
+  </config-description>
+
+</config-descriptions>

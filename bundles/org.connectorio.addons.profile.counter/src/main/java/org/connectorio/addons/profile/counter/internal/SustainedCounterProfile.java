@@ -45,7 +45,7 @@ class SustainedCounterProfile extends BaseCounterProfile {
 
   @Override
   public ProfileTypeUID getProfileTypeUID() {
-    return CounterProfiles.PULSE_COUNTER;
+    return CounterProfiles.SUSTAINED_COUNTER;
   }
 
   @Override
@@ -53,12 +53,12 @@ class SustainedCounterProfile extends BaseCounterProfile {
   protected void handleReading(Type current, Type previous, boolean incoming) {
     if (incoming) { // incoming, handler to item
       if (current instanceof DecimalType) {
-        this.update((AtomicReference) previousValue, (DecimalType) current, (DecimalType) last, update(callback::sendUpdate),
+        this.update((AtomicReference) previousValue, (DecimalType) current, (DecimalType) previous, update(callback::sendUpdate),
           (left, right) -> new DecimalType(left.toBigDecimal().subtract(right.toBigDecimal())),
           (left, right) -> new DecimalType(left.toBigDecimal().add(right.toBigDecimal()))
         );
       } else if (current instanceof QuantityType) {
-        this.update((AtomicReference) previousValue, (QuantityType) current, (QuantityType) last, update(callback::sendUpdate),
+        this.update((AtomicReference) previousValue, (QuantityType) current, (QuantityType) previous, update(callback::sendUpdate),
           QuantityType::subtract,
           QuantityType::add
         );

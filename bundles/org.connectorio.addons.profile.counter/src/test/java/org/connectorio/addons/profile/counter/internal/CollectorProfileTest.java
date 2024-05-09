@@ -17,7 +17,6 @@
  */
 package org.connectorio.addons.profile.counter.internal;
 
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -36,10 +35,10 @@ import org.openhab.core.thing.profiles.ProfileCallback;
 import org.openhab.core.thing.profiles.ProfileContext;
 
 /**
- * Basic test which confirms conversion logic for sustained counter.
+ * Basic test which confirms conversion logic for collector profile.
  */
 @ExtendWith(MockitoExtension.class)
-class SustainedCounterProfileTest {
+class CollectorProfileTest {
 
   @Mock
   ProfileCallback callback;
@@ -55,22 +54,20 @@ class SustainedCounterProfileTest {
     Configuration config = new Configuration(cfgMap);
 
     when(itemStateRetriever.getItemName(callback)).thenReturn("foo");
-    when(itemStateRetriever.retrieveState("foo")).thenReturn(new DecimalType(10));
+    when(itemStateRetriever.retrieveState("foo")).thenReturn(new DecimalType(1000));
     when(context.getConfiguration()).thenReturn(config);
 
-    // we shall start with 10.0 retrieved from persistence
-    SustainedCounterProfile profile = new SustainedCounterProfile(callback, context, itemStateRetriever);
+    CollectorProfile profile = new CollectorProfile(callback, context, itemStateRetriever);
 
     // update from item above accepted level
     profile.onStateUpdateFromHandler(new DecimalType(10.0));
     profile.onStateUpdateFromHandler(new DecimalType(13.1));
-
-    // reset call
     profile.onStateUpdateFromHandler(new DecimalType(10));
 
-    Mockito.verify(callback).sendUpdate(new DecimalType(20));
-    Mockito.verify(callback).sendUpdate(new DecimalType(23.1));
-    Mockito.verify(callback).sendUpdate(new DecimalType(33.1));
+    // verify results
+    Mockito.verify(callback).sendUpdate(new DecimalType(1010));
+    Mockito.verify(callback).sendUpdate(new DecimalType(1023.1));
+    Mockito.verify(callback).sendUpdate(new DecimalType(1033.1));
   }
 
   @Test
@@ -84,19 +81,16 @@ class SustainedCounterProfileTest {
     when(itemStateRetriever.getItemName(callback)).thenReturn("foo");
     when(itemStateRetriever.retrieveState("foo")).thenReturn(null);
 
-    // we shall start with 10.0 retrieved from persistence
-    SustainedCounterProfile profile = new SustainedCounterProfile(callback, context, itemStateRetriever);
+    CollectorProfile profile = new CollectorProfile(callback, context, itemStateRetriever);
 
     // update from item above accepted level
     profile.onStateUpdateFromHandler(new DecimalType(13.0));
     profile.onStateUpdateFromHandler(new DecimalType(13.1));
-
-    // reset call
     profile.onStateUpdateFromHandler(new DecimalType(10));
 
     Mockito.verify(callback).sendUpdate(new DecimalType(13));
-    Mockito.verify(callback).sendUpdate(new DecimalType(13.1));
-    Mockito.verify(callback).sendUpdate(new DecimalType(23.1));
+    Mockito.verify(callback).sendUpdate(new DecimalType(26.1));
+    Mockito.verify(callback).sendUpdate(new DecimalType(36.1));
   }
 
   @Test
@@ -111,18 +105,16 @@ class SustainedCounterProfileTest {
     when(itemStateRetriever.retrieveState("foo")).thenReturn(null);
 
     // we shall start with 10.0 retrieved from persistence
-    SustainedCounterProfile profile = new SustainedCounterProfile(callback, context, itemStateRetriever);
+    CollectorProfile profile = new CollectorProfile(callback, context, itemStateRetriever);
 
     // update from item above accepted level
     profile.onStateUpdateFromHandler(new QuantityType<>(13.0, Units.KILOWATT_HOUR));
     profile.onStateUpdateFromHandler(new QuantityType<>(13.1, Units.KILOWATT_HOUR));
-
-    // reset call
     profile.onStateUpdateFromHandler(new QuantityType<>(10, Units.KILOWATT_HOUR));
 
-    Mockito.verify(callback).sendUpdate(new QuantityType(13, Units.KILOWATT_HOUR));
-    Mockito.verify(callback).sendUpdate(new QuantityType(13.1, Units.KILOWATT_HOUR));
-    Mockito.verify(callback).sendUpdate(new QuantityType<>(23.1, Units.KILOWATT_HOUR));
+    Mockito.verify(callback).sendUpdate(new QuantityType<>(13, Units.KILOWATT_HOUR));
+    Mockito.verify(callback).sendUpdate(new QuantityType<>(26.1, Units.KILOWATT_HOUR));
+    Mockito.verify(callback).sendUpdate(new QuantityType<>(36.1, Units.KILOWATT_HOUR));
   }
 
   @Test
@@ -134,21 +126,19 @@ class SustainedCounterProfileTest {
     when(context.getConfiguration()).thenReturn(config);
 
     when(itemStateRetriever.getItemName(callback)).thenReturn("foo");
-    when(itemStateRetriever.retrieveState("foo")).thenReturn(new DecimalType(10));
+    when(itemStateRetriever.retrieveState("foo")).thenReturn(new DecimalType(1000));
 
     // we shall start with 10.0 retrieved from persistence
-    SustainedCounterProfile profile = new SustainedCounterProfile(callback, context, itemStateRetriever);
+    CollectorProfile profile = new CollectorProfile(callback, context, itemStateRetriever);
 
     // update from item above accepted level
     profile.onStateUpdateFromHandler(new DecimalType(13.0));
     profile.onStateUpdateFromHandler(new DecimalType(13.1));
-
-    // reset call
     profile.onStateUpdateFromHandler(new DecimalType(10));
 
-    Mockito.verify(callback).sendUpdate(new DecimalType(23));
-    Mockito.verify(callback).sendUpdate(new DecimalType(23.1));
-    Mockito.verify(callback).sendUpdate(new DecimalType(33.1));
+    Mockito.verify(callback).sendUpdate(new DecimalType(1013));
+    Mockito.verify(callback).sendUpdate(new DecimalType(1026.1));
+    Mockito.verify(callback).sendUpdate(new DecimalType(1036.1));
   }
 
   @Test
@@ -160,46 +150,18 @@ class SustainedCounterProfileTest {
     when(context.getConfiguration()).thenReturn(config);
 
     when(itemStateRetriever.getItemName(callback)).thenReturn("foo");
-    when(itemStateRetriever.retrieveState("foo")).thenReturn(new QuantityType<>(10, Units.KILOWATT_HOUR));
+    when(itemStateRetriever.retrieveState("foo")).thenReturn(new QuantityType<>(1000, Units.KILOWATT_HOUR));
 
     // we shall start with 10.0 retrieved from persistence
-    SustainedCounterProfile profile = new SustainedCounterProfile(callback, context, itemStateRetriever);
+    CollectorProfile profile = new CollectorProfile(callback, context, itemStateRetriever);
 
-    // update from item above accepted level
     profile.onStateUpdateFromHandler(new QuantityType<>(13.0, Units.KILOWATT_HOUR));
     profile.onStateUpdateFromHandler(new QuantityType<>(13.1, Units.KILOWATT_HOUR));
-
-    // reset call
     profile.onStateUpdateFromHandler(new QuantityType<>(10, Units.KILOWATT_HOUR));
 
-    Mockito.verify(callback).sendUpdate(new QuantityType(23, Units.KILOWATT_HOUR));
-    Mockito.verify(callback).sendUpdate(new QuantityType(23.1, Units.KILOWATT_HOUR));
-    Mockito.verify(callback).sendUpdate(new QuantityType<>(33.1, Units.KILOWATT_HOUR));
+    Mockito.verify(callback).sendUpdate(new QuantityType(1013, Units.KILOWATT_HOUR));
+    Mockito.verify(callback).sendUpdate(new QuantityType(1026.1, Units.KILOWATT_HOUR));
+    Mockito.verify(callback).sendUpdate(new QuantityType<>(1036.1, Units.KILOWATT_HOUR));
   }
 
-  @Test
-  void checkSequentialUpdateDecimalValueFromPersistence() {
-    HashMap<String, Object> cfgMap = new HashMap<>();
-    cfgMap.put("uninitializedBehavior", UninitializedBehavior.RESTORE_FROM_PERSISTENCE.name());
-    Configuration config = new Configuration(cfgMap);
-
-    when(context.getConfiguration()).thenReturn(config);
-
-    when(itemStateRetriever.getItemName(callback)).thenReturn("foo");
-    when(itemStateRetriever.retrieveState("foo")).thenReturn(new DecimalType(0));
-
-    // we shall start with 10.0 retrieved from persistence
-    SustainedCounterProfile profile = new SustainedCounterProfile(callback, context, itemStateRetriever);
-
-    int index = 0;
-    while (index++ < 100) {
-      // update from item above accepted level
-      profile.onStateUpdateFromHandler(new DecimalType(index));
-    }
-    Mockito.verify(callback).sendUpdate(new DecimalType(100));
-
-    // reset call
-    profile.onStateUpdateFromHandler(new DecimalType(10));
-    Mockito.verify(callback).sendUpdate(new DecimalType(110));
-  }
 }

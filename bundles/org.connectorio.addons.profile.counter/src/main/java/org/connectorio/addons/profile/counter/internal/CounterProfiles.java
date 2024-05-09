@@ -23,6 +23,18 @@ import org.openhab.core.thing.profiles.StateProfileType;
 
 public interface CounterProfiles {
 
+  ProfileTypeUID COLLECTOR = new ProfileTypeUID("connectorio", "collector");
+  StateProfileType COLLECTOR_PROFILE_TYPE = ProfileTypeBuilder.newState(COLLECTOR, "Collector")
+    .withSupportedItemTypes("Number")
+    .withSupportedItemTypesOfChannel("Number")
+    .build();
+
+  ProfileTypeUID ENERGY_COUNTER = new ProfileTypeUID("connectorio", "energy-counter");
+  StateProfileType ENERGY_COUNTER_PROFILE_TYPE = ProfileTypeBuilder.newState(COLLECTOR, "Energy Counter (transform W to Wh)")
+    .withSupportedItemTypes("Number")
+    .withSupportedItemTypesOfChannel("Number")
+    .build();
+
   ProfileTypeUID LIMIT_COUNTER_TOP = new ProfileTypeUID("connectorio", "limit-counter-top");
   StateProfileType LIMIT_COUNTER_TOP_PROFILE_TYPE = ProfileTypeBuilder.newState(LIMIT_COUNTER_TOP, "Filter counter upper values")
     .withSupportedItemTypes("Number")

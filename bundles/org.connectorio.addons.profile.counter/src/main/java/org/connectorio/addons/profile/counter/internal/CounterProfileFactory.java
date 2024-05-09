@@ -44,6 +44,12 @@ public class CounterProfileFactory implements ProfileFactory, ProfileTypeProvide
 
   @Override
   public Profile createProfile(ProfileTypeUID profileTypeUID, ProfileCallback callback, ProfileContext profileContext) {
+    if (CounterProfiles.COLLECTOR.equals(profileTypeUID)) {
+      return new CollectorProfile(callback, profileContext, linkedItemStateRetriever);
+    }
+    if (CounterProfiles.ENERGY_COUNTER.equals(profileTypeUID)) {
+      return new EnergyCounterProfile(callback, profileContext);
+    }
     if (CounterProfiles.LIMIT_COUNTER_TOP.equals(profileTypeUID)) {
       return new LimitCounterTopProfile(callback, profileContext, linkedItemStateRetriever);
     }
@@ -61,14 +67,18 @@ public class CounterProfileFactory implements ProfileFactory, ProfileTypeProvide
 
   @Override
   public Collection<ProfileTypeUID> getSupportedProfileTypeUIDs() {
-    return Arrays.asList(CounterProfiles.LIMIT_COUNTER_TOP, CounterProfiles.LIMIT_COUNTER_BOTTOM,
-      CounterProfiles.PULSE_COUNTER, CounterProfiles.SUSTAINED_COUNTER);
+    return Arrays.asList(CounterProfiles.COLLECTOR, CounterProfiles.ENERGY_COUNTER,
+      CounterProfiles.LIMIT_COUNTER_TOP, CounterProfiles.LIMIT_COUNTER_BOTTOM,
+      CounterProfiles.PULSE_COUNTER, CounterProfiles.SUSTAINED_COUNTER
+    );
   }
 
   @Override
   public Collection<ProfileType> getProfileTypes(Locale locale) {
-    return Arrays.asList(CounterProfiles.LIMIT_COUNTER_TOP_PROFILE_TYPE, CounterProfiles.LIMIT_COUNTER_BOTTOM_PROFILE_TYPE,
-      CounterProfiles.PULSE_PROFILE_TYPE, CounterProfiles.SUSTAINED_COUNTER_PROFILE_TYPE);
+    return Arrays.asList(CounterProfiles.COLLECTOR_PROFILE_TYPE, CounterProfiles.ENERGY_COUNTER_PROFILE_TYPE,
+      CounterProfiles.LIMIT_COUNTER_TOP_PROFILE_TYPE, CounterProfiles.LIMIT_COUNTER_BOTTOM_PROFILE_TYPE,
+      CounterProfiles.PULSE_PROFILE_TYPE, CounterProfiles.SUSTAINED_COUNTER_PROFILE_TYPE
+    );
   }
 
 }

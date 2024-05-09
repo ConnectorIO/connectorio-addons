@@ -45,18 +45,18 @@ class LimitCounterBottomProfile extends BaseCounterProfile {
   @Override
   protected void handleReading(Type current, Type previous, boolean incoming) {
     if (incoming) { // incoming, handler to item
-      if (current instanceof DecimalType && last instanceof DecimalType) {
-        compare((DecimalType) current, (DecimalType) last, update(callback::sendUpdate));
+      if (current instanceof DecimalType && previous instanceof DecimalType) {
+        compare((DecimalType) current, (DecimalType) previous, update(callback::sendUpdate));
       }
-      if (current instanceof QuantityType && last instanceof QuantityType<?>) {
-        compare((QuantityType<?>) current, (QuantityType<?>) last, update(callback::sendUpdate));
+      if (current instanceof QuantityType && previous instanceof QuantityType<?>) {
+        compare((QuantityType<?>) current, (QuantityType<?>) previous, update(callback::sendUpdate));
       }
     } else { // outgoing, item to handler
-      if (current instanceof DecimalType && last instanceof DecimalType) {
-        compare((DecimalType) current, (DecimalType) last, update(callback::handleCommand));
+      if (current instanceof DecimalType && previous instanceof DecimalType) {
+        compare((DecimalType) current, (DecimalType) previous, update(callback::handleCommand));
       }
-      if (current instanceof QuantityType && last instanceof QuantityType<?>) {
-        compare((QuantityType<?>) current, (QuantityType<?>) last, update(callback::handleCommand));
+      if (current instanceof QuantityType && previous instanceof QuantityType<?>) {
+        compare((QuantityType<?>) current, (QuantityType<?>) previous, update(callback::handleCommand));
       }
     }
   }
@@ -81,7 +81,7 @@ class LimitCounterBottomProfile extends BaseCounterProfile {
   }
 
   public String toString() {
-    return "LimitCounterBottom [" + last + "]";
+    return "LimitCounterBottom [" + last() + "]";
   }
 
 }
