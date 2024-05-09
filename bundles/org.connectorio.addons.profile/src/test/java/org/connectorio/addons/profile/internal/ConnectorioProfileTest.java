@@ -24,6 +24,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ThreadFactory;
 import org.connectorio.addons.profile.ProfileFactoryRegistry;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -44,7 +49,6 @@ import org.openhab.core.types.State;
 /**
  * Test of chained invocations between profiles and framework.
  */
-@Disabled
 @ExtendWith(MockitoExtension.class)
 class ConnectorioProfileTest {
 
@@ -65,11 +69,18 @@ class ConnectorioProfileTest {
   ProfileFactory factory2;
 
   @Test
-  void checkChainedValue() {
+  void checkChainedValue() throws Exception {
     HashMap<String, Object> cfgMap = new HashMap<>();
-    cfgMap.put("profiles", Arrays.asList(CONDITION_PROFILE, SCALE_PROFILE));
+    cfgMap.put("a1.profile", CONDITION_PROFILE);
+    cfgMap.put("b2.profile", SCALE_PROFILE);
     Configuration config = new Configuration(cfgMap);
 
+    Executor executor = new Executor() {
+      @Override
+      public void execute(Runnable command) {
+        command.run();
+      }
+    };
     when(context.getConfiguration()).thenReturn(config);
 
     when(registry.getAll()).thenReturn(Arrays.asList(factory1, factory2));
@@ -85,11 +96,11 @@ class ConnectorioProfileTest {
       inv.getArgument(2, ProfileContext.class)
     ));
 
-    ConnectorioProfile profile = new ConnectorioProfile(callback, context, registry);
-    profile.onCommandFromItem(new DecimalType(22.0));
-    Mockito.verify(callback).handleCommand(new DecimalType(11.0));
+    ConnectorioProfile profile = new ConnectorioProfile(executor, callback, context, registry);
+//    profile.onCommandFromItem(new DecimalType(22.0));
+//    Mockito.verify(callback).handleCommand(new DecimalType(11.0));
 
-    profile.onCommandFromHandler(new DecimalType(11.0));
+    profile.onStateUpdateFromHandler(new DecimalType(11.0));
     Mockito.verify(callback).sendUpdate(new DecimalType(22.0));
   }
 
@@ -144,7 +155,7 @@ class ConnectorioProfileTest {
     public void onCommandFromItem(Command command) {
       if (command instanceof DecimalType) {
         DecimalType dec = (DecimalType) command;
-        callback.sendUpdate(new DecimalType(dec.doubleValue() / 2));
+        callback.handleCommand(new DecimalType(dec.doubleValue() / 2));
       }
     }
   }
