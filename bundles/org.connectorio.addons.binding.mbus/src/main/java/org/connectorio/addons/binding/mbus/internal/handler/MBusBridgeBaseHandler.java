@@ -17,14 +17,18 @@
  */
 package org.connectorio.addons.binding.mbus.internal.handler;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 import org.connectorio.addons.binding.handler.GenericBridgeHandlerBase;
 import org.connectorio.addons.binding.mbus.config.BridgeConfig;
 import org.connectorio.addons.binding.mbus.internal.discovery.DiscoveryCoordinator;
+import org.connectorio.addons.binding.mbus.internal.discovery.MBusDiscoveryService;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
+import org.openhab.core.thing.binding.ThingHandlerService;
 import org.openhab.core.types.Command;
 import org.openmuc.jmbus.MBusConnection;
 import org.slf4j.Logger;
@@ -57,6 +61,17 @@ public abstract class MBusBridgeBaseHandler<C extends BridgeConfig> extends Gene
     });
   }
 
+  @Override
+  public void dispose() {
+    if (connection.isDone()) {
+      try {
+        connection.get().close();
+      } catch (Exception e) {
+        logger.error("Failed to close serial connection", e);
+      }
+    }
+  }
+
   protected abstract CompletableFuture<MBusConnection> initializeConnection();
 
   @Override
@@ -71,6 +86,13 @@ public abstract class MBusBridgeBaseHandler<C extends BridgeConfig> extends Gene
 
   public CompletableFuture<DiscoveryCoordinator> getDiscoveryCoordinator() {
     return connection.thenApply(connection -> this.discoveryCoordinator);
+  }
+
+  @Override
+  public Collection<Class<? extends ThingHandlerService>> getServices() {
+    return getBridgeConfig().filter(cfg -> cfg.discoveryMethod != null)
+      .map(cfg -> Collections.<Class<? extends ThingHandlerService>>singleton(MBusDiscoveryService.class))
+      .orElse(Collections.emptySet());
   }
 
 }

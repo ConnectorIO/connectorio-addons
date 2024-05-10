@@ -20,9 +20,52 @@
 
 |===
 
-[[thing-type:co7io-mbus:openhab-serial]]
-== Config `thing-type:co7io-mbus:openhab-serial`
-[width="100%",caption="thing-type:co7io-mbus:openhab-serial configuration",cols="1,1,1,2"]
+[[thing-type:co7io-mbus:device]]
+== Config `thing-type:co7io-mbus:device`
+[width="100%",caption="thing-type:co7io-mbus:device configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| address
+| INTEGER
+| Primary address
+| 
+
+| discoverChannels
+| BOOLEAN
+| Discover channels
+| Enable automatic creation of channels based on polled data.
+
+| serialNumber
+| INTEGER
+| Serial number
+| 
+
+| manufacturerId
+| TEXT
+| Manufacturer identifier
+| Three character identifier of manufacturer, for example 'KAM' for Kamstrup.
+
+| version
+| INTEGER
+| Version
+| 
+
+| deviceType
+| TEXT
+| Device type
+| Type of device according to standard.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Time between poll cycles.
+
+|===
+
+[[thing-type:co7io-mbus:serial]]
+== Config `thing-type:co7io-mbus:serial`
+[width="100%",caption="thing-type:co7io-mbus:serial configuration",cols="1,1,1,2"]
 |===
 |Name | Type | Label ^|Description
 
@@ -70,49 +113,6 @@
 | TEXT
 | Wildcard mask
 | Address mask (in hex format) used to scan secondary addresses on the bus. Used only if 'Secondary address' scan is enabled.
-
-| refreshInterval
-| INTEGER
-| Refresh interval
-| Time between poll cycles.
-
-|===
-
-[[thing-type:co7io-mbus:device]]
-== Config `thing-type:co7io-mbus:device`
-[width="100%",caption="thing-type:co7io-mbus:device configuration",cols="1,1,1,2"]
-|===
-|Name | Type | Label ^|Description
-
-| address
-| INTEGER
-| Primary address
-| 
-
-| discoverChannels
-| BOOLEAN
-| Discover channels
-| Enable automatic creation of channels based on polled data.
-
-| serialNumber
-| INTEGER
-| Serial number
-| 
-
-| manufacturerId
-| TEXT
-| Manufacturer identifier
-| Three character identifier of manufacturer, for example 'KAM' for Kamstrup.
-
-| version
-| INTEGER
-| Version
-| 
-
-| deviceType
-| TEXT
-| Device type
-| Type of device according to standard.
 
 | refreshInterval
 | INTEGER

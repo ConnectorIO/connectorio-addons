@@ -107,6 +107,8 @@ public class WMBusDeviceThingHandler<B extends WMBusBridgeHandler<BridgeConfig>>
       getBridgeHandler().map(WMBusBridgeHandler::getKeyStore).orElse(CompletableFuture.failedFuture(new IllegalArgumentException()))
         .thenAccept(keyStore -> keyStore.addKey(address, HexUtils.hexToBytes(encryptionKey)));
     }
+    getBridgeHandler().map(WMBusBridgeHandler::getDispatcher).orElse(CompletableFuture.failedFuture(new IllegalArgumentException()))
+        .thenAccept(dispatcher -> dispatcher.attach(this));
 
     for (Channel channel : getThing().getChannels()) {
       if (WMBusBindingConstants.CHANNEL_TYPE_RSSI.equals(channel.getChannelTypeUID())) {
@@ -127,6 +129,9 @@ public class WMBusDeviceThingHandler<B extends WMBusBridgeHandler<BridgeConfig>>
   public void dispose() {
     getBridgeHandler().map(WMBusBridgeHandler::getKeyStore).orElse(CompletableFuture.failedFuture(new IllegalArgumentException()))
       .thenAccept(keyStore -> keyStore.removeKey(address));
+
+    getBridgeHandler().map(WMBusBridgeHandler::getDispatcher).orElse(CompletableFuture.failedFuture(new IllegalArgumentException()))
+      .thenAccept(dispatcher -> dispatcher.detach(this));
 
     super.dispose();
   }

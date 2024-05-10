@@ -5,19 +5,19 @@
 |===
 |Bridge | Label ^|Description
 
-| co7io-mbus:openhab-serial
+| co7io-mbus:serial
 | Serial Bridge
 | The M-Bus Serial bridge allows to poll data using compatible serial interfaces.
 
-<<co7io-mbus:openhab-serial>>
+<<co7io-mbus:serial>>
 
 |===
 
 
-[[co7io-mbus:openhab-serial]]
-== Bridge `co7io-mbus:openhab-serial`
+[[co7io-mbus:serial]]
+== Bridge `co7io-mbus:serial`
 
-Below table contains complete configuration of `co7io-mbus:openhab-serial`.
+Below table contains complete configuration of `co7io-mbus:serial`.
 
 
 

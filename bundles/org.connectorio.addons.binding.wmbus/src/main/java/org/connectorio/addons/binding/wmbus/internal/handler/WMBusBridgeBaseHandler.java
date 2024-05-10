@@ -85,12 +85,9 @@ public abstract class WMBusBridgeBaseHandler<C extends BridgeConfig> extends Gen
 
   @Override
   public Collection<Class<? extends ThingHandlerService>> getServices() {
-    return getBridgeConfig().map(cfg -> {
-      if (cfg.discoverDevices) {
-        return Collections.<Class<? extends ThingHandlerService>>singleton(WMBusDiscoveryService.class);
-      }
-      return Collections.<Class<? extends ThingHandlerService>>emptyList();
-    }).orElse(Collections.emptyList());
+    return getBridgeConfig().filter(cfg -> cfg.discoverDevices)
+      .map(cfg -> Collections.<Class<? extends ThingHandlerService>>singleton(WMBusDiscoveryService.class))
+      .orElse(Collections.emptySet());
   }
 
   @Override
@@ -109,21 +106,6 @@ public abstract class WMBusBridgeBaseHandler<C extends BridgeConfig> extends Gen
 
   public CompletableFuture<DiscoveryCoordinator> getDiscoveryCoordinator() {
     return connection.thenApply(connection -> this.discoveryCoordinator);
-  }
-  @Override
-  public void childHandlerDisposed(ThingHandler childHandler, Thing childThing) {
-    if (childHandler instanceof WMBusDeviceThingHandler) {
-      WMBusDeviceThingHandler handler = (WMBusDeviceThingHandler) childHandler;
-      dispatcher.thenAccept(dsp -> dsp.detach(handler));
-    }
-  }
-
-  @Override
-  public void childHandlerInitialized(ThingHandler childHandler, Thing childThing) {
-    if (childHandler instanceof WMBusDeviceThingHandler) {
-      WMBusDeviceThingHandler handler = (WMBusDeviceThingHandler) childHandler;
-      dispatcher.thenAccept(dsp -> dsp.attach(handler));
-    }
   }
 
 }

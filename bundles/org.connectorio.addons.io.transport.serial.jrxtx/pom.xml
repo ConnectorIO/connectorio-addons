@@ -117,6 +117,10 @@
             <Export-Package>
               org.openmuc.jrxtx.*
             </Export-Package>
+            <Import-Package>
+              gnu.io.*;version=!,
+              *
+            </Import-Package>
             <Private-Package>
               !gnu.io.factory,
               !gnu.io.rfc2217,

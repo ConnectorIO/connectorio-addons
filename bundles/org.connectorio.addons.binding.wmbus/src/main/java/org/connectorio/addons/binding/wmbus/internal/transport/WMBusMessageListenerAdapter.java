@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.function.Consumer;
 import org.connectorio.addons.binding.wmbus.dispatch.WMBusMessageDispatcher;
 import org.openhab.core.thing.binding.ThingHandlerCallback;
+import org.openmuc.jmbus.HexUtils;
 import org.openmuc.jmbus.wireless.WMBusListener;
 import org.openmuc.jmbus.wireless.WMBusMessage;
 import org.slf4j.Logger;
@@ -39,7 +40,7 @@ public class WMBusMessageListenerAdapter implements WMBusListener {
 
   @Override
   public void newMessage(WMBusMessage message) {
-    logger.debug("Received message {}", message);
+    logger.debug("Received message from {}: {}", message.getSecondaryAddress(), HexUtils.bytesToHex(message.asBlob()));
     dispatcher.dispatch(message);
   }
 
