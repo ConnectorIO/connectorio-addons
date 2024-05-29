@@ -248,8 +248,8 @@ public class TAOperations {
         IndexAddress address = IndexAddress.staticParse(buffer);
         final int subIndex = address.getSubindex();
         short rawValue = buffer.readShort(16);
-        buffer.readUnsignedByte(8); // constant 0x41
-        int unit = buffer.readUnsignedShort(8);
+        buffer.readUnsignedShort(8); // constant 0x41
+        int unit = buffer.readShort(8);
 
         TAValue value = new TAValue(unit, rawValue);
         if (logger.isDebugEnabled()) {
