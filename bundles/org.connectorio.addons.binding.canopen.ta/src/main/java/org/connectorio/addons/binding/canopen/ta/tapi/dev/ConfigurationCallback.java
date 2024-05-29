@@ -44,7 +44,7 @@ class ConfigurationCallback extends AbstractCallback {
     IndexAddress address = IndexAddress.staticParse(buffer);
     final int subIndex = address.getSubindex();
     short rawValue = buffer.readShort(16);
-    buffer.readUnsignedByte(8); // constant 0x41
+    short constant = buffer.readUnsignedShort(8); // constant 0x41
     int unit = buffer.readUnsignedShort(8);
 
     if (logger.isDebugEnabled()) {
