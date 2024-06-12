@@ -31,9 +31,9 @@ public class WMBusMessageListenerAdapter implements WMBusListener {
 
   private final Logger logger = LoggerFactory.getLogger(WMBusMessageListenerAdapter.class);
   private final WMBusMessageDispatcher dispatcher;
-  private final Consumer<String> offlineCallback;
+  private final Consumer<IOException> offlineCallback;
 
-  public WMBusMessageListenerAdapter(WMBusMessageDispatcher dispatcher, Consumer<String> offlineCallback) {
+  public WMBusMessageListenerAdapter(WMBusMessageDispatcher dispatcher, Consumer<IOException> offlineCallback) {
     this.dispatcher = dispatcher;
     this.offlineCallback = offlineCallback;
   }
@@ -53,7 +53,7 @@ public class WMBusMessageListenerAdapter implements WMBusListener {
   public void stoppedListening(IOException cause) {
     logger.error("Error while reading serial data stream", cause);
 
-    offlineCallback.accept("Error in receiver thread " + cause.getMessage());
+    offlineCallback.accept(cause);
   }
 
 }

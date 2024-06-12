@@ -17,9 +17,13 @@
  */
 package org.connectorio.addons.binding.wmbus.internal.handler;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import org.connectorio.addons.binding.handler.GenericBridgeHandlerBase;
 import org.connectorio.addons.binding.wmbus.dispatch.WMBusMessageDispatcher;
 import org.connectorio.addons.binding.wmbus.internal.KeyStore;
@@ -30,10 +34,8 @@ import org.connectorio.addons.binding.wmbus.internal.dispatch.DefaultWMBusMessag
 import org.connectorio.addons.binding.wmbus.internal.security.MutableKeyStore;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
-import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
-import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.binding.ThingHandlerService;
 import org.openhab.core.types.Command;
 import org.openmuc.jmbus.wireless.WMBusConnection;
@@ -58,8 +60,7 @@ public abstract class WMBusBridgeBaseHandler<C extends BridgeConfig> extends Gen
   @Override
   public void initialize() {
     DefaultWMBusMessageDispatcher messageDispatcher = new DefaultWMBusMessageDispatcher();
-    connection = initializeConnection(messageDispatcher);
-    connection.whenComplete((connection, error) -> {
+    BiConsumer<WMBusConnection, Throwable> callback = (connection, error) -> {
       if (error != null) {
         logger.error("Could not open serial connection", error);
         updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Could not open port");
@@ -67,10 +68,37 @@ public abstract class WMBusBridgeBaseHandler<C extends BridgeConfig> extends Gen
       }
       updateStatus(ThingStatus.ONLINE);
       dispatcher.complete(messageDispatcher);
+    };
+
+    open(callback, messageDispatcher, new Consumer<>() {
+      @Override
+      public void accept(IOException e) {
+        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Error in receiver thread " + e.getMessage());
+        WMBusConnection connection = WMBusBridgeBaseHandler.this.connection.getNow(null);
+        if (connection != null) {
+          try {
+            connection.close();
+          } catch (IOException ex) {
+            logger.warn("Failed to close connection", e);
+          }
+        }
+
+        open(callback, messageDispatcher, this);
+      }
     });
   }
 
-  protected abstract CompletableFuture<WMBusConnection> initializeConnection(WMBusMessageDispatcher dispatcher);
+  private void open(BiConsumer<WMBusConnection, Throwable> callback, WMBusMessageDispatcher dispatcher, Consumer<IOException> reconnect) {
+    scheduler.schedule(new Runnable() {
+      @Override
+      public void run() {
+        connection = initializeConnection(dispatcher, reconnect);
+        connection.whenComplete(callback);
+      }
+    }, 5L, TimeUnit.SECONDS);
+  }
+
+  protected abstract CompletableFuture<WMBusConnection> initializeConnection(WMBusMessageDispatcher dispatcher, Consumer<IOException> reconnect);
 
   @Override
   public void dispose() {
