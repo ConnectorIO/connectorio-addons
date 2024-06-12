@@ -17,9 +17,11 @@
  */
 package org.connectorio.addons.binding.wmbus.internal.handler;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import org.connectorio.addons.binding.wmbus.dispatch.WMBusMessageDispatcher;
 import org.connectorio.addons.binding.wmbus.internal.config.TcpBridgeConfig;
 import org.connectorio.addons.binding.wmbus.internal.discovery.DiscoveryCoordinator;
@@ -37,7 +39,7 @@ public class WMBusTcpBridgeHandler extends WMBusBridgeBaseHandler<TcpBridgeConfi
   }
 
   @Override
-  protected CompletableFuture<WMBusConnection> initializeConnection(WMBusMessageDispatcher dispatcher) {
+  protected CompletableFuture<WMBusConnection> initializeConnection(WMBusMessageDispatcher dispatcher, Consumer<IOException> reconnect) {
     CompletableFuture<WMBusConnection> connection = new CompletableFuture<>();
     scheduler.execute(new Runnable() {
       @Override
@@ -56,9 +58,7 @@ public class WMBusTcpBridgeHandler extends WMBusBridgeBaseHandler<TcpBridgeConfi
           return;
         }
 
-        WMBusMessageListenerAdapter listener = new WMBusMessageListenerAdapter(dispatcher, (message) -> {
-          updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, message);
-        });
+        WMBusMessageListenerAdapter listener = new WMBusMessageListenerAdapter(dispatcher, reconnect);
         WMBusTcpBuilder builder = new WMBusTcpBuilder(
           config.manufacturer, listener, config.hostAddress.trim(), config.port
         );

@@ -17,12 +17,13 @@
  */
 package org.connectorio.addons.binding.wmbus.internal.handler;
 
+import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import org.connectorio.addons.binding.wmbus.dispatch.WMBusMessageDispatcher;
 import org.connectorio.addons.binding.wmbus.internal.config.SerialBridgeConfig;
 import org.connectorio.addons.binding.wmbus.internal.discovery.DiscoveryCoordinator;
 import org.connectorio.addons.binding.wmbus.internal.transport.WMBusMessageListenerAdapter;
-import org.openhab.core.io.transport.serial.SerialPortManager;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
@@ -38,7 +39,8 @@ public class WMBusSerialJrxtxBridgeHandler extends WMBusBridgeBaseHandler<Serial
   }
 
   @Override
-  protected CompletableFuture<WMBusConnection> initializeConnection(WMBusMessageDispatcher dispatcher) {
+  protected CompletableFuture<WMBusConnection> initializeConnection(WMBusMessageDispatcher dispatcher,
+      Consumer<IOException> reconnect) {
     CompletableFuture<WMBusConnection> connection = new CompletableFuture<>();
     SerialBridgeConfig config = getConfigAs(SerialBridgeConfig.class);
 
@@ -59,9 +61,7 @@ public class WMBusSerialJrxtxBridgeHandler extends WMBusBridgeBaseHandler<Serial
       @Override
       public void run() {
         SerialBridgeConfig config = getConfigAs(SerialBridgeConfig.class);
-        WMBusMessageListenerAdapter listener = new WMBusMessageListenerAdapter(dispatcher, (message) -> {
-          updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, message);
-        });
+        WMBusMessageListenerAdapter listener = new WMBusMessageListenerAdapter(dispatcher, reconnect);
         WMBusSerialBuilder builder = new WMBusSerialBuilder(
           config.manufacturer, listener, config.serialPort
         );
