@@ -101,6 +101,44 @@
 
 |===
 
+[[thing-type:co7io-wmbus:device]]
+== Config `thing-type:co7io-wmbus:device`
+[width="100%",caption="thing-type:co7io-wmbus:device configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| discoverChannels
+| BOOLEAN
+| Discover channels
+| Enable automatic creation of channels based on received WM-Bus messages. Some device may use various messages (telegrams) to reports their reading, hence it is advised to keep this option enabled for at least a day.
+
+| serialNumber
+| INTEGER
+| Serial number
+| 
+
+| manufacturerId
+| TEXT
+| Manufacturer identifier
+| Three character identifier of manufacturer, for example 'KAM' for Kamstrup.
+
+| version
+| INTEGER
+| Version
+| 
+
+| deviceType
+| TEXT
+| Device type
+| Type of device according to standard.
+
+| encryptionKey
+| TEXT
+| Encryption key
+| Secret key used to decrypt device payloads. In hex form.
+
+|===
+
 [[thing-type:co7io-wmbus:serial-jrxtx]]
 == Config `thing-type:co7io-wmbus:serial-jrxtx`
 [width="100%",caption="thing-type:co7io-wmbus:serial-jrxtx configuration",cols="1,1,1,2"]
@@ -146,44 +184,6 @@
 | INTEGER
 | Time to live
 | Time to live (TTL) in minutes for discovered elements. After passing of TTL element will be removed, possibly re-discovered when appears again. This setting can be used to discard invalid records produced by unstable radio interface. Please note that some devices may have irregular communication schedule. Value of -1 disables time to live. Common values are 60 (one hour) and 1440 (one day).
-
-|===
-
-[[thing-type:co7io-wmbus:device]]
-== Config `thing-type:co7io-wmbus:device`
-[width="100%",caption="thing-type:co7io-wmbus:device configuration",cols="1,1,1,2"]
-|===
-|Name | Type | Label ^|Description
-
-| discoverChannels
-| BOOLEAN
-| Discover channels
-| Enable automatic creation of channels based on received WM-Bus messages. Some device may use various messages (telegrams) to reports their reading, hence it is advised to keep this option enabled for at least a day.
-
-| serialNumber
-| INTEGER
-| Serial number
-| 
-
-| manufacturerId
-| TEXT
-| Manufacturer identifier
-| Three character identifier of manufacturer, for example 'KAM' for Kamstrup.
-
-| version
-| INTEGER
-| Version
-| 
-
-| deviceType
-| TEXT
-| Device type
-| Type of device according to standard.
-
-| encryptionKey
-| TEXT
-| Encryption key
-| Secret key used to decrypt device payloads. In hex form.
 
 |===
 
