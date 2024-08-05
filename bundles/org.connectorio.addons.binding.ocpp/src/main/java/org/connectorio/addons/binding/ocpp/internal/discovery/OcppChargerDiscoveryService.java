@@ -75,7 +75,7 @@ public class OcppChargerDiscoveryService extends AbstractDiscoveryService implem
     DiscoveryResultBuilder resultBuilder = DiscoveryResultBuilder.create(thingUID)
       .withBridge(bridgeUid)
       .withProperty(Thing.PROPERTY_MODEL_ID, request.getChargePointModel())
-      .withProperty(Thing.PROPERTY_SERIAL_NUMBER, request.getMeterSerialNumber())
+      .withProperty(Thing.PROPERTY_SERIAL_NUMBER, request.getChargePointSerialNumber())
       .withProperty(Thing.PROPERTY_VENDOR, request.getChargePointVendor())
       .withProperty(Thing.PROPERTY_FIRMWARE_VERSION, request.getFirmwareVersion())
       .withRepresentationProperty(Thing.PROPERTY_SERIAL_NUMBER)
