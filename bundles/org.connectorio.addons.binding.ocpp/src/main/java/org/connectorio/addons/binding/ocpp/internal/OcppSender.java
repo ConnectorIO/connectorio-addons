@@ -21,9 +21,10 @@ import eu.chargetime.ocpp.model.Confirmation;
 import eu.chargetime.ocpp.model.Request;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
+import org.connectorio.addons.binding.ocpp.internal.server.ChargerReference;
 
 public interface OcppSender {
 
-  <T extends Confirmation> CompletionStage<T> send(UUID sessionIndex, Request request);
+  <T extends Confirmation> CompletionStage<T> send(ChargerReference reference, Request request);
 
 }

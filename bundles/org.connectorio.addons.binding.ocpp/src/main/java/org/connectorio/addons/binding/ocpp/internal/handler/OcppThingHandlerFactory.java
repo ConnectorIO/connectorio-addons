@@ -45,10 +45,13 @@ public class OcppThingHandlerFactory extends BaseThingHandlerFactory implements 
       if (thing.getThingTypeUID().equals(OcppBindingConstants.SERVER_THING_TYPE)) {
         return new ServerBridgeHandler((Bridge) thing, networkAddressService);
       }
-    } else {
       if (thing.getThingTypeUID().equals(OcppBindingConstants.CHARGER_THING_TYPE)) {
-        return new ChargerThingHandler(thing);
+        return new ChargerThingHandler((Bridge) thing);
       }
+    }
+
+    if (thing.getThingTypeUID().equals(OcppBindingConstants.CONNECTOR_THING_TYPE)) {
+      return new ConnectorThingHandler(thing);
     }
     return null;
   }
