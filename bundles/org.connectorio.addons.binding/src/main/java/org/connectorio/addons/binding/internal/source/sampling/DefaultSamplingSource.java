@@ -87,6 +87,7 @@ public class DefaultSamplingSource<T extends Sampler> implements SamplingSource<
     private final Logger logger = LoggerFactory.getLogger(SamplerRunnable.class);
 
     private final Sampler sampler;
+    private int failureCount = 0;
 
     SamplerRunnable(Sampler sampler) {
       this.sampler = sampler;
@@ -94,8 +95,18 @@ public class DefaultSamplingSource<T extends Sampler> implements SamplingSource<
 
     @Override
     public void run() {
-      logger.trace("Executing operation {}", sampler);
-      sampler.fetch();
+      try {
+        logger.trace("Executing operation {}", sampler);
+        sampler.fetch();
+      } catch (Exception e) {
+        if (failureCount++ == 0) {
+          logger.warn("Failed to collect sample", e);
+        } else if (failureCount < 1000 && failureCount % 100 == 0) {
+          logger.warn("Failed to collect sample. This is {} failure of this task", failureCount, e);
+        } else if (failureCount >= 1000 && failureCount % 1000 == 0) {
+          logger.warn("Failed to collect sample. This is {} failure of this task, possible permanent communication error", failureCount, e);
+        }
+      }
     }
   }
 }
