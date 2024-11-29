@@ -39,7 +39,7 @@
     <module>org.connectorio.addons.binding.amsads</module>
     <module>org.connectorio.addons.binding.askoheat</module>
     <module>org.connectorio.addons.binding.bacnet</module>
-    <module>org.connectorio.addons.binding.can</module>
+    <module>org.connectorio.addons.binding.canbus</module>
     <module>org.connectorio.addons.binding.canopen</module>
     <module>org.connectorio.addons.binding.canopen.ta</module>
     <module>org.connectorio.addons.binding.fatek</module>
@@ -68,9 +68,12 @@
     <module>org.connectorio.addons.managed.xstream</module>
     <module>org.connectorio.addons.mqtt</module>
     <module>org.connectorio.addons.network</module>
+    <module>org.connectorio.addons.network.can</module>
+    <module>org.connectorio.addons.network.can.dbus</module>
     <module>org.connectorio.addons.network.core</module>
     <module>org.connectorio.addons.network.ip</module>
     <module>org.connectorio.addons.network.jvm</module>
+    <module>org.connectorio.addons.network.linux</module>
     <module>org.connectorio.addons.network.transmitter</module>
     <module>org.connectorio.addons.network.transmitter.ip</module>
     <module>org.connectorio.addons.norule</module>
@@ -98,6 +101,7 @@
     <module>org.connectorio.addons.test</module>
     <module>org.connectorio.addons.transformation.inverse</module>
     <module>org.connectorio.addons.ui.iconify</module>
+    <module>org.connectorio.bittpl</module>
     <module>org.connectorio.chrono</module>
     <module>org.connectorio.logtail</module>
     <module>org.connectorio.logtail.web</module>
