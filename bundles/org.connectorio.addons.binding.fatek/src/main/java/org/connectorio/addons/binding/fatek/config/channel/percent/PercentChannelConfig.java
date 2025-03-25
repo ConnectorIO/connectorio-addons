@@ -25,6 +25,7 @@ public class PercentChannelConfig extends BaseChannelConfig {
 
   public boolean unsigned;
   public BigDecimal step = BigDecimal.valueOf(5);
+  public BigDecimal factor = BigDecimal.valueOf(1);
 
   public PercentChannelConfig() {}
 

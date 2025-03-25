@@ -66,32 +66,32 @@ public class DefaultChannelHandlerFactory implements FatekChannelHandlerFactory 
     }
     if (FatekBindingConstants.CHANNEL_TYPE_PERCENT32.equals(channel.getChannelTypeUID())) {
       Percent32ChannelConfig config = channel.getConfiguration().as(Percent32ChannelConfig.class);
-      return new PercentChannelHandler(channel, config.step, RegisterParser.parseData16(config),
+      return new PercentChannelHandler(channel, config.step, RegisterParser.parseData32(config),
         new Percent32Converter(config)
       );
     }
     if (FatekBindingConstants.CHANNEL_TYPE_ROLLERSHUTTER16.equals(channel.getChannelTypeUID())) {
       RollerShutterChannelConfig config = channel.getConfiguration().as(RollerShutterChannelConfig.class);
-      DiscreteChannelConfig startCfg = new DiscreteChannelConfig(config.startRegister, config.startIndex, config.startInvert);
-      DiscreteChannelConfig stopCfg = new DiscreteChannelConfig(config.stopRegister, config.stopIndex, config.stopInvert);
+      DiscreteChannelConfig upCfg = new DiscreteChannelConfig(config.upRegister, config.upIndex, config.upInvert);
+      DiscreteChannelConfig downCfg = new DiscreteChannelConfig(config.downRegister, config.downIndex, config.downInvert);
       return new RollerShutterChannelHandler(channel, RegisterParser.parseData16(config),
-        RegisterParser.parseDiscrete(startCfg),
-        RegisterParser.parseDiscrete(startCfg),
-        new Data16Converter(config),
-        new DiscreteConverter(startCfg),
-        new DiscreteConverter(stopCfg)
+        RegisterParser.parseDiscrete(upCfg),
+        RegisterParser.parseDiscrete(downCfg),
+        new Percent16Converter(config),
+        new DiscreteConverter(upCfg),
+        new DiscreteConverter(downCfg)
       );
     }
     if (FatekBindingConstants.CHANNEL_TYPE_ROLLERSHUTTER32.equals(channel.getChannelTypeUID())) {
       RollerShutter32ChannelConfig config = channel.getConfiguration().as(RollerShutter32ChannelConfig.class);
-      DiscreteChannelConfig startCfg = new DiscreteChannelConfig(config.startRegister, config.startIndex, config.startInvert);
-      DiscreteChannelConfig stopCfg = new DiscreteChannelConfig(config.stopRegister, config.stopIndex, config.stopInvert);
-      return new RollerShutterChannelHandler(channel, RegisterParser.parseData16(config),
-        RegisterParser.parseDiscrete(startCfg),
-        RegisterParser.parseDiscrete(startCfg),
-        new Data32Converter(config),
-        new DiscreteConverter(startCfg),
-        new DiscreteConverter(stopCfg)
+      DiscreteChannelConfig upCfg = new DiscreteChannelConfig(config.upRegister, config.upIndex, config.upInvert);
+      DiscreteChannelConfig downCfg = new DiscreteChannelConfig(config.downRegister, config.downIndex, config.downInvert);
+      return new RollerShutterChannelHandler(channel, RegisterParser.parseData32(config),
+        RegisterParser.parseDiscrete(upCfg),
+        RegisterParser.parseDiscrete(upCfg),
+        new Percent32Converter(config),
+        new DiscreteConverter(upCfg),
+        new DiscreteConverter(downCfg)
       );
     }
     if (FatekBindingConstants.CHANNEL_TYPE_COLOR16.equals(channel.getChannelTypeUID())) {

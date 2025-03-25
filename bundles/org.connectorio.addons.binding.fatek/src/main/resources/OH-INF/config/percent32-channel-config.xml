@@ -42,10 +42,15 @@
         <option value="DWC">DWC: Counter discrete data register (32 bit)</option>
       </options>
     </parameter>
-    <parameter name="index" type="integer" required="true">
+    <parameter name="index" type="integer" required="true" min="0">
       <label>Register index</label>
       <description>Index of register used to retrieve data.</description>
       <default>0</default>
+    </parameter>
+    <parameter name="factor" type="decimal" required="false" min="0">
+      <label>Scale factor</label>
+      <description>Factor used to multiply received and divide sent values.</description>
+      <default>1</default>
     </parameter>
     <parameter name="floating" type="boolean">
       <label>floating point</label>

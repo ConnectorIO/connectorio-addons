@@ -48,7 +48,7 @@
         <option value="DWC">DWC: Counter discrete data register (32 bit)</option>
       </options>
     </parameter>
-    <parameter name="color1index" type="integer" required="true">
+    <parameter name="color1index" type="integer" required="true" min="0">
       <label>Register index</label>
       <description>Index of register used to retrieve data.</description>
       <default>0</default>
@@ -75,7 +75,7 @@
         <option value="DWC">DWC: Counter discrete data register (32 bit)</option>
       </options>
     </parameter>
-    <parameter name="color2index" type="integer" required="true">
+    <parameter name="color2index" type="integer" required="true" min="0">
       <label>Register index</label>
       <description>Index of register used to retrieve data.</description>
       <default>0</default>
@@ -102,13 +102,13 @@
         <option value="DWC">DWC: Counter discrete data register (32 bit)</option>
       </options>
     </parameter>
-    <parameter name="color3index" type="integer" required="true">
+    <parameter name="color3index" type="integer" required="true" min="0">
       <label>Register index</label>
       <description>Index of register used to retrieve data.</description>
       <default>0</default>
     </parameter>
 
-    <parameter name="step" type="decimal" required="false">
+    <parameter name="step" type="decimal" required="false" min="0">
       <label>Step</label>
       <description>Value assumed for increase/decrease command.</description>
       <default>5</default>
@@ -137,7 +137,7 @@
         <option value="C">C: Counter contact</option>
       </options>
     </parameter>
-    <parameter name="switcherIndex" type="integer" groupName="switcher">
+    <parameter name="switcherIndex" type="integer" groupName="switcher" min="0">
       <label>Register index</label>
       <description>Index of register used to write data.</description>
       <default>0</default>

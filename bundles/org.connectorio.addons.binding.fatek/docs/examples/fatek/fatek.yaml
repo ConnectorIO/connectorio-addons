@@ -56,18 +56,18 @@ things:
     - id: "rollx16"
       type: "rollershutter16"
       configuration:
-        stopIndex: 2
-        startIndex: 1
-        stopRegister: "M"
+        downIndex: 2
+        upIndex: 1
         index: 1
-        startRegister: "M"
+        upRegister: "M"
+        downRegister: "M"
         register: "R"
     - id: "rollx32"
       type: "rollershutter32"
       configuration:
-        stopIndex: 2
-        startIndex: 1
-        stopRegister: "M"
+        downIndex: 2
+        upIndex: 1
         index: 1
-        startRegister: "M"
+        upRegister: "M"
+        downRegister: "M"
         register: "DR"

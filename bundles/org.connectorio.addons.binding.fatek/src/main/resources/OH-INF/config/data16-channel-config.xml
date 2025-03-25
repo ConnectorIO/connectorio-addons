@@ -42,7 +42,7 @@
         <option value="WC">WC: Counter discrete data register (16 bit)</option>
      </options>
     </parameter>
-    <parameter name="index" type="integer" required="true">
+    <parameter name="index" type="integer" required="true" min="0">
       <label>Register index</label>
       <description>Index of register used to retrieve data.</description>
       <default>0</default>

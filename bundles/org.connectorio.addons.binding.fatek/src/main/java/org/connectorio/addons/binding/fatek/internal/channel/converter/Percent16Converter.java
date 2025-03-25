@@ -17,13 +17,17 @@
  */
 package org.connectorio.addons.binding.fatek.internal.channel.converter;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import org.connectorio.addons.binding.fatek.config.channel.data.DataChannelConfig;
 import org.connectorio.addons.binding.fatek.config.channel.percent.PercentChannelConfig;
+import org.connectorio.addons.binding.fatek.internal.channel.Percentage;
 import org.openhab.core.library.types.PercentType;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
 import org.simplify4u.jfatek.registers.RegValue;
+import org.simplify4u.jfatek.registers.RegValue16;
 import org.simplify4u.jfatek.registers.RegValue32;
 
 public class Percent16Converter implements Converter {
@@ -34,6 +38,7 @@ public class Percent16Converter implements Converter {
     this.config = config;
   }
 
+  // divide
   @Override
   public RegValue toValue(Command command) {
     if (!(command instanceof PercentType)) {
@@ -41,15 +46,16 @@ public class Percent16Converter implements Converter {
     }
 
     PercentType percentType = (PercentType) command;
-    long longValue = percentType.toBigDecimal().longValue();
-    return new RegValue32(config.unsigned ? BigInteger.valueOf(longValue).longValue() : longValue);
+    BigDecimal scaledValue = percentType.toBigDecimal().divide(config.factor, RoundingMode.HALF_UP);
+    long longValue = scaledValue.longValue();
+    return new RegValue16(config.unsigned ? BigInteger.valueOf(longValue).longValue() : longValue);
   }
 
+  // multiply
   @Override
   public State toState(RegValue value) {
-    int number = config.unsigned ? value.intValueUnsigned() : value.intValue();
-    number = Math.min(number, 100);
-    number = Math.max(number, 0);
-    return new PercentType(number);
+    int baseValue = config.unsigned ? value.intValueUnsigned() : value.intValue();
+    BigDecimal scaledValue = BigDecimal.valueOf(baseValue).multiply(config.factor);
+    return Percentage.from(scaledValue);
   }
 }

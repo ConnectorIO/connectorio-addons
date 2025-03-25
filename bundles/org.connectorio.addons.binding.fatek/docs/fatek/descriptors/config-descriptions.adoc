@@ -18,6 +18,11 @@
 | Register index
 | Index of register used to retrieve data.
 
+| factor
+| DECIMAL
+| Scale factor
+| Factor used to multiply received and divide sent values.
+
 | floating
 | BOOLEAN
 | floating point
@@ -191,6 +196,11 @@
 | Register index
 | Index of register used to retrieve data.
 
+| factor
+| DECIMAL
+| Scale factor
+| Factor used to multiply received and divide sent values.
+
 | step
 | INTEGER
 | Step
@@ -219,6 +229,11 @@
 | Register index
 | Index of register used to retrieve data.
 
+| factor
+| DECIMAL
+| Scale factor
+| Factor used to multiply received and divide sent values.
+
 | unsigned
 | BOOLEAN
 | Unsigned
@@ -229,32 +244,32 @@
 | floating point
 | Indicate that read/write value is a floating point number. Overrides unsigned flag.
 
-| startRegister
+| upRegister
 | TEXT
 | Register
 | Type of discrete register to write UP command.
 
-| startIndex
+| upIndex
 | INTEGER
 | Register index
 | Index of register used to write data.
 
-| startInvert
+| upInvert
 | BOOLEAN
 | Invert
 | Invert logical representation of related register (0->1, 1->0).
 
-| stopRegister
+| downRegister
 | TEXT
 | Register
 | Type of discrete register to write DOWN command.
 
-| stopIndex
+| downIndex
 | INTEGER
 | Register index
 | Index of register used to retrieve data.
 
-| stopInvert
+| downInvert
 | BOOLEAN
 | Invert
 | Invert logical representation of related register (0->1, 1->0).
@@ -310,6 +325,11 @@
 | Register index
 | Index of register used to retrieve data.
 
+| factor
+| DECIMAL
+| Scale factor
+| Factor used to multiply received and divide sent values.
+
 | unsigned
 | BOOLEAN
 | Unsigned
@@ -320,32 +340,32 @@
 | floating point
 | Indicate that read/write value is a floating point number. Overrides unsigned flag.
 
-| startRegister
+| upRegister
 | TEXT
 | Register
 | Type of discrete register to write UP command.
 
-| startIndex
+| upIndex
 | INTEGER
 | Register index
 | Index of register used to write data.
 
-| startInvert
+| upInvert
 | BOOLEAN
 | Invert
 | Invert logical representation of related register (0->1, 1->0).
 
-| stopRegister
+| downRegister
 | TEXT
 | Register
 | Type of discrete register to write DOWN command.
 
-| stopIndex
+| downIndex
 | INTEGER
 | Register index
 | Index of register used to retrieve data.
 
-| stopInvert
+| downInvert
 | BOOLEAN
 | Invert
 | Invert logical representation of related register (0->1, 1->0).
