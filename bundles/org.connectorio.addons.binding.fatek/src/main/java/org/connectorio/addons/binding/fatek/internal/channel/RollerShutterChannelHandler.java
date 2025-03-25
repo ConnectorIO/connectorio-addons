@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.connectorio.addons.binding.fatek.internal.channel.converter.Converter;
-import org.openhab.core.library.types.IncreaseDecreaseType;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.StopMoveType;
 import org.openhab.core.library.types.UpDownType;
@@ -46,21 +45,21 @@ public class RollerShutterChannelHandler implements FatekChannelHandler {
 
   private final ChannelUID channel;
   private final DataReg register;
-  private final DisReg startReg;
-  private final DisReg stopReg;
+  private final DisReg upReg;
+  private final DisReg downReg;
   private final Converter positionConverter;
-  private final Converter startConverter;
-  private final Converter stopConverter;
+  private final Converter upConverter;
+  private final Converter downConverter;
 
-  public RollerShutterChannelHandler(Channel channel, DataReg register, DisReg startReg, DisReg stopReg,
-    Converter positionConverter, Converter startConverter, Converter stopConverter) {
+  public RollerShutterChannelHandler(Channel channel, DataReg register, DisReg upReg, DisReg downReg,
+    Converter positionConverter, Converter upConverter, Converter downConverter) {
     this.channel = channel.getUID();
     this.register = register;
-    this.startReg = startReg;
-    this.stopReg = stopReg;
+    this.upReg = upReg;
+    this.downReg = downReg;
     this.positionConverter = positionConverter;
-    this.startConverter = startConverter;
-    this.stopConverter = stopConverter;
+    this.upConverter = upConverter;
+    this.downConverter = downConverter;
   }
 
   @Override
@@ -81,25 +80,26 @@ public class RollerShutterChannelHandler implements FatekChannelHandler {
     }
 
     if (UpDownType.UP.equals(command)) {
-      RegValue start = startConverter.toValue(OnOffType.ON);
-      RegValue stop = stopConverter.toValue(OnOffType.OFF);
+      RegValue start = upConverter.toValue(OnOffType.ON);
       return new FatekWriteMixDataCmd(null, Map.of(
-        startReg, start,
-        stopReg, stop
+        upReg, start
       ));
     } else if (UpDownType.DOWN.equals(command)) {
-      RegValue start = startConverter.toValue(OnOffType.OFF);
-      RegValue stop = stopConverter.toValue(OnOffType.ON);
+      RegValue stop = downConverter.toValue(OnOffType.ON);
       return new FatekWriteMixDataCmd(null, Map.of(
-        startReg, start,
-        stopReg, stop
+        downReg, stop
       ));
     } else if (StopMoveType.STOP.equals(command)) {
-      RegValue start = startConverter.toValue(OnOffType.OFF);
-      RegValue stop = stopConverter.toValue(OnOffType.OFF);
+      if (upReg.equals(downReg)) {
+        return new FatekWriteMixDataCmd(null, Map.of(
+          upReg, upConverter.toValue(OnOffType.OFF)
+        ));
+      }
+      RegValue start = upConverter.toValue(OnOffType.OFF);
+      RegValue stop = downConverter.toValue(OnOffType.OFF);
       return new FatekWriteMixDataCmd(null, Map.of(
-        startReg, start,
-        stopReg, stop
+        upReg, start,
+        downReg, stop
       ));
     }
 
@@ -115,9 +115,6 @@ public class RollerShutterChannelHandler implements FatekChannelHandler {
 
   @Override
   public String validateConfiguration() {
-    if (startReg == stopReg) {
-      return "Start and stop registers must differ!";
-    }
     return null;
   }
 

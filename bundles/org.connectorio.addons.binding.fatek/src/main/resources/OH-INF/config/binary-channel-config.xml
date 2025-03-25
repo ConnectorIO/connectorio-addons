@@ -27,13 +27,14 @@
       <description>Type of discrete register to read or write.</description>
       <options>
         <option value="X">X: (DI) Digital input</option>
+        <option value="Y">Y: (DO) Digital output</option>
         <option value="M">M: Internal relay</option>
         <option value="S">S: Step relay</option>
         <option value="T">T: Timer contact</option>
         <option value="C">C: Counter contact</option>
       </options>
     </parameter>
-    <parameter name="index" type="integer" required="true">
+    <parameter name="index" type="integer" required="true" min="0">
       <label>Register index</label>
       <description>Index of register used to retrieve data.</description>
       <default>0</default>
