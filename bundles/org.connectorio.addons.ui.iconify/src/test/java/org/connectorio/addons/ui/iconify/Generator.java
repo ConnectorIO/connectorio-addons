@@ -23,14 +23,23 @@ public class Generator {
   private final ObjectMapper mapper = new ObjectMapper();
   private final String version;
   private boolean cache;
+  private final File iconPath;
+
+  public Generator(String version, boolean cache, String iconPath) {
+    this.version = version;
+    this.cache = cache;
+    this.iconPath = new File(iconPath);
+    if (this.iconPath.exists()) {
+      this.iconPath.mkdirs();
+    }
+  }
 
   public Generator() {
     this("2.2.20", true);
   }
 
   public Generator(String version, boolean cache) {
-    this.version = version;
-    this.cache = cache;
+    this(version, cache, "target/iconify/svgs");
   }
 
   private void run() throws Exception {
@@ -54,7 +63,7 @@ public class Generator {
         for (Entry<String, IconifyIcon> icons : iconSet.getIcons().entrySet()) {
           String iconId = icons.getKey();
           IconifyIcon icon = icons.getValue();
-          File iconFile = new File("target/generated-resources/iconify/icons/" + iconSetId + "/" + iconId + ".svg");
+          File iconFile = new File(iconPath + "/icons/" + iconSetId + "/" + iconId + ".svg");
           iconFile.getParentFile().mkdirs();
           BufferedWriter writer = new BufferedWriter(new FileWriter(iconFile));
           writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n");
@@ -95,7 +104,15 @@ public class Generator {
   }
 
   public static void main(String[] args) throws Exception {
-    new Generator().run();
+    if (args.length != 3) {
+      System.out.println("Missing required arguments");
+      return;
+    }
+    new Generator(
+      args[0],
+      Boolean.parseBoolean(args[1]),
+      args[2]
+    ).run();
   }
 
 }
