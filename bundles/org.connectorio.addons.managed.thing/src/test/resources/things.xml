@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<things>
-  <thing id="foo" label="Custom thing" type="a:b:c">
+<things xmlns="https://connectorio.com/xmlns/managed/things/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+    https://connectorio.com/xmlns/managed/things/1.0.0
+    https://connectorio.com/xmlns/managed/things-1.0.0.xsd
+  ">
+  <thing label="Custom thing" type="a:b:c">
+    <id>foo:thing</id>
+    <bridge>foo:bridge:instance</bridge>
     <config>
       <foo>bar</foo>
       <baz>foo</baz>
     </config>
-    <channel id="asf" type="foo:bar">
+    <channel>
+      <id>foo:abc</id>
+      <type>foo:bar:channel-kindX</type>
       <label>Test</label>
       <config>
         <a>d</a>
@@ -13,6 +22,7 @@
       </config>
     </channel>
   </thing>
-  <bridge id="bar" label="Custom thing" type="a:b:d">
+  <bridge label="Custom thing" type="a:b:d">
+    <id>foo:bridge:instance</id>
   </bridge>
 </things>

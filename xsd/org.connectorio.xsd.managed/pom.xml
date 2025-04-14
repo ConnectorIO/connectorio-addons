@@ -22,21 +22,14 @@
 
   <parent>
     <groupId>org.connectorio.addons</groupId>
-    <artifactId>parent</artifactId>
+    <artifactId>xsd</artifactId>
     <version>3.0.0-SNAPSHOT</version>
-    <relativePath>../parent/pom.xml</relativePath>
   </parent>
 
-  <groupId>org.connectorio.addons</groupId>
-  <artifactId>xsd</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>org.connectorio.xsd.managed</artifactId>
+  <packaging>bundle</packaging>
 
-  <name>ConnectorIO - Addons - XSD</name>
-  <description>Third party XSD resources.</description>
-
-  <modules>
-    <module>org.connectorio.xsd.managed</module>
-    <module>org.connectorio.xsd.openhab</module>
-  </modules>
+  <name>ConnectorIO - Addons - XSD - Managed</name>
+  <description>Schema resources needed for validation of connectorio's XML format for provisioning of things, items and links.</description>
 
 </project>
