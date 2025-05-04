@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<links>
+<links xmlns="https://connectorio.com/xmlns/managed/links/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+    https://connectorio.com/xmlns/managed/links/1.0.0
+    https://connectorio.com/xmlns/managed/links-1.0.0.xsd
+  ">
   <link item="Foo">
     <channel>modbus:data:heatpump:flow_temperature:number</channel>
     <config>
