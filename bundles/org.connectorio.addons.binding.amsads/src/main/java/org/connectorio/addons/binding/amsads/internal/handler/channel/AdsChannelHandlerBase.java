@@ -49,7 +49,8 @@ public abstract class AdsChannelHandlerBase implements AdsChannelHandler {
     this.thing = thing;
     this.callback = callback;
     this.channel = channel;
-    this.refreshInterval = Optional.ofNullable(channel.getConfiguration())
+    this.refreshInterval = Optional.ofNullable(channel)
+      .map(Channel::getConfiguration)
       .map(cfg -> cfg.get("refreshInterval"))
       .map(val -> val instanceof Long ? (Long) val : Long.parseLong("" + val))
       .orElse(null);
