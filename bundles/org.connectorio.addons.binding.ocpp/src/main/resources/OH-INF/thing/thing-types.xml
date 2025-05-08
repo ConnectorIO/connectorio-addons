@@ -62,7 +62,7 @@
     </config-description>
   </bridge-type>
 
-  <thing-type id="charger">
+  <bridge-type id="charger">
     <supported-bridge-type-refs>
       <bridge-type-ref id="server"/>
     </supported-bridge-type-refs>
@@ -71,6 +71,10 @@
     <description>An instance of electric charger.</description>
 
     <config-description>
+      <parameter name="serialNumber" type="text" required="true">
+        <label>Charge point serial number</label>
+        <description>Serial number of charge point (defined by manufacturer).</description>
+      </parameter>
       <parameter name="heartbeat" type="integer" required="false" min="1">
         <label>Heartbeat</label>
         <description>
@@ -80,7 +84,7 @@
         <unitLabel>s</unitLabel>
       </parameter>
     </config-description>
-  </thing-type>
+  </bridge-type>
 
   <thing-type id="connector">
     <supported-bridge-type-refs>
@@ -89,6 +93,134 @@
 
     <label>Connector</label>
     <description>A charger connector.</description>
+
+    <channels>
+      <channel id="chargePointStatus" typeId="chargePointStatus" />
+      <channel id="transactionId" typeId="number">
+        <label>Transaction id</label>
+        <description>Current transaction.</description>
+      </channel>
+      <channel id="idTag" typeId="string">
+        <label>Tag</label>
+        <description>Tag identifier.</description>
+      </channel>
+      <channel id="timestampStart" typeId="dateTime">
+        <label>Start timestamp</label>
+        <description>Start timestamp of most recent transaction.</description>
+      </channel>
+      <channel id="timestampStop" typeId="dateTime">
+        <label>Stop timestamp</label>
+        <description>Stop timestamp of most recent transaction.</description>
+      </channel>
+      <channel id="meterStart" typeId="energy">
+        <label>Meter start</label>
+        <description>Value of meter energy reading at the start of transaction.</description>
+      </channel>
+      <channel id="meterStop" typeId="energy">
+        <label>Meter stop</label>
+        <description>Value of meter energy reading at the end of transaction.</description>
+      </channel>
+
+      <channel id="timestamp" typeId="dateTime">
+        <label>Timestamp of samples being pushed to measurement channels.</label>
+      </channel>
+      <channel id="currentExport" typeId="current">
+        <label>Current.Export</label>
+        <description>Instantaneous current flow from EV</description>
+      </channel>
+      <channel id="currentImport" typeId="current">
+        <label>Current.Import</label>
+        <description>Instantaneous current flow to EV</description>
+      </channel>
+      <channel id="currentOffered" typeId="current">
+        <label>Current.Offered</label>
+        <description>Maximum current offered to EV</description>
+      </channel>
+      <channel id="energyActiveExport" typeId="energy">
+        <label>Energy.Active.Export.Register</label>
+        <description>Energy exported by EV (Wh or kWh)</description>
+      </channel>
+      <channel id="energyActiveImport" typeId="energy">
+        <label>Energy.Active.Import.Register</label>
+        <description>Energy imported by EV (Wh or kWh)</description>
+      </channel>
+      <channel id="energyReactiveExport" typeId="energy">
+        <label>Energy.Reactive.Export.Register</label>
+        <description>Reactive energy exported by EV (varh or kvarh)</description>
+      </channel>
+      <channel id="energyReactiveImport" typeId="energy">
+        <label>Energy.Reactive.Import.Register</label>
+        <description>Reactive energy imported by EV (varh or kvarh)</description>
+      </channel>
+      <channel id="energyActiveExportInterval" typeId="energy">
+        <label>Energy.Active.Export.Interval</label>
+        <description>Energy exported by EV (Wh or kWh)</description>
+      </channel>
+      <channel id="energyActiveImportInterval" typeId="energy">
+        <label>Energy.Active.Import.Interval</label>
+        <description>Energy imported by EV (Wh or kWh)</description>
+      </channel>
+      <channel id="energyReactiveExportInterval" typeId="energy">
+        <label>Energy.Reactive.Export.Interval</label>
+        <description>Reactive energy exported by EV. (varh or kvarh)</description>
+      </channel>
+      <channel id="energyReactiveImportInterval" typeId="energy">
+        <label>Energy.Reactive.Import.Interval</label>
+        <description>Reactive energy imported by EV. (varh or kvarh)</description>
+      </channel>
+      <channel id="frequency" typeId="frequency">
+        <label>Frequency</label>
+        <description>Instantaneous reading of powerline frequency</description>
+      </channel>
+      <channel id="powerActiveExport" typeId="power">
+        <label>Power.Active.Export</label>
+        <description>Instantaneous active power exported by EV. (W or kW)</description>
+      </channel>
+      <channel id="powerActiveImport" typeId="power">
+        <label>Power.Active.Import</label>
+        <description>Instantaneous active power imported by EV. (W or kW)</description>
+      </channel>
+      <channel id="powerFactor" typeId="number">
+        <label>Power.Factor</label>
+        <description>Instantaneous power factor of total energy flow</description>
+      </channel>
+      <channel id="powerOffered" typeId="power">
+        <label>Power.Offered</label>
+        <description>Maximum power offered to EV</description>
+      </channel>
+      <channel id="powerReactiveExport" typeId="power">
+        <label>Power.Reactive.Export</label>
+        <description>Instantaneous reactive power exported by EV. (var or kvar)</description>
+      </channel>
+      <channel id="powerReactiveImport" typeId="power">
+        <label>Power.Reactive.Import</label>
+        <description>Instantaneous reactive power imported by EV. (var or kvar)</description>
+      </channel>
+      <channel id="rpm" typeId="number">
+        <label>RPM</label>
+        <description>Fan speed in RPM</description>
+      </channel>
+      <channel id="soc" typeId="percent">
+        <label>SoC</label>
+        <description>State of charge of charging vehicle in percentage.</description>
+      </channel>
+      <channel id="temperature" typeId="temperature">
+        <label>Temperature</label>
+        <description>Temperature reading inside Charge Point.</description>
+      </channel>
+      <channel id="voltage" typeId="voltage">
+        <label>Voltage</label>
+        <description>Instantaneous AC RMS supply voltage</description>
+      </channel>
+    </channels>
+
+    <config-description>
+      <parameter name="connectorId" type="integer" required="true" min="1" step="1">
+        <label>Connector</label>
+        <description>Identifier of connector - starts from 1.</description>
+      </parameter>
+    </config-description>
+
   </thing-type>
 
 </thing:thing-descriptions>
