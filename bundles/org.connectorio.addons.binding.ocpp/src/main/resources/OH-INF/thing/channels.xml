@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright (C) 2024-2024 ConnectorIO sp. z o.o.
+ -
+ - This is free software; you can redistribute it and/or modify
+ - it under the terms of the GNU General Public License as published by
+ - the Free Software Foundation; either version 2 of the License, or
+ - (at your option) any later version.
+ -
+ -     https://www.gnu.org/licenses/gpl-3.0.txt
+ -
+ - This library is distributed in the hope that it will be useful,
+ - but WITHOUT ANY WARRANTY; without even the implied warranty of
+ - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ - GNU General Public License for more details.
+ -
+ - You should have received a copy of the GNU General Public License
+ - along with Foobar; if not, write to the Free Software
+ - Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ -
+ - SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<thing:thing-descriptions bindingId="co7io-ocpp"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+  <!-- basics -->
+  <channel-type id="dateTime">
+    <item-type>DateTime</item-type>
+    <label>Date time value</label>
+    <description>Date time value.</description>
+  </channel-type>
+
+  <channel-type id="number">
+    <item-type>Number</item-type>
+    <label>Number value</label>
+    <description>Number value.</description>
+  </channel-type>
+
+  <channel-type id="string">
+    <item-type>String</item-type>
+    <label>String value</label>
+    <description>String value.</description>
+  </channel-type>
+
+  <!-- quantities -->
+  <channel-type id="current">
+    <item-type>Number:ElectricCurrent</item-type>
+    <label>Current</label>
+    <description>Electric current value.</description>
+  </channel-type>
+
+  <channel-type id="energy">
+    <item-type>Number:Energy</item-type>
+    <label>Energy</label>
+    <description>Energy.</description>
+  </channel-type>
+
+  <channel-type id="frequency">
+    <item-type>Number:Frequency</item-type>
+    <label>Frequency</label>
+    <description>Frequency.</description>
+  </channel-type>
+
+  <channel-type id="percent">
+    <item-type>Dimmer</item-type>
+    <label>Percentage</label>
+  </channel-type>
+
+  <channel-type id="power">
+    <item-type>Number:Power</item-type>
+    <label>Power</label>
+    <description>Power.</description>
+  </channel-type>
+
+  <channel-type id="temperature">
+    <item-type>Number:Temperature</item-type>
+    <label>Temperature</label>
+    <description>Temperature.</description>
+  </channel-type>
+
+  <channel-type id="voltage">
+    <item-type>Number:ElectricPotential</item-type>
+    <label>Voltage</label>
+    <description>Electric voltage value.</description>
+  </channel-type>
+
+  <!-- enumerations -->
+  <channel-type id="chargePointStatus">
+    <item-type>String</item-type>
+    <label>Charge point status</label>
+    <state>
+      <options>
+        <option value="Available">Available</option>
+        <option value="Preparing">Preparing</option>
+        <option value="Charging">Charging</option>
+        <option value="SuspendedEVSE">SuspendedEVSE</option>
+        <option value="SuspendedEV">SuspendedEV</option>
+        <option value="Finishing">Finishing</option>
+        <option value="Reserved">Reserved</option>
+        <option value="Unavailable">Unavailable</option>
+        <option value="Faulted">Faulted</option>
+      </options>
+    </state>
+  </channel-type>
+
+</thing:thing-descriptions>

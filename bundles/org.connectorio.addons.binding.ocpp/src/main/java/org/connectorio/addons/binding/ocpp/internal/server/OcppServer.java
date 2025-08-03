@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.ocpp.internal.server;
 
+import eu.chargetime.ocpp.feature.profile.ServerCoreEventHandler;
 import eu.chargetime.ocpp.JSONServer;
 import eu.chargetime.ocpp.NotConnectedException;
 import eu.chargetime.ocpp.OccurenceConstraintException;
@@ -26,12 +27,21 @@ import eu.chargetime.ocpp.feature.profile.ServerCoreProfile;
 import eu.chargetime.ocpp.model.Confirmation;
 import eu.chargetime.ocpp.model.Request;
 import eu.chargetime.ocpp.model.SessionInformation;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Set;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import org.connectorio.addons.binding.ocpp.internal.OcppRequestListener;
 import org.connectorio.addons.binding.ocpp.internal.OcppSender;
+import org.connectorio.addons.binding.ocpp.internal.server.adapter.BootConfigAdapter;
+import org.connectorio.addons.binding.ocpp.internal.server.adapter.HearbeatAdapter;
+import org.connectorio.addons.binding.ocpp.internal.server.adapter.AuthorizationIdTagAdapter;
+import org.connectorio.addons.binding.ocpp.internal.server.adapter.BootRegistrationAdapter;
+import org.connectorio.addons.binding.ocpp.internal.server.adapter.RequestListenerAdapter;
+import org.connectorio.addons.binding.ocpp.internal.server.adapter.StatusAdapter;
+import org.connectorio.addons.binding.ocpp.internal.server.adapter.TransactionAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,12 +51,16 @@ public class OcppServer implements OcppSender {
   private final JSONServer server;
   private final String ip;
   private final int port;
+  private final OcppChargerSessionRegistry chargerSessionRegistry;
 
-  public OcppServer(String ip, int port, OcppRequestListener<Request> listener, Set<String> identifiers, Set<String> tags) {
+  public OcppServer(String ip, int port, OcppChargerSessionRegistry chargerSessionRegistry,
+      Deque<ServerCoreEventHandler> eventHandlers) {
     this.ip = ip;
     this.port = port;
-    OcppServerCoreEventHandler eventHandler = new OcppServerCoreEventHandler(this, listener, identifiers, tags);
-    this.server = new JSONServer(new ServerCoreProfile(eventHandler));
+    this.chargerSessionRegistry = chargerSessionRegistry;
+
+    CoreEventHandlerWrapper handler = new CoreEventHandlerWrapper(eventHandlers);
+    this.server = new JSONServer(new ServerCoreProfile(handler));
   }
 
   public void activate() {
@@ -59,19 +73,21 @@ public class OcppServer implements OcppSender {
       @Override
       public void lostSession(UUID sessionIndex) {
         logger.info("Terminated connection {}.", sessionIndex);
+        chargerSessionRegistry.removeSession(sessionIndex);
       }
     });
   }
 
   @Override
-  public CompletionStage<Confirmation> send(UUID sessionIndex, Request request) {
+  public CompletionStage<Confirmation> send(ChargerReference chargerReference, Request request) {
     try {
+      UUID sessionIndex = chargerSessionRegistry.getSession(chargerReference);
+      if (sessionIndex == null) {
+        logger.warn("Could not send request {} to charger {}. Session not found.", request, chargerReference);
+        return CompletableFuture.failedFuture(new NotConnectedException());
+      }
       return this.server.send(sessionIndex, request);
-    } catch (OccurenceConstraintException e) {
-      throw new RuntimeException(e);
-    } catch (UnsupportedFeatureException e) {
-      throw new RuntimeException(e);
-    } catch (NotConnectedException e) {
+    } catch (OccurenceConstraintException | UnsupportedFeatureException | NotConnectedException e) {
       throw new RuntimeException(e);
     }
   }
@@ -80,11 +96,6 @@ public class OcppServer implements OcppSender {
     if (!server.isClosed()) {
       server.close();
     }
-  }
-
-  public static void main(String[] args) {
-    OcppServer ocppServer = new OcppServer("127.0.0.1", 8888, null, Collections.emptySet(), Collections.emptySet());
-    ocppServer.activate();
   }
 
 }
