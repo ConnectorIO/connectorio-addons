@@ -35,10 +35,6 @@
   <dependencies>
     <dependency>
       <groupId>org.connectorio.addons</groupId>
-      <artifactId>org.connectorio.addons.binding.can</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.binding.canopen</artifactId>
     </dependency>
     <dependency>
@@ -49,6 +45,12 @@
     <dependency>
       <groupId>org.connectorio.addons</groupId>
       <artifactId>org.connectorio.addons.feature</artifactId>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.addons.feature.network</artifactId>
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
