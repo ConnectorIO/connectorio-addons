@@ -69,8 +69,11 @@ public class PersistenceStrategyCommand extends AbstractConsoleCommandExtension 
 
     for (PersistenceServiceConfiguration config : get(manager)) {
       console.println("service  '" + config.getUID() + "'");
+      console.println("  - aliases:'");
+      for (Entry<String, String> alias : config.getAliases().entrySet()) {
+        console.println("    " + alias.getKey() + "=" + alias.getValue());
+      }
       for (PersistenceItemConfiguration itemConfig : config.getConfigs()) {
-        console.println("  alias '" + itemConfig.alias() + "'");
         console.println("  - includes:");
         for (PersistenceConfig itemCfg : itemConfig.items()) {
           print(console, "    ", itemCfg);

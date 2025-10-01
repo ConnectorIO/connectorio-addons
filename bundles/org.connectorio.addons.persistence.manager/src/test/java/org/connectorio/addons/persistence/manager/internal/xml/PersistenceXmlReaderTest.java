@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.connectorio.addons.persistence.manager.HasNamePatternPersistenceFilter;
 import org.connectorio.addons.persistence.manager.HasTagPersistenceFilter;
 import org.junit.jupiter.api.Test;
@@ -33,25 +34,25 @@ class PersistenceXmlReaderTest {
     itemStrategies.add(Globals.RESTORE);
     itemStrategies.add(Globals.UPDATE);
     List<PersistenceItemConfiguration> configs = new ArrayList<>();
-    configs.add(new PersistenceItemConfiguration(items, alias, itemStrategies, Arrays.asList(new HasTagPersistenceFilter("Computed"), new HasNamePatternPersistenceFilter(".*?_([^Current]*)$"))));
-    configs.add(new PersistenceItemConfiguration(Arrays.asList(new PersistenceItemConfig("Sample_Item")), "itemCfg", itemStrategies, null));
-    configs.add(new PersistenceItemConfiguration(Arrays.asList(new PersistenceGroupConfig("Sample_Group")), "groupCfg", itemStrategies, null));
+    configs.add(new PersistenceItemConfiguration(items, itemStrategies, Arrays.asList(new HasTagPersistenceFilter("Computed"), new HasNamePatternPersistenceFilter(".*?_([^Current]*)$"))));
+    configs.add(new PersistenceItemConfiguration(Arrays.asList(new PersistenceItemConfig("Sample_Item")), itemStrategies, null));
+    configs.add(new PersistenceItemConfiguration(Arrays.asList(new PersistenceGroupConfig("Sample_Group")), itemStrategies, null));
     List<PersistenceStrategy> defaults = Arrays.asList(Globals.CHANGE, new PersistenceCronStrategy("everyHour", "0 ? ? ?"));
     List<PersistenceStrategy> strategies = new ArrayList<>();
     strategies.add(Globals.CHANGE);
     PersistenceServiceConfiguration configuration = new PersistenceServiceConfiguration("a",
-      configs, defaults, strategies, Collections.emptyList()
+      configs, Collections.emptyMap(), defaults, strategies, Collections.emptyList()
     );
 
     assertThat(config.getDefaults()).isEqualTo(configuration.getDefaults());
     assertThat(config.getStrategies()).isEqualTo(configuration.getStrategies());
 
     List<PersistenceItemConfiguration> configConfigs = config.getConfigs();
+    assertThat(config.getAliases()).isEqualTo(Map.of("Sample_Group" , "groupCfg", "Sample_Item", "itemCfg"));
     for (int index = 0, size = configConfigs.size(); index < size; index++) {
       PersistenceItemConfiguration itemConfiguration = configConfigs.get(index);
       PersistenceItemConfiguration source = configuration.getConfigs().get(index);
 
-      assertThat(itemConfiguration.alias()).isEqualTo(source.alias());
       // persistence configuration elements do not define equals/hash code!
       assertThat(itemConfiguration.items().toString()).isEqualTo(source.items().toString());
       assertThat(itemConfiguration.strategies()).isEqualTo(source.strategies());

@@ -2,7 +2,7 @@ name: Build pushed commit
 
 on:
   push:
-    branches: [ "master", "3.*" , "4.*" ]
+    branches: [ "master", "3.*" , "4.*" , "5.*" ]
 
 jobs:
   build:
