@@ -35,7 +35,7 @@ public class PersistenceItemConfigurationConverter extends GenericUnmarshaller<P
     }
 
     return new PersistenceItemConfiguration(
-      items, alias, strategies, filters
+      items, strategies, filters
     );
   }
 }
