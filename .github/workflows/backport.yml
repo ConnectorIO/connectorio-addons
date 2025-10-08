@@ -1,0 +1,47 @@
+name: Backport
+
+on:
+  pull_request:
+    types: [opened, labeled, unlabeled, synchronize]
+  issue_comment:
+    types: [created]
+
+jobs:
+  backport:
+    if: contains(github.event.pull_request.labels.*.name, 'backport')
+    permissions:
+      pull-requests: write
+      contents: write
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get Github App Token
+        uses: actions/create-github-app-token@5d869da34e18e7287c1daad50e0b8ea0f506ce69 # v1.11.0
+        id: app-token
+        with:
+          app-id: ${{ vars.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+      - uses: actions/checkout@v4
+        with:
+          token: '${{ steps.app-token.outputs.token }}'
+          fetch-depth: 1
+      - name: Create backport pull requests
+        uses: splatch/backport-action@v3.3-spl
+        with:
+          # Token to authenticate requests to GitHub
+          github_token: '${{ steps.app-token.outputs.token }}'
+          add_author_as_assignee: true
+          add_labels: bot
+          label_pattern: ^backport-([^ ]+)$
+          branch_name: 'backport-pr${pull_number}-to-${target_branch}'
+          pull_title: '[${target_branch}] ${pull_title}'
+          pull_description: |-
+            Backport of #${pull_number} to `${target_branch}`.
+
+            relates to ${issue_refs}
+          experimental: >
+            {
+              "conflict_resolution": "draft_commit_conflicts",
+              "accept_open_pr": true,
+              "comment_open_pr": false
+            }
