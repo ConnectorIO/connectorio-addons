@@ -1,0 +1,24 @@
+site:
+  title: ConnectorIO Addons
+content:
+  sources:
+    - url: https://github.com/connectorio/connectorio-addons.git
+      branches: ['3.0.x', '3.1.x', '3.2.x', '3.3.x', '3.4.x', '4.0.x', '4.1.x', '4.2.x', '4.3.x', '4.4.x', '5.0.x', ]
+      start_path: documentation/docs
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true
+  #supplemental_files: supplemental
+antora:
+  extensions:
+    - '@antora/lunr-extension'
+asciidoc:
+  extensions:
+    - asciidoctor-kroki
+  attributes:
+    allow-uri-read: 'true'
+output:
+  dir: ./target/site
+runtime:
+  fetch: true
