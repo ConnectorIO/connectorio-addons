@@ -22,12 +22,12 @@ import org.simplify4u.jfatek.registers.RegName;
 
 public class RollerShutterChannelConfig extends DataChannelConfig {
 
-  public int startIndex;
-  public RegName startRegister;
-  public boolean startInvert;
+  public int upIndex;
+  public RegName upRegister;
+  public boolean upInvert;
 
-  public int stopIndex;
-  public RegName stopRegister;
-  public boolean stopInvert;
+  public int downIndex;
+  public RegName downRegister;
+  public boolean downInvert;
 
 }
