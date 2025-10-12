@@ -40,67 +40,48 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.asciidoctor</groupId>
-            <artifactId>asciidoctor-maven-plugin</artifactId>
-            <version>1.6.0</version>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <version>1.15.4</version>
+
             <executions>
               <execution>
-                <id>output-html</id>
-                <phase>generate-resources</phase>
+                <id>install node and npm</id>
                 <goals>
-                  <goal>process-asciidoc</goal>
+                  <goal>install-node-and-npm</goal>
                 </goals>
+                <phase>prepare-package</phase>
+              </execution>
+              <execution>
+                <id>npm install</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <phase>prepare-package</phase>
+
                 <configuration>
-                  <backend>html</backend>
+                  <arguments>install</arguments>
                 </configuration>
               </execution>
               <execution>
-                <id>output-pdf</id>
-                <phase>generate-resources</phase>
+                <id>generate website</id>
                 <goals>
-                  <goal>process-asciidoc</goal>
+                  <goal>npx</goal>
                 </goals>
+
+                <phase>package</phase>
+
                 <configuration>
-                  <backend>pdf</backend>
+                  <arguments>antora ../antora-playbook.yml</arguments>
                 </configuration>
               </execution>
+
             </executions>
             <configuration>
-              <sourceDirectory>${basedir}/docs</sourceDirectory>
-              <sourceDocumentName>index.adoc</sourceDocumentName>
-              <doctype>book</doctype>
-              <sourceHighlighter>highlight.js</sourceHighlighter>
-              <requires>
-                <require>asciidoctor-diagram</require>
-              </requires>
-              <attributes>
-                <attribute-missing>warn</attribute-missing>
-                <webfonts>Work Sans</webfonts>
-                <icons>font</icons>
-                <imagesdir>${project.build.directory}/generated-docs/images</imagesdir>
-                <pagenums/>
-                <toc/>
-                <idprefix>-</idprefix>
-                <idseparator>-</idseparator>
-                <sectlinks />
-                <sectnums />
-                <!--<revremark></revremark>-->
-                <revnumber>${project.version}</revnumber>
-                <revdate>${maven.build.timestamp}</revdate>
-              </attributes>
+              <nodeVersion>v16.16.0</nodeVersion>
+              <workingDirectory>${project.basedir}/target</workingDirectory>
+              <installDirectory>${project.basedir}/target</installDirectory>
             </configuration>
-            <dependencies>
-              <dependency>
-                <groupId>org.asciidoctor</groupId>
-                <artifactId>asciidoctorj-diagram</artifactId>
-                <version>2.0.2</version>
-              </dependency>
-              <dependency>
-                <groupId>org.asciidoctor</groupId>
-                <artifactId>asciidoctorj-pdf</artifactId>
-                <version>1.5.3</version>
-              </dependency>
-            </dependencies>
           </plugin>
         </plugins>
       </build>
