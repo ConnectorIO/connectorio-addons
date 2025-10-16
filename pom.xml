@@ -72,6 +72,12 @@
 
   <profiles>
     <profile>
+      <id>docs</id>
+      <modules>
+        <module>documentation</module>
+      </modules>
+    </profile>
+    <profile>
       <id>sonatype-oss</id>
 
       <activation>
