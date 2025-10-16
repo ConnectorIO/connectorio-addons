@@ -34,58 +34,60 @@
   <name>ConnectorIO - Binding - Documentation</name>
   <description>Help resources for developed bindings.</description>
 
-  <profiles>
-    <profile>
-      <id>asciidoctor</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.github.eirslett</groupId>
-            <artifactId>frontend-maven-plugin</artifactId>
-            <version>1.15.4</version>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.15.4</version>
 
-            <executions>
-              <execution>
-                <id>install node and npm</id>
-                <goals>
-                  <goal>install-node-and-npm</goal>
-                </goals>
-                <phase>prepare-package</phase>
-              </execution>
-              <execution>
-                <id>npm install</id>
-                <goals>
-                  <goal>npm</goal>
-                </goals>
-                <phase>prepare-package</phase>
+        <executions>
+          <execution>
+            <id>install node and npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <phase>pre-site</phase>
+          </execution>
+          <execution>
+            <id>npm install</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <phase>pre-site</phase>
 
-                <configuration>
-                  <arguments>install</arguments>
-                </configuration>
-              </execution>
-              <execution>
-                <id>generate website</id>
-                <goals>
-                  <goal>npx</goal>
-                </goals>
-
-                <phase>package</phase>
-
-                <configuration>
-                  <arguments>antora ../antora-playbook.yml</arguments>
-                </configuration>
-              </execution>
-
-            </executions>
             <configuration>
-              <nodeVersion>v16.16.0</nodeVersion>
-              <workingDirectory>${project.basedir}/target</workingDirectory>
-              <installDirectory>${project.basedir}/target</installDirectory>
+              <arguments>install</arguments>
             </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
+          </execution>
+          <execution>
+            <id>generate website</id>
+            <goals>
+              <goal>npx</goal>
+            </goals>
+            <phase>site</phase>
+            <configuration>
+              <arguments>antora ../antora-playbook.yml</arguments>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <nodeVersion>v16.16.0</nodeVersion>
+          <workingDirectory>${project.basedir}/target</workingDirectory>
+          <installDirectory>${project.basedir}/target</installDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration combine.self="override">
+          <skip>false</skip>
+          <skipDeploy>false</skipDeploy>
+        </configuration>
+        <dependencies>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
