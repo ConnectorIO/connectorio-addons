@@ -19,6 +19,7 @@ package org.connectorio.addons.binding.fatek.internal.channel.converter;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import org.connectorio.addons.binding.fatek.config.channel.percent.Percent32ChannelConfig;
 import org.connectorio.addons.binding.fatek.internal.channel.Percentage;
 import org.openhab.core.library.types.PercentType;
@@ -42,22 +43,24 @@ public class Percent32Converter implements Converter {
     }
 
     PercentType percentType = (PercentType) command;
+    BigDecimal value = percentType.toBigDecimal().multiply(config.factor);
     if (config.floating) {
-      return new RegValue32(Float.floatToIntBits(percentType.toBigDecimal().floatValue()));
+      return new RegValue32(Float.floatToIntBits(value.floatValue()));
     }
 
-    long longValue = percentType.toBigDecimal().longValue();
+    long longValue = config.factor.multiply(BigDecimal.valueOf(value.longValue())).longValue();
     return new RegValue32(config.unsigned ? BigInteger.valueOf(longValue).longValue() : longValue);
   }
 
   @Override
   public State toState(RegValue value) {
     if (config.floating) {
-      BigDecimal decimal = BigDecimal.valueOf(value.floatValue());
+      BigDecimal decimal = BigDecimal.valueOf(value.floatValue()).divide(config.factor, RoundingMode.HALF_UP);
       return new PercentType(decimal.max(Percentage.HUNDRED).min(Percentage.ZERO));
     }
 
     int number = config.unsigned ? value.intValueUnsigned() : value.intValue();
+    number = config.factor.divide(BigDecimal.valueOf(number), RoundingMode.HALF_UP).intValue();
     number = Math.min(number, 100);
     number = Math.max(number, 0);
     return new PercentType(number);

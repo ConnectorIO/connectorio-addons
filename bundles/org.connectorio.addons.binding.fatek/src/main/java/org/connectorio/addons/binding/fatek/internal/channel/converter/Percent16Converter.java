@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.fatek.internal.channel.converter;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import org.connectorio.addons.binding.fatek.config.channel.data.DataChannelConfig;
 import org.connectorio.addons.binding.fatek.config.channel.percent.PercentChannelConfig;
@@ -41,7 +42,8 @@ public class Percent16Converter implements Converter {
     }
 
     PercentType percentType = (PercentType) command;
-    long longValue = percentType.toBigDecimal().longValue();
+    BigDecimal value = percentType.toBigDecimal().multiply(config.factor);
+    long longValue = value.longValue();
     return new RegValue32(config.unsigned ? BigInteger.valueOf(longValue).longValue() : longValue);
   }
 
