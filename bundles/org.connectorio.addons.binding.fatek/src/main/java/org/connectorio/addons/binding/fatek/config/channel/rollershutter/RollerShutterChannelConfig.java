@@ -17,10 +17,12 @@
  */
 package org.connectorio.addons.binding.fatek.config.channel.rollershutter;
 
+import java.math.BigDecimal;
 import org.connectorio.addons.binding.fatek.config.channel.data.DataChannelConfig;
+import org.connectorio.addons.binding.fatek.config.channel.percent.PercentChannelConfig;
 import org.simplify4u.jfatek.registers.RegName;
 
-public class RollerShutterChannelConfig extends DataChannelConfig {
+public class RollerShutterChannelConfig extends PercentChannelConfig {
 
   public int upIndex;
   public RegName upRegister;

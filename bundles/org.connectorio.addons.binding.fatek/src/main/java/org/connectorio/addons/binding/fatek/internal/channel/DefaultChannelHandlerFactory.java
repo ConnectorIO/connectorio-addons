@@ -77,7 +77,7 @@ public class DefaultChannelHandlerFactory implements FatekChannelHandlerFactory 
       return new RollerShutterChannelHandler(channel, RegisterParser.parseData16(config),
         RegisterParser.parseDiscrete(startCfg),
         RegisterParser.parseDiscrete(startCfg),
-        new Data16Converter(config),
+        new Percent16Converter(config),
         new DiscreteConverter(startCfg),
         new DiscreteConverter(stopCfg)
       );
@@ -89,7 +89,7 @@ public class DefaultChannelHandlerFactory implements FatekChannelHandlerFactory 
       return new RollerShutterChannelHandler(channel, RegisterParser.parseData16(config),
         RegisterParser.parseDiscrete(startCfg),
         RegisterParser.parseDiscrete(startCfg),
-        new Data32Converter(config),
+        new Percent32Converter(config),
         new DiscreteConverter(startCfg),
         new DiscreteConverter(stopCfg)
       );
