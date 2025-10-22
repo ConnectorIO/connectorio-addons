@@ -951,7 +951,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>xml-maven-plugin</artifactId>
-          <version>1.1.0</version>
+          <version>1.2.0</version>
           <configuration>
             <validationSets>
               <validationSet>
@@ -962,9 +962,8 @@
                 <validating>true</validating>
               </validationSet>
             </validationSets>
-            <catalogHadling>strict</catalogHadling>
             <catalogs>
-              <catalog>file:${project.basedir}/../../xsd/org.connectorio.xsd.openhab/src/main/resources/openhab-catalog.xml</catalog>
+              <catalog>openhab-catalog.xml</catalog>
             </catalogs>
           </configuration>
           <executions>
@@ -973,6 +972,13 @@
               <phase>none</phase>
             </execution>
           </executions>
+          <dependencies>
+            <dependency>
+              <groupId>org.connectorio.addons</groupId>
+              <artifactId>org.connectorio.xsd.openhab</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+          </dependencies>
         </plugin>
         <plugin>
           <groupId>org.apache.karaf.tooling</groupId>
