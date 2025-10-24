@@ -36,6 +36,7 @@ public class Percent32Converter implements Converter {
     this.config = config;
   }
 
+  // divide
   @Override
   public RegValue toValue(Command command) {
     if (!(command instanceof PercentType)) {
@@ -43,26 +44,25 @@ public class Percent32Converter implements Converter {
     }
 
     PercentType percentType = (PercentType) command;
-    BigDecimal value = percentType.toBigDecimal().multiply(config.factor);
+    BigDecimal scaledValue = percentType.toBigDecimal().divide(config.factor, RoundingMode.HALF_UP);
     if (config.floating) {
-      return new RegValue32(Float.floatToIntBits(value.floatValue()));
+      return new RegValue32(Float.floatToIntBits(scaledValue.floatValue()));
     }
 
-    long longValue = config.factor.multiply(BigDecimal.valueOf(value.longValue())).longValue();
+    long longValue = scaledValue.longValue();
     return new RegValue32(config.unsigned ? BigInteger.valueOf(longValue).longValue() : longValue);
   }
 
+  // multiply
   @Override
   public State toState(RegValue value) {
     if (config.floating) {
-      BigDecimal decimal = BigDecimal.valueOf(value.floatValue()).divide(config.factor, RoundingMode.HALF_UP);
-      return new PercentType(decimal.max(Percentage.HUNDRED).min(Percentage.ZERO));
+      BigDecimal scaledValue = BigDecimal.valueOf(value.floatValue()).multiply(config.factor);
+      return Percentage.from(scaledValue);
     }
 
     int number = config.unsigned ? value.intValueUnsigned() : value.intValue();
-    number = config.factor.divide(BigDecimal.valueOf(number), RoundingMode.HALF_UP).intValue();
-    number = Math.min(number, 100);
-    number = Math.max(number, 0);
-    return new PercentType(number);
+    BigDecimal scaledValue = config.factor.multiply(BigDecimal.valueOf(number));
+    return Percentage.from(scaledValue);
   }
 }
