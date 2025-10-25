@@ -17,7 +17,8 @@
  */
 grammar BitTPL;
 
-// This grammar is a basic definition of permitted inputs for bit templates
+// This grammar is a basic definition of permitted inputs for byte based messages.
+// It allows to define a selective templates and matching patterns.
 
 segments
     : segment* EOF
@@ -36,16 +37,18 @@ octet
     ;
 
 
-hexSeq : HEX_SQ+;
-bitSeq : BIT_SQ+;
+hexSeq : HEX_SEQ+;
+bitSeq : BIT_SEQ+;
 
-BIT_SQ : BIT | '.';
+BIT_SEQ : BIT | BIT_ANY;
+BIT_ANY : '.';
 BIT
     : '0'
     | '1'
     ;
 
-HEX_SQ : HEX_DIGIT | '*';
+HEX_SEQ : HEX_DIGIT | HEX_ANY;
+HEX_ANY : '*';
 HEX_DIGIT
     : '0' .. '9'
     | 'a' .. 'f'

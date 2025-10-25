@@ -8,32 +8,34 @@ Templates can be constructed from four elements described in table below.
 
 [cols="1,2,1,1"]
 |===
-|Name | Pattern| Size (bit count)| Notes
+|Name | Pattern| Size (bit count)| Sample expr.
 
 | Nibble
 | `'0' .. '9' \| 'a' .. 'f' \| 'A' .. 'F'`
 | 4
-|
+| `xAA`
 
 | Nibble variable
 | `*`
 | 4
-| Written as `0000b`
+| `xA*`
 
 | Bit
 | `'0' .. '9' \| 'a' .. 'f' \| 'A' .. 'F'`
 | 1
-|
+| `b0010`
 
 | Bit variable
 | `.`
 | 1
-| Written as `0b`.
+| `b1.0.`
 
 |===
 
-When template is turned again into message its variable part always default to `0b`.
-It is duty of caller to fill placeholders with proper values.
+The template can be also used to create messages.
+
+When template is turned into message, variable part is defaulted to `0x00`.
+Caller have to fill placeholders with proper values.
 What is notable - writing does not have to follow variable parts.
 
 === Example templates

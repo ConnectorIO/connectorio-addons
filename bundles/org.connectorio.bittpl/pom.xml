@@ -76,7 +76,7 @@
             <phase>none</phase>
           </execution>
           <execution>
-            <id>add-anltr-sources</id>
+            <id>add-antlr-sources</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>add-source</goal>

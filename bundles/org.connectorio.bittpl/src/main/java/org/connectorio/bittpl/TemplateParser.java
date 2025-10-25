@@ -61,7 +61,7 @@ public class TemplateParser {
 
     @Override
     public void enterHexSeq(HexSeqContext ctx) {
-      for (TerminalNode node : ctx.HEX_SQ()) {
+      for (TerminalNode node : ctx.HEX_SEQ()) {
         String nibble = node.getText();
         if (STAR.equals(nibble)) {
           elements.add(new NibbleWildcard(offset));
@@ -75,7 +75,7 @@ public class TemplateParser {
 
     @Override
     public void enterBitSeq(BitSeqContext ctx) {
-      for (TerminalNode node : ctx.BIT_SQ()) {
+      for (TerminalNode node : ctx.BIT_SEQ()) {
         String bit = node.getText();
         if (DOT.equals(bit)) {
           elements.add(new BitWildcard(offset));
