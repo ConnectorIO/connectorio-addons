@@ -33,13 +33,11 @@ public class CoRecordReader extends AbstractReader<PlcReadResponse, byte[]> {
 
   @Override
   protected byte[] extract(PlcReadResponse response, String field) {
-    List<Byte> bytes = new ArrayList<>(response.getAllBytes(field));
-    byte[] value = new byte[bytes.size()];
-    for (int index = 0; index < bytes.size(); index++) {
-      value[index] = bytes.get(index);
+    Object bytes = response.getObject(field);
+    if (bytes instanceof byte[]) {
+      return (byte[]) bytes;
     }
-
-    return value;
+    throw new IllegalArgumentException("Unexpected value, expected byte[] got " + (bytes != null ? bytes.getClass().getName() : "NULL"));
   }
 
 }
