@@ -66,7 +66,7 @@ public class DefaultChannelHandlerFactory implements FatekChannelHandlerFactory 
     }
     if (FatekBindingConstants.CHANNEL_TYPE_PERCENT32.equals(channel.getChannelTypeUID())) {
       Percent32ChannelConfig config = channel.getConfiguration().as(Percent32ChannelConfig.class);
-      return new PercentChannelHandler(channel, config.step, RegisterParser.parseData16(config),
+      return new PercentChannelHandler(channel, config.step, RegisterParser.parseData32(config),
         new Percent32Converter(config)
       );
     }
