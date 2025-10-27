@@ -76,7 +76,7 @@ public class DefaultChannelHandlerFactory implements FatekChannelHandlerFactory 
       DiscreteChannelConfig stopCfg = new DiscreteChannelConfig(config.downRegister, config.downIndex, config.downInvert);
       return new RollerShutterChannelHandler(channel, RegisterParser.parseData16(config),
         RegisterParser.parseDiscrete(startCfg),
-        RegisterParser.parseDiscrete(startCfg),
+        RegisterParser.parseDiscrete(stopCfg),
         new Percent16Converter(config),
         new DiscreteConverter(startCfg),
         new DiscreteConverter(stopCfg)
@@ -86,7 +86,7 @@ public class DefaultChannelHandlerFactory implements FatekChannelHandlerFactory 
       RollerShutter32ChannelConfig config = channel.getConfiguration().as(RollerShutter32ChannelConfig.class);
       DiscreteChannelConfig startCfg = new DiscreteChannelConfig(config.upRegister, config.upIndex, config.upInvert);
       DiscreteChannelConfig stopCfg = new DiscreteChannelConfig(config.downRegister, config.downIndex, config.downInvert);
-      return new RollerShutterChannelHandler(channel, RegisterParser.parseData16(config),
+      return new RollerShutterChannelHandler(channel, RegisterParser.parseData32(config),
         RegisterParser.parseDiscrete(startCfg),
         RegisterParser.parseDiscrete(startCfg),
         new Percent32Converter(config),
