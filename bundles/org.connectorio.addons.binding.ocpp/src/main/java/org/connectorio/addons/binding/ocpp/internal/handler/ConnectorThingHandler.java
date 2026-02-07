@@ -16,6 +16,7 @@ import eu.chargetime.ocpp.model.core.StopTransactionRequest;
 import eu.chargetime.ocpp.model.core.ValueFormat;
 import java.time.ZonedDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.measure.Quantity;
 import org.connectorio.addons.binding.handler.GenericThingHandlerBase;
 import org.connectorio.addons.binding.ocpp.internal.config.ChargerConfig;
 import org.connectorio.addons.binding.ocpp.internal.server.OcppMeasurementMapping;
@@ -36,8 +37,7 @@ import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tec.uom.se.ComparableQuantity;
-import tec.uom.se.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeHandler, ChargerConfig> implements
   StatusNotificationHandler, TransactionHandler, MeterValuesHandler {
