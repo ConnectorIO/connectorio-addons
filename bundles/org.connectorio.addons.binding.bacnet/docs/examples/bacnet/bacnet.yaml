@@ -52,13 +52,13 @@ things:
       type: "deviceReadableNumber"
       label: "Exhaust temperature"
       configuration:
-        instance: 1
         type: "ANALOG_INPUT"
         refreshInterval: 500
+        instance: 1
     - id: "ai2"
       type: "deviceReadableNumber"
       label: "Supply temperature"
       configuration:
-        instance: 2
         type: "ANALOG_INPUT"
         refreshInterval: 500
+        instance: 2

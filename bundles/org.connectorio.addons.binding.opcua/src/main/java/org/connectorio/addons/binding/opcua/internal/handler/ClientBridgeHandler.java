@@ -36,7 +36,9 @@ import org.eclipse.milo.opcua.stack.core.UaException;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ByteString;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
+import org.eclipse.milo.opcua.stack.core.types.enumerated.MessageSecurityMode;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.UserTokenType;
+import org.eclipse.milo.opcua.stack.core.types.structured.BrowseDescription;
 import org.eclipse.milo.opcua.stack.core.types.structured.EndpointDescription;
 import org.eclipse.milo.opcua.stack.core.types.structured.UserTokenPolicy;
 import org.openhab.core.thing.Bridge;
@@ -85,10 +87,22 @@ public class ClientBridgeHandler extends GenericBridgeHandlerBase<ClientConfig> 
       return CompletableFuture.completedFuture(null);
     }
 
-    return DiscoveryClient.getEndpoints("opc.tcp://" + config.host + ":" + config.port)
+    return DiscoveryClient.findServers("opc.tcp://" + config.host + ":" + config.port)
+      .thenCompose(servers -> {
+        if (servers.isEmpty()) {
+          return CompletableFuture.failedFuture(new IllegalAccessError("No servers found"));
+        }
+        if (servers.get(0).getDiscoveryUrls().length == 0) {
+          return CompletableFuture.failedFuture(new IllegalAccessError("No discovery URL found"));
+        }
+        return DiscoveryClient.getEndpoints(servers.get(0).getDiscoveryUrls()[0]);
+      })
       .thenApply(endpoints -> {
         for (EndpointDescription description : endpoints) {
           UserTokenPolicy[] tokens = description.getUserIdentityTokens();
+          if (description.getSecurityMode() != MessageSecurityMode.None) {
+            continue;
+          }
           for (UserTokenPolicy tokenPolicy : tokens) {
             if (UserTokenType.Anonymous == tokenPolicy.getTokenType() || UserTokenType.UserName == tokenPolicy.getTokenType()) {
               return description;
@@ -134,4 +148,5 @@ public class ClientBridgeHandler extends GenericBridgeHandlerBase<ClientConfig> 
   public CompletionStage<OpcUaClient> getClient() {
     return clientConnection;
   }
+
 }

@@ -17,17 +17,64 @@
  */
 package org.connectorio.addons.binding.opcua.internal.config;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.connectorio.addons.binding.config.Configuration;
+import org.eclipse.milo.opcua.stack.core.types.builtin.ByteString;
+import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
+import org.openhab.core.util.HexUtils;
 
 public class NodeConfig implements Configuration {
 
   public int ns;
   public IdentifierType identifierType;
-  public String identifier;
+  public Integer identifier;
+  public String stringIdentifier = "";
   public long publishInterval = 0L;
 
   public enum IdentifierType {
     i, s, g, b;
+  }
+
+  public NodeId createNodeId() {
+    switch (this.identifierType) {
+      case i:
+        return new NodeId(this.ns, UInteger.valueOf(this.identifier));
+      case s:
+        return new NodeId(this.ns, this.stringIdentifier);
+      case g:
+        return new NodeId(this.ns, UUID.fromString(this.stringIdentifier));
+      case b:
+        return new NodeId(this.ns, ByteString.of(HexUtils.hexToBytes(this.stringIdentifier)));
+    }
+    return null;
+  }
+
+  public static Map<String, Object> createNodeConfig(NodeId nodeId) {
+    Map<String, Object> config = new HashMap<>();
+    config.put("ns", nodeId.getNamespaceIndex().intValue());
+    switch (nodeId.getType()) {
+      case Numeric:
+        config.put("identifierType", IdentifierType.i.name());
+        config.put("identifier", nodeId.getIdentifier());
+        break;
+      case String:
+        config.put("identifierType", IdentifierType.s.name());
+        config.put("stringIdentifier", nodeId.getIdentifier());
+        break;
+      case Guid:
+        config.put("identifierType", IdentifierType.g.name());
+        config.put("stringIdentifier", nodeId.getIdentifier());
+        break;
+      case Opaque:
+        config.put("identifierType", IdentifierType.b.name());
+        config.put("stringIdentifier", nodeId.getIdentifier());
+        break;
+    }
+
+    return config;
   }
 
 }

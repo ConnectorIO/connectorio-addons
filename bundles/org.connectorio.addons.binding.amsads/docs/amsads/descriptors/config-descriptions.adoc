@@ -198,34 +198,6 @@
 
 |===
 
-[[thing-type:co7io-amsads:switch-symbol-tag]]
-== Config `thing-type:co7io-amsads:switch-symbol-tag`
-[width="100%",caption="thing-type:co7io-amsads:switch-symbol-tag configuration",cols="1,1,1,2"]
-|===
-|Name | Type | Label ^|Description
-
-| symbol
-| TEXT
-| Field symbol
-| Name of field be read from device. For TwinCAT 2 use names such .symbol, for TwinCAT 3 use Task.Name.
-
-| type
-| TEXT
-| Value encoding
-| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OFF. Any other value is assumed to represent ON.
-
-| inverse
-| BOOLEAN
-| Inverse conversion logic
-| Inverse logical representation of FALSE/TRUE values.
-
-| refreshInterval
-| INTEGER
-| Refresh interval
-| Default refresh interval specified for entire connection and devices associated with it. Setting refresh interval forces this channel to be polled rather than subscribed. It might help with older devices which do not support subscriptions.
-
-|===
-
 [[thing-type:co7io-amsads:number-symbol-tag]]
 == Config `thing-type:co7io-amsads:number-symbol-tag`
 [width="100%",caption="thing-type:co7io-amsads:number-symbol-tag configuration",cols="1,1,1,2"]
@@ -269,6 +241,34 @@
 | TEXT
 | Value encoding
 | Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OPEN. Any other value is assumed to represent CLOSED.
+
+| inverse
+| BOOLEAN
+| Inverse conversion logic
+| Inverse logical representation of FALSE/TRUE values.
+
+| refreshInterval
+| INTEGER
+| Refresh interval
+| Default refresh interval specified for entire connection and devices associated with it. Setting refresh interval forces this channel to be polled rather than subscribed. It might help with older devices which do not support subscriptions.
+
+|===
+
+[[thing-type:co7io-amsads:switch-symbol-tag]]
+== Config `thing-type:co7io-amsads:switch-symbol-tag`
+[width="100%",caption="thing-type:co7io-amsads:switch-symbol-tag configuration",cols="1,1,1,2"]
+|===
+|Name | Type | Label ^|Description
+
+| symbol
+| TEXT
+| Field symbol
+| Name of field be read from device. For TwinCAT 2 use names such .symbol, for TwinCAT 3 use Task.Name.
+
+| type
+| TEXT
+| Value encoding
+| Encoding of the field. Value in brackets indicate length of type in bytes. Value FALSE or its numeric representation 0 is interpreted as OFF. Any other value is assumed to represent ON.
 
 | inverse
 | BOOLEAN

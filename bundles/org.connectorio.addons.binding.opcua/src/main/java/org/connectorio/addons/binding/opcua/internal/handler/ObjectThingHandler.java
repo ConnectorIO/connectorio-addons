@@ -25,40 +25,33 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.connectorio.addons.binding.handler.GenericThingHandlerBase;
 import org.connectorio.addons.binding.opcua.internal.config.NodeConfig;
-import org.connectorio.addons.binding.opcua.internal.config.NodeConfig.IdentifierType;
 import org.eclipse.milo.opcua.sdk.client.AddressSpace.BrowseOptions;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaMonitoredItem;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaMonitoredItem.ValueConsumer;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaSubscription;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaSubscription.ItemCreationCallback;
+import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaSubscription.NotificationListener;
 import org.eclipse.milo.opcua.sdk.client.nodes.UaNode;
-import org.eclipse.milo.opcua.sdk.client.nodes.UaObjectNode;
+import org.eclipse.milo.opcua.sdk.client.nodes.UaVariableNode;
 import org.eclipse.milo.opcua.sdk.client.subscriptions.OpcUaSubscriptionManager;
 import org.eclipse.milo.opcua.stack.core.AttributeId;
-import org.eclipse.milo.opcua.stack.core.BuiltinDataType;
 import org.eclipse.milo.opcua.stack.core.Identifiers;
-import org.eclipse.milo.opcua.stack.core.types.builtin.ByteString;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DateTime;
+import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
-import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseDirection;
-import org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseResultMask;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.MonitoringMode;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.NodeClass;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
-import org.eclipse.milo.opcua.stack.core.types.structured.BrowseDescription;
 import org.eclipse.milo.opcua.stack.core.types.structured.MonitoredItemCreateRequest;
 import org.eclipse.milo.opcua.stack.core.types.structured.MonitoringParameters;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
@@ -110,21 +103,30 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
       updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Invalid identifier type");
       return;
     }
-    if (config.identifier == null || config.identifier.trim().isEmpty()) {
+    if (config.identifier == null && config.stringIdentifier.trim().isEmpty()) {
       updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Invalid identifier");
       return;
     }
 
-    this.nodeId = createNodeId(config);
+    this.nodeId = config.createNodeId();
 
     getBridgeHandler().ifPresent(bridge -> {
       bridge.getClient().whenComplete((client, error) -> {
         if (error != null) {
-          updateStatus(ThingStatus.ONLINE, ThingStatusDetail.BRIDGE_OFFLINE);
+          updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
           return;
         }
 
         if (!thing.getChannels().isEmpty()) {
+          this.channelMap = new HashMap<>();
+          this.nodeMap = new HashMap<>();
+          for (Channel channel : thing.getChannels()) {
+            Configuration configuration = channel.getConfiguration();
+            NodeId nodeId = configuration.as(NodeConfig.class).createNodeId();
+            this.channelMap.put(channel.getUID(), nodeId);
+            this.nodeMap.put(nodeId, channel.getUID());
+          }
+
           subscriptionManager = client.getSubscriptionManager();
           subscriptionManager.createSubscription(1000).whenComplete((subscription, failure) -> {
             if (failure != null) {
@@ -134,11 +136,12 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
             this.subscription = subscription;
             initializeSubscription(subscription);
           });
+          updateStatus(ThingStatus.ONLINE);
           return;
         }
 
         // initialize default channel list based on browse answer
-        client.getAddressSpace().getObjectNodeAsync(this.nodeId).whenComplete((node, readErr) -> {
+        client.getAddressSpace().getNodeAsync(this.nodeId).whenComplete((node, readErr) -> {
           if (readErr != null) {
             logger.warn("Could not retrieve object node from server {}", nodeId, readErr);
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, "Remote server returned error " + readErr.getMessage());
@@ -163,17 +166,10 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
   }
 
   private void initializeSubscription(UaSubscription subscription) {
-    this.channelMap = new HashMap<>();
-    this.nodeMap = new HashMap<>();
     List<MonitoredItemCreateRequest> monitoredItems = new ArrayList<>();
-    for (Channel channel : thing.getChannels()) {
-      Configuration configuration = channel.getConfiguration();
-      NodeConfig as = configuration.as(NodeConfig.class);
-      MonitoredItemCreateRequest monitoredItem = createMonitoredItem(as);
+    for (NodeId nodeId : this.nodeMap.keySet()) {
+      MonitoredItemCreateRequest monitoredItem = createMonitoredItem(nodeId);
       monitoredItems.add(monitoredItem);
-
-      this.channelMap.put(channel.getUID(), nodeId);
-      this.nodeMap.put(nodeId, channel.getUID());
     }
 
     ItemCreationCallback cbk = new ItemCreationCallback() {
@@ -186,12 +182,25 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
     subscription.createMonitoredItems(TimestampsToReturn.Both, monitoredItems, cbk).whenComplete((monitors, errors) -> {
       if (errors != null) {
         logger.error("Failed to construct subscription for {} elements", monitoredItems.size(), errors);
+        return;
       }
       logger.info("Creation of monitored items succeeded");
     });
+    subscription.addNotificationListener(new NotificationListener() {
+      @Override
+      public void onDataChangeNotification(UaSubscription subscription, List<UaMonitoredItem> monitoredItems, List<DataValue> dataValues, DateTime publishTime) {
+        for (int index = 0; index < monitoredItems.size(); index++) {
+          UaMonitoredItem item = monitoredItems.get(index);
+          DataValue dataValue = dataValues.get(index);
+          NodeId nodeId = item.getReadValueId().getNodeId();
+          logger.trace("Thing {} received data change notification from {} for channel {}, {}", thing.getUID(), publishTime, nodeId, dataValue.getValue());
+          ObjectThingHandler.this.onValueArrived(item, dataValue);
+        }
+      }
+    });
   }
 
-  private MonitoredItemCreateRequest createMonitoredItem(NodeConfig config) {
+  private MonitoredItemCreateRequest createMonitoredItem(NodeId objectId) {
     MonitoringParameters parameters = new MonitoringParameters(
       uint(SUBSCRIPTION_COUNTER.incrementAndGet()),
       1000.0,
@@ -200,30 +209,20 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
       true
     );
 
-    NodeId objectId = createNodeId(config);
     ReadValueId readValueId = new ReadValueId(
       objectId, AttributeId.Value.uid(),
       null,
       QualifiedName.NULL_VALUE
     );
-    return new MonitoredItemCreateRequest(readValueId, MonitoringMode.Sampling, parameters);
+    return new MonitoredItemCreateRequest(readValueId, MonitoringMode.Reporting, parameters);
   }
 
-  private void fetchChannels(OpcUaClient client, UaObjectNode node) {
+  private void fetchChannels(OpcUaClient client, UaNode node) {
     List<Channel> channels = getThing().getChannels();
     // thing has at least one channel defined, do not generate channels
     if (!channels.isEmpty()) {
       return;
     }
-
-    BrowseDescription browse = new BrowseDescription(
-      nodeId,
-      BrowseDirection.Forward,
-      Identifiers.References,
-      true,
-      uint(NodeClass.Variable.getValue()),
-      uint(BrowseResultMask.All.getValue())
-    );
 
     BrowseOptions options = new BrowseOptions(
       BrowseDirection.Forward,
@@ -241,28 +240,90 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
 
       ThingBuilder thing = editThing();
       List<Channel> channelDefinitions = new ArrayList<>();
+
       for (UaNode variable : result) {
         NodeId variableNodeId = variable.getNodeId();
-        logger.info("Potential channel found " + variableNodeId + " " + variable.getDescription());
-        Map<String, Object> config = createNodeConfig(variableNodeId);
+        logger.info("Potential channel found {} {}", variableNodeId, variable.getDescription());
+        Map<String, Object> config = NodeConfig.createNodeConfig(variableNodeId);
 
         // todo finish channel construction
         String channelId = variableNodeId.getNamespaceIndex() + "_" + variableNodeId.getIdentifier();
         ChannelUID channelUID = new ChannelUID(getThing().getUID(), channelId);
-        ChannelBuilder channelBuilder = ChannelBuilder.create(channelUID)
+        ChannelBuilder channelBuilder = determineChannelType(variable, ChannelBuilder.create(channelUID)
           .withLabel(Optional.ofNullable(variable.getDisplayName().getText()).orElse(nodeId.toString()))
           .withDescription(Optional.ofNullable(variable.getDescription().getText()).orElse(""))
           .withConfiguration(new Configuration(config))
-          // temporary
-          .withType(new ChannelTypeUID("co7io-opcua", "double"))
-          .withAcceptedItemType(CoreItemFactory.NUMBER)
-//          .withType();
-          ;
-        channelDefinitions.add(channelBuilder.build());
+        );
+        if (channelBuilder != null) {
+          channelDefinitions.add(channelBuilder.build());
+        }
       }
 
       updateThing(thing.withChannels(channelDefinitions).build());
     });
+  }
+
+  private ChannelBuilder determineChannelType(UaNode node, ChannelBuilder channelBuilder) {
+    if (!(node instanceof UaVariableNode)) {
+      return null;
+    }
+    UaVariableNode variable = (UaVariableNode) node;
+    if (variable.getDataType().equals(Identifiers.SByte)) {
+      channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "signed-byte"));
+    } else if (variable.getDataType().equals(Identifiers.Byte)) {
+      channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "byte"));
+    } else if (variable.getDataType().equals(Identifiers.Int16)) {
+      channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "int16"));
+    } else if (variable.getDataType().equals(Identifiers.UInt16)) {
+      channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "uint16"));
+    } else if (variable.getDataType().equals(Identifiers.Int32)) {
+      channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "int32"));
+    } else if (variable.getDataType().equals(Identifiers.UInt32)) {
+      channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "uint32"));
+    } else if (variable.getDataType().equals(Identifiers.Int64)) {
+      channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "int64"));
+    } else if (variable.getDataType().equals(Identifiers.UInt64)) {
+      channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "uint64"));
+    } else if (variable.getDataType().equals(Identifiers.Float)) {
+      channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "float"));
+    } else if (variable.getDataType().equals(Identifiers.Double)) {
+      channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "double"));
+    } else if (variable.getDataType().equals(Identifiers.String)) {
+      channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "string"));
+    } else if (variable.getDataType().equals(Identifiers.DateTime)) {
+      channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "datetime"));
+    } else if (variable.getDataType().equals(Identifiers.Guid)) {
+      channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "guid"));
+    } else if (variable.getDataType().equals(Identifiers.ByteString)) {
+      channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "byte-string"));
+    } else {
+      Variant dataValue = variable.getValue().getValue();
+      Object value = dataValue.getValue();
+      if (value == null) {
+        logger.debug("Unable to map channel type for node {}, data type: {}, value is null", variable.getNodeId(),
+            variable.getDataType());
+        return null;
+      } else if (value instanceof Number) {
+        if (value instanceof Short) {
+          channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "int16"));
+        } else if (value instanceof Integer) {
+          channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "int32"));
+        } else if (value instanceof Long) {
+          channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "int64"));
+        } else {
+          channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "double"));
+        }
+      } else if (value instanceof String || value instanceof LocalizedText) {
+        channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "string"));
+      } else if (value instanceof DateTime) {
+        channelBuilder.withType(new ChannelTypeUID("co7io-opcua", "datetime"));
+      } else {
+        logger.debug("Unsupported node {}, data type: {}, value {} ({})", variable.getNodeId(), variable.getDataType(),
+            value, value.getClass());
+        return null;
+      }
+    }
+    return channelBuilder;
   }
 
   @Override
@@ -293,42 +354,6 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
     logger.info("Ignoring command {}. Channel {} is not mapped to any OPC UA node. ", command, channelUID);
   }
 
-  private NodeId createNodeId(NodeConfig config) {
-    switch (config.identifierType) {
-      case i:
-        return new NodeId(config.ns, UInteger.valueOf(config.identifier));
-      case s:
-        return new NodeId(config.ns, config.identifier);
-      case g:
-        return new NodeId(config.ns, UUID.fromString(config.identifier));
-      case b:
-        return new NodeId(config.ns, ByteString.of(config.identifier.getBytes()));
-    }
-    return null;
-  }
-
-  private Map<String, Object> createNodeConfig(NodeId nodeId) {
-    Map<String, Object> config = new HashMap<>();
-    config.put("ns", nodeId.getNamespaceIndex().intValue());
-    config.put("identifier", nodeId.getIdentifier());
-    switch (nodeId.getType()) {
-      case Numeric:
-        config.put("identifierType", IdentifierType.i.name());
-        break;
-      case String:
-        config.put("identifierType", IdentifierType.s.name());
-        break;
-      case Guid:
-        config.put("identifierType", IdentifierType.g.name());
-        break;
-      case Opaque:
-        config.put("identifierType", IdentifierType.b.name());
-        break;
-    }
-
-    return config;
-  }
-
   @Override
   public void onValueArrived(UaMonitoredItem item, DataValue value) {
     if (getCallback() == null) {
@@ -352,8 +377,8 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
       return Boolean.TRUE.equals(val) ? OnOffType.ON : OnOffType.OFF;
     } else if (val instanceof Number) {
       return new DecimalType(((Number) val).doubleValue());
-    } else if (val instanceof String) {
-      return new StringType(val.toString());
+    } else if (val instanceof String ||  val instanceof LocalizedText) {
+      return new StringType(val instanceof LocalizedText ? ((LocalizedText) val).getText() : val.toString());
     } else if (val instanceof DateTime) {
       ZonedDateTime dateTime = ((DateTime) val).getJavaInstant().atZone(ZoneId.systemDefault());
       return new DateTimeType(dateTime);

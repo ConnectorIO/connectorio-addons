@@ -57,17 +57,17 @@ things:
       type: "rollershutter16"
       configuration:
         downIndex: 2
-        upIndex: 1
         index: 1
         upRegister: "M"
         downRegister: "M"
+        upIndex: 1
         register: "R"
     - id: "rollx32"
       type: "rollershutter32"
       configuration:
         downIndex: 2
-        upIndex: 1
         index: 1
         upRegister: "M"
         downRegister: "M"
+        upIndex: 1
         register: "DR"
