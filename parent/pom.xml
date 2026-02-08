@@ -1111,6 +1111,7 @@
         <configuration>
           <systemPropertyVariables>
             <openhab.version>${openhab-distro.version}</openhab.version>
+            <api.version>1.44</api.version>
           </systemPropertyVariables>
         </configuration>
       </plugin>
