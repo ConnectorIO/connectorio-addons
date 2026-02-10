@@ -23,9 +23,9 @@
 | Identifier
 | Node identifier - value interpretation depends on identifier type.
 
-| publishInterval
+| refreshInterval
 | INTEGER
-| Publish interval
+| Refresh interval
 | Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
 
 |===
@@ -66,10 +66,10 @@
 | Request timeout
 | 
 
-| publishInterval
+| refreshInterval
 | INTEGER
-| Publish interval
-| Default publish interval for all subscriptions made through this connection.
+| Refresh interval
+| Time between subscription publish calls.
 
 |===
 

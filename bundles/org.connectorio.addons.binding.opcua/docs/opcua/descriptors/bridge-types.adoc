@@ -55,10 +55,10 @@ Below table contains complete configuration of `co7io-opcua:client`.
 | Request timeout
 | 
 
-| publishInterval
+| refreshInterval
 | INTEGER
-| Publish interval
-| Default publish interval for all subscriptions made through this connection.
+| Refresh interval
+| Time between subscription publish calls.
 
 |===
 

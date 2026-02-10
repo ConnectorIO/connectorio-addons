@@ -45,9 +45,9 @@ Supported bridges:
 | Identifier
 | Node identifier - value interpretation depends on identifier type.
 
-| publishInterval
+| refreshInterval
 | INTEGER
-| Publish interval
+| Refresh interval
 | Default publish interval for all subscriptions made for this node. By default, it is set to 0 to inherit value specified at connection level.
 
 |===

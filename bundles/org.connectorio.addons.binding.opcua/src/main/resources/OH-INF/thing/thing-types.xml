@@ -66,10 +66,10 @@
         <default>10000</default>
         <unitLabel>ms</unitLabel>
       </parameter>
-      <parameter name="publishInterval" type="integer">
-        <label>Publish interval</label>
-        <description>Default publish interval for all subscriptions made through this connection.</description>
-        <default>1000</default>
+      <parameter name="refreshInterval" type="integer" required="false">
+        <label>Refresh interval</label>
+        <description>Time between subscription publish calls.</description>
+        <default>0</default>
       </parameter>
     </config-description>
   </bridge-type>

@@ -47,8 +47,8 @@
         Node identifier - value interpretation depends on identifier type.
       </description>
     </parameter>
-    <parameter name="publishInterval" type="integer">
-      <label>Publish interval</label>
+    <parameter name="refreshInterval" type="integer" required="false">
+      <label>Refresh interval</label>
       <description>
         Default publish interval for all subscriptions made for this node.
         By default, it is set to 0 to inherit value specified at connection level.

@@ -17,9 +17,9 @@
  */
 package org.connectorio.addons.binding.opcua.internal.config;
 
-import org.connectorio.addons.binding.config.Configuration;
+import org.connectorio.addons.binding.config.PollingConfiguration;
 
-public class ClientConfig implements Configuration {
+public class ClientConfig extends PollingConfiguration {
 
   public String host;
   public int port = 4848;
@@ -29,7 +29,5 @@ public class ClientConfig implements Configuration {
 
   public int requestTimeout = 10_000;
   public int connectTimeout = 10_000;
-
-  public long publishInterval = 1000L;
 
 }
