@@ -55,22 +55,19 @@ public class NodeConfig implements Configuration {
   public static Map<String, Object> createNodeConfig(NodeId nodeId) {
     Map<String, Object> config = new HashMap<>();
     config.put("ns", nodeId.getNamespaceIndex().intValue());
+    config.put("identifier", nodeId.getIdentifier().toString());
     switch (nodeId.getType()) {
       case Numeric:
         config.put("identifierType", IdentifierType.i.name());
-        config.put("identifier", nodeId.getIdentifier());
         break;
       case String:
         config.put("identifierType", IdentifierType.s.name());
-        config.put("stringIdentifier", nodeId.getIdentifier());
         break;
       case Guid:
         config.put("identifierType", IdentifierType.g.name());
-        config.put("stringIdentifier", nodeId.getIdentifier());
         break;
       case Opaque:
         config.put("identifierType", IdentifierType.b.name());
-        config.put("stringIdentifier", nodeId.getIdentifier());
         break;
     }
 

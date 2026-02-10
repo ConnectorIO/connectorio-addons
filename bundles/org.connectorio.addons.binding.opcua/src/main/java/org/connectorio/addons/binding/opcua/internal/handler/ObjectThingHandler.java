@@ -336,7 +336,7 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
       return;
     }
 
-    if (channelMap.containsKey(channelUID)) {
+    if (channelMap != null && channelMap.containsKey(channelUID)) {
       // we have node for this channel
       NodeId nodeId = channelMap.get(channelUID);
       DataValue dataValue = mapCommand(command);
@@ -362,7 +362,7 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
     }
 
     NodeId nodeId = item.getReadValueId().getNodeId();
-    if (nodeMap.containsKey(nodeId)) {
+    if (nodeMap != null && nodeMap.containsKey(nodeId)) {
       ChannelUID channel = nodeMap.get(nodeId);
       State mappedValue = mapValue(value);
       if (mappedValue != null) {
