@@ -23,9 +23,12 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.connectorio.addons.binding.handler.GenericThingHandlerBase;
@@ -56,7 +59,6 @@ import org.eclipse.milo.opcua.stack.core.types.structured.MonitoredItemCreateReq
 import org.eclipse.milo.opcua.stack.core.types.structured.MonitoringParameters;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
 import org.openhab.core.config.core.Configuration;
-import org.openhab.core.library.CoreItemFactory;
 import org.openhab.core.library.types.DateTimeType;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
@@ -69,7 +71,6 @@ import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.binding.builder.ChannelBuilder;
-import org.openhab.core.thing.binding.builder.ThingBuilder;
 import org.openhab.core.thing.type.ChannelTypeUID;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
@@ -103,7 +104,7 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
       updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Invalid identifier type");
       return;
     }
-    if (config.identifier == null && config.stringIdentifier.trim().isEmpty()) {
+    if (config.identifier == null || config.identifier.trim().length() == 0) {
       updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Invalid identifier");
       return;
     }
@@ -149,7 +150,23 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
           }
           updateStatus(ThingStatus.ONLINE);
           logger.debug("Finished initialization of thing handler for node {}, retrieved UA object {}.", nodeId, node);
-          fetchChannels(client, node);
+          fetchChannels(client, node).whenComplete((discoveredChannels, throwable) -> {
+            if (throwable != null) {
+              logger.warn("Could not retrieve object variables from server {}", nodeId, throwable);
+              updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR,
+                  "Remote server returned error while retrieving variables" + throwable.getMessage());
+              return;
+            }
+            if (discoveredChannels != null && !discoveredChannels.isEmpty()) {
+              logger.debug("Updating OPC UA thing {} definition with {} discovered channels.", nodeId, discoveredChannels.size());
+              Thing updatedThing = editThing().withChannels(discoveredChannels).build();
+              updateThing(updatedThing);
+            }
+          }).whenComplete((discoveredThing, throwable) -> {
+            if (throwable != null) {
+              logger.warn("Could not update OPC UA thing {} channels.", nodeId, throwable);
+            }
+          });
         });
       });
     });
@@ -217,13 +234,7 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
     return new MonitoredItemCreateRequest(readValueId, MonitoringMode.Reporting, parameters);
   }
 
-  private void fetchChannels(OpcUaClient client, UaNode node) {
-    List<Channel> channels = getThing().getChannels();
-    // thing has at least one channel defined, do not generate channels
-    if (!channels.isEmpty()) {
-      return;
-    }
-
+  private CompletableFuture<List<Channel>> fetchChannels(OpcUaClient client, UaNode node) {
     BrowseOptions options = new BrowseOptions(
       BrowseDirection.Forward,
       Identifiers.HierarchicalReferences,
@@ -231,16 +242,8 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
       uint(NodeClass.Variable.getValue()),
       uint(0)
     );
-    client.getAddressSpace().browseNodesAsync(node, options).whenComplete((result, error) -> {
-      if (error != null) {
-        logger.warn("Could not retrieve object variables from server {}", nodeId, error);
-        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, "Remote server returned error while retrieving variables" + error.getMessage());
-        return;
-      }
-
-      ThingBuilder thing = editThing();
-      List<Channel> channelDefinitions = new ArrayList<>();
-
+    return client.getAddressSpace().browseNodesAsync(node, options).thenApply(result -> {
+      Set<Channel> channelDefinitions = new LinkedHashSet<>();
       for (UaNode variable : result) {
         NodeId variableNodeId = variable.getNodeId();
         logger.info("Potential channel found {} {}", variableNodeId, variable.getDescription());
@@ -250,16 +253,17 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
         String channelId = variableNodeId.getNamespaceIndex() + "_" + variableNodeId.getIdentifier();
         ChannelUID channelUID = new ChannelUID(getThing().getUID(), channelId);
         ChannelBuilder channelBuilder = determineChannelType(variable, ChannelBuilder.create(channelUID)
-          .withLabel(Optional.ofNullable(variable.getDisplayName().getText()).orElse(nodeId.toString()))
-          .withDescription(Optional.ofNullable(variable.getDescription().getText()).orElse(""))
+          .withLabel(Optional.ofNullable(variable.getDisplayName()).map(LocalizedText::getText).orElse(nodeId.toString()))
+          .withDescription(Optional.ofNullable(variable.getDescription()).map(LocalizedText::getText).orElse(""))
           .withConfiguration(new Configuration(config))
         );
         if (channelBuilder != null) {
-          channelDefinitions.add(channelBuilder.build());
+          if (channelDefinitions.add(channelBuilder.build())) {
+            logger.debug("Discovered channel {} from node {}", channelUID, variableNodeId);
+          }
         }
       }
-
-      updateThing(thing.withChannels(channelDefinitions).build());
+      return new ArrayList<>(channelDefinitions);
     });
   }
 

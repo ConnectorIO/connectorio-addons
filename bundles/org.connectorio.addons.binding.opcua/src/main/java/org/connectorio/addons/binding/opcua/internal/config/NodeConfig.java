@@ -17,21 +17,20 @@
  */
 package org.connectorio.addons.binding.opcua.internal.config;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.connectorio.addons.binding.config.Configuration;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ByteString;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
-import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 import org.openhab.core.util.HexUtils;
 
 public class NodeConfig implements Configuration {
 
   public int ns;
   public IdentifierType identifierType;
-  public Integer identifier;
-  public String stringIdentifier = "";
+  public String identifier;
   public long publishInterval = 0L;
 
   public enum IdentifierType {
@@ -41,13 +40,17 @@ public class NodeConfig implements Configuration {
   public NodeId createNodeId() {
     switch (this.identifierType) {
       case i:
-        return new NodeId(this.ns, UInteger.valueOf(this.identifier));
+        try {
+          return new NodeId(this.ns, new BigDecimal(this.identifier.trim()).intValue());
+        } catch (NumberFormatException e) {
+          return null;
+        }
       case s:
-        return new NodeId(this.ns, this.stringIdentifier);
+        return new NodeId(this.ns, this.identifier);
       case g:
-        return new NodeId(this.ns, UUID.fromString(this.stringIdentifier));
+        return new NodeId(this.ns, UUID.fromString(this.identifier));
       case b:
-        return new NodeId(this.ns, ByteString.of(HexUtils.hexToBytes(this.stringIdentifier)));
+        return new NodeId(this.ns, ByteString.of(HexUtils.hexToBytes(this.identifier)));
     }
     return null;
   }
