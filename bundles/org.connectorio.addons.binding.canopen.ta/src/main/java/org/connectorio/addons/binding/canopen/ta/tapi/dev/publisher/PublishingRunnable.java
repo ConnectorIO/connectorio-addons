@@ -22,6 +22,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.plc4x.java.canopen.readwrite.CANOpenService;
 import org.apache.plc4x.java.spi.generation.WriteBuffer;
 import org.apache.plc4x.java.spi.generation.WriteBufferByteBased;
+import org.apache.plc4x.java.spi.values.PlcRawByteArray;
 import org.apache.plc4x.java.spi.values.PlcSINT;
 import org.apache.plc4x.java.spi.values.PlcValues;
 import org.connectorio.addons.binding.canopen.api.CoNode;
@@ -40,10 +41,7 @@ public abstract class PublishingRunnable implements Runnable {
   protected final void send(int nodeId, CANOpenService service, WriteBufferByteBased buffer) {
     byte[] data = buffer.getBytes();
     logger.trace("Send to node {} {} (cob {}) data: {}", nodeId, service, Integer.toHexString(service.getMin() + nodeId), Hex.encodeHexString(data));
-    node.getConnection().send(nodeId, service, PlcValues.of(
-      new PlcSINT(data[0]), new PlcSINT(data[1]), new PlcSINT(data[2]), new PlcSINT(data[3]),
-      new PlcSINT(data[4]), new PlcSINT(data[5]), new PlcSINT(data[6]), new PlcSINT(data[7])
-    ));
+    node.getConnection().send(nodeId, service, new PlcRawByteArray(data));
   }
 
   protected boolean hasKeyInRange(Map<Integer, ?> elements, int start, int limit) {

@@ -31,6 +31,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.plc4x.java.canopen.readwrite.CANOpenService;
+import org.apache.plc4x.java.spi.values.PlcRawByteArray;
 import org.apache.plc4x.java.spi.values.PlcUSINT;
 import org.apache.plc4x.java.spi.values.PlcValues;
 import org.connectorio.addons.binding.canopen.api.CoNode;
@@ -249,29 +250,29 @@ public abstract class TADevice {
   }
 
   public void login() {
-    node.getConnection().send(clientId, CANOpenService.RECEIVE_PDO_3, PlcValues.of(
-      new PlcUSINT(0x80 + node.getNodeId()),
-      new PlcUSINT(0x00),
-      new PlcUSINT(0x1F),
-      new PlcUSINT(0x00),
-      new PlcUSINT(node.getNodeId()),
-      new PlcUSINT(clientId),
-      new PlcUSINT(0x80),
-      new PlcUSINT(0x12)
-    ));
+    node.getConnection().send(clientId, CANOpenService.RECEIVE_PDO_3, new PlcRawByteArray(new byte[] {
+      (byte) (0x80 + node.getNodeId()),
+      (byte) 0x00,
+      (byte) 0x1F,
+      (byte) 0x00,
+      (byte) node.getNodeId(),
+      (byte) clientId,
+      (byte) 0x80,
+      (byte) 0x12
+    }));
   }
 
   public void logout() {
-    node.getConnection().send(clientId, CANOpenService.RECEIVE_PDO_3, PlcValues.of(
-      new PlcUSINT(0x80 + node.getNodeId()),
-      new PlcUSINT(0x01),
-      new PlcUSINT(0x1F),
-      new PlcUSINT(0x00),
-      new PlcUSINT(node.getNodeId()),
-      new PlcUSINT(clientId),
-      new PlcUSINT(0x80),
-      new PlcUSINT(0x12)
-    ));
+    node.getConnection().send(clientId, CANOpenService.RECEIVE_PDO_3, new PlcRawByteArray(new byte[]{
+      (byte) (0x80 + node.getNodeId()),
+      (byte) 0x01,
+      (byte) 0x1F,
+      (byte) 0x00,
+      (byte) node.getNodeId(),
+      (byte) clientId,
+      (byte) 0x80,
+      (byte) 0x12
+    }));
   }
 
   public void close() {
@@ -423,16 +424,16 @@ public abstract class TADevice {
 
   private void reloadOutputs() {
     logger.info("Reload {} outputs.", node.getNodeId());
-    node.getConnection().send(0, CANOpenService.TRANSMIT_PDO_4, PlcValues.of(
-      new PlcUSINT(0x80 + node.getNodeId()),
-      new PlcUSINT(0x01),
-      new PlcUSINT(0x4e),
-      new PlcUSINT(0x01),
-      new PlcUSINT(0x01),
-      new PlcUSINT(0x00),
-      new PlcUSINT(0x00),
-      new PlcUSINT(0x00)
-    ));
+    node.getConnection().send(0, CANOpenService.TRANSMIT_PDO_4, new PlcRawByteArray(new byte[]{
+        (byte) (0x80 + node.getNodeId()),
+        (byte) 0x01,
+        (byte) 0x4e,
+        (byte) 0x01,
+        (byte) 0x01,
+        (byte) 0x00,
+        (byte) 0x00,
+        (byte) 0x00
+    }));
   }
 
   private void scanFunctions() {

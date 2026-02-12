@@ -29,6 +29,7 @@ import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.SerializationException;
 import org.apache.plc4x.java.spi.generation.WriteBuffer;
 import org.apache.plc4x.java.spi.generation.WriteBufferByteBased;
+import org.apache.plc4x.java.spi.values.PlcRawByteArray;
 import org.apache.plc4x.java.spi.values.PlcSINT;
 import org.apache.plc4x.java.spi.values.PlcValues;
 import org.connectorio.addons.binding.canopen.api.CoNode;
@@ -104,16 +105,7 @@ public class CoPdoTransmitHandler extends AbstractPdoHandler<CoPdoConfig> implem
   }
 
   private PlcValue toPlcValue(byte[] data) {
-    return PlcValues.of(
-      new PlcSINT(data.length > 0 ? data[0] : 0),
-      new PlcSINT(data.length > 1 ? data[1] : 0),
-      new PlcSINT(data.length > 2 ? data[2] : 0),
-      new PlcSINT(data.length > 3 ? data[3] : 0),
-      new PlcSINT(data.length > 4 ? data[4] : 0),
-      new PlcSINT(data.length > 5 ? data[5] : 0),
-      new PlcSINT(data.length > 6 ? data[6] : 0),
-      new PlcSINT(data.length > 7 ? data[7] : 0)
-    );
+    return new PlcRawByteArray(data);
   }
 
   private void writeState(WriteBuffer buffer, CANOpenDataType type, Command command) throws SerializationException {

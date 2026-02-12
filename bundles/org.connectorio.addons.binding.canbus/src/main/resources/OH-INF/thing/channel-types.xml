@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright (C) 2023-2023 ConnectorIO Sp. z o.o.
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -
+ - SPDX-License-Identifier: Apache-2.0
+ -->
+<thing:thing-descriptions bindingId="co7io-canbus"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+  xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+  <channel-type id="switch">
+    <item-type>Switch</item-type>
+    <label>Switch</label>
+    <description>Switchable value which can be described using two values - on and off.</description>
+    <config-description>
+      <parameter name="offset" type="integer">
+        <label>Bit offset</label>
+        <description>Bit offset from beginning of data section (counted from 0).</description>
+      </parameter>
+      <parameter name="onValue" type="text">
+        <label>On value</label>
+        <description>
+          Value which indicates 'ON' state, described using bit template.
+        </description>
+      </parameter>
+      <parameter name="offValue" type="text">
+        <label>Off value</label>
+        <description>Value which indicates 'OFF' state, described using bit template.</description>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="contact">
+    <item-type>Contact</item-type>
+    <label>Contact</label>
+    <description>Contact which can be described using two values - open and closed.</description>
+    <config-description>
+      <parameter name="offset" type="integer">
+        <label>Bit offset</label>
+        <description>Bit offset from beginning of data section (counted from 0).</description>
+      </parameter>
+      <parameter name="openValue" type="text">
+        <label>Open value</label>
+        <description>Value which indicates 'OPEN' state, described using bit template.</description>
+      </parameter>
+      <parameter name="closedValue" type="text">
+        <label>Closed value</label>
+        <description>Value which indicates 'CLOSED' state, described using bit template.</description>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="number">
+    <item-type>Number</item-type>
+    <label>Number</label>
+    <description>Numeric value interpreted according to typical binary encoding scheme.</description>
+    <config-description>
+      <parameter name="offset" type="integer">
+        <label>Bit offset</label>
+        <description>Bit offset from beginning of data section (counted from 0).</description>
+      </parameter>
+      <parameter name="length" type="integer">
+        <label>Bit length</label>
+        <description>Number of bits which should be read or written into message.</description>
+      </parameter>
+      <parameter name="type" type="text">
+        <label>Type</label>
+        <description>Encoding of data and its endianness.</description>
+        <options>
+          <option value="UNSIGNED8">UNSIGNED8 (up to 8 bits)</option>
+          <option value="UNSIGNED16">UNSIGNED16 (up to 16 bits)</option>
+          <option value="UNSIGNED32">UNSIGNED32 (up to 32 bits)</option>
+          <option value="UNSIGNED64">UNSIGNED64 (up to 64 bits)</option>
+          <option value="INTEGER8">INTEGER8 (up to 8 bits)</option>
+          <option value="INTEGER16">INTEGER16 (up to 16 bits)</option>
+          <option value="INTEGER32">INTEGER32 (up to 32 bits)</option>
+          <option value="INTEGER64">INTEGER64 (up to 64 bits)</option>
+          <option value="REAL32">REAL32 (up to 32 bits)</option>
+          <option value="REAL64">REAL64 (up to 64 bits)</option>
+        </options>
+      </parameter>
+      <parameter name="littleEndian" type="boolean">
+        <label>Little endian</label>
+        <description>
+          Switch little endian encoding for written/received values.
+          By default, all mappings are expected to be big endian.
+        </description>
+        <default>false</default>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+  <channel-type id="byte">
+    <item-type>Image</item-type>
+    <label>Byte sequence</label>
+    <description>Raw sequence of data, with no processing values are communicated using RawType (byte sequence).</description>
+    <config-description>
+      <parameter name="offset" type="integer">
+        <label>Bit offset</label>
+        <description>Bit offset from beginning of data section (counted from 0).</description>
+      </parameter>
+      <parameter name="length" type="integer">
+        <label>Bit length</label>
+        <description>Number of bits which should be read or written into message.</description>
+      </parameter>
+    </config-description>
+  </channel-type>
+
+</thing:thing-descriptions>
