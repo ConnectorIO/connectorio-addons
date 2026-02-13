@@ -23,11 +23,10 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -243,28 +242,56 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
       uint(0)
     );
     return client.getAddressSpace().browseNodesAsync(node, options).thenApply(result -> {
-      Set<Channel> channelDefinitions = new LinkedHashSet<>();
+      Map<ChannelUID, Channel> channelDefinitions = new LinkedHashMap<>();
       for (UaNode variable : result) {
         NodeId variableNodeId = variable.getNodeId();
         logger.info("Potential channel found {} {}", variableNodeId, variable.getDescription());
         Map<String, Object> config = NodeConfig.createNodeConfig(variableNodeId);
 
-        // todo finish channel construction
-        String channelId = variableNodeId.getNamespaceIndex() + "_" + variableNodeId.getIdentifier();
-        ChannelUID channelUID = new ChannelUID(getThing().getUID(), channelId);
+        ChannelUID channelUID = new ChannelUID(getThing().getUID(), channelId(variableNodeId));
         ChannelBuilder channelBuilder = determineChannelType(variable, ChannelBuilder.create(channelUID)
           .withLabel(Optional.ofNullable(variable.getDisplayName()).map(LocalizedText::getText).orElse(nodeId.toString()))
           .withDescription(Optional.ofNullable(variable.getDescription()).map(LocalizedText::getText).orElse(""))
           .withConfiguration(new Configuration(config))
         );
         if (channelBuilder != null) {
-          if (channelDefinitions.add(channelBuilder.build())) {
-            logger.debug("Discovered channel {} from node {}", channelUID, variableNodeId);
-          }
+          Channel channel = channelBuilder.build();
+          appendChannel(channelDefinitions, channelUID, channel, variableNodeId);
         }
       }
-      return new ArrayList<>(channelDefinitions);
+      return new ArrayList<>(channelDefinitions.values());
     });
+  }
+
+  private void appendChannel(Map<ChannelUID, Channel> channelDefinitions, ChannelUID channelUID,
+      Channel channel, NodeId variableNodeId) {
+    if (!channelDefinitions.containsKey(channelUID)) {
+      logger.debug("Discovered channel {} from node {}", channelUID, variableNodeId);
+      channelDefinitions.put(channelUID, channel);
+    } else {
+      // generate unique id by appending sequence number to the end of ID
+      ChannelUID uniqueId =  channelUID;
+      int seq = 0;
+      do {
+        uniqueId = new ChannelUID(uniqueId.getThingUID(), uniqueId.getId() + "_" + seq++);
+      } while (channelDefinitions.containsKey(uniqueId));
+      logger.debug("Detected duplicate channel ID {} from node {}, using channel {} instead", channelUID, variableNodeId, uniqueId);
+
+      Channel uniqueChannel = ChannelBuilder.create(uniqueId)
+          .withType(channel.getChannelTypeUID())
+          .withLabel(channel.getLabel())
+          .withDescription(channel.getDescription())
+          .withConfiguration(channel.getConfiguration())
+          .withKind(channel.getKind())
+          .build();
+      appendChannel(channelDefinitions, uniqueId, uniqueChannel, variableNodeId);
+    }
+  }
+
+  private String channelId(NodeId nodeId) {
+    String channelId = nodeId.getNamespaceIndex() + "_";
+    String id = (nodeId.getIdentifier().toString()).replaceAll("\\W+", "_");
+    return channelId + id;
   }
 
   private ChannelBuilder determineChannelType(UaNode node, ChannelBuilder channelBuilder) {
