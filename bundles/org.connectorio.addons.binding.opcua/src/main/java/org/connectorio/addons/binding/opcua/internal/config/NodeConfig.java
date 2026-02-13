@@ -21,17 +21,16 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.connectorio.addons.binding.config.Configuration;
+import org.connectorio.addons.binding.config.PollingConfiguration;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ByteString;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.openhab.core.util.HexUtils;
 
-public class NodeConfig implements Configuration {
+public class NodeConfig extends PollingConfiguration {
 
   public int ns;
   public IdentifierType identifierType;
   public String identifier;
-  public long publishInterval = 0L;
 
   public enum IdentifierType {
     i, s, g, b;

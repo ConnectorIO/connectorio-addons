@@ -30,7 +30,9 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.connectorio.addons.binding.config.PollingConfiguration;
 import org.connectorio.addons.binding.handler.GenericThingHandlerBase;
+import org.connectorio.addons.binding.opcua.internal.config.ClientConfig;
 import org.connectorio.addons.binding.opcua.internal.config.NodeConfig;
 import org.eclipse.milo.opcua.sdk.client.AddressSpace.BrowseOptions;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
@@ -127,8 +129,9 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
             this.nodeMap.put(nodeId, channel.getUID());
           }
 
+          Long refreshInterval = bridge.getBridgeConfig().map(cfg -> cfg.refreshInterval).orElse(1000L);
           subscriptionManager = client.getSubscriptionManager();
-          subscriptionManager.createSubscription(1000).whenComplete((subscription, failure) -> {
+          subscriptionManager.createSubscription(refreshInterval).whenComplete((subscription, failure) -> {
             if (failure != null) {
               logger.error("Failed to initialize subscription", failure);
               return;
@@ -278,12 +281,12 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
       logger.debug("Detected duplicate channel ID {} from node {}, using channel {} instead", channelUID, variableNodeId, uniqueId);
 
       Channel uniqueChannel = ChannelBuilder.create(uniqueId)
-          .withType(channel.getChannelTypeUID())
-          .withLabel(channel.getLabel())
-          .withDescription(channel.getDescription())
-          .withConfiguration(channel.getConfiguration())
-          .withKind(channel.getKind())
-          .build();
+        .withType(channel.getChannelTypeUID())
+        .withLabel(channel.getLabel())
+        .withDescription(channel.getDescription())
+        .withConfiguration(channel.getConfiguration())
+        .withKind(channel.getKind())
+        .build();
       appendChannel(channelDefinitions, uniqueId, uniqueChannel, variableNodeId);
     }
   }
