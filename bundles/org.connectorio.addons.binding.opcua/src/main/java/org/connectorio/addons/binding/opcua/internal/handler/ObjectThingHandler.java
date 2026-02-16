@@ -19,20 +19,22 @@ package org.connectorio.addons.binding.opcua.internal.handler;
 
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
 
+import java.math.BigInteger;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.connectorio.addons.binding.config.PollingConfiguration;
 import org.connectorio.addons.binding.handler.GenericThingHandlerBase;
-import org.connectorio.addons.binding.opcua.internal.config.ClientConfig;
 import org.connectorio.addons.binding.opcua.internal.config.NodeConfig;
 import org.eclipse.milo.opcua.sdk.client.AddressSpace.BrowseOptions;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
@@ -52,6 +54,9 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UByte;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseDirection;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.MonitoringMode;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.NodeClass;
@@ -75,6 +80,7 @@ import org.openhab.core.thing.binding.builder.ChannelBuilder;
 import org.openhab.core.thing.type.ChannelTypeUID;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
+import org.openhab.core.types.UnDefType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -373,15 +379,29 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
     if (channelMap != null && channelMap.containsKey(channelUID)) {
       // we have node for this channel
       NodeId nodeId = channelMap.get(channelUID);
-      DataValue dataValue = mapCommand(command);
+      DataValue dataValue = Optional.ofNullable(getThing().getChannel(channelUID))
+        .map(Channel::getChannelTypeUID)
+        .map(type -> mapCommand(command, type))
+        .orElse(null);
 
       if (dataValue == null) {
-        logger.warn("Write of value {} is not supported. Node {} will not be updated", command, nodeId);
+        logger.warn("Write of value {} (type {}) is not supported. Channel {}, for node {} will not be updated", command,
+            command.getClass().getName(), channelUID, nodeId);
         return;
       }
-      clientCompletionStage.thenAccept(client -> {
-        client.writeValue(nodeId, dataValue);
-      });
+      clientCompletionStage.thenCompose(client -> client.writeValue(nodeId, dataValue))
+        .whenComplete((result, throwable) -> {
+          if (throwable != null) {
+            logger.warn("Error writing value {} for channel {} of node {}", command, channelUID, nodeId, throwable);
+            return;
+          }
+
+          if (!result.isGood()) {
+            logger.debug("Failed to write value {} to channel {} for node {}: {}", command, channelUID, nodeId, result);
+          } else {
+            logger.trace("Successful write of value {} from channel {} to node {}", command, channelUID, nodeId);
+          }
+        });
       return;
     }
 
@@ -422,20 +442,73 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
     return null;
   }
 
-  private DataValue mapCommand(Command command) {
-    if (command instanceof OnOffType) {
-      Variant variant = new Variant(command == OnOffType.ON);
-      return new DataValue(variant);
+  private DataValue mapCommand(Command command, ChannelTypeUID type) {
+    if (!(command instanceof State)) {
+      return null;
     }
-    if (command instanceof OpenClosedType) {
-      Variant variant = new Variant(command == OpenClosedType.OPEN);
-      return new DataValue(variant);
+
+    String channelType = type.getId();
+
+    State state = (State) command;
+    Variant variant = null;
+    Variant nullValue = Variant.NULL_VALUE;
+    if ("boolean".equals(channelType)) {
+      variant = new Variant(state.as(OnOffType.class) == OnOffType.ON);
     }
-    if (command instanceof StringType) {
-      Variant variant = new Variant(command.toString());
-      return new DataValue(variant);
+    if ("signed-byte".equals(channelType)) {
+      DecimalType decimal = state.as(DecimalType.class);
+      variant = decimal == null ? nullValue : new Variant(decimal.byteValue());
     }
-    return null;
+    if ("unsigned-byte".equals(channelType)) {
+      DecimalType decimal = state.as(DecimalType.class);
+      variant = decimal == null ? nullValue : new Variant(Unsigned.ubyte(decimal.byteValue()));
+    }
+    if ("int16".equals(channelType)) {
+      DecimalType decimal = state.as(DecimalType.class);
+      variant = decimal == null ? nullValue : new Variant(decimal.intValue());
+    }
+    if ("uint16".equals(channelType) || "int32".equals(channelType)) {
+      DecimalType decimal = state.as(DecimalType.class);
+      variant = decimal == null ? nullValue : new Variant(decimal.intValue());
+    }
+    if ("uint32".equals(channelType) || "int64".equals(channelType)) {
+      DecimalType decimal = state.as(DecimalType.class);
+      variant = decimal == null ? nullValue : new Variant(decimal.longValue());
+    }
+    if ("uint64".equals(channelType)) {
+      DecimalType decimal = state.as(DecimalType.class);
+      variant = decimal == null ? nullValue : new Variant(Unsigned.ulong(decimal.toBigDecimal().toBigInteger()));
+    }
+    if ("float".equals(channelType)) {
+      DecimalType decimal = state.as(DecimalType.class);
+      variant = decimal == null ? nullValue : new Variant(decimal.floatValue());
+    }
+    if ("double".equals(channelType)) {
+      DecimalType decimal = state.as(DecimalType.class);
+      variant = decimal == null ? nullValue : new Variant(decimal.doubleValue());
+    }
+    if ("string".equals(channelType)) {
+      StringType string = state.as(StringType.class);
+      variant = string == null ? nullValue : new Variant(string.toString());
+    }
+    if ("datetime".equals(channelType)) {
+      DateTimeType dateTime = state.as(DateTimeType.class);
+      if (dateTime != null) {
+        variant = new Variant(new DateTime(dateTime.getZonedDateTime().toInstant()));
+      } else {
+        variant = nullValue;
+      }
+    }
+    if ("guid".equals(channelType)) {
+      StringType string = state.as(StringType.class);
+      variant = string == null ? nullValue : new Variant(string.toString());
+    }
+    if ("byte-string".equals(channelType)) {
+      StringType string = state.as(StringType.class);
+      variant = string == null ? nullValue : new Variant(string.toString());
+    }
+
+    return variant == null ? null : new DataValue(variant);
   }
 
 }
