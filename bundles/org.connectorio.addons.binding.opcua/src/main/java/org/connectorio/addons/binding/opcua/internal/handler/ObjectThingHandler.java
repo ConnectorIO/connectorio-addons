@@ -392,7 +392,12 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
             logger.warn("Error writing value {} for channel {} of node {}", command, channelUID, nodeId, throwable);
             return;
           }
-          logger.debug("Status after write of value {} to channel {} for node {}: {}", command, channelUID, nodeId, result.getValue());
+
+          if (!result.isGood()) {
+            logger.debug("Failed to write value {} to channel {} for node {}: {}", command, channelUID, nodeId, result);
+          } else {
+            logger.trace("Successful write of value {} from channel {} to node {}", command, channelUID, nodeId);
+          }
         });
       return;
     }
