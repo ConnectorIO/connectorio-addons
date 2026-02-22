@@ -19,6 +19,7 @@ package org.connectorio.addons.binding.opcua.internal.handler;
 
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -55,6 +56,8 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UByte;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.ULong;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseDirection;
@@ -442,7 +445,7 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
     return null;
   }
 
-  private DataValue mapCommand(Command command, ChannelTypeUID type) {
+  static DataValue mapCommand(Command command, ChannelTypeUID type) {
     if (!(command instanceof State)) {
       return null;
     }
@@ -453,7 +456,16 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
     Variant variant = null;
     Variant nullValue = Variant.NULL_VALUE;
     if ("boolean".equals(channelType)) {
-      variant = new Variant(state.as(OnOffType.class) == OnOffType.ON);
+      if (state instanceof OnOffType) {
+        variant = new Variant(state.as(OnOffType.class) == OnOffType.ON);
+      } else if (state instanceof OpenClosedType) {
+        variant = new Variant(state.as(OpenClosedType.class) == OpenClosedType.OPEN);
+      } else {
+        DecimalType decimalType = state.as(DecimalType.class);
+        if (decimalType != null) {
+          variant = new Variant(!decimalType.toBigDecimal().equals(BigDecimal.ZERO));
+        }
+      }
     }
     if ("signed-byte".equals(channelType)) {
       DecimalType decimal = state.as(DecimalType.class);
@@ -461,23 +473,31 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
     }
     if ("unsigned-byte".equals(channelType)) {
       DecimalType decimal = state.as(DecimalType.class);
-      variant = decimal == null ? nullValue : new Variant(Unsigned.ubyte(decimal.byteValue()));
+      variant = decimal == null ? nullValue : new Variant(Unsigned.ubyte(0xFF & decimal.byteValue()));
     }
     if ("int16".equals(channelType)) {
       DecimalType decimal = state.as(DecimalType.class);
-      variant = decimal == null ? nullValue : new Variant(decimal.intValue());
+      variant = decimal == null ? nullValue : new Variant(decimal.shortValue());
     }
-    if ("uint16".equals(channelType) || "int32".equals(channelType)) {
+    if ("uint16".equals(channelType)) {
+      DecimalType decimal = state.as(DecimalType.class);
+      variant = decimal == null ? nullValue : new Variant(UShort.valueOf(0xFF & decimal.intValue()));
+    }
+    if ("int32".equals(channelType)) {
       DecimalType decimal = state.as(DecimalType.class);
       variant = decimal == null ? nullValue : new Variant(decimal.intValue());
     }
-    if ("uint32".equals(channelType) || "int64".equals(channelType)) {
+    if ("uint32".equals(channelType)) {
+      DecimalType decimal = state.as(DecimalType.class);
+      variant = decimal == null ? nullValue : new Variant(UInteger.valueOf(0xFF & decimal.intValue()));
+    }
+    if ("int64".equals(channelType)) {
       DecimalType decimal = state.as(DecimalType.class);
       variant = decimal == null ? nullValue : new Variant(decimal.longValue());
     }
     if ("uint64".equals(channelType)) {
       DecimalType decimal = state.as(DecimalType.class);
-      variant = decimal == null ? nullValue : new Variant(Unsigned.ulong(decimal.toBigDecimal().toBigInteger()));
+      variant = decimal == null ? nullValue : new Variant(ULong.valueOf(Long.toUnsignedString(decimal.longValue())));
     }
     if ("float".equals(channelType)) {
       DecimalType decimal = state.as(DecimalType.class);
@@ -488,8 +508,14 @@ public class ObjectThingHandler extends GenericThingHandlerBase<ClientBridgeHand
       variant = decimal == null ? nullValue : new Variant(decimal.doubleValue());
     }
     if ("string".equals(channelType)) {
-      StringType string = state.as(StringType.class);
-      variant = string == null ? nullValue : new Variant(string.toString());
+      StringType stringType = state.as(StringType.class);
+      String string = null;
+      if (stringType != null) {
+        string = stringType.toString();
+      } else {
+        string = state.toString();
+      }
+      variant = string == null ? nullValue : new Variant(string);
     }
     if ("datetime".equals(channelType)) {
       DateTimeType dateTime = state.as(DateTimeType.class);
