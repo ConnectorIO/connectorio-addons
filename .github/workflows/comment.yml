@@ -1,0 +1,212 @@
+name: Comment Bot - Retest & Rebuild
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  actions: write
+  issues: write
+
+jobs:
+  bot-commands:
+    if: github.event.issue.pull_request && contains('/retest /rebuild', github.event.comment.body)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Parse command
+        id: parse
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.comment.body.trim().toLowerCase();
+            const command = body.split(/\s+/)[0];
+            
+            if (!['/retest', '/rebuild'].includes(command)) {
+              core.setFailed(`Unknown command: ${command}`);
+              return;
+            }
+            
+            core.setOutput('command', command);
+            console.log(`Command received: ${command}`);
+
+      - name: Verify permissions
+        id: verify
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const commenter = context.payload.comment.user.login;
+            const command = '${{ steps.parse.outputs.command }}';
+            
+            // Rebuild requires higher permissions (can be same as retest or stricter)
+            const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              username: commenter
+            });
+            
+            const required = {
+              '/retest': ['admin', 'write', 'maintain', 'triage'],
+              '/rebuild': ['admin', 'write', 'maintain']  // Stricter for rebuild
+            };
+            
+            if (!required[command].includes(permission.permission)) {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `🚫 @${commenter} **${command}** requires \`${command === '/rebuild' ? 'write' : 'triage'}\` access. You have: \`${permission.permission}\``
+              });
+              core.setFailed('Insufficient permissions');
+              return;
+            }
+            
+            core.setOutput('user', commenter);
+            core.setOutput('perm', permission.permission);
+
+      - name: Get PR details
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            
+            core.setOutput('sha', pr.head.sha);
+            core.setOutput('ref', pr.head.ref);
+            core.setOutput('repo', pr.head.repo.full_name);
+
+      - name: Execute /retest
+        if: steps.parse.outputs.command == '/retest'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prRef = '${{ steps.pr.outputs.ref }}';
+            const user = '${{ steps.verify.outputs.user }}';
+            
+            // Find latest workflow run for this branch
+            const runs = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              branch: prRef,
+              per_page: 5,
+              event: 'pull_request'
+            });
+            
+            if (runs.data.workflow_runs.length === 0) {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `⚠️ No workflow runs found for this PR. Try \`/rebuild\` instead.`
+              });
+              return;
+            }
+            
+            // Re-run the most recent one
+            const run = runs.data.workflow_runs[0];
+            await github.rest.actions.reRunWorkflow({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: run.id
+            });
+            
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🔄 **Retest** triggered by @${user}\n\nRe-running workflow: [${run.name} #${run.run_number}](${run.html_url})`
+            });
+
+      - name: Execute /rebuild
+        if: steps.parse.outputs.command == '/rebuild'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prRef = '${{ steps.pr.outputs.ref }}';
+            const prSha = '${{ steps.pr.outputs.sha }}';
+            const user = '${{ steps.verify.outputs.user }}';
+            
+            // Get all workflows
+            const workflows = await github.rest.actions.listRepoWorkflows({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            
+            // Find CI workflows (customize these patterns)
+            const ciWorkflows = workflows.data.workflows.filter(w => 
+              w.path.includes('.github/workflows/pr')
+            );
+            
+            if (ciWorkflows.length === 0) {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `❌ No CI workflow found to rebuild`
+              });
+              return;
+            }
+            
+            const triggered = [];
+            
+            // Trigger workflow_dispatch for each CI workflow
+            for (const workflow of ciWorkflows) {
+              try {
+                await github.rest.actions.createWorkflowDispatch({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  workflow_id: workflow.id,
+                  ref: prRef,  // This creates a NEW run on this ref
+                  inputs: {
+                    pr_number: context.issue.number.toString(),
+                    rebuild_triggered: 'true',
+                    triggered_by: user,
+                    trigger_sha: prSha
+                  }
+                });
+                triggered.push(workflow.name);
+              } catch (error) {
+                // Workflow might not have workflow_dispatch configured
+                console.log(`Failed to trigger ${workflow.name}: ${error.message}`);
+              }
+            }
+            
+            if (triggered.length === 0) {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `⚠️ Could not trigger rebuild. Ensure CI workflows have \`workflow_dispatch\` trigger configured.`
+              });
+              return;
+            }
+            
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🏗️ **Rebuild** triggered by @${user}\n\nFresh builds started for:\n${triggered.map(w => `- **${w}**`).join('\n')}\n\nCommit: \`${prSha.substring(0, 7)}\``
+            });
+
+      - name: React to comment
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'rocket'
+            });
