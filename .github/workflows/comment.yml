@@ -144,7 +144,7 @@ jobs:
             
             // Exclude CI workflows (customize these patterns)
             const ciWorkflows = workflows.data.workflows.filter(w => 
-              !w.path.includes('.github/workflows/pr')
+              w.path.includes('.github/workflows/pr')
             );
             
             if (ciWorkflows.length === 0) {
