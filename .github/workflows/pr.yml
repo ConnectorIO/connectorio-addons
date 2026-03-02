@@ -3,6 +3,20 @@ name: Build pull request
 on:
   pull_request:
     branches: [ "master", "3.*" , "4.*", "5.x" ]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        type: string
+        description: ""
+      rebuild_triggered:
+        type: string
+        description: ""
+      triggered_by:
+        type: string
+        description: ""
+      trigger_sha:
+        type: string
+        description: ""
 
 jobs:
   build:
