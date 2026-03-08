@@ -38,6 +38,10 @@
       <artifactId>org.openhab.core</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.connectorio.addons</groupId>
+      <artifactId>org.connectorio.units</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
