@@ -18,6 +18,6 @@ jobs:
       server_id: co7io-public-snapshots
       deploy: true
       skip_test_publish: false
-      additional_profiles: 'thing4,openhab'
+      additional_profiles: 'thing4,openhab,documentation'
       master_branch: '3'
 
