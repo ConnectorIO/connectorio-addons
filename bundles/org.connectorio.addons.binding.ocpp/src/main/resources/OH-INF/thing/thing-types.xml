@@ -73,7 +73,7 @@
     <config-description>
       <parameter name="serialNumber" type="text" required="true">
         <label>Charge point serial number</label>
-        <description>Serial number of charge point (defined by manufacturer).</description>
+        <description>OCPP identify of the charge point (WebSocket URL path).</description>
       </parameter>
       <parameter name="heartbeat" type="integer" required="false" min="1">
         <label>Heartbeat</label>

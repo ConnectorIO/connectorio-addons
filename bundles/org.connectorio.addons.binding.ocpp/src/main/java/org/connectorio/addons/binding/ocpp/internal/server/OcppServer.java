@@ -68,6 +68,16 @@ public class OcppServer implements OcppSender {
       @Override
       public void newSession(UUID sessionIndex, SessionInformation information) {
         logger.info("New OCPP connection {} with identifier {} from address {}.", sessionIndex, information.getIdentifier(), information.getAddress());
+
+        // Register session immediately on connect, don't wait for BootNotification
+        // as some chargers sends the BootNotification only if the charger is rebooted.
+        String identifier = information.getIdentifier();
+        if (identifier != null && identifier.startsWith("/")) {
+            identifier = identifier.substring(1);
+        }
+        
+        chargerSessionRegistry.registerSession(sessionIndex, 
+            new ChargerReference(identifier));
       }
 
       @Override
