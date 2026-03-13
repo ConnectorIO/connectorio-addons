@@ -21,13 +21,20 @@ public class BootRegistrationAdapter extends CoreEventHandlerAdapter implements
   public BootRegistrationAdapter(Set<String> identifiers) {
     this.identifiers = identifiers;
   }
+  
+  @Override
+  public void registerSession(UUID session, ChargerReference chargerReference) {
+      registrations.put(session, chargerReference);
+  }
 
   @Override
   public BootNotificationConfirmation handleBootNotificationRequest(UUID sessionIndex, BootNotificationRequest request) {
     ZonedDateTime time = ZonedDateTime.now();
-    if (identifiers.isEmpty() || identifiers.contains(request.getChargePointSerialNumber())) {
-      registrations.put(sessionIndex, new ChargerReference(request.getChargePointSerialNumber()));
-      return new BootNotificationConfirmation(time, 60, RegistrationStatus.Accepted);
+    // Session already registered in newSession()
+    
+    ChargerReference registered = registrations.get(sessionIndex);
+    if (identifiers.isEmpty() || (registered != null && identifiers.contains(registered.getSerial()))) {
+    	return new BootNotificationConfirmation(time, 60, RegistrationStatus.Accepted);
     }
 
     // keep charger connected, but not active
