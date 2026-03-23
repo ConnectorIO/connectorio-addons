@@ -96,6 +96,7 @@ public class PercentChannelHandler implements FatekChannelHandler {
   private FatekWriteDataCmd write(PercentType percentage) {
     RegValue value = converter.toValue(percentage);
     if (value instanceof RegValueData) {
+      logger.debug("Creating command to write register {} with value {} ({})", register, value, value.getClass());
       return new FatekWriteDataCmd(null, register, (RegValueData) value);
     }
     return null;
