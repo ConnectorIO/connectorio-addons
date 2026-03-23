@@ -100,6 +100,7 @@ public class ColorChannelHandler implements FatekChannelHandler {
     } else if (command instanceof OnOffType) {
       RegValue value = switcherConverter.toValue(command);
       if (value != null) {
+        logger.debug("Creating command to write register {} with value {} ({})", switcher, value, value.getClass());
         return new FatekWriteDiscreteCmd(null, switcher, value.boolValue());
       }
       return null;
