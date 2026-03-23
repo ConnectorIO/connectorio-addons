@@ -128,7 +128,8 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
       }
       FatekCommand<?> cmd = handler.prepareWrite(command);
       if (cmd == null) {
-        logger.warn("Could not map command {} from channel {} to value supported by PLC. Ignoring this write.", command, channelUID);
+        logger.warn("Could not map command {}({}) from channel {} to value supported by PLC. Ignoring this write.",
+            command, command.getClass(), channelUID);
         return;
       }
 
