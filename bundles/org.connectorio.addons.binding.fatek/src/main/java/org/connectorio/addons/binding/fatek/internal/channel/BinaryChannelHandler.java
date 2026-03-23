@@ -29,9 +29,12 @@ import org.simplify4u.jfatek.FatekWriteDiscreteCmd;
 import org.simplify4u.jfatek.registers.DisReg;
 import org.simplify4u.jfatek.registers.Reg;
 import org.simplify4u.jfatek.registers.RegValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BinaryChannelHandler implements FatekChannelHandler {
 
+  private final Logger logger = LoggerFactory.getLogger(BinaryChannelHandler.class);
   private final DisReg register;
   private final Converter converter;
   private final ChannelUID channel;
@@ -56,6 +59,7 @@ public class BinaryChannelHandler implements FatekChannelHandler {
   public FatekCommand<?> prepareWrite(Command command) {
     RegValue value = converter.toValue(command);
     if (value != null) {
+      logger.debug("Creating command to write register {} with value {} ({})", register, value, value.getClass());
       return new FatekWriteDiscreteCmd(null, register, value.boolValue());
     }
     return null;
