@@ -31,9 +31,12 @@ import org.simplify4u.jfatek.registers.DataReg;
 import org.simplify4u.jfatek.registers.Reg;
 import org.simplify4u.jfatek.registers.RegValue;
 import org.simplify4u.jfatek.registers.RegValueData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DataChannelHandler implements FatekChannelHandler {
 
+  private final Logger logger = LoggerFactory.getLogger(DataChannelHandler.class);
   private final ChannelUID channel;
   private final DataReg register;
   private final Converter converter;
@@ -58,7 +61,8 @@ public class DataChannelHandler implements FatekChannelHandler {
   public FatekCommand<?> prepareWrite(Command command) {
     RegValue value = converter.toValue(command);
     if (value instanceof RegValueData) {
-      return new FatekWriteDataCmd((FatekPLC) null, register, (RegValueData) value);
+      logger.debug("Creating command to write register {} with value {} ({})", register, value, value.getClass());
+      return new FatekWriteDataCmd(null, register, (RegValueData) value);
     }
     return null;
   }
