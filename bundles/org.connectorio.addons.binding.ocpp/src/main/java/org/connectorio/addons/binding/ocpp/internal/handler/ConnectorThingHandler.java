@@ -143,6 +143,13 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
   private static State parse(Double measurement, ChannelUID uid, SampledValue sample) {
     String unit = sample.getUnit();
     if (unit != null) {
+	  // Normalize unit names that don't match JSR-385 format
+	  switch (unit) {
+	    case "Celsius": unit = "°C"; break;
+	    case "Fahrenheit": unit = "°F"; break;
+	    default: break;
+	  }
+
       Quantity<?> quantity = Quantities.getQuantity("1 " + unit);
       return new QuantityType<>(measurement, quantity.getUnit());
     }
