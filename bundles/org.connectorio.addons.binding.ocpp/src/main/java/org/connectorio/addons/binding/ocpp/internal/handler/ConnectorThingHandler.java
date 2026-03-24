@@ -65,7 +65,10 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
 
     // push transaction id
     Integer transactionId = request.getTransactionId();
-    callback.stateUpdated(new ChannelUID(getThing().getUID(), "transactionId"), new DecimalType(transactionId));
+    // transactionId is null outside of an active charge transaction
+    if (transactionId != null) {
+      callback.stateUpdated(new ChannelUID(getThing().getUID(), "transactionId"), new DecimalType(transactionId));
+    }
 
     for (MeterValue value : request.getMeterValue()) {
       ZonedDateTime timestamp = value.getTimestamp();
@@ -140,7 +143,14 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
   private static State parse(Double measurement, ChannelUID uid, SampledValue sample) {
     String unit = sample.getUnit();
     if (unit != null) {
-      ComparableQuantity<?> quantity = Quantities.getQuantity("1 " + unit);
+	  // Normalize unit names that don't match JSR-385 format
+	  switch (unit) {
+	    case "Celsius": unit = "°C"; break;
+	    case "Fahrenheit": unit = "°F"; break;
+	    default: break;
+	  }
+
+      Quantity<?> quantity = Quantities.getQuantity("1 " + unit);
       return new QuantityType<>(measurement, quantity.getUnit());
     }
 
