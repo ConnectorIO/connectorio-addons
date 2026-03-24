@@ -65,7 +65,10 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
 
     // push transaction id
     Integer transactionId = request.getTransactionId();
-    callback.stateUpdated(new ChannelUID(getThing().getUID(), "transactionId"), new DecimalType(transactionId));
+    // transactionId is null outside of an active charge transaction
+    if (transactionId != null) {
+      callback.stateUpdated(new ChannelUID(getThing().getUID(), "transactionId"), new DecimalType(transactionId));
+    }
 
     for (MeterValue value : request.getMeterValue()) {
       ZonedDateTime timestamp = value.getTimestamp();
