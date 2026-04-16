@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.ocpp.internal.server;
 
+import eu.chargetime.ocpp.feature.profile.ClientSmartChargingProfile;
 import eu.chargetime.ocpp.feature.profile.ServerCoreEventHandler;
 import eu.chargetime.ocpp.JSONServer;
 import eu.chargetime.ocpp.NotConnectedException;
@@ -44,6 +45,7 @@ import org.connectorio.addons.binding.ocpp.internal.server.adapter.StatusAdapter
 import org.connectorio.addons.binding.ocpp.internal.server.adapter.TransactionAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import eu.chargetime.ocpp.feature.profile.ServerSmartChargingProfile;
 
 public class OcppServer implements OcppSender {
 
@@ -61,6 +63,9 @@ public class OcppServer implements OcppSender {
 
     CoreEventHandlerWrapper handler = new CoreEventHandlerWrapper(eventHandlers);
     this.server = new JSONServer(new ServerCoreProfile(handler));
+    
+    ServerSmartChargingHandler smartHandler = new ServerSmartChargingHandler();
+    this.server.addFeatureProfile(new ClientSmartChargingProfile(smartHandler));
   }
 
   public void activate() {
