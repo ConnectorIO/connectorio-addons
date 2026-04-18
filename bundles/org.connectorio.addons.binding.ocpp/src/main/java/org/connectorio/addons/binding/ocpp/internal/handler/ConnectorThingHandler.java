@@ -14,24 +14,36 @@ import eu.chargetime.ocpp.model.core.StatusNotificationRequest;
 import eu.chargetime.ocpp.model.core.StopTransactionConfirmation;
 import eu.chargetime.ocpp.model.core.StopTransactionRequest;
 import eu.chargetime.ocpp.model.core.ValueFormat;
+import eu.chargetime.ocpp.model.core.ChargingProfile;
+import eu.chargetime.ocpp.model.core.ChargingProfileKindType;
+import eu.chargetime.ocpp.model.core.ChargingProfilePurposeType;
+import eu.chargetime.ocpp.model.core.ChargingRateUnitType;
+import eu.chargetime.ocpp.model.core.ChargingSchedule;
+import eu.chargetime.ocpp.model.core.ChargingSchedulePeriod;
+import eu.chargetime.ocpp.model.smartcharging.SetChargingProfileRequest;
 import java.time.ZonedDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.measure.Quantity;
 import org.connectorio.addons.binding.handler.GenericThingHandlerBase;
+import org.connectorio.addons.binding.ocpp.OcppBindingConstants;
 import org.connectorio.addons.binding.ocpp.internal.config.ChargerConfig;
 import org.connectorio.addons.binding.ocpp.internal.server.OcppMeasurementMapping;
 import org.connectorio.addons.binding.ocpp.internal.server.listener.MeterValuesHandler;
 import org.connectorio.addons.binding.ocpp.internal.server.listener.StatusNotificationHandler;
 import org.connectorio.addons.binding.ocpp.internal.server.listener.TransactionHandler;
+import org.connectorio.addons.binding.ocpp.internal.OcppSender;
+import org.connectorio.addons.binding.ocpp.internal.server.ChargerReference;
 import org.openhab.core.library.types.DateTimeType;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.types.StringType;
 import org.openhab.core.library.unit.Units;
+import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.UID;
+import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
@@ -44,9 +56,17 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
 
   private final AtomicInteger transactionId = new AtomicInteger();
   private final Logger logger = LoggerFactory.getLogger(ConnectorThingHandler.class);
+  
+  private OcppSender ocppSender;
+  private String chargerSerialNumber;
 
   public ConnectorThingHandler(Thing thing) {
     super(thing);
+  }
+
+  protected void setOcppSender(OcppSender sender, String chargerSerial) {
+    this.ocppSender = sender;
+    this.chargerSerialNumber = chargerSerial;
   }
 
   @Override
@@ -56,7 +76,56 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
 
   @Override
   public void handleCommand(ChannelUID channelUID, Command command) {
+    if (OcppBindingConstants.CHARGE_LIMIT.getAsString().equals(channelUID.getId())) {
+      handleChargeLimitCommand(command);
+    }
+  }
 
+  private void handleChargeLimitCommand(Command command) {
+    double limit;
+    if (command instanceof DecimalType) {
+      limit = ((DecimalType) command).doubleValue();
+    } else if (command instanceof QuantityType) {
+      limit = ((QuantityType<?>) command).doubleValue();
+    } else {
+      logger.warn("Unsupported command type for chargeLimit: {}", command.getClass());
+      return;
+    }
+
+    sendChargingProfile(limit);
+  }
+
+  private void sendChargingProfile(double limit) {
+    if (ocppSender == null || chargerSerialNumber == null) {
+      logger.warn("OcppSender or charger serial not set. Cannot send charging profile.");
+      return;
+    }
+
+    ChargerReference chargerRef = new ChargerReference(chargerSerialNumber);
+
+    // Create charging profile with the specified limit
+    ChargingSchedulePeriod period = new ChargingSchedulePeriod(0, limit);
+    ChargingSchedule schedule = new ChargingSchedule(
+      ChargingRateUnitType.A,
+      new ChargingSchedulePeriod[]{ period }
+    );
+
+    ChargingProfile profile = new ChargingProfile();
+    profile.setChargingProfileId(1);
+    profile.setStackLevel(0);
+    profile.setChargingProfilePurpose(ChargingProfilePurposeType.TxDefaultProfile);
+    profile.setChargingProfileKind(ChargingProfileKindType.Relative);
+    profile.setChargingSchedule(schedule);
+
+    SetChargingProfileRequest setProfileRequest = new SetChargingProfileRequest(1, profile);
+    
+    ocppSender.send(chargerRef, setProfileRequest).whenComplete((confirmation, throwable) -> {
+      if (throwable != null) {
+        logger.warn("Failed to send SetChargingProfile with limit {}", limit, throwable);
+      } else {
+        logger.info("SetChargingProfile with limit {} sent successfully: {}", limit, confirmation);
+      }
+    });
   }
 
   @Override

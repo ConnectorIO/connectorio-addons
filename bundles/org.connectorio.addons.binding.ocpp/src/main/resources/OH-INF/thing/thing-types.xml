@@ -223,6 +223,10 @@
         <label>Voltage</label>
         <description>Instantaneous AC RMS supply voltage</description>
       </channel>
+      <channel id="chargeLimit" typeId="current">
+        <label>Charge Limit</label>
+        <description>Charging current limit in Amperes. Set this to control the maximum charging current.</description>
+      </channel>
     </channels>
 
     <config-description>
