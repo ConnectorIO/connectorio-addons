@@ -75,8 +75,8 @@ public class TAAnalogOutput extends TACanOutputObject<Value<?>> {
     try {
       logger.trace("Encoded value for CAN Output {} is {}", this, Hex.encodeHexString(data));
       ReadBuffer buffer = new ReadBufferByteBased(data, ByteOrder.LITTLE_ENDIAN);
-      this.type = buffer.readUnsignedByte(8); // type
-      this.unit = buffer.readUnsignedByte(8); // unit
+      this.type = buffer.readUnsignedShort(8); // type
+      this.unit = buffer.readUnsignedShort(8); // unit
       int numericValue = parseNumber(buffer, data.length);
 
       if (numericValue > Short.MIN_VALUE && numericValue < Short.MAX_VALUE) {

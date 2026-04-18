@@ -37,6 +37,7 @@
     <module>org.connectorio.addons.itest</module>
     <module>org.connectorio.addons.itest.amsads</module>
     <module>org.connectorio.addons.itest.bacnet</module>
+    <module>org.connectorio.addons.itest.canbus</module>
     <module>org.connectorio.addons.itest.canopen</module>
     <module>org.connectorio.addons.itest.fatek</module>
     <module>org.connectorio.addons.itest.io.transport.serial</module>
