@@ -28,6 +28,7 @@ import eu.chargetime.ocpp.feature.profile.ServerCoreProfile;
 import eu.chargetime.ocpp.model.Confirmation;
 import eu.chargetime.ocpp.model.Request;
 import eu.chargetime.ocpp.model.SessionInformation;
+import eu.chargetime.ocpp.model.core.ChangeConfigurationRequest;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
@@ -54,12 +55,14 @@ public class OcppServer implements OcppSender {
   private final String ip;
   private final int port;
   private final OcppChargerSessionRegistry chargerSessionRegistry;
+  private final String initialOcularEcoMode;
 
   public OcppServer(String ip, int port, OcppChargerSessionRegistry chargerSessionRegistry,
-      Deque<ServerCoreEventHandler> eventHandlers) {
+      Deque<ServerCoreEventHandler> eventHandlers, String initialOcularEcoMode) {
     this.ip = ip;
     this.port = port;
     this.chargerSessionRegistry = chargerSessionRegistry;
+    this.initialOcularEcoMode = initialOcularEcoMode;
 
     CoreEventHandlerWrapper handler = new CoreEventHandlerWrapper(eventHandlers);
     this.server = new JSONServer(new ServerCoreProfile(handler));
@@ -83,6 +86,8 @@ public class OcppServer implements OcppSender {
         
         chargerSessionRegistry.registerSession(sessionIndex, 
             new ChargerReference(identifier));
+        
+        applyOcularEcoMode(sessionIndex, identifier);
       }
 
       @Override
@@ -91,6 +96,45 @@ public class OcppServer implements OcppSender {
         chargerSessionRegistry.removeSession(sessionIndex);
       }
     });
+  }
+  
+  enum EcoMode {
+  	FAST("0"),
+  	SOLAR_ASSIST("1"),
+  	SOLAR_ONLY("2");
+  	
+  	String value;
+  	EcoMode(String value) {
+  		this.value = value;
+  	}
+  }
+
+  private void applyOcularEcoMode(UUID sessionIndex, String mode) {
+    if (initialOcularEcoMode != null && !initialOcularEcoMode.equals("NONE")) {
+      try {
+        changeConfigurationOcularEcoMode(sessionIndex, EcoMode.valueOf(initialOcularEcoMode));
+      } catch (IllegalArgumentException e) {
+        logger.warn("Invalid EcoMode: {}", initialOcularEcoMode);
+      }
+    }
+  }
+  
+  private void changeConfigurationOcularEcoMode(UUID sessionIndex, EcoMode ecoMode) {
+    try {
+      ChangeConfigurationRequest request = new ChangeConfigurationRequest();
+      request.setKey("EcoMode");
+      request.setValue(ecoMode.value);
+      
+      server.send(sessionIndex, request).whenComplete((confirmation, ex) -> {
+        if (ex != null) {
+          logger.warn("ChangeConfiguration failed", ex);
+        } else {
+          logger.info("ChangeConfiguration result: {}", confirmation);
+        }
+      });
+    } catch (Exception e) {
+      logger.error("Error sending ChangeConfiguration", e);
+    }
   }
 
   @Override

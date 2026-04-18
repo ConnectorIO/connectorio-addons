@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.ocpp.internal.handler;
 
+import eu.chargetime.ocpp.NotConnectedException;
 import eu.chargetime.ocpp.feature.profile.ServerCoreEventHandler;
 import eu.chargetime.ocpp.model.Request;
 import java.util.Collection;
@@ -25,11 +26,14 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.stream.Collectors;
 import org.connectorio.addons.binding.handler.GenericBridgeHandlerBase;
 import org.connectorio.addons.binding.ocpp.internal.OcppAttendant;
 import org.connectorio.addons.binding.ocpp.internal.OcppRequestListener;
+import org.connectorio.addons.binding.ocpp.internal.OcppSender;
 import org.connectorio.addons.binding.ocpp.internal.config.ServerConfig;
 import org.connectorio.addons.binding.ocpp.internal.discovery.OcppChargerDiscoveryService;
 import org.connectorio.addons.binding.ocpp.internal.server.ChargerReference;
@@ -47,8 +51,9 @@ import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.binding.ThingHandlerService;
 import org.openhab.core.types.Command;
+import eu.chargetime.ocpp.model.Confirmation;
 
-public class ServerBridgeHandler extends GenericBridgeHandlerBase<ServerConfig> implements OcppAttendant {
+public class ServerBridgeHandler extends GenericBridgeHandlerBase<ServerConfig> implements OcppAttendant, OcppSender {
 
   private final CompositeRequestListener listener = new CompositeRequestListener();
 
@@ -92,7 +97,10 @@ public class ServerBridgeHandler extends GenericBridgeHandlerBase<ServerConfig> 
     eventHandlers.add(bridgeHandler);
     eventHandlers.add(new RequestListenerAdapter(listener));
 
-    server = new OcppServer(address, config.port, bootAdapter, eventHandlers);
+    server = new OcppServer(
+      address, config.port, bootAdapter, eventHandlers,
+      config.initialOcularEcoMode != null ? config.initialOcularEcoMode : "NONE"
+    );
     server.activate();
     updateStatus(ThingStatus.ONLINE);
   }
@@ -151,5 +159,13 @@ public class ServerBridgeHandler extends GenericBridgeHandlerBase<ServerConfig> 
   @Override
   public <T extends Request> void removeRequestListener(OcppRequestListener<T> listener) {
     this.listener.removeRequestListener(listener);
+  }
+
+  @Override
+  public CompletionStage<Confirmation> send(ChargerReference chargerReference, Request request) {
+    if (server == null) {
+      return CompletableFuture.failedFuture(new NotConnectedException());
+    }
+    return server.send(chargerReference, request);
   }
 }

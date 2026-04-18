@@ -44,6 +44,17 @@
         <default>10</default>
         <unitLabel>s</unitLabel>
       </parameter>
+      <parameter name="initialOcularEcoMode" type="text" required="false">
+        <label>Initial Ocular Eco Mode</label>
+        <description>Eco mode to set when chargers connect (FAST, SOLAR_ASSIST, SOLAR_ONLY, or NONE for disabled).</description>
+        <default>NONE</default>
+        <options>
+          <option value="NONE">Disabled</option>
+          <option value="FAST">Fast Charging</option>
+          <option value="SOLAR_ASSIST">Solar Assist</option>
+          <option value="SOLAR_ONLY">Solar Only</option>
+        </options>
+      </parameter>
       <parameter name="chargers" type="text" required="false" multiple="true">
         <label>Charger identities</label>
         <description>
