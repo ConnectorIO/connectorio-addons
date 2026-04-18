@@ -36,4 +36,4 @@ jobs:
       development_version: ${{ inputs.development_version }}
       perform_version: ${{ inputs.perform_version }}
       dry_run: ${{ inputs.dry_run }}
-      additional_profiles: 'thing4,openhab'
+      additional_profiles: 'thing4,openhab,documentation'
