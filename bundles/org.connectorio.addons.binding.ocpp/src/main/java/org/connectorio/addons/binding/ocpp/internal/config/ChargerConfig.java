@@ -20,5 +20,5 @@ package org.connectorio.addons.binding.ocpp.internal.config;
 import org.connectorio.addons.binding.config.Configuration;
 
 public class ChargerConfig implements Configuration {
-
+  public String remoteStartTag = "openhab";
 }

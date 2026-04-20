@@ -24,6 +24,7 @@ import eu.chargetime.ocpp.model.core.RemoteStartTransactionRequest;
 import eu.chargetime.ocpp.model.core.RemoteStopTransactionRequest;
 import eu.chargetime.ocpp.model.smartcharging.SetChargingProfileRequest;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.measure.Quantity;
 import org.connectorio.addons.binding.handler.GenericThingHandlerBase;
@@ -63,7 +64,7 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
   private OcppSender ocppSender;
   private String chargerSerialNumber;
   private Integer currentTransactionId;
-  private String lastTag;
+  private String remoteStartTag;
 
   public ConnectorThingHandler(Thing thing) {
     super(thing);
@@ -76,6 +77,15 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
 
   @Override
   public void initialize() {
+    Optional<ChargerConfig> config = getThingConfig();
+    if (config.isPresent()) {
+      remoteStartTag = config.get().remoteStartTag;
+      if (remoteStartTag == null || remoteStartTag.trim().isEmpty()) {
+        remoteStartTag = "openhab";
+      }
+    } else {
+      remoteStartTag = "openhab";
+    }
     updateStatus(ThingStatus.ONLINE);
   }
 
@@ -108,19 +118,14 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
       return;
     }
 
-    if (lastTag == null || lastTag.trim().isEmpty()) {
-      logger.warn("No tag available for RemoteStartTransaction.");
-      return;
-    }
-
     ChargerReference chargerRef = new ChargerReference(chargerSerialNumber);
-    RemoteStartTransactionRequest request = new RemoteStartTransactionRequest(lastTag);
+    RemoteStartTransactionRequest request = new RemoteStartTransactionRequest(remoteStartTag);
 
     ocppSender.send(chargerRef, request).whenComplete((confirmation, throwable) -> {
       if (throwable != null) {
-        logger.warn("Failed to send RemoteStartTransaction for tag {}", lastTag, throwable);
+        logger.warn("Failed to send RemoteStartTransaction with tag {}", remoteStartTag, throwable);
       } else {
-        logger.info("RemoteStartTransaction for tag {} sent successfully: {}", lastTag, confirmation);
+        logger.info("RemoteStartTransaction with tag {} sent successfully: {}", remoteStartTag, confirmation);
       }
     });
   }
@@ -250,7 +255,6 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
   @Override
   public StartTransactionConfirmation handleStartTransaction(StartTransactionRequest request) {
     String tag = request.getIdTag();
-    lastTag = tag;
 
     ThingHandlerCallback callback = getCallback();
     callback.stateUpdated(new ChannelUID(getThing().getUID(), "idTag"), new StringType(tag));

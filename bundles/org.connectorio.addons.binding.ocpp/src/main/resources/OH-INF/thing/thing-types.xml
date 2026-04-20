@@ -238,6 +238,11 @@
         <label>Connector</label>
         <description>Identifier of connector - starts from 1.</description>
       </parameter>
+      <parameter name="remoteStartTag" type="text" required="false">
+        <label>Remote Start Tag</label>
+        <description>Tag to use for remote start transactions. Defaults to "openhab" if not specified.</description>
+        <default>openhab</default>
+      </parameter>
     </config-description>
 
   </thing-type>
