@@ -115,6 +115,10 @@
         <label>Tag</label>
         <description>Tag identifier.</description>
       </channel>
+      <channel id="charging" typeId="switch">
+        <label>Charging</label>
+        <description>Remote start/stop charging control. Send ON to trigger RemoteStartTransaction and OFF to trigger RemoteStopTransaction.</description>
+      </channel>
       <channel id="timestampStart" typeId="dateTime">
         <label>Start timestamp</label>
         <description>Start timestamp of most recent transaction.</description>

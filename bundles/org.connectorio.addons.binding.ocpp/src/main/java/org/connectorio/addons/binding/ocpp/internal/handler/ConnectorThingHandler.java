@@ -20,6 +20,8 @@ import eu.chargetime.ocpp.model.core.ChargingProfilePurposeType;
 import eu.chargetime.ocpp.model.core.ChargingRateUnitType;
 import eu.chargetime.ocpp.model.core.ChargingSchedule;
 import eu.chargetime.ocpp.model.core.ChargingSchedulePeriod;
+import eu.chargetime.ocpp.model.core.RemoteStartTransactionRequest;
+import eu.chargetime.ocpp.model.core.RemoteStopTransactionRequest;
 import eu.chargetime.ocpp.model.smartcharging.SetChargingProfileRequest;
 import java.time.ZonedDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -45,6 +47,7 @@ import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.UID;
 import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.binding.ThingHandlerCallback;
+import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
 import org.slf4j.Logger;
@@ -59,6 +62,8 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
   
   private OcppSender ocppSender;
   private String chargerSerialNumber;
+  private Integer currentTransactionId;
+  private String lastTag;
 
   public ConnectorThingHandler(Thing thing) {
     super(thing);
@@ -76,9 +81,71 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
 
   @Override
   public void handleCommand(ChannelUID channelUID, Command command) {
-    if (OcppBindingConstants.CHARGE_LIMIT.getAsString().equals(channelUID.getId())) {
+    String channelId = channelUID.getId();
+    if (OcppBindingConstants.CHARGE_LIMIT.getAsString().equals(channelId)) {
       handleChargeLimitCommand(command);
+    } else if (OcppBindingConstants.CHARGING.getAsString().equals(channelId)) {
+      handleChargingCommand(command);
     }
+  }
+
+  private void handleChargingCommand(Command command) {
+    if (!(command instanceof OnOffType)) {
+      logger.warn("Unsupported command type for charging control: {}", command.getClass());
+      return;
+    }
+
+    if (OnOffType.ON.equals(command)) {
+      sendRemoteStartTransaction();
+    } else {
+      sendRemoteStopTransaction();
+    }
+  }
+
+  private void sendRemoteStartTransaction() {
+    if (ocppSender == null || chargerSerialNumber == null) {
+      logger.warn("OcppSender or charger serial not set. Cannot send RemoteStartTransaction.");
+      return;
+    }
+
+    if (lastTag == null || lastTag.trim().isEmpty()) {
+      logger.warn("No tag available for RemoteStartTransaction.");
+      return;
+    }
+
+    ChargerReference chargerRef = new ChargerReference(chargerSerialNumber);
+    RemoteStartTransactionRequest request = new RemoteStartTransactionRequest(lastTag);
+
+    ocppSender.send(chargerRef, request).whenComplete((confirmation, throwable) -> {
+      if (throwable != null) {
+        logger.warn("Failed to send RemoteStartTransaction for tag {}", lastTag, throwable);
+      } else {
+        logger.info("RemoteStartTransaction for tag {} sent successfully: {}", lastTag, confirmation);
+      }
+    });
+  }
+
+  private void sendRemoteStopTransaction() {
+    if (ocppSender == null || chargerSerialNumber == null) {
+      logger.warn("OcppSender or charger serial not set. Cannot send RemoteStopTransaction.");
+      return;
+    }
+
+    if (currentTransactionId == null) {
+      logger.warn("No active transaction found for RemoteStopTransaction.");
+      return;
+    }
+
+    ChargerReference chargerRef = new ChargerReference(chargerSerialNumber);
+    RemoteStopTransactionRequest request = new RemoteStopTransactionRequest(currentTransactionId);
+
+    ocppSender.send(chargerRef, request).whenComplete((confirmation, throwable) -> {
+      if (throwable != null) {
+        logger.warn("Failed to send RemoteStopTransaction for transaction {}", currentTransactionId, throwable);
+      } else {
+        logger.info("RemoteStopTransaction for transaction {} sent successfully: {}", currentTransactionId, confirmation);
+      }
+    });
   }
 
   private void handleChargeLimitCommand(Command command) {
@@ -136,6 +203,7 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
     Integer transactionId = request.getTransactionId();
     // transactionId is null outside of an active charge transaction
     if (transactionId != null) {
+      currentTransactionId = transactionId;
       callback.stateUpdated(new ChannelUID(getThing().getUID(), "transactionId"), new DecimalType(transactionId));
     }
 
@@ -182,9 +250,11 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
   @Override
   public StartTransactionConfirmation handleStartTransaction(StartTransactionRequest request) {
     String tag = request.getIdTag();
+    lastTag = tag;
 
     ThingHandlerCallback callback = getCallback();
     callback.stateUpdated(new ChannelUID(getThing().getUID(), "idTag"), new StringType(tag));
+    callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CHARGING.getAsString()), OnOffType.ON);
     callback.stateUpdated(new ChannelUID(getThing().getUID(), "timestampStart"), new DateTimeType(request.getTimestamp()));
     callback.stateUpdated(new ChannelUID(getThing().getUID(), "meterStart"), new QuantityType<>(request.getMeterStart(), Units.WATT_HOUR));
 
@@ -201,8 +271,10 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
       return new StopTransactionConfirmation();
     }
 
+    currentTransactionId = null;
     ThingHandlerCallback callback = getCallback();
     callback.stateUpdated(new ChannelUID(getThing().getUID(), "idTag"), new StringType(tag));
+    callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CHARGING.getAsString()), OnOffType.OFF);
     callback.stateUpdated(new ChannelUID(getThing().getUID(), "timestampStop"), new DateTimeType(request.getTimestamp()));
     callback.stateUpdated(new ChannelUID(getThing().getUID(), "meterStop"), new QuantityType<>(request.getMeterStop(), Units.WATT_HOUR));
 
