@@ -14,15 +14,6 @@ import eu.chargetime.ocpp.model.core.StatusNotificationRequest;
 import eu.chargetime.ocpp.model.core.StopTransactionConfirmation;
 import eu.chargetime.ocpp.model.core.StopTransactionRequest;
 import eu.chargetime.ocpp.model.core.ValueFormat;
-import eu.chargetime.ocpp.model.core.ChargingProfile;
-import eu.chargetime.ocpp.model.core.ChargingProfileKindType;
-import eu.chargetime.ocpp.model.core.ChargingProfilePurposeType;
-import eu.chargetime.ocpp.model.core.ChargingRateUnitType;
-import eu.chargetime.ocpp.model.core.ChargingSchedule;
-import eu.chargetime.ocpp.model.core.ChargingSchedulePeriod;
-import eu.chargetime.ocpp.model.core.RemoteStartTransactionRequest;
-import eu.chargetime.ocpp.model.core.RemoteStopTransactionRequest;
-import eu.chargetime.ocpp.model.smartcharging.SetChargingProfileRequest;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -66,6 +57,9 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
   private Integer currentTransactionId;
   private String remoteStartTag;
 
+  private final ChargeLimitCommandHandler chargeLimitHandler = new ChargeLimitCommandHandler();
+  private final ChargingCommandHandler chargingHandler = new ChargingCommandHandler();
+
   public ConnectorThingHandler(Thing thing) {
     super(thing);
   }
@@ -93,111 +87,10 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
   public void handleCommand(ChannelUID channelUID, Command command) {
     String channelId = channelUID.getId();
     if (OcppBindingConstants.CHARGE_LIMIT.getAsString().equals(channelId)) {
-      handleChargeLimitCommand(command);
+      chargeLimitHandler.handle(command, ocppSender, chargerSerialNumber);
     } else if (OcppBindingConstants.CHARGING.getAsString().equals(channelId)) {
-      handleChargingCommand(command);
+      chargingHandler.handle(command, ocppSender, chargerSerialNumber, remoteStartTag, currentTransactionId);
     }
-  }
-
-  private void handleChargingCommand(Command command) {
-    if (!(command instanceof OnOffType)) {
-      logger.warn("Unsupported command type for charging control: {}", command.getClass());
-      return;
-    }
-
-    if (OnOffType.ON.equals(command)) {
-      sendRemoteStartTransaction();
-    } else {
-      sendRemoteStopTransaction();
-    }
-  }
-
-  private void sendRemoteStartTransaction() {
-    if (ocppSender == null || chargerSerialNumber == null) {
-      logger.warn("OcppSender or charger serial not set. Cannot send RemoteStartTransaction.");
-      return;
-    }
-
-    ChargerReference chargerRef = new ChargerReference(chargerSerialNumber);
-    RemoteStartTransactionRequest request = new RemoteStartTransactionRequest(remoteStartTag);
-
-    ocppSender.send(chargerRef, request).whenComplete((confirmation, throwable) -> {
-      if (throwable != null) {
-        logger.warn("Failed to send RemoteStartTransaction with tag {}", remoteStartTag, throwable);
-      } else {
-        logger.info("RemoteStartTransaction with tag {} sent successfully: {}", remoteStartTag, confirmation);
-      }
-    });
-  }
-
-  private void sendRemoteStopTransaction() {
-    if (ocppSender == null || chargerSerialNumber == null) {
-      logger.warn("OcppSender or charger serial not set. Cannot send RemoteStopTransaction.");
-      return;
-    }
-
-    if (currentTransactionId == null) {
-      logger.warn("No active transaction found for RemoteStopTransaction.");
-      return;
-    }
-
-    ChargerReference chargerRef = new ChargerReference(chargerSerialNumber);
-    RemoteStopTransactionRequest request = new RemoteStopTransactionRequest(currentTransactionId);
-
-    ocppSender.send(chargerRef, request).whenComplete((confirmation, throwable) -> {
-      if (throwable != null) {
-        logger.warn("Failed to send RemoteStopTransaction for transaction {}", currentTransactionId, throwable);
-      } else {
-        logger.info("RemoteStopTransaction for transaction {} sent successfully: {}", currentTransactionId, confirmation);
-      }
-    });
-  }
-
-  private void handleChargeLimitCommand(Command command) {
-    double limit;
-    if (command instanceof DecimalType) {
-      limit = ((DecimalType) command).doubleValue();
-    } else if (command instanceof QuantityType) {
-      limit = ((QuantityType<?>) command).doubleValue();
-    } else {
-      logger.warn("Unsupported command type for chargeLimit: {}", command.getClass());
-      return;
-    }
-
-    sendChargingProfile(limit);
-  }
-
-  private void sendChargingProfile(double limit) {
-    if (ocppSender == null || chargerSerialNumber == null) {
-      logger.warn("OcppSender or charger serial not set. Cannot send charging profile.");
-      return;
-    }
-
-    ChargerReference chargerRef = new ChargerReference(chargerSerialNumber);
-
-    // Create charging profile with the specified limit
-    ChargingSchedulePeriod period = new ChargingSchedulePeriod(0, limit);
-    ChargingSchedule schedule = new ChargingSchedule(
-      ChargingRateUnitType.A,
-      new ChargingSchedulePeriod[]{ period }
-    );
-
-    ChargingProfile profile = new ChargingProfile();
-    profile.setChargingProfileId(1);
-    profile.setStackLevel(0);
-    profile.setChargingProfilePurpose(ChargingProfilePurposeType.TxDefaultProfile);
-    profile.setChargingProfileKind(ChargingProfileKindType.Relative);
-    profile.setChargingSchedule(schedule);
-
-    SetChargingProfileRequest setProfileRequest = new SetChargingProfileRequest(1, profile);
-    
-    ocppSender.send(chargerRef, setProfileRequest).whenComplete((confirmation, throwable) -> {
-      if (throwable != null) {
-        logger.warn("Failed to send SetChargingProfile with limit {}", limit, throwable);
-      } else {
-        logger.info("SetChargingProfile with limit {} sent successfully: {}", limit, confirmation);
-      }
-    });
   }
 
   @Override
