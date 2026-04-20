@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 public class ChargingCommandHandler {
     private final Logger logger = LoggerFactory.getLogger(ChargingCommandHandler.class);
 
-    public void handle(Command command, CommandContext context) {
+    public void handle(Command command, ConnectorCommandContext context) {
         if (!(command instanceof OnOffType)) {
             logger.warn("Unsupported command type for charging control: {}", command.getClass());
             return;
@@ -25,7 +25,7 @@ public class ChargingCommandHandler {
         }
     }
 
-    private void sendRemoteStartTransaction(CommandContext context) {
+    private void sendRemoteStartTransaction(ConnectorCommandContext context) {
         OcppSender ocppSender = context.getOcppSender();
         String chargerSerialNumber = context.getChargerSerialNumber();
         String remoteStartTag = context.getRemoteStartTag();
@@ -46,7 +46,7 @@ public class ChargingCommandHandler {
         });
     }
 
-    private void sendRemoteStopTransaction(CommandContext context) {
+    private void sendRemoteStopTransaction(ConnectorCommandContext context) {
         OcppSender ocppSender = context.getOcppSender();
         String chargerSerialNumber = context.getChargerSerialNumber();
         Integer currentTransactionId = context.getCurrentTransactionId();

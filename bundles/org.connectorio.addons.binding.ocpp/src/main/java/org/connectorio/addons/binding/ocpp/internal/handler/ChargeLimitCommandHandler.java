@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 public class ChargeLimitCommandHandler {
     private final Logger logger = LoggerFactory.getLogger(ChargeLimitCommandHandler.class);
 
-    public void handle(Command command, CommandContext context) {
+    public void handle(Command command, ConnectorCommandContext context) {
         double limit;
         if (command instanceof DecimalType) {
             limit = ((DecimalType) command).doubleValue();

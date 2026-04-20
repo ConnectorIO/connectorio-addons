@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 import tech.units.indriya.quantity.Quantities;
 
 public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeHandler, ChargerConfig> implements
-  StatusNotificationHandler, TransactionHandler, MeterValuesHandler, CommandContext {
+  StatusNotificationHandler, TransactionHandler, MeterValuesHandler, ConnectorCommandContext {
 
   private final AtomicInteger transactionId = new AtomicInteger();
   private final Logger logger = LoggerFactory.getLogger(ConnectorThingHandler.class);
@@ -57,11 +57,17 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
   private Integer currentTransactionId;
   private String remoteStartTag;
 
-  private final ChargeLimitCommandHandler chargeLimitHandler = new ChargeLimitCommandHandler();
-  private final ChargingCommandHandler chargingHandler = new ChargingCommandHandler();
+  private final ChargeLimitCommandHandler chargeLimitHandler;
+  private final ChargingCommandHandler chargingHandler;
 
   public ConnectorThingHandler(Thing thing) {
+    this(thing, new ChargeLimitCommandHandler(), new ChargingCommandHandler());
+  }
+
+  ConnectorThingHandler(Thing thing, ChargeLimitCommandHandler chargeLimitHandler, ChargingCommandHandler chargingHandler) {
     super(thing);
+    this.chargeLimitHandler = chargeLimitHandler;
+    this.chargingHandler = chargingHandler;
   }
 
   protected void setOcppSender(OcppSender sender, String chargerSerial) {
@@ -95,10 +101,10 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
     if (config.isPresent()) {
       remoteStartTag = config.get().remoteStartTag;
       if (remoteStartTag == null || remoteStartTag.trim().isEmpty()) {
-        remoteStartTag = "openhab";
+        remoteStartTag = ChargerConfig.DEFAULT_REMOTE_START_TAG;
       }
     } else {
-      remoteStartTag = "openhab";
+      remoteStartTag = ChargerConfig.DEFAULT_REMOTE_START_TAG;
     }
     updateStatus(ThingStatus.ONLINE);
   }
