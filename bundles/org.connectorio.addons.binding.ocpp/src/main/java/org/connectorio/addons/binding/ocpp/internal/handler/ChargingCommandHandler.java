@@ -12,20 +12,23 @@ import org.slf4j.LoggerFactory;
 public class ChargingCommandHandler {
     private final Logger logger = LoggerFactory.getLogger(ChargingCommandHandler.class);
 
-    public void handle(Command command, OcppSender ocppSender, String chargerSerialNumber, String remoteStartTag, Integer currentTransactionId) {
+    public void handle(Command command, CommandContext context) {
         if (!(command instanceof OnOffType)) {
             logger.warn("Unsupported command type for charging control: {}", command.getClass());
             return;
         }
 
         if (OnOffType.ON.equals(command)) {
-            sendRemoteStartTransaction(ocppSender, chargerSerialNumber, remoteStartTag);
+            sendRemoteStartTransaction(context);
         } else {
-            sendRemoteStopTransaction(ocppSender, chargerSerialNumber, currentTransactionId);
+            sendRemoteStopTransaction(context);
         }
     }
 
-    private void sendRemoteStartTransaction(OcppSender ocppSender, String chargerSerialNumber, String remoteStartTag) {
+    private void sendRemoteStartTransaction(CommandContext context) {
+        OcppSender ocppSender = context.getOcppSender();
+        String chargerSerialNumber = context.getChargerSerialNumber();
+        String remoteStartTag = context.getRemoteStartTag();
         if (ocppSender == null || chargerSerialNumber == null) {
             logger.warn("OcppSender or charger serial not set. Cannot send RemoteStartTransaction.");
             return;
@@ -43,7 +46,10 @@ public class ChargingCommandHandler {
         });
     }
 
-    private void sendRemoteStopTransaction(OcppSender ocppSender, String chargerSerialNumber, Integer currentTransactionId) {
+    private void sendRemoteStopTransaction(CommandContext context) {
+        OcppSender ocppSender = context.getOcppSender();
+        String chargerSerialNumber = context.getChargerSerialNumber();
+        Integer currentTransactionId = context.getCurrentTransactionId();
         if (ocppSender == null || chargerSerialNumber == null) {
             logger.warn("OcppSender or charger serial not set. Cannot send RemoteStopTransaction.");
             return;

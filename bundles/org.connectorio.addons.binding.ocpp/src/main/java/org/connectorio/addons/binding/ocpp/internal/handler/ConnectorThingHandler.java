@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 import tech.units.indriya.quantity.Quantities;
 
 public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeHandler, ChargerConfig> implements
-  StatusNotificationHandler, TransactionHandler, MeterValuesHandler {
+  StatusNotificationHandler, TransactionHandler, MeterValuesHandler, CommandContext {
 
   private final AtomicInteger transactionId = new AtomicInteger();
   private final Logger logger = LoggerFactory.getLogger(ConnectorThingHandler.class);
@@ -70,6 +70,26 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
   }
 
   @Override
+  public OcppSender getOcppSender() {
+    return ocppSender;
+  }
+
+  @Override
+  public String getChargerSerialNumber() {
+    return chargerSerialNumber;
+  }
+
+  @Override
+  public String getRemoteStartTag() {
+    return remoteStartTag;
+  }
+
+  @Override
+  public Integer getCurrentTransactionId() {
+    return currentTransactionId;
+  }
+
+  @Override
   public void initialize() {
     Optional<ChargerConfig> config = getThingConfig();
     if (config.isPresent()) {
@@ -87,9 +107,9 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
   public void handleCommand(ChannelUID channelUID, Command command) {
     String channelId = channelUID.getId();
     if (OcppBindingConstants.CHARGE_LIMIT.getAsString().equals(channelId)) {
-      chargeLimitHandler.handle(command, ocppSender, chargerSerialNumber);
+      chargeLimitHandler.handle(command, this);
     } else if (OcppBindingConstants.CHARGING.getAsString().equals(channelId)) {
-      chargingHandler.handle(command, ocppSender, chargerSerialNumber, remoteStartTag, currentTransactionId);
+      chargingHandler.handle(command, this);
     }
   }
 

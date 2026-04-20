@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 public class ChargeLimitCommandHandler {
     private final Logger logger = LoggerFactory.getLogger(ChargeLimitCommandHandler.class);
 
-    public void handle(Command command, OcppSender ocppSender, String chargerSerialNumber) {
+    public void handle(Command command, CommandContext context) {
         double limit;
         if (command instanceof DecimalType) {
             limit = ((DecimalType) command).doubleValue();
@@ -28,7 +28,7 @@ public class ChargeLimitCommandHandler {
             logger.warn("Unsupported command type for chargeLimit: {}", command.getClass());
             return;
         }
-        sendChargingProfile(limit, ocppSender, chargerSerialNumber);
+        sendChargingProfile(limit, context.getOcppSender(), context.getChargerSerialNumber());
     }
 
     private void sendChargingProfile(double limit, OcppSender ocppSender, String chargerSerialNumber) {
