@@ -28,25 +28,14 @@ import eu.chargetime.ocpp.feature.profile.ServerCoreProfile;
 import eu.chargetime.ocpp.model.Confirmation;
 import eu.chargetime.ocpp.model.Request;
 import eu.chargetime.ocpp.model.SessionInformation;
-import eu.chargetime.ocpp.model.core.ChangeConfigurationRequest;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Deque;
-import java.util.LinkedList;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import org.connectorio.addons.binding.ocpp.internal.OcppSender;
-import org.connectorio.addons.binding.ocpp.internal.server.adapter.BootConfigAdapter;
-import org.connectorio.addons.binding.ocpp.internal.server.adapter.HearbeatAdapter;
-import org.connectorio.addons.binding.ocpp.internal.server.adapter.AuthorizationIdTagAdapter;
-import org.connectorio.addons.binding.ocpp.internal.server.adapter.BootRegistrationAdapter;
-import org.connectorio.addons.binding.ocpp.internal.server.adapter.RequestListenerAdapter;
-import org.connectorio.addons.binding.ocpp.internal.server.adapter.StatusAdapter;
-import org.connectorio.addons.binding.ocpp.internal.server.adapter.TransactionAdapter;
+import org.connectorio.addons.binding.ocpp.internal.server.custom.OcularSolarEcoMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import eu.chargetime.ocpp.feature.profile.ServerSmartChargingProfile;
 
 public class OcppServer implements OcppSender {
 
@@ -55,14 +44,15 @@ public class OcppServer implements OcppSender {
   private final String ip;
   private final int port;
   private final OcppChargerSessionRegistry chargerSessionRegistry;
-  private final String initialOcularEcoMode;
+  private final OcularSolarEcoMode ocularSolarEcoMode;
 
   public OcppServer(String ip, int port, OcppChargerSessionRegistry chargerSessionRegistry,
-      Deque<ServerCoreEventHandler> eventHandlers, String initialOcularEcoMode) {
+      Deque<ServerCoreEventHandler> eventHandlers, OcularSolarEcoMode ocularSolarEcoMode) {
     this.ip = ip;
     this.port = port;
     this.chargerSessionRegistry = chargerSessionRegistry;
-    this.initialOcularEcoMode = initialOcularEcoMode;
+    this.ocularSolarEcoMode = ocularSolarEcoMode;
+    ocularSolarEcoMode.setOcppSender(this);
 
     CoreEventHandlerWrapper handler = new CoreEventHandlerWrapper(eventHandlers);
     this.server = new JSONServer(new ServerCoreProfile(handler));
@@ -87,7 +77,8 @@ public class OcppServer implements OcppSender {
         chargerSessionRegistry.registerSession(sessionIndex, 
             new ChargerReference(identifier));
         
-        applyOcularEcoMode(sessionIndex, identifier);
+        ChargerReference reference = new ChargerReference(identifier);
+        ocularSolarEcoMode.applyOcularEcoMode(reference);
       }
 
       @Override
@@ -96,45 +87,6 @@ public class OcppServer implements OcppSender {
         chargerSessionRegistry.removeSession(sessionIndex);
       }
     });
-  }
-  
-  enum EcoMode {
-  	FAST("0"),
-  	SOLAR_ASSIST("1"),
-  	SOLAR_ONLY("2");
-  	
-  	String value;
-  	EcoMode(String value) {
-  		this.value = value;
-  	}
-  }
-
-  private void applyOcularEcoMode(UUID sessionIndex, String mode) {
-    if (initialOcularEcoMode != null && !initialOcularEcoMode.equals("NONE")) {
-      try {
-        changeConfigurationOcularEcoMode(sessionIndex, EcoMode.valueOf(initialOcularEcoMode));
-      } catch (IllegalArgumentException e) {
-        logger.warn("Invalid EcoMode: {}", initialOcularEcoMode);
-      }
-    }
-  }
-  
-  private void changeConfigurationOcularEcoMode(UUID sessionIndex, EcoMode ecoMode) {
-    try {
-      ChangeConfigurationRequest request = new ChangeConfigurationRequest();
-      request.setKey("EcoMode");
-      request.setValue(ecoMode.value);
-      
-      server.send(sessionIndex, request).whenComplete((confirmation, ex) -> {
-        if (ex != null) {
-          logger.warn("ChangeConfiguration failed", ex);
-        } else {
-          logger.info("ChangeConfiguration result: {}", confirmation);
-        }
-      });
-    } catch (Exception e) {
-      logger.error("Error sending ChangeConfiguration", e);
-    }
   }
 
   @Override
