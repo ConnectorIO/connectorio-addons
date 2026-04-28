@@ -67,6 +67,7 @@
           <apiPackage>org.connectorio.bddhab.rest.client.v40</apiPackage>
           <modelPackage>org.connectorio.bddhab.rest.client.v40.model</modelPackage>
           <additionalProperties>
+            <additionalProperty>hideGenerationTimestamp=true</additionalProperty>
             <additionalProperty>openApiNullable=false</additionalProperty>
           </additionalProperties>
         </configuration>
