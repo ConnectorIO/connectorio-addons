@@ -129,6 +129,7 @@
           <apiPackage>org.connectorio.addons.binding.smartme.v1.client</apiPackage>
           <modelPackage>org.connectorio.addons.binding.smartme.v1.client.model</modelPackage>
           <additionalProperties>
+            <additionalProperty>hideGenerationTimestamp=true</additionalProperty>
             <additionalProperty>openApiNullable=false</additionalProperty>
           </additionalProperties>
         </configuration>
