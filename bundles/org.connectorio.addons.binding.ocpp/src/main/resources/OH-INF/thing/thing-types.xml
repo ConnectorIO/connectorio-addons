@@ -46,7 +46,7 @@
       </parameter>
       <parameter name="initialOcularEcoMode" type="text" required="false">
         <label>Initial Ocular Eco Mode</label>
-        <description>Eco mode to set when chargers connect (FAST, SOLAR_ASSIST, SOLAR_ONLY, or NONE for disabled).</description>
+        <description>[EXPERIMENTAL] Eco mode to set when chargers connect (FAST, SOLAR_ASSIST, SOLAR_ONLY, or NONE for disabled).</description>
         <default>NONE</default>
         <options>
           <option value="NONE">Disabled</option>
