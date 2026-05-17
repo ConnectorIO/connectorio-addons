@@ -930,6 +930,92 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>2.43.0</version>
+          <configuration>
+            <ratchetFrom>github/master</ratchetFrom>
+            <setLicenseHeaderYearsFromGitHistory>true</setLicenseHeaderYearsFromGitHistory>
+            <java>
+              <eclipse>
+                <file>connectorio_codestyle.xml</file>
+                <version>${eclipse-jdt-formatter.version}</version>
+              </eclipse>
+              <removeUnusedImports />
+              <importOrder>
+                <file>connectorio.importorder</file>
+              </importOrder>
+              <endWithNewline />
+              <licenseHeader>
+                <file>${maven.multiModuleProjectDirectory}/build/spotless/header-${code.license}-java.txt</file>
+              </licenseHeader>
+            </java>
+            <pom>
+              <sortPom>
+                <sortDependencies>groupId,artifactId,scope</sortDependencies>
+                <sortPlugins>groupId,artifactId</sortPlugins>
+                <sortProperties>true</sortProperties>
+                <lineSeparator>\n</lineSeparator>
+                <expandEmptyElements>false</expandEmptyElements>
+                <indentBlankLines>false</indentBlankLines>
+                <nrOfIndentSpace>2</nrOfIndentSpace>
+              </sortPom>
+            </pom>
+            <formats>
+              <format>
+                <!-- define the files to apply to -->
+                <includes>
+                  <include>*.xml</include>
+                </includes>
+                <licenseHeader>
+                  <file>${maven.multiModuleProjectDirectory}/build/spotless/header-${code.license}-xml.txt</file>
+                  <delimiter>&lt;(?![?!])</delimiter>
+                </licenseHeader>
+              </format>
+              <format>
+                <includes>
+                  <include>src/**/*.xml</include>
+                </includes>
+                <excludes>
+                  <exclude>**/pom.xml</exclude>
+                  <exclude>**/feature.xml</exclude>
+                </excludes>
+                <eclipseWtp>
+                  <type>XML</type>
+                  <files>
+                    <file>connectorio_wst_xml_files.prefs</file>
+                  </files>
+                  <version>${eclipse-wtp-formatter.version}</version>
+                </eclipseWtp>
+                <trimTrailingWhitespace></trimTrailingWhitespace>
+                <endWithNewline></endWithNewline>
+              </format>
+              <format>
+                <!-- feature.xml -->
+                <includes>
+                  <include>src/main/feature/feature.xml</include>
+                </includes>
+                <eclipseWtp>
+                  <type>XML</type>
+                  <files>
+                    <file>connectorio_wst_feature_file.prefs</file>
+                  </files>
+                  <version>${eclipse-wtp-formatter.version}</version>
+                </eclipseWtp>
+                <trimTrailingWhitespace></trimTrailingWhitespace>
+                <endWithNewline></endWithNewline>
+              </format>
+            </formats>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.connectorio.formatters</groupId>
+              <artifactId>eclipse</artifactId>
+              <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
           <version>5.1.9</version>
@@ -1210,6 +1296,48 @@
           </snapshots>
         </pluginRepository>
       </pluginRepositories>
+    </profile>
+
+    <profile>
+      <id>format</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>spotless-apply</id>
+                <goals>
+                  <goal>apply</goal>
+                </goals>
+                <phase>process-sources</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>format-check</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>spotless-check</id>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+                <phase>verify</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 
