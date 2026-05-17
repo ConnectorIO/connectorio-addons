@@ -1,0 +1,8 @@
+# Main code owners
+*                                                   @connectorio/core
+
+# OCPP binding and relatives
+/bundles/org.connectorio.addons.binding.ocpp/*      @PRosenb
+/features/org.connectorio.addons.feature.ocpp/*     @PRosenb
+/kars/org.connectorio.addons.kar.ocpp/*             @PRosenb
+/itests/org.connectorio.addons.itest.ocpp/*         @PRosenb

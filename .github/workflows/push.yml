@@ -19,5 +19,5 @@ jobs:
       deploy: true
       skip_test_publish: false
       additional_profiles: 'thing4,openhab'
-      master_branch: '3'
+      master_branch: '5'
 
