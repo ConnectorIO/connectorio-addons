@@ -519,6 +519,11 @@
       </dependency>
       <dependency>
         <groupId>org.connectorio.addons</groupId>
+        <artifactId>org.connectorio.addons.profile.inverse</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.connectorio.addons</groupId>
         <artifactId>org.connectorio.addons.profile.isg</artifactId>
         <version>${project.version}</version>
       </dependency>

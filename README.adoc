@@ -11,63 +11,117 @@ All together openHAB and co7io-addons allows to:
 - Collect data and ingest it towards IT systems.
 - Securely connect back to the hardware (without VPN client installation).
 
-While code is divided in specific areas most ot it is present under `bundles` folder:
+The top level project structure is divided into four main parts:
 
-* `bundles` - various kinds of connectivity extensions which adapt industrial or functional algorithms into runtime.
- ** `org.connectorio.addons.binding` - common/shared code for binding.
- ** `org.connectorio.addons.binding.askoheat` - integration of Askoheat heaters (experimental).
- ** `org.connectorio.addons.binding.amsads` - implementation of ADS based integration for Beckhoff PLCs.
- ** `org.connectorio.addons.binding.can` - generic purpose CAN binding (experimental).
- ** `org.connectorio.addons.binding.bacnet` - communication with BACnet enabled HVAC equipment and other commercial real estate hardware.
- ** `org.connectorio.addons.binding.canopen` - integration of CANopen enabled deployments through SocketCAN.
- ** `org.connectorio.addons.binding.canopen.ta` - integration for https://ta.co.at[Technische Alternative] hardware (it is based on CANopen).
- ** `org.connectorio.addons.binding.plc4x` - integration with http://plc4x.apache.org[Apache PLC4X] project.
- ** `org.connectorio.addons.binding.s7` - handling of connectivity to Step 7 (S7) enabled PLCs (coming from a certain vendor).
- * `org.connectorio.addons.transformation.*` - non-standard operations which might be used at the link level to implement certain functionality.
- ** `org.connectorio.addons.feature` - main feature package
- ** `org.connectorio.addons.feature.amsads` - AMS/ADS deployment package
- ** `org.connectorio.addons.feature.bacnet` - BACnet deployment package
- ** `org.connectorio.addons.feature.canopen` - CANopen deployment package
- ** `org.connectorio.addons.feature.plc4x` - base runtime package for integrations based upon Apache PLC4X
- ** `org.connectorio.addons.feature.s7` - S7 deployment package
- ** `org.connectorio.addons.feature.openhab` - All-in-one deployment package for openHAB.
- * `documentation` textual descriptions, screenshots and such needed to understand operational aspects of working with this code.
+ * `bundles` - implementation of integrations
+ * `features` - runtime dependency descriptor
+ * `kars` - deployment archive for Apache Karaf / openHAB compatible deployments
+ * `itests` - integration tests, primarily to verify that KARs can be installed under openHAB
+
+The `bundles` folder have several major groups:
+
+ * `org.connectorio.addons.binding.*` - common/shared code for binding and specific bindings.
+ * `org.connectorio.addons.io.*` - various input/output handling code.
+ * `org.connectorio.addons.profile.*` - transformations for commands/states exchanged between bindings and items.
+ * `org.connectorio.addons.temporal.*` - experimental support for temporal values / schedules.
+ * `org.connectorio.addons.config` - a workaround for some trivial shortcomings in (past) openHAB ConfigMapper implementation.
+
+Bindings provided within this repository (starts with `org.connectorio.addons.binding.xyz`):
+
+|===
+|Binding |Connection |Description
+
+| `amsads`      | local | Implementation of ADS based integration for Beckhoff PLCs.
+| `askoheat`    | local | Integration of Askoma Askoheat heaters (experimental)
+| `bacnet`      | local | Communication with BACnet enabled HVAC equipment and other commercial real estate hardware.
+| `can`         | local | Generic purpose CAN binding (experimental).
+| `canopen`     | local | Integration of CANopen enabled deployments through SocketCAN.
+| `canopen.ta`  | local | Integration for https://ta.co.at[Technische Alternative] hardware (it is based on CANopen).
+| `fatek`       | local | Integration with Fatek PLCs using serial/tcp protocol.
+| `mbus`        | local | Integration with M-Bus devices (experimental/unstable due to transport layer).
+| `ocpp`        | local | Integration with charging stations based on Open Charge Point Protocol.
+| `opcua`       | local | Integration with OPC UA compatible devices / PLCs / systems.
+| `relayweblog` | local | Integration with a Relay.de metering gateway over its HTTP api.
+| `s7`          | local | Integration with S7 compatible PLCs made by Siemens.
+| `smartme`     | cloud | Integration with a cloud metering system smart-me.com.
+| `wmbus`       | local | Integration with Wireless M-Bus meters.
+|===
+
+Supported profiles/transformations (module starts with `org.connectorio.addons.profile.xyz`):
+
+|===
+|Profile |Module |Description
+
+| `limit-bottom`          | `boundary` | Restrict lowest accepted value (inclusive) for a plain decimal.
+| `limit-bottom-quantity` | `boundary` | Restrict lowest accepted value (inclusive) for a quantity with a specified unit.
+| `limit-top`             | `boundary` | Restrict highest accepted value (inclusive) for a plain decimal.
+| `limit-top-quantity`    | `boundary` | Restrict highest accepted value (inclusive) for a quantity with a specified unit.
+| `limit-range`           | `boundary` | Restrict accepted values to a lowest–highest range for a plain decimal.
+| `limit-range` (quantity)| `boundary` | Restrict accepted values to a lowest–highest range for a quantity with a specified unit.
+| `collector`             | `counter`  | Accumulate incoming values; configures how the first value is handled when the profile is uninitialized.
+| `pulse-counter`         | `counter`  | Increment item state by a configurable step on each incoming pulse or tick signal.
+| `sustained-counter`     | `counter`  | Variant of pulse-counter that additionally configures uninitialized-state behavior.
+| `limit-counter-top`     | `counter`  | Reject counter updates that exceed the current value by more than a configurable anomaly percentage.
+| `limit-counter-bottom`  | `counter`  | Guard counter from decreasing below a known state; configures uninitialized-state behavior.
+| `toggle`                | `inverse`  | Profile to flip on -> off, off -> on commands/states.
+| `isg-value`             | `isg`      | Filter out undefined values returned from modbus registers by ISG heat pumps.
+| `isg-energy`            | `isg`      | Scale energy values returned from energy registers polled from ISG heat pumps.
+| `cast-binary`           | `cast`     | Cast an incoming value to a binary (OnOff) representation.
+| `periodic`              | `timer`    | Send a configurable periodic refresh command at a fixed time interval (seconds up to days).
+| `debounce`              | `timer`    | Suppress rapid state changes; forwards only the first or last value within a configurable time window.
+| `math-scale`            | `math`     | Multiply values arriving from the device by a scale factor; divide values sent to the device by the same factor.
+| `sma`                   | `sma`      | Filter out undefined values returned by SMA inverters for unsupported registers.
+| `quantity`              | `quantity` | Attach a physical unit to a plain decimal received from an integration; strips the unit before sending commands back.
+
+|===
+
+The higher level `org.connectorio.addons.profile` module handles chaining of profiles, so they form a small rule, without major runtime overhead.
+With ConnectorIO `ProfileFactory` it is possible to have bidirectional transformation i.e. scale [0.1] -> unit [V] for incoming data.
+Due to limitation in configuration handling this module can be used only with links produced by XStream Link manager provided by this repository.
+
+Support modules:
+
+* `bddhab` generated REST Api client for openHAB.
+* `documentation` textual descriptions, screenshots and such needed to understand operational aspects of working with this code.
+* `xsd` XML Schema resources used for offline validation of XML documents.
+
 
 If you seek for secure VPN-less cloud solution allowing accessing any of above hardware please have a look on https://github.com/connectorio/connectorio-addons[connectorio-cloud] addon.
 It allows combining multiple installations, buildings and machines across diverse geographical locations in https://app.connectorio.cloud[ConnectorIO Cloud].
 This is a lightweight dashboard application for collected information.
 
 == License & notice
-Most of the code is licensed under Apache Software License. The `org.connectorio.addons.binding.bacnet` and `org.connectorio.addons.feature.bacnet` is exceptional and it is licensed under GPLv3 due to GPL code dependencies.
+Most of the code is licensed under Apache Software License.
+The `org.connectorio.addons.binding.bacnet`, `org.connectorio.addons.feature.bacnet`, `org.connectorio.addons.kar.bacnet`, `org.connectorio.addons.itest.bacnet` is licensed under GPLv3 due to GPL code dependencies.
 
 Code refers EPLv1 and EPLv2 licensed code mainly through openHAB artifacts.
 
 == Commercial usage
 Commercial usage of this code is permitted and welcome as long as you can build binaries yourself.
-We provide no binary artifacts here, if you wish to receive one please https://connectorio.com/openhab[visit our web page] and register to download them.
+We provide no binary artifacts, however build snapshots can always be retrieved from https://repository.connectorio.cloud[repository.connectorio.cloud].
 
 == Support
 We do support this code please https://connectorio.com/contact?utm_content=readme&utm_medium=social&utm_source=github.com[get in touch with us]
 if you are interested in terms and conditions.
 
 === Relation to openHAB
-This code is deployed independently of openHAB addons repository due to "incompatible" licensing (ASLv2 vs EPLv2).
-It will stay here cause it allows us to unify infrastructure between bindings we maintain.
-The shared code for `bindings` which might not be fortunate, but simplifies a lot common operations and reduces boilerplate code.
-Quality of code and coding style is different from in openHAB repositories.
-Code style is not planned to be aligned.
+This repository contains sources for third party openHAB addons.
 
-Please treat this repository as a source for third party addons.
+This code is deployed independently of openHAB addons repository due to "incompatible" licensing (ASLv2 vs EPLv2).
+It will stay here cause it allows us to maintain multiple OH versions and unify infrastructure between multiple bindings.
+The shared code for `bindings` which might not be fortunate, simplifies a lot of common operations and reduces boilerplate code.
+Quality of code and coding style is slightly different from in openHAB repositories, is not planned to be aligned.
+Additionally, code here does not fight against developers as it does not employ @Nullable annotation processor.
 
 === Trademarks
 The ® sign indicates that given name or logo is a registered trademark.
 
 We respect copyright, and we value trademarks of others.
-BACnet, Apache PLC4X, Siemens, Beckhoff, CANopen, openHAB are all registered trademarks belonging to its respective owners.
+BACnet, Apache PLC4X, Apache Karaf, Siemens, Beckhoff, CANopen, openHAB are all registered trademarks belonging to its respective owners.
 Above names are mentioned here to give credits to producers of awesome equipment, libraries, software and specifications.
 They are not listed here for advertising or affirmation purposes.
 
-ConnectorIO sp. z o.o. (publisher of this code) is not in relation nor partnership of any kind with any of above organizations.
+ConnectorIO sp. z o.o. (publisher of this code) and its collaborators are not in relation nor in partnership of any kind with any of the above organizations.
 If you were misled by contents of this file or our code https://connectorio.com/contact?utm_content=trademark_issue&utm_medium=social&utm_source=github.com[please let us know],
 so we can clean things up.
 

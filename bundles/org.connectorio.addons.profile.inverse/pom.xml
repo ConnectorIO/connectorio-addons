@@ -25,16 +25,16 @@
     <version>3.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>org.connectorio.addons.transformation.inverse</artifactId>
+  <artifactId>org.connectorio.addons.profile.inverse</artifactId>
   <packaging>bundle</packaging>
 
-  <name>ConnectorIO - Addons - Transformation - Inverse</name>
-  <description>Inverting transformation - flips two states.</description>
+  <name>ConnectorIO - Addons - Profile - Inverse</name>
+  <description>Inverting Profile - flips two states.</description>
 
   <dependencies>
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
-      <artifactId>org.openhab.core.transform</artifactId>
+      <artifactId>org.openhab.core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
