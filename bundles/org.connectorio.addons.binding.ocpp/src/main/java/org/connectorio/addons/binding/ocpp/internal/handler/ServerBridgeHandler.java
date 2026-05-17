@@ -41,6 +41,7 @@ import org.connectorio.addons.binding.ocpp.internal.server.CompositeRequestListe
 import org.connectorio.addons.binding.ocpp.internal.server.OcppServer;
 import org.connectorio.addons.binding.ocpp.internal.server.adapter.AuthorizationIdTagAdapter;
 import org.connectorio.addons.binding.ocpp.internal.server.adapter.BootRegistrationAdapter;
+import org.connectorio.addons.binding.ocpp.internal.server.adapter.OcppConfigurationDumpAdapter;
 import org.connectorio.addons.binding.ocpp.internal.server.adapter.RequestListenerAdapter;
 import org.connectorio.addons.binding.ocpp.internal.server.custom.OcularSolarEcoMode;
 import org.openhab.core.net.NetworkAddressService;
@@ -102,6 +103,14 @@ public class ServerBridgeHandler extends GenericBridgeHandlerBase<ServerConfig> 
       address, config.port, bootAdapter, eventHandlers,
       new OcularSolarEcoMode(config.initialOcularEcoMode)
     );
+
+    // Diagnostic dump of every charger's configuration on Boot. Listener-only;
+    // returns null so it never affects the chain's BootNotificationConfirmation.
+    // Added to the (thread-safe) deque after server construction so it can hold
+    // the OcppSender reference, and before activate() so it's wired up before
+    // the first session opens.
+    eventHandlers.add(new OcppConfigurationDumpAdapter(server, bootAdapter));
+
     server.activate();
     updateStatus(ThingStatus.ONLINE);
   }
