@@ -44,6 +44,17 @@
         <default>10</default>
         <unitLabel>s</unitLabel>
       </parameter>
+      <parameter name="initialOcularEcoMode" type="text" required="false">
+        <label>Initial Ocular Eco Mode</label>
+        <description>[EXPERIMENTAL] Eco mode to set when chargers connect (FAST, SOLAR_ASSIST, SOLAR_ONLY, or NONE for disabled).</description>
+        <default>NONE</default>
+        <options>
+          <option value="NONE">Disabled</option>
+          <option value="FAST">Fast Charging</option>
+          <option value="SOLAR_ASSIST">Solar Assist</option>
+          <option value="SOLAR_ONLY">Solar Only</option>
+        </options>
+      </parameter>
       <parameter name="chargers" type="text" required="false" multiple="true">
         <label>Charger identities</label>
         <description>
@@ -103,6 +114,10 @@
       <channel id="idTag" typeId="string">
         <label>Tag</label>
         <description>Tag identifier.</description>
+      </channel>
+      <channel id="charging" typeId="switch">
+        <label>Charging</label>
+        <description>Remote start/stop charging control. Send ON to trigger RemoteStartTransaction and OFF to trigger RemoteStopTransaction.</description>
       </channel>
       <channel id="timestampStart" typeId="dateTime">
         <label>Start timestamp</label>
@@ -212,12 +227,21 @@
         <label>Voltage</label>
         <description>Instantaneous AC RMS supply voltage</description>
       </channel>
+      <channel id="chargeLimit" typeId="current">
+        <label>Charge Limit</label>
+        <description>Charging current limit in Amperes. Set this to control the maximum charging current.</description>
+      </channel>
     </channels>
 
     <config-description>
       <parameter name="connectorId" type="integer" required="true" min="1" step="1">
         <label>Connector</label>
         <description>Identifier of connector - starts from 1.</description>
+      </parameter>
+      <parameter name="remoteStartTag" type="text" required="false">
+        <label>Remote Start Tag</label>
+        <description>Tag to use for remote start transactions. Defaults to "openhab" if not specified.</description>
+        <default>openhab</default>
       </parameter>
     </config-description>
 

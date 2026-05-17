@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.ocpp.internal.handler;
 
+import eu.chargetime.ocpp.model.Confirmation;
 import eu.chargetime.ocpp.model.Request;
 import eu.chargetime.ocpp.model.core.HeartbeatConfirmation;
 import eu.chargetime.ocpp.model.core.HeartbeatRequest;
@@ -31,9 +32,12 @@ import eu.chargetime.ocpp.model.core.StopTransactionRequest;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.CompletionStage;
 import org.connectorio.addons.binding.handler.GenericBridgeHandlerBase;
 import org.connectorio.addons.binding.ocpp.internal.OcppAttendant;
 import org.connectorio.addons.binding.ocpp.internal.OcppRequestListener;
+import org.connectorio.addons.binding.ocpp.internal.OcppSender;
+import org.connectorio.addons.binding.ocpp.internal.server.ChargerReference;
 import org.connectorio.addons.binding.ocpp.internal.config.ChargerConfig;
 import org.connectorio.addons.binding.ocpp.internal.discovery.OcppChargerConnectorDiscoveryService;
 import org.connectorio.addons.binding.ocpp.internal.server.CompositeRequestListener;
@@ -53,7 +57,7 @@ import org.slf4j.LoggerFactory;
 
 public class ChargerThingHandler extends GenericBridgeHandlerBase<ChargerConfig> implements
   HeartbeatHandler, StatusNotificationHandler, TransactionHandler, MeterValuesHandler,
-  OcppAttendant {
+  OcppAttendant, OcppSender {
 
   private final Logger logger = LoggerFactory.getLogger(ConnectorThingHandler.class);
   private final CompositeRequestListener listener = new CompositeRequestListener();
@@ -125,6 +129,12 @@ public class ChargerThingHandler extends GenericBridgeHandlerBase<ChargerConfig>
       Integer connectorId = getConnectorId(childThing);
       if (connectorId != null) {
         adapter.addConnector(connectorId, (ConnectorThingHandler) childHandler);
+        
+        // Pass OcppSender and charger serial to connector for charging profile requests
+        Object serial = getThing().getConfiguration().get("serialNumber");
+        if (serial instanceof String) {
+          ((ConnectorThingHandler) childHandler).setOcppSender(this, (String) serial);
+        }
       }
     }
   }
@@ -145,6 +155,16 @@ public class ChargerThingHandler extends GenericBridgeHandlerBase<ChargerConfig>
   @Override
   public <T extends Request> void removeRequestListener(OcppRequestListener<T> listener) {
     this.listener.removeRequestListener(listener);
+  }
+
+  @Override
+  public CompletionStage<Confirmation> send(ChargerReference chargerReference, Request request) {
+    Bridge bridge = getBridge();
+    if (bridge != null && bridge.getHandler() instanceof ServerBridgeHandler) {
+      ServerBridgeHandler serverHandler = (ServerBridgeHandler) bridge.getHandler();
+      return serverHandler.send(chargerReference, request);
+    }
+    throw new RuntimeException("No server bridge handler available");
   }
 
   private Integer getConnectorId(Thing childThing) {

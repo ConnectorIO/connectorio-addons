@@ -25,6 +25,7 @@ public class ServerConfig implements Configuration {
   public String address;
   public int port;
   public int heartbeat;
+  public String initialOcularEcoMode;
 
   public List<String> chargers;
   public List<String> tags;

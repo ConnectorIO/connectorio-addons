@@ -34,7 +34,7 @@ public class BootRegistrationAdapter extends CoreEventHandlerAdapter implements
     
     ChargerReference registered = registrations.get(sessionIndex);
     if (identifiers.isEmpty() || (registered != null && identifiers.contains(registered.getSerial()))) {
-    	return new BootNotificationConfirmation(time, 60, RegistrationStatus.Accepted);
+      return new BootNotificationConfirmation(time, 60, RegistrationStatus.Accepted);
     }
 
     // keep charger connected, but not active

@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.binding.ocpp.internal.server;
 
+import eu.chargetime.ocpp.feature.profile.ClientSmartChargingProfile;
 import eu.chargetime.ocpp.feature.profile.ServerCoreEventHandler;
 import eu.chargetime.ocpp.JSONServer;
 import eu.chargetime.ocpp.NotConnectedException;
@@ -27,21 +28,12 @@ import eu.chargetime.ocpp.feature.profile.ServerCoreProfile;
 import eu.chargetime.ocpp.model.Confirmation;
 import eu.chargetime.ocpp.model.Request;
 import eu.chargetime.ocpp.model.SessionInformation;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Deque;
-import java.util.LinkedList;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import org.connectorio.addons.binding.ocpp.internal.OcppSender;
-import org.connectorio.addons.binding.ocpp.internal.server.adapter.BootConfigAdapter;
-import org.connectorio.addons.binding.ocpp.internal.server.adapter.HearbeatAdapter;
-import org.connectorio.addons.binding.ocpp.internal.server.adapter.AuthorizationIdTagAdapter;
-import org.connectorio.addons.binding.ocpp.internal.server.adapter.BootRegistrationAdapter;
-import org.connectorio.addons.binding.ocpp.internal.server.adapter.RequestListenerAdapter;
-import org.connectorio.addons.binding.ocpp.internal.server.adapter.StatusAdapter;
-import org.connectorio.addons.binding.ocpp.internal.server.adapter.TransactionAdapter;
+import org.connectorio.addons.binding.ocpp.internal.server.custom.OcularSolarEcoMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,15 +44,21 @@ public class OcppServer implements OcppSender {
   private final String ip;
   private final int port;
   private final OcppChargerSessionRegistry chargerSessionRegistry;
+  private final OcularSolarEcoMode ocularSolarEcoMode;
 
   public OcppServer(String ip, int port, OcppChargerSessionRegistry chargerSessionRegistry,
-      Deque<ServerCoreEventHandler> eventHandlers) {
+      Deque<ServerCoreEventHandler> eventHandlers, OcularSolarEcoMode ocularSolarEcoMode) {
     this.ip = ip;
     this.port = port;
     this.chargerSessionRegistry = chargerSessionRegistry;
+    this.ocularSolarEcoMode = ocularSolarEcoMode;
+    ocularSolarEcoMode.setOcppSender(this);
 
     CoreEventHandlerWrapper handler = new CoreEventHandlerWrapper(eventHandlers);
     this.server = new JSONServer(new ServerCoreProfile(handler));
+    
+    ServerSmartChargingHandler smartHandler = new ServerSmartChargingHandler();
+    this.server.addFeatureProfile(new ClientSmartChargingProfile(smartHandler));
   }
 
   public void activate() {
@@ -78,6 +76,9 @@ public class OcppServer implements OcppSender {
         
         chargerSessionRegistry.registerSession(sessionIndex, 
             new ChargerReference(identifier));
+        
+        ChargerReference reference = new ChargerReference(identifier);
+        ocularSolarEcoMode.applyOcularEcoMode(reference);
       }
 
       @Override

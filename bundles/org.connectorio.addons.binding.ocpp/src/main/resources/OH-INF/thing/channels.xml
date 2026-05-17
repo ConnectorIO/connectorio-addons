@@ -44,6 +44,12 @@
     <description>String value.</description>
   </channel-type>
 
+  <channel-type id="switch">
+    <item-type>Switch</item-type>
+    <label>Switch</label>
+    <description>On/off control channel.</description>
+  </channel-type>
+
   <!-- quantities -->
   <channel-type id="current">
     <item-type>Number:ElectricCurrent</item-type>
