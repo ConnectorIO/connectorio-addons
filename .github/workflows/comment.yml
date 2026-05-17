@@ -81,6 +81,7 @@ jobs:
             
             core.setOutput('sha', pr.head.sha);
             core.setOutput('ref', pr.head.ref);
+            core.setOutput('base_ref', pr.base.ref);
             core.setOutput('repo', pr.head.repo.full_name);
 
       - name: Execute /retest
@@ -132,7 +133,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const prRef = '${{ steps.pr.outputs.ref }}';
             const prSha = '${{ steps.pr.outputs.sha }}';
             const user = '${{ steps.verify.outputs.user }}';
             
@@ -166,7 +166,7 @@ jobs:
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   workflow_id: workflow.id,
-                  ref: prRef,  // This creates a NEW run on this ref
+                  ref: '${{ steps.pr.outputs.base_ref }}',
                   inputs: {
                     pr_number: context.issue.number.toString(),
                     rebuild_triggered: 'true',
