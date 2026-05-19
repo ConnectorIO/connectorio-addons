@@ -145,11 +145,11 @@
       </channel>
       <channel id="currentImport" typeId="current">
         <label>Current.Import</label>
-        <description>Instantaneous current flow to EV (aggregate; on 3-phase chargers this is the last-reported phase). Use the per-phase channels below for stable 3-phase readings.</description>
+        <description>Instantaneous current flow to EV. Updated from every SampledValue whose measurand resolves to Current.Import, regardless of phase; link this if you want a single channel that follows the latest reading.</description>
       </channel>
       <channel id="currentImportL1" typeId="current">
         <label>Current.Import L1</label>
-        <description>Instantaneous current flow to EV on phase L1.</description>
+        <description>Instantaneous current flow to EV on phase L1. Filled when the charger reports a phase (either via SampledValue.phase or a measurand suffix).</description>
       </channel>
       <channel id="currentImportL2" typeId="current">
         <label>Current.Import L2</label>
@@ -237,11 +237,11 @@
       </channel>
       <channel id="voltage" typeId="voltage">
         <label>Voltage</label>
-        <description>Instantaneous AC RMS supply voltage (aggregate; on 3-phase chargers this is the last-reported phase). Use the per-phase channels below for stable 3-phase readings.</description>
+        <description>Instantaneous AC RMS supply voltage. Updated from every SampledValue whose measurand resolves to Voltage, regardless of phase; link this if you want a single channel that follows the latest reading.</description>
       </channel>
       <channel id="voltageL1" typeId="voltage">
         <label>Voltage L1</label>
-        <description>Instantaneous AC RMS supply voltage on phase L1.</description>
+        <description>Instantaneous AC RMS supply voltage on phase L1. Filled when the charger reports a phase.</description>
       </channel>
       <channel id="voltageL2" typeId="voltage">
         <label>Voltage L2</label>
