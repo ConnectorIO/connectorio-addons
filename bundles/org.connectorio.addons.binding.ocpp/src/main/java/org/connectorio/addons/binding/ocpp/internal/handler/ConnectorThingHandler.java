@@ -146,11 +146,25 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
 
         try {
           Double measurement = Double.valueOf(sample.getValue());
+          // Aggregate channel (existing single-value behaviour) — kept so any
+          // pre-existing item link on currentImport / voltage / etc. continues
+          // to receive updates regardless of phase.
           UID ref = OcppMeasurementMapping.get(sample.getMeasurand());
           if (ref != null) {
             ChannelUID uid = new ChannelUID(getThing().getUID(), ref.getAsString());
             State state = parse(measurement, uid, sample);
             getCallback().stateUpdated(uid, state);
+          }
+          // Per-phase channel (currentImportL1/L2/L3, voltageL1/L2/L3) — Pete's
+          // Option 1 for 3-phase chargers. Resolves the phase from either the
+          // SampledValue.phase field or the vendor-specific measurand suffix
+          // (Wallbox FW 6.7.x emits "Current.Import.L1" without a phase field).
+          UID perPhaseRef = OcppMeasurementMapping.getPerPhase(
+              sample.getMeasurand(), sample.getPhase());
+          if (perPhaseRef != null) {
+            ChannelUID perPhaseUid = new ChannelUID(getThing().getUID(), perPhaseRef.getAsString());
+            State perPhaseState = parse(measurement, perPhaseUid, sample);
+            getCallback().stateUpdated(perPhaseUid, perPhaseState);
           }
         } catch (NumberFormatException e) {
           logger.debug("Could not parse value of measurement {}", sample, e);

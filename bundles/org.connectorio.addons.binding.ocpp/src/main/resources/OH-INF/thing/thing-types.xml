@@ -145,7 +145,19 @@
       </channel>
       <channel id="currentImport" typeId="current">
         <label>Current.Import</label>
-        <description>Instantaneous current flow to EV</description>
+        <description>Instantaneous current flow to EV (aggregate; on 3-phase chargers this is the last-reported phase). Use the per-phase channels below for stable 3-phase readings.</description>
+      </channel>
+      <channel id="currentImportL1" typeId="current">
+        <label>Current.Import L1</label>
+        <description>Instantaneous current flow to EV on phase L1.</description>
+      </channel>
+      <channel id="currentImportL2" typeId="current">
+        <label>Current.Import L2</label>
+        <description>Instantaneous current flow to EV on phase L2.</description>
+      </channel>
+      <channel id="currentImportL3" typeId="current">
+        <label>Current.Import L3</label>
+        <description>Instantaneous current flow to EV on phase L3.</description>
       </channel>
       <channel id="currentOffered" typeId="current">
         <label>Current.Offered</label>
@@ -225,7 +237,19 @@
       </channel>
       <channel id="voltage" typeId="voltage">
         <label>Voltage</label>
-        <description>Instantaneous AC RMS supply voltage</description>
+        <description>Instantaneous AC RMS supply voltage (aggregate; on 3-phase chargers this is the last-reported phase). Use the per-phase channels below for stable 3-phase readings.</description>
+      </channel>
+      <channel id="voltageL1" typeId="voltage">
+        <label>Voltage L1</label>
+        <description>Instantaneous AC RMS supply voltage on phase L1.</description>
+      </channel>
+      <channel id="voltageL2" typeId="voltage">
+        <label>Voltage L2</label>
+        <description>Instantaneous AC RMS supply voltage on phase L2.</description>
+      </channel>
+      <channel id="voltageL3" typeId="voltage">
+        <label>Voltage L3</label>
+        <description>Instantaneous AC RMS supply voltage on phase L3.</description>
       </channel>
       <channel id="chargeLimit" typeId="current">
         <label>Charge Limit</label>
