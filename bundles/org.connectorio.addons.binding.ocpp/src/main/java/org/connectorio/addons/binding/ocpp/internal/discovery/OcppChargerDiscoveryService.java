@@ -29,10 +29,13 @@ import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingUID;
 import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.binding.ThingHandlerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OcppChargerDiscoveryService extends AbstractDiscoveryService implements DiscoveryService,
   ThingHandlerService, OcppRequestListener<BootNotificationRequest> {
 
+  private final Logger logger = LoggerFactory.getLogger(OcppChargerDiscoveryService.class);
   private ServerBridgeHandler thingHandler;
 
   public OcppChargerDiscoveryService() {
@@ -70,6 +73,10 @@ public class OcppChargerDiscoveryService extends AbstractDiscoveryService implem
   @Override
   public void onRequest(BootNotificationRequest request) {
     ThingUID bridgeUid = thingHandler.getThing().getUID();
+    if (request.getChargePointSerialNumber() == null) {
+      logger.info("Received boot notification for charge having no serial number {}", request);
+      return;
+    }
     String thingId = request.getChargePointSerialNumber().replaceAll("[^A-Z0-9_]", "").toLowerCase();
     ThingUID thingUID = new ThingUID(OcppBindingConstants.CHARGER_THING_TYPE, bridgeUid, thingId);
     DiscoveryResultBuilder resultBuilder = DiscoveryResultBuilder.create(thingUID)
