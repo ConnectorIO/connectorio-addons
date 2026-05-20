@@ -32,12 +32,24 @@ import java.util.Deque;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.connectorio.addons.binding.ocpp.internal.OcppSender;
 import org.connectorio.addons.binding.ocpp.internal.server.custom.OcularSolarEcoMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OcppServer implements OcppSender {
+
+  /**
+   * Maximum time to wait for a charger to answer a CSMS-initiated CALL.
+   * chargetime/ocpp's {@code Server.send(...)} returns a future from
+   * {@code PromiseRepository} that is silently orphaned when the underlying
+   * WebSocket closes mid-flight — see ChargeTimeEU/Java-OCA-OCPP#121. Wrapping
+   * with {@code orTimeout} surfaces the failure as a
+   * {@link TimeoutException} instead of leaving the caller waiting forever.
+   */
+  private static final long CALL_TIMEOUT_SECONDS = 15;
 
   private final Logger logger = LoggerFactory.getLogger(OcppServer.class);
   private final JSONServer server;
@@ -97,7 +109,16 @@ public class OcppServer implements OcppSender {
         logger.warn("Could not send request {} to charger {}. Session not found.", request, chargerReference);
         return CompletableFuture.failedFuture(new NotConnectedException());
       }
-      return this.server.send(sessionIndex, request);
+      return this.server.send(sessionIndex, request)
+          .toCompletableFuture()
+          .orTimeout(CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+          .whenComplete((confirmation, throwable) -> {
+            if (throwable instanceof TimeoutException) {
+              logger.warn("Request {} to charger {} timed out after {} s — chargetime/ocpp future may have been"
+                      + " orphaned by socket close (ChargeTimeEU/Java-OCA-OCPP#121).",
+                  request.getClass().getSimpleName(), chargerReference, CALL_TIMEOUT_SECONDS);
+            }
+          });
     } catch (OccurenceConstraintException | UnsupportedFeatureException | NotConnectedException e) {
       throw new RuntimeException(e);
     }
