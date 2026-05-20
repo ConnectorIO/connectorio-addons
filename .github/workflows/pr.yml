@@ -31,6 +31,6 @@ jobs:
       openhab: true
       server_id: co7io-public-snapshots
       deploy: ${{ github.event.pull_request.head.repo.fork == false }}
-      skip_test_publish: false
+      skip_test_publish: ${{ github.event.pull_request.head.repo.fork == true }}
       additional_profiles: 'thing4,openhab'
       master_branch: '5'
