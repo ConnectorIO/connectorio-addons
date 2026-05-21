@@ -56,8 +56,9 @@ public class OcppMeasurementMapping {
   );
 
   // Vendor-suffix form: "Current.Import.L1" with no phase field set.
-  // Captured group holds the digit 1/2/3.
-  private final static Pattern PHASE_SUFFIX = Pattern.compile("\\.L([1-3])$");
+  // Captured group holds the full "Lx" token so the same string can be used
+  // both for stripping and for resolving the phase key in PER_PHASE.
+  private final static Pattern PHASE_SUFFIX = Pattern.compile("\\.(L[1-3])$");
 
   /**
    * Resolve every channel that should receive an update for a given
@@ -121,7 +122,7 @@ public class OcppMeasurementMapping {
     }
     // Vendor-suffix form: phase encoded in the measurand name itself.
     Matcher m = PHASE_SUFFIX.matcher(sample.getMeasurand());
-    return m.find() ? "L" + m.group(1) : null;
+    return m.find() ? m.group(1) : null;
   }
 
   private static String stripPhaseSuffix(String measurand) {

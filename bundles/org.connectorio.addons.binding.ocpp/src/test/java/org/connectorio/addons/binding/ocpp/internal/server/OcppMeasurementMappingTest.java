@@ -1,6 +1,8 @@
 package org.connectorio.addons.binding.ocpp.internal.server;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import eu.chargetime.ocpp.model.core.SampledValue;
 import org.connectorio.addons.binding.ocpp.OcppBindingConstants;
@@ -8,12 +10,18 @@ import org.junit.jupiter.api.Test;
 
 class OcppMeasurementMappingTest {
 
+  /**
+   * The Java-OCA-OCPP library validates {@link SampledValue#setMeasurand} and
+   * {@link SampledValue#setPhase} setters strictly, throwing on values that
+   * aren't in the OCPP 1.6 enumeration. Real chargers in the wild send vendor
+   * variants like {@code Current.Import.L2} and stray phase strings; we need
+   * to exercise those paths in the mapper without the library blocking us
+   * before the assertion runs. Mocking SampledValue bypasses the setters.
+   */
   private static SampledValue sample(String measurand, String phase) {
-    SampledValue v = new SampledValue();
-    v.setMeasurand(measurand);
-    if (phase != null) {
-      v.setPhase(phase);
-    }
+    SampledValue v = mock(SampledValue.class);
+    when(v.getMeasurand()).thenReturn(measurand);
+    when(v.getPhase()).thenReturn(phase);
     return v;
   }
 

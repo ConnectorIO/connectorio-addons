@@ -145,11 +145,11 @@
       </channel>
       <channel id="currentImport" typeId="current">
         <label>Current.Import</label>
-        <description>Instantaneous current flow to EV. Updated from every SampledValue whose measurand resolves to Current.Import, regardless of phase; link this if you want a single channel that follows the latest reading.</description>
+        <description>Instantaneous current flow to EV. Last-write-wins across phases: if the charger sends per-phase Current.Import samples, the last phase processed lands here. Single-phase chargers can link this directly; for true per-phase telemetry use the L1/L2/L3 channels.</description>
       </channel>
       <channel id="currentImportL1" typeId="current">
         <label>Current.Import L1</label>
-        <description>Instantaneous current flow to EV on phase L1. Filled when the charger reports a phase (either via SampledValue.phase or a measurand suffix).</description>
+        <description>Instantaneous current flow to EV on phase L1. Populated when the charger identifies a phase via either SampledValue.phase or a vendor measurand suffix (e.g. Current.Import.L1).</description>
       </channel>
       <channel id="currentImportL2" typeId="current">
         <label>Current.Import L2</label>
