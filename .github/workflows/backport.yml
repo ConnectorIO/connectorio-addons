@@ -2,46 +2,87 @@ name: Backport
 
 on:
   pull_request:
-    types: [opened, labeled, unlabeled, synchronize]
-  issue_comment:
-    types: [created]
+    types: [closed, labeled]
+    branches: ["master", "3.*", "4.*", "5.*"]
 
 jobs:
   backport:
-    if: contains(github.event.pull_request.labels.*.name, 'backport')
-    permissions:
-      pull-requests: write
-      contents: write
+    if: >
+      github.event.pull_request.merged == true &&
+      contains(join(github.event.pull_request.labels.*.name, ' '), 'backport-')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
-      - name: Get Github App Token
-        uses: actions/create-github-app-token@5d869da34e18e7287c1daad50e0b8ea0f506ce69 # v1.11.0
-        id: app-token
-        with:
-          app-id: ${{ vars.BOT_APP_ID }}
-          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v4
         with:
-          token: '${{ steps.app-token.outputs.token }}'
-          fetch-depth: 1
-      - name: Create backport pull requests
-        uses: splatch/backport-action@v3.3-spl
-        with:
-          # Token to authenticate requests to GitHub
-          github_token: '${{ steps.app-token.outputs.token }}'
-          add_author_as_assignee: true
-          add_labels: bot
-          label_pattern: ^backport-([^ ]+)$
-          branch_name: 'backport-pr${pull_number}-to-${target_branch}'
-          pull_title: '[${target_branch}] ${pull_title}'
-          pull_description: |-
-            Backport of #${pull_number} to `${target_branch}`.
+          token: ${{ github.token }}
+          fetch-depth: 0
 
-            relates to ${issue_refs}
-          experimental: >
-            {
-              "conflict_resolution": "draft_commit_conflicts",
-              "accept_open_pr": true,
-              "comment_open_pr": false
-            }
+      - name: Run backports
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE:  ${{ github.event.pull_request.title }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          LABELS:    ${{ join(github.event.pull_request.labels.*.name, ' ') }}
+          AUTHOR:    ${{ github.event.pull_request.user.login }}
+          TRIGGER_LABEL: ${{ github.event.label.name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # On 'labeled' events process only the label that was just added.
+          # On 'closed' events process all backport-* labels present on the PR.
+          LABELS="${TRIGGER_LABEL:-$LABELS}"
+
+          # Detect whether the merge commit has multiple parents (true merge commit)
+          # vs. a single parent (squash or rebase merge).
+          PARENT_COUNT=$(git rev-list --parents -n 1 "$MERGE_SHA" | awk '{print NF-1}')
+
+          # Preserve original author for conflict commits (clean cherry-picks keep it automatically).
+          ORIGINAL_AUTHOR=$(git log -1 --format="%an <%ae>" "$MERGE_SHA")
+
+          do_cherry_pick() {
+            if [ "$PARENT_COUNT" -gt 1 ]; then
+              git cherry-pick -x -m 1 "$MERGE_SHA"
+            else
+              git cherry-pick -x "$MERGE_SHA"
+            fi
+          }
+
+          for label in $LABELS; do
+            [[ "$label" =~ ^backport-(.+)$ ]] || continue
+            TARGET="${BASH_REMATCH[1]}"
+            BRANCH="backport-pr${PR_NUMBER}-to-${TARGET}"
+
+            echo "Backporting #${PR_NUMBER} to ${TARGET}"
+            git fetch origin "$TARGET"
+            git checkout -B "$BRANCH" "origin/${TARGET}"
+
+            if do_cherry_pick; then
+              git push origin "${BRANCH}:${TARGET}"
+              gh pr comment "$PR_NUMBER" \
+                --body "Backported to \`${TARGET}\`."
+            else
+              # Commit the conflicted state as-is so the draft PR shows what needs fixing
+              git add -A
+              git commit --author="$ORIGINAL_AUTHOR" -m "conflict: cherry-pick of ${MERGE_SHA:0:7} onto ${TARGET}"
+              git push origin "$BRANCH"
+
+              BODY=$(printf 'Backport of #%s to `%s`.\n\nConflicts need manual resolution before merging.' "$PR_NUMBER" "$TARGET")
+              URL=$(gh pr create \
+                --title "[${TARGET}] ${PR_TITLE}" \
+                --body "$BODY" \
+                --base "$TARGET" \
+                --head "$BRANCH" \
+                --draft \
+                --label "bot" \
+                --assignee "$AUTHOR")
+
+              gh pr comment "$PR_NUMBER" \
+                --body "Backport to \`${TARGET}\` has conflicts — PR: ${URL}"
+            fi
+          done
