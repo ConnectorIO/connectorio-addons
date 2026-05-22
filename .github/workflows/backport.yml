@@ -65,7 +65,7 @@ jobs:
             if do_cherry_pick; then
               git push origin "${BRANCH}:${TARGET}"
               gh pr comment "$PR_NUMBER" \
-                --body "Backported to \`${TARGET}\`."
+                --body "Backported \`${MERGE_SHA:0:7}\` to \`${TARGET}\`."
             else
               # Commit the conflicted state as-is so the draft PR shows what needs fixing
               git add -A
@@ -73,16 +73,17 @@ jobs:
               git push origin "$BRANCH"
 
               BODY=$(printf 'Backport of #%s to `%s`.\n\nConflicts need manual resolution before merging.' "$PR_NUMBER" "$TARGET")
-              URL=$(gh pr create \
+              BACKPORT_PR=$(gh pr create \
                 --title "[${TARGET}] ${PR_TITLE}" \
                 --body "$BODY" \
                 --base "$TARGET" \
                 --head "$BRANCH" \
                 --draft \
                 --label "bot" \
-                --assignee "$AUTHOR")
+                --assignee "$AUTHOR" \
+                --json number --jq '.number')
 
               gh pr comment "$PR_NUMBER" \
-                --body "Backport to \`${TARGET}\` has conflicts — PR: ${URL}"
+                --body "Backport of \`${MERGE_SHA:0:7}\` to \`${TARGET}\` has conflicts — #${BACKPORT_PR}"
             fi
           done
