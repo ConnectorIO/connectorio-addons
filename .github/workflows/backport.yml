@@ -36,8 +36,8 @@ jobs:
           AUTHOR:    ${{ github.event.pull_request.user.login }}
           TRIGGER_LABEL: ${{ github.event.label.name }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "connectorio-ci[bot]"
+          git config user.email "ci@connectorio.com"
 
           # On 'labeled' events process only the label that was just added.
           # On 'closed' events process all backport-* labels present on the PR.
@@ -67,28 +67,30 @@ jobs:
             git fetch origin "$TARGET"
             git checkout -B "$BRANCH" "origin/${TARGET}"
 
+            DRAFT="--draft"
+            BODY=$(printf 'Backport of #%s to `%s`.\n\nConflicts need manual resolution before merging.' "$PR_NUMBER" "$TARGET")
+
             if do_cherry_pick; then
-              git push origin "${BRANCH}:${TARGET}"
-              gh pr comment "$PR_NUMBER" \
-                --body "Backported \`${MERGE_SHA:0:7}\` to \`${TARGET}\`."
+              DRAFT=""
+              BODY=$(printf 'Backport of #%s to `%s`.' "$PR_NUMBER" "$TARGET")
             else
-              # Commit the conflicted state as-is so the draft PR shows what needs fixing
               git add -A
               git commit --author="$ORIGINAL_AUTHOR" -m "conflict: cherry-pick of ${MERGE_SHA:0:7} onto ${TARGET}"
-              git push origin "$BRANCH"
+            fi
 
-              BODY=$(printf 'Backport of #%s to `%s`.\n\nConflicts need manual resolution before merging.' "$PR_NUMBER" "$TARGET")
-              BACKPORT_PR=$(gh pr create \
-                --title "[${TARGET}] ${PR_TITLE}" \
-                --body "$BODY" \
-                --base "$TARGET" \
-                --head "$BRANCH" \
-                --draft \
-                --label "bot" \
-                --assignee "$AUTHOR" \
-                --json number --jq '.number')
+            git push origin "$BRANCH"
 
-              gh pr comment "$PR_NUMBER" \
-                --body "Backport of \`${MERGE_SHA:0:7}\` to \`${TARGET}\` has conflicts — #${BACKPORT_PR}"
+            BACKPORT_PR=$(gh pr create \
+              --title "[${TARGET}] ${PR_TITLE}" \
+              --body "$BODY" \
+              --base "$TARGET" \
+              --head "$BRANCH" \
+              --label "bot" \
+              --assignee "$AUTHOR" \
+              $DRAFT \
+              --json number --jq '.number')
+
+            if [ -z "$DRAFT" ]; then
+              gh pr merge "$BACKPORT_PR" --auto --rebase
             fi
           done
