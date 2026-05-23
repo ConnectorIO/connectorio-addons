@@ -100,7 +100,8 @@ public class ServerBridgeHandler extends GenericBridgeHandlerBase<ServerConfig> 
 
     server = new OcppServer(
       address, config.port, bootAdapter, eventHandlers,
-      new OcularSolarEcoMode(config.initialOcularEcoMode)
+      new OcularSolarEcoMode(config.initialOcularEcoMode),
+      config.pingInterval
     );
     server.activate();
     updateStatus(ThingStatus.ONLINE);
