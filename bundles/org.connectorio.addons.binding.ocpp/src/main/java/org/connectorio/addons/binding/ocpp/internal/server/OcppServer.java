@@ -19,6 +19,7 @@ package org.connectorio.addons.binding.ocpp.internal.server;
 
 import eu.chargetime.ocpp.feature.profile.ClientSmartChargingProfile;
 import eu.chargetime.ocpp.feature.profile.ServerCoreEventHandler;
+import eu.chargetime.ocpp.JSONConfiguration;
 import eu.chargetime.ocpp.JSONServer;
 import eu.chargetime.ocpp.NotConnectedException;
 import eu.chargetime.ocpp.OccurenceConstraintException;
@@ -59,7 +60,8 @@ public class OcppServer implements OcppSender {
   private final OcularSolarEcoMode ocularSolarEcoMode;
 
   public OcppServer(String ip, int port, OcppChargerSessionRegistry chargerSessionRegistry,
-      Deque<ServerCoreEventHandler> eventHandlers, OcularSolarEcoMode ocularSolarEcoMode) {
+      Deque<ServerCoreEventHandler> eventHandlers, OcularSolarEcoMode ocularSolarEcoMode,
+      int pingIntervalSec) {
     this.ip = ip;
     this.port = port;
     this.chargerSessionRegistry = chargerSessionRegistry;
@@ -67,8 +69,14 @@ public class OcppServer implements OcppSender {
     ocularSolarEcoMode.setOcppSender(this);
 
     CoreEventHandlerWrapper handler = new CoreEventHandlerWrapper(eventHandlers);
-    this.server = new JSONServer(new ServerCoreProfile(handler));
-    
+    if (pingIntervalSec > 0) {
+      JSONConfiguration jsonConfig = JSONConfiguration.get().setParameter(JSONConfiguration.PING_INTERVAL_PARAMETER, pingIntervalSec);
+      this.server = new JSONServer(new ServerCoreProfile(handler), jsonConfig);
+      logger.debug("OCPP server WebSocket PING interval set to {}s", pingIntervalSec);
+    } else {
+      this.server = new JSONServer(new ServerCoreProfile(handler));
+    }
+
     ServerSmartChargingHandler smartHandler = new ServerSmartChargingHandler();
     this.server.addFeatureProfile(new ClientSmartChargingProfile(smartHandler));
   }

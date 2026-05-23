@@ -26,6 +26,7 @@ public class ServerConfig implements Configuration {
   public int port;
   public int heartbeat;
   public String initialOcularEcoMode;
+  public int pingInterval = 60;
 
   public List<String> chargers;
   public List<String> tags;
