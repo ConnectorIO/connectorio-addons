@@ -70,6 +70,15 @@
           If at least one value is provided requests from unknown tags will be rejected.
         </description>
       </parameter>
+      <parameter name="pingInterval" type="integer" required="false" min="0">
+        <label>WebSocket Ping Interval</label>
+        <description>
+          Seconds between server-driven WebSocket PING frames towards charger.
+        </description>
+        <default>60</default>
+        <unitLabel>s</unitLabel>
+        <advanced>true</advanced>
+      </parameter>
     </config-description>
   </bridge-type>
 
