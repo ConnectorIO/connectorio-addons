@@ -7,4 +7,5 @@ public interface ConnectorCommandContext {
     String getChargerSerialNumber();
     String getRemoteStartTag();
     Integer getCurrentTransactionId();
+    Integer getConnectorId();
 }
