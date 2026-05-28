@@ -45,6 +45,7 @@ class ChargeLimitCommandHandlerTest {
     // given
     when(context.getOcppSender()).thenReturn(sender);
     when(context.getChargerSerialNumber()).thenReturn("charger-serial");
+    when(context.getConnectorId()).thenReturn(2);
     when(sender.send(any(ChargerReference.class), any(Request.class)))
       .thenReturn(CompletableFuture.completedFuture(null));
 
@@ -56,6 +57,7 @@ class ChargeLimitCommandHandlerTest {
     verify(sender).send(any(ChargerReference.class), requestCaptor.capture());
 
     assertThat(requestCaptor.getValue()).isInstanceOf(SetChargingProfileRequest.class);
+    assertThat(((SetChargingProfileRequest) requestCaptor.getValue()).getConnectorId()).isEqualTo(2);
   }
 
   @Test
@@ -63,6 +65,7 @@ class ChargeLimitCommandHandlerTest {
     // given
     when(context.getOcppSender()).thenReturn(sender);
     when(context.getChargerSerialNumber()).thenReturn("charger-serial");
+    when(context.getConnectorId()).thenReturn(1);
     when(sender.send(any(ChargerReference.class), any(Request.class)))
       .thenReturn(CompletableFuture.completedFuture(null));
 
@@ -76,6 +79,21 @@ class ChargeLimitCommandHandlerTest {
     verify(sender).send(any(ChargerReference.class), requestCaptor.capture());
 
     assertThat(requestCaptor.getValue()).isInstanceOf(SetChargingProfileRequest.class);
+    assertThat(((SetChargingProfileRequest) requestCaptor.getValue()).getConnectorId()).isEqualTo(1);
+  }
+
+  @Test
+  void shouldNotSendWhenConnectorIdMissing() {
+    // given
+    when(context.getOcppSender()).thenReturn(sender);
+    when(context.getChargerSerialNumber()).thenReturn("charger-serial");
+    when(context.getConnectorId()).thenReturn(null);
+
+    // when
+    handler.handle(new DecimalType(10), context);
+
+    // then
+    verify(sender, never()).send(any(ChargerReference.class), any(Request.class));
   }
 
   @Test
