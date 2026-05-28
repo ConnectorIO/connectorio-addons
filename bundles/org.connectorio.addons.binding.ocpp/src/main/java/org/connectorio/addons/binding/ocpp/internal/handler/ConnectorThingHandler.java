@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.measure.Quantity;
 import org.connectorio.addons.binding.handler.GenericThingHandlerBase;
 import org.connectorio.addons.binding.ocpp.OcppBindingConstants;
-import org.connectorio.addons.binding.ocpp.internal.config.ChargerConfig;
+import org.connectorio.addons.binding.ocpp.internal.config.ConnectorConfig;
 import org.connectorio.addons.binding.ocpp.internal.server.OcppMeasurementMapping;
 import org.connectorio.addons.binding.ocpp.internal.server.listener.MeterValuesHandler;
 import org.connectorio.addons.binding.ocpp.internal.server.listener.StatusNotificationHandler;
@@ -46,16 +46,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.units.indriya.quantity.Quantities;
 
-public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeHandler, ChargerConfig> implements
+public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeHandler, ConnectorConfig> implements
   StatusNotificationHandler, TransactionHandler, MeterValuesHandler, ConnectorCommandContext {
 
   private final AtomicInteger transactionId = new AtomicInteger();
   private final Logger logger = LoggerFactory.getLogger(ConnectorThingHandler.class);
-  
+
   private OcppSender ocppSender;
   private String chargerSerialNumber;
   private Integer currentTransactionId;
   private String remoteStartTag;
+  private Integer connectorId;
 
   private final ChargeLimitCommandHandler chargeLimitHandler;
   private final ChargingCommandHandler chargingHandler;
@@ -96,15 +97,21 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
   }
 
   @Override
+  public Integer getConnectorId() {
+    return connectorId;
+  }
+
+  @Override
   public void initialize() {
-    Optional<ChargerConfig> config = getThingConfig();
+    Optional<ConnectorConfig> config = getThingConfig();
     if (config.isPresent()) {
       remoteStartTag = config.get().remoteStartTag;
       if (remoteStartTag == null || remoteStartTag.trim().isEmpty()) {
-        remoteStartTag = ChargerConfig.DEFAULT_REMOTE_START_TAG;
+        remoteStartTag = ConnectorConfig.DEFAULT_REMOTE_START_TAG;
       }
+      connectorId = config.get().connectorId;
     } else {
-      remoteStartTag = ChargerConfig.DEFAULT_REMOTE_START_TAG;
+      remoteStartTag = ConnectorConfig.DEFAULT_REMOTE_START_TAG;
     }
     updateStatus(ThingStatus.ONLINE);
   }
