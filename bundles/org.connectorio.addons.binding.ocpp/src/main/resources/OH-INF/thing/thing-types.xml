@@ -79,6 +79,36 @@
         <unitLabel>s</unitLabel>
         <advanced>true</advanced>
       </parameter>
+      <parameter name="meterValueSampleInterval" type="integer" required="false" min="0">
+        <label>MeterValue Sample Interval</label>
+        <description>
+          Seconds between MeterValues samples during an active transaction.
+          Pushed to each connecting charger on BootNotification.
+        </description>
+        <default>30</default>
+        <unitLabel>s</unitLabel>
+        <advanced>true</advanced>
+      </parameter>
+      <parameter name="meterValuesData" type="text" required="false">
+        <label>MeterValues Measurands</label>
+        <description>
+          Comma-separated OCPP measurand list pushed as both MeterValuesSampledData
+          (during transactions) and MeterValuesAlignedData (clock-aligned, idle).
+        </description>
+        <default>Energy.Active.Import.Register,Power.Active.Import,Current.Import,Voltage</default>
+        <advanced>true</advanced>
+      </parameter>
+      <parameter name="clockAlignedDataInterval" type="integer" required="false" min="0">
+        <label>Clock-Aligned Data Interval</label>
+        <description>
+          Seconds between clock-aligned MeterValues pushes. Set to 0 to disable
+          idle telemetry; chargers that don't support clock-aligned values
+          respond Rejected and the setting is logged.
+        </description>
+        <default>30</default>
+        <unitLabel>s</unitLabel>
+        <advanced>true</advanced>
+      </parameter>
     </config-description>
   </bridge-type>
 
