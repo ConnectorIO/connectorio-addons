@@ -174,6 +174,13 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
     StringType val = new StringType(status.name());
     getCallback().stateUpdated(new ChannelUID(getThing().getUID(), "chargePointStatus"), val);
 
+    if (status == ChargePointStatus.Available
+        || status == ChargePointStatus.Finishing
+        || status == ChargePointStatus.SuspendedEV
+        || status == ChargePointStatus.SuspendedEVSE) {
+      resetPowerAndCurrentChannels();
+    }
+
     return new StatusNotificationConfirmation();
   }
 
@@ -207,7 +214,21 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
     callback.stateUpdated(new ChannelUID(getThing().getUID(), "timestampStop"), new DateTimeType(request.getTimestamp()));
     callback.stateUpdated(new ChannelUID(getThing().getUID(), "meterStop"), new QuantityType<>(request.getMeterStop(), Units.WATT_HOUR));
 
+    resetPowerAndCurrentChannels();
+
     return new StopTransactionConfirmation();
+  }
+  /**
+   * Resets power and current-related channels to 0 when a transaction ends.
+   */
+  private void resetPowerAndCurrentChannels() {
+    ThingHandlerCallback callback = getCallback();
+    callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.POWER_ACTIVE_IMPORT.getAsString()), new QuantityType<>(0, Units.WATT));
+    callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CURRENT_IMPORT.getAsString()), new QuantityType<>(0, Units.AMPERE));
+    callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CURRENT_IMPORT_L1.getAsString()), new QuantityType<>(0, Units.AMPERE));
+    callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CURRENT_IMPORT_L2.getAsString()), new QuantityType<>(0, Units.AMPERE));
+    callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CURRENT_IMPORT_L3.getAsString()), new QuantityType<>(0, Units.AMPERE));
+    callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CURRENT_OFFERED.getAsString()), new QuantityType<>(0, Units.AMPERE));
   }
 
   private static State parse(Double measurement, ChannelUID uid, SampledValue sample) {
