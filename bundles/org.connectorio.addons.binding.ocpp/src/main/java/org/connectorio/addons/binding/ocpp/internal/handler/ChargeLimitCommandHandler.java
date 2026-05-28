@@ -28,12 +28,12 @@ public class ChargeLimitCommandHandler {
             logger.warn("Unsupported command type for chargeLimit: {}", command.getClass());
             return;
         }
-        sendChargingProfile(limit, context.getOcppSender(), context.getChargerSerialNumber());
+        sendChargingProfile(limit, context.getOcppSender(), context.getChargerSerialNumber(), context.getConnectorId());
     }
 
-    private void sendChargingProfile(double limit, OcppSender ocppSender, String chargerSerialNumber) {
-        if (ocppSender == null || chargerSerialNumber == null) {
-            logger.warn("OcppSender or charger serial not set. Cannot send charging profile.");
+    private void sendChargingProfile(double limit, OcppSender ocppSender, String chargerSerialNumber, Integer connectorId) {
+        if (ocppSender == null || chargerSerialNumber == null || connectorId == null) {
+            logger.warn("OcppSender, charger serial or connector id not set. Cannot send charging profile.");
             return;
         }
 
@@ -53,7 +53,7 @@ public class ChargeLimitCommandHandler {
         profile.setChargingProfileKind(ChargingProfileKindType.Relative);
         profile.setChargingSchedule(schedule);
 
-        SetChargingProfileRequest setProfileRequest = new SetChargingProfileRequest(1, profile);
+        SetChargingProfileRequest setProfileRequest = new SetChargingProfileRequest(connectorId, profile);
         
         ocppSender.send(chargerRef, setProfileRequest).whenComplete((confirmation, throwable) -> {
             if (throwable != null) {
