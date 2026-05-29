@@ -120,6 +120,17 @@
         <default>true</default>
         <advanced>true</advanced>
       </parameter>
+      <parameter name="vendorConfig" type="text" required="false" multiple="true">
+        <label>Vendor Configuration Keys</label>
+        <description>
+          Vendor-specific OCPP configuration keys to push as ChangeConfiguration on each charger's
+          BootNotification. Format: KEY=VALUE per entry. Example: FreeMode=true (Phoenix Contact CHARX
+          authorisation bypass; AuthorizeRemoteTxRequests=false alone is not enough on CHARX SEC-3xxx
+          FW 1.9.0 to accept CSMS-initiated RemoteStartTransaction). Chargers that don't recognise a
+          key respond NotSupported and the entry is logged.
+        </description>
+        <advanced>true</advanced>
+      </parameter>
     </config-description>
   </bridge-type>
 
