@@ -20,6 +20,10 @@ package org.connectorio.addons.binding.ocpp.internal.server.adapter;
 import eu.chargetime.ocpp.model.core.BootNotificationConfirmation;
 import eu.chargetime.ocpp.model.core.BootNotificationRequest;
 import eu.chargetime.ocpp.model.core.ChangeConfigurationRequest;
+import eu.chargetime.ocpp.model.core.ChangeConfigurationConfirmation;
+import eu.chargetime.ocpp.model.core.ConfigurationStatus;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import org.connectorio.addons.binding.ocpp.internal.OcppSender;
 import org.connectorio.addons.binding.ocpp.internal.server.ChargerReference;
@@ -28,6 +32,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MeterValuesConfigAdapter extends CoreEventHandlerAdapter {
+
+  /**
+   * Measurands often advertised but not implemented by individual charger firmwares. When a
+   * charger rejects a ChangeConfiguration containing a sampled-data list, we strip the first
+   * matching measurand from the list and retry — repeatedly if needed. Phoenix Contact CHARX
+   * SEC-3xxx (FW 1.9.0) rejects {@code Temperature} (no internal sensor) and sometimes
+   * {@code Power.Offered}. Order = strip priority (most fragile first).
+   */
+  private static final List<String> FRAGILE_MEASURANDS = Arrays.asList("Temperature", "Power.Offered");
 
   private final Logger logger = LoggerFactory.getLogger(MeterValuesConfigAdapter.class);
   private final OcppChargerSessionRegistry sessionRegistry;
@@ -59,12 +72,52 @@ public class MeterValuesConfigAdapter extends CoreEventHandlerAdapter {
   }
 
   private void apply(ChargerReference reference, String key, String value) {
+    boolean isMeterMeasurandKey = "MeterValuesSampledData".equals(key) || "MeterValuesAlignedData".equals(key);
     sender.send(reference, new ChangeConfigurationRequest(key, value)).whenComplete((confirmation, ex) -> {
       if (ex != null) {
         logger.warn("ChangeConfiguration[{}] for {} failed: {}", key, reference, ex.getMessage());
-      } else {
-        logger.debug("ChangeConfiguration[{}={}] for {}: {}", key, value, reference, confirmation);
+        return;
       }
+      if (isMeterMeasurandKey && confirmation instanceof ChangeConfigurationConfirmation
+          && ((ChangeConfigurationConfirmation) confirmation).getStatus() == ConfigurationStatus.Rejected) {
+        String stripped = stripFirstFragile(value);
+        if (!stripped.equals(value) && !stripped.isEmpty()) {
+          logger.info("Charger {} rejected ChangeConfiguration[{}={}] — retrying as {}", reference, key, value, stripped);
+          apply(reference, key, stripped);
+          return;
+        }
+      }
+      logger.debug("ChangeConfiguration[{}={}] for {}: {}", key, value, reference, confirmation);
     });
+  }
+
+  /**
+   * Return {@code value} with the first matching fragile measurand removed (commas reconciled), or
+   * {@code value} unchanged if none of the fragile measurands appear. Order follows
+   * {@link #FRAGILE_MEASURANDS}.
+   */
+  static String stripFirstFragile(String value) {
+    if (value == null || value.isEmpty()) {
+      return value;
+    }
+    String[] tokens = value.split(",");
+    for (String fragile : FRAGILE_MEASURANDS) {
+      for (int i = 0; i < tokens.length; i++) {
+        if (fragile.equals(tokens[i].trim())) {
+          StringBuilder sb = new StringBuilder();
+          for (int j = 0; j < tokens.length; j++) {
+            if (j == i) {
+              continue;
+            }
+            if (sb.length() > 0) {
+              sb.append(',');
+            }
+            sb.append(tokens[j].trim());
+          }
+          return sb.toString();
+        }
+      }
+    }
+    return value;
   }
 }
