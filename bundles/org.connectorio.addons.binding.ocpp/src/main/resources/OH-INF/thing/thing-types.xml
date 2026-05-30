@@ -154,7 +154,19 @@
       </channel>
       <channel id="currentImport" typeId="current">
         <label>Current.Import</label>
-        <description>Instantaneous current flow to EV</description>
+        <description>Instantaneous current flow to EV. Last-write-wins across phases: if the charger sends per-phase Current.Import samples, the last phase processed lands here. Single-phase chargers can link this directly; for true per-phase telemetry use the L1/L2/L3 channels.</description>
+      </channel>
+      <channel id="currentImportL1" typeId="current">
+        <label>Current.Import L1</label>
+        <description>Instantaneous current flow to EV on phase L1. Populated when the charger identifies a phase via either SampledValue.phase or a vendor measurand suffix (e.g. Current.Import.L1).</description>
+      </channel>
+      <channel id="currentImportL2" typeId="current">
+        <label>Current.Import L2</label>
+        <description>Instantaneous current flow to EV on phase L2.</description>
+      </channel>
+      <channel id="currentImportL3" typeId="current">
+        <label>Current.Import L3</label>
+        <description>Instantaneous current flow to EV on phase L3.</description>
       </channel>
       <channel id="currentOffered" typeId="current">
         <label>Current.Offered</label>
@@ -234,7 +246,19 @@
       </channel>
       <channel id="voltage" typeId="voltage">
         <label>Voltage</label>
-        <description>Instantaneous AC RMS supply voltage</description>
+        <description>Instantaneous AC RMS supply voltage. Updated from every SampledValue whose measurand resolves to Voltage, regardless of phase; link this if you want a single channel that follows the latest reading.</description>
+      </channel>
+      <channel id="voltageL1" typeId="voltage">
+        <label>Voltage L1</label>
+        <description>Instantaneous AC RMS supply voltage on phase L1. Filled when the charger reports a phase.</description>
+      </channel>
+      <channel id="voltageL2" typeId="voltage">
+        <label>Voltage L2</label>
+        <description>Instantaneous AC RMS supply voltage on phase L2.</description>
+      </channel>
+      <channel id="voltageL3" typeId="voltage">
+        <label>Voltage L3</label>
+        <description>Instantaneous AC RMS supply voltage on phase L3.</description>
       </channel>
       <channel id="chargeLimit" typeId="current">
         <label>Charge Limit</label>
