@@ -80,15 +80,15 @@ jobs:
 
             git push origin "$BRANCH"
 
-            BACKPORT_PR=$(gh pr create \
+            BACKPORT_URL=$(gh pr create \
               --title "[${TARGET}] ${PR_TITLE}" \
               --body "$BODY" \
               --base "$TARGET" \
               --head "$BRANCH" \
               --label "bot" \
               --assignee "$AUTHOR" \
-              $DRAFT \
-              --json number --jq '.number')
+              $DRAFT)
+            BACKPORT_PR="${BACKPORT_URL##*/}"
 
             if [ -z "$DRAFT" ]; then
               gh pr merge "$BACKPORT_PR" --auto --rebase
