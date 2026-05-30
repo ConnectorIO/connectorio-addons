@@ -18,6 +18,7 @@
 package org.connectorio.addons.binding.ocpp.internal.server;
 
 import eu.chargetime.ocpp.feature.profile.ClientSmartChargingProfile;
+import eu.chargetime.ocpp.feature.profile.ServerRemoteTriggerProfile;
 import eu.chargetime.ocpp.feature.profile.ServerCoreEventHandler;
 import eu.chargetime.ocpp.JSONConfiguration;
 import eu.chargetime.ocpp.JSONServer;
@@ -29,6 +30,8 @@ import eu.chargetime.ocpp.feature.profile.ServerCoreProfile;
 import eu.chargetime.ocpp.model.Confirmation;
 import eu.chargetime.ocpp.model.Request;
 import eu.chargetime.ocpp.model.SessionInformation;
+import eu.chargetime.ocpp.model.remotetrigger.TriggerMessageRequest;
+import eu.chargetime.ocpp.model.remotetrigger.TriggerMessageRequestType;
 import java.util.Deque;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -79,6 +82,7 @@ public class OcppServer implements OcppSender {
 
     ServerSmartChargingHandler smartHandler = new ServerSmartChargingHandler();
     this.server.addFeatureProfile(new ClientSmartChargingProfile(smartHandler));
+    this.server.addFeatureProfile(new ServerRemoteTriggerProfile());
   }
 
   public void activate() {
@@ -94,11 +98,12 @@ public class OcppServer implements OcppSender {
             identifier = identifier.substring(1);
         }
         
-        chargerSessionRegistry.registerSession(sessionIndex, 
+        chargerSessionRegistry.registerSession(sessionIndex,
             new ChargerReference(identifier));
-        
+
         ChargerReference reference = new ChargerReference(identifier);
         ocularSolarEcoMode.applyOcularEcoMode(reference);
+        triggerStateRefresh(reference);
       }
 
       @Override
@@ -136,6 +141,22 @@ public class OcppServer implements OcppSender {
     if (!server.isClosed()) {
       server.close();
     }
+  }
+
+  private void triggerStateRefresh(ChargerReference reference) {
+    sendTrigger(reference, TriggerMessageRequestType.StatusNotification);
+    sendTrigger(reference, TriggerMessageRequestType.BootNotification);
+  }
+
+  private void sendTrigger(ChargerReference reference, TriggerMessageRequestType type) {
+    TriggerMessageRequest request = new TriggerMessageRequest(type);
+    send(reference, request).whenComplete((confirmation, throwable) -> {
+      if (throwable != null) {
+        logger.debug("TriggerMessage({}) for {} failed: {}", type, reference, throwable.getMessage());
+      } else {
+        logger.debug("TriggerMessage({}) for {}: {}", type, reference, confirmation);
+      }
+    });
   }
 
 }
