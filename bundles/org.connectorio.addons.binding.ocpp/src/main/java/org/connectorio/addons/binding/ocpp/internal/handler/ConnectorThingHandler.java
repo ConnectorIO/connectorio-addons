@@ -138,6 +138,14 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
       if (command == OnOffType.ON) {
         sendUnlock();
       }
+    } else if (OcppBindingConstants.PAUSE.getAsString().equals(channelId)) {
+      if (command instanceof OnOffType) {
+        if (command == OnOffType.ON) {
+          chargeLimitHandler.pause(this);
+        } else {
+          chargeLimitHandler.resume(this);
+        }
+      }
     }
   }
 
