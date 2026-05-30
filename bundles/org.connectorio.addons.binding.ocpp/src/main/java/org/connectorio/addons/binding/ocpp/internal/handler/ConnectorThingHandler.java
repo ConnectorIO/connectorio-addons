@@ -146,8 +146,7 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
 
         try {
           Double measurement = Double.valueOf(sample.getValue());
-          UID ref = OcppMeasurementMapping.get(sample.getMeasurand());
-          if (ref != null) {
+          for (UID ref : OcppMeasurementMapping.channelsFor(sample)) {
             ChannelUID uid = new ChannelUID(getThing().getUID(), ref.getAsString());
             State state = parse(measurement, uid, sample);
             getCallback().stateUpdated(uid, state);
