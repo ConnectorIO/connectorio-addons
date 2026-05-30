@@ -128,6 +128,14 @@
         <label>Charging</label>
         <description>Remote start/stop charging control. Send ON to trigger RemoteStartTransaction and OFF to trigger RemoteStopTransaction.</description>
       </channel>
+      <channel id="reset" typeId="switch">
+        <label>Reset</label>
+        <description>Momentary. Send ON to issue a soft Reset to the charge point; the channel returns to OFF once the request settles.</description>
+      </channel>
+      <channel id="lock" typeId="switch">
+        <label>Unlock Connector</label>
+        <description>Momentary. Send ON to issue UnlockConnector for this connector (releases the cable latch / terminates a stuck transaction); the channel returns to OFF once the request settles.</description>
+      </channel>
       <channel id="timestampStart" typeId="dateTime">
         <label>Start timestamp</label>
         <description>Start timestamp of most recent transaction.</description>
