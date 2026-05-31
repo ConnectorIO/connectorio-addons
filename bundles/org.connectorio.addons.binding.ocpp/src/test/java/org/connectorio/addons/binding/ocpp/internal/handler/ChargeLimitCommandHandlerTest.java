@@ -109,4 +109,12 @@ class ChargeLimitCommandHandlerTest {
     // then
     verify(sender, never()).send(any(ChargerReference.class), any(Request.class));
   }
+
+  @Test
+  void shouldIgnoreRefreshType() {
+    // chargeLimit is a write-only control; REFRESH must be a no-op
+    handler.handle(org.openhab.core.types.RefreshType.REFRESH, context);
+
+    verify(sender, never()).send(any(ChargerReference.class), any(Request.class));
+  }
 }

@@ -12,6 +12,7 @@ import org.connectorio.addons.binding.ocpp.internal.server.ChargerReference;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.types.Command;
+import org.openhab.core.types.RefreshType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,10 @@ public class ChargeLimitCommandHandler {
     private double lastRequestedLimit = -1;
 
     public void handle(Command command, ConnectorCommandContext context) {
+        if (command instanceof RefreshType) {
+            // chargeLimit is a write-only control; REFRESH (e.g. on item link) has nothing to read.
+            return;
+        }
         double limit;
         if (command instanceof DecimalType) {
             limit = ((DecimalType) command).doubleValue();
