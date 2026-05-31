@@ -60,10 +60,10 @@ class ConnectorThingHandlerTest {
 
     private void verifyResetChannels() {
         verify(callback).stateUpdated(new ChannelUID("ocpp:connector:1:powerActiveImport"), new QuantityType<>(0, Units.WATT));
-        verify(callback).stateUpdated(argThat(uid -> uid.getId().equals("currentImport")), eq(new QuantityType<>(0, Units.AMPERE)));
-        verify(callback).stateUpdated(argThat(uid -> uid.getId().equals("currentImportL1")), eq(new QuantityType<>(0, Units.AMPERE)));
-        verify(callback).stateUpdated(argThat(uid -> uid.getId().equals("currentImportL2")), eq(new QuantityType<>(0, Units.AMPERE)));
-        verify(callback).stateUpdated(argThat(uid -> uid.getId().equals("currentImportL3")), eq(new QuantityType<>(0, Units.AMPERE)));
-        verify(callback).stateUpdated(argThat(uid -> uid.getId().equals("currentOffered")), eq(new QuantityType<>(0, Units.AMPERE)));
+        verify(callback).stateUpdated(new ChannelUID("ocpp:connector:1:currentImport"), new QuantityType<>(0, Units.AMPERE));
+        verify(callback).stateUpdated(new ChannelUID("ocpp:connector:1:currentImportL1"), new QuantityType<>(0, Units.AMPERE));
+        verify(callback).stateUpdated(new ChannelUID("ocpp:connector:1:currentImportL2"), new QuantityType<>(0, Units.AMPERE));
+        verify(callback).stateUpdated(new ChannelUID("ocpp:connector:1:currentImportL3"), new QuantityType<>(0, Units.AMPERE));
+        verify(callback).stateUpdated(new ChannelUID("ocpp:connector:1:currentOffered"), new QuantityType<>(0, Units.AMPERE));
     }
 }
