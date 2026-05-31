@@ -3,6 +3,7 @@ package org.connectorio.addons.binding.ocpp.internal.handler;
 import eu.chargetime.ocpp.model.core.ChargePointStatus;
 import eu.chargetime.ocpp.model.core.StatusNotificationRequest;
 import eu.chargetime.ocpp.model.core.StopTransactionRequest;
+import java.time.ZonedDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -36,16 +37,7 @@ class ConnectorThingHandlerTest {
         StopTransactionRequest request = new StopTransactionRequest(0, ZonedDateTime.now(), 1);
         request.setIdTag("testTag");
         // Simulate transactionId state
-        java.lang.reflect.Field txIdField;
-        try {
-            txIdField = ConnectorThingHandler.class.getDeclaredField("transactionId");
-            txIdField.setAccessible(true);
-            java.util.concurrent.atomic.AtomicInteger txId = new java.util.concurrent.atomic.AtomicInteger(0);
-            txId.set(2); // so txId.get() == 2, request.getTransactionId() == 1
-            txIdField.set(handler, txId);
-        } catch (Exception e) {
-            fail(e);
-        }
+        handler.setTransactionId(2); // so transactionId.get() == 2, request.getTransactionId() == 1
         handler.handleStopTransaction(request);
         verifyResetChannels();
     }

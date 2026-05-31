@@ -49,6 +49,10 @@ import tech.units.indriya.quantity.Quantities;
 public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeHandler, ConnectorConfig> implements
   StatusNotificationHandler, TransactionHandler, MeterValuesHandler, ConnectorCommandContext {
 
+  // Package-scoped for testability
+  void setTransactionId(int value) {
+    this.transactionId.set(value);
+  }
   private final AtomicInteger transactionId = new AtomicInteger();
   private final Logger logger = LoggerFactory.getLogger(ConnectorThingHandler.class);
 
