@@ -37,6 +37,7 @@ public class PhantomCycleDetector {
   private final int threshold;
   private final Deque<Long> availableTimestamps = new ArrayDeque<>();
   private boolean chargingSinceAvailable;
+  private ChargePointStatus lastStatus;
 
   public PhantomCycleDetector(long windowMs, int threshold) {
     this.windowMs = windowMs;
@@ -51,6 +52,8 @@ public class PhantomCycleDetector {
    *     a fresh run of cycles.
    */
   public synchronized boolean record(ChargePointStatus status, long nowMs) {
+    ChargePointStatus previous = lastStatus;
+    lastStatus = status;
     if (status == ChargePointStatus.Charging) {
       chargingSinceAvailable = true;
       return false;
@@ -62,6 +65,13 @@ public class PhantomCycleDetector {
       // A real session ran since the last Available — not a phantom cycle.
       chargingSinceAvailable = false;
       availableTimestamps.clear();
+      return false;
+    }
+    if (previous == null || previous == ChargePointStatus.Available) {
+      // Only a genuine return counts: the connector must have actually left Available and come
+      // back. A charger re-announcing Available on (re)connect or in response to a TriggerMessage
+      // reports the same state repeatedly — those duplicates are not cycles and must not trip the
+      // detector (otherwise the connect/reconnect status burst fires it at startup).
       return false;
     }
     availableTimestamps.addLast(nowMs);
