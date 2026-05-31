@@ -182,7 +182,7 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
         || status == ChargePointStatus.Finishing
         || status == ChargePointStatus.SuspendedEV
         || status == ChargePointStatus.SuspendedEVSE) {
-      resetPowerAndCurrentChannels();
+      resetSessionState(null, null);
     }
 
     return new StatusNotificationConfirmation();
@@ -211,22 +211,28 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
       return new StopTransactionConfirmation();
     }
 
-    currentTransactionId = null;
+    resetSessionState(tag, OnOffType.OFF);
+    // Set stop-specific fields
     ThingHandlerCallback callback = getCallback();
-    callback.stateUpdated(new ChannelUID(getThing().getUID(), "idTag"), new StringType(tag));
-    callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CHARGING.getAsString()), OnOffType.OFF);
     callback.stateUpdated(new ChannelUID(getThing().getUID(), "timestampStop"), new DateTimeType(request.getTimestamp()));
     callback.stateUpdated(new ChannelUID(getThing().getUID(), "meterStop"), new QuantityType<>(request.getMeterStop(), Units.WATT_HOUR));
-
-    resetPowerAndCurrentChannels();
 
     return new StopTransactionConfirmation();
   }
   /**
-   * Resets power and current-related channels to 0 when a transaction ends.
+   * Resets all relevant session state and channels when a transaction ends or charger becomes available.
+   * If any argument is null, that field is not updated (for use in StatusNotification events).
    */
-  private void resetPowerAndCurrentChannels() {
+  private void resetSessionState(String idTag, OnOffType chargingState) {
+    currentTransactionId = null;
     ThingHandlerCallback callback = getCallback();
+    if (idTag != null) {
+      callback.stateUpdated(new ChannelUID(getThing().getUID(), "idTag"), new StringType(idTag));
+    }
+    if (chargingState != null) {
+      callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CHARGING.getAsString()), chargingState);
+    }
+    // Always reset power/current channels
     callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.POWER_ACTIVE_IMPORT.getAsString()), new QuantityType<>(0, Units.WATT));
     callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CURRENT_IMPORT.getAsString()), new QuantityType<>(0, Units.AMPERE));
     callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CURRENT_IMPORT_L1.getAsString()), new QuantityType<>(0, Units.AMPERE));
