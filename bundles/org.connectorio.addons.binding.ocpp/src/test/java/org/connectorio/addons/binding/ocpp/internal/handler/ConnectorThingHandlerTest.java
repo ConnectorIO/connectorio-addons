@@ -33,11 +33,8 @@ class ConnectorThingHandlerTest {
 
     @Test
     void testResetOnStopTransaction() {
-        StopTransactionRequest request = mock(StopTransactionRequest.class);
-        when(request.getIdTag()).thenReturn("testTag");
-        when(request.getTransactionId()).thenReturn(1);
-        when(request.getTimestamp()).thenReturn(java.time.ZonedDateTime.now());
-        when(request.getMeterStop()).thenReturn(0);
+        StopTransactionRequest request = new StopTransactionRequest(0, ZonedDateTime.now(), 1);
+        request.setIdTag("testTag");
         // Simulate transactionId state
         java.lang.reflect.Field txIdField;
         try {
@@ -70,7 +67,7 @@ class ConnectorThingHandlerTest {
     }
 
     private void verifyResetChannels() {
-        verify(callback).stateUpdated(argThat(uid -> uid.getId().equals("powerActiveImport")), eq(new QuantityType<>(0, Units.WATT)));
+        verify(callback).stateUpdated(new ChannelUID("ocpp:connector:1:powerActiveImport"), new QuantityType<>(0, Units.WATT));
         verify(callback).stateUpdated(argThat(uid -> uid.getId().equals("currentImport")), eq(new QuantityType<>(0, Units.AMPERE)));
         verify(callback).stateUpdated(argThat(uid -> uid.getId().equals("currentImportL1")), eq(new QuantityType<>(0, Units.AMPERE)));
         verify(callback).stateUpdated(argThat(uid -> uid.getId().equals("currentImportL2")), eq(new QuantityType<>(0, Units.AMPERE)));
