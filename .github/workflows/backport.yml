@@ -41,7 +41,7 @@ jobs:
 
           # On 'labeled' events process only the label that was just added.
           # On 'closed' events process all backport-* labels present on the PR.
-          LABELS="${TRIGGER_LABEL:-$LABELS}"
+          LABELS=$(printf '%s\n' ${TRIGGER_LABEL:-$LABELS} | sort | tr '\n' ' ')
 
           # Detect whether the merge commit has multiple parents (true merge commit)
           # vs. a single parent (squash or rebase merge).
