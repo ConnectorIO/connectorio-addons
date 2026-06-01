@@ -1,6 +1,8 @@
 package org.connectorio.addons.binding.ocpp.internal.handler;
 
 import eu.chargetime.ocpp.model.Confirmation;
+import eu.chargetime.ocpp.model.core.BootNotificationConfirmation;
+import eu.chargetime.ocpp.model.core.BootNotificationRequest;
 import eu.chargetime.ocpp.model.core.HeartbeatConfirmation;
 import eu.chargetime.ocpp.model.core.HeartbeatRequest;
 import eu.chargetime.ocpp.model.core.MeterValuesConfirmation;
@@ -34,6 +36,16 @@ public class ServerBridgeDispatcherAdapter extends CoreEventHandlerAdapter {
 
   public void removeHandler(ChargerReference reference) {
     this.handlers.remove(reference);
+  }
+
+  @Override
+  public BootNotificationConfirmation handleBootNotificationRequest(UUID sessionIndex, BootNotificationRequest request) {
+    handle(sessionIndex, handler -> {
+      handler.handleBoot(request);
+      return null;
+    });
+    // Acceptance is owned by BootRegistrationAdapter — don't pre-empt the chain.
+    return null;
   }
 
   @Override
