@@ -43,12 +43,22 @@ public class ChargerConnectorAdapter implements StatusNotificationHandler, Meter
   @Override
   public StatusNotificationConfirmation handleStatusNotification(StatusNotificationRequest request) {
     listener.onRequest(request);
+    if (!handlers.containsKey(request.getConnectorId())) {
+      // Charger-level (connectorId 0) or a connector with no Thing — ACK so the OCPP layer does
+      // not answer the charge point with NotSupported.
+      return new StatusNotificationConfirmation();
+    }
     return handle(handler -> handler.handleStatusNotification(request), request.getConnectorId());
   }
 
   @Override
   public MeterValuesConfirmation handleMeterValues(MeterValuesRequest request) {
     listener.onRequest(request);
+    if (!handlers.containsKey(request.getConnectorId())) {
+      // Charger-level (connectorId 0, e.g. idle clock-aligned MeterValues) or a connector with no
+      // Thing — ACK with an empty confirmation rather than letting the library reply NotSupported.
+      return new MeterValuesConfirmation();
+    }
     return handle(handler -> handler.handleMeterValues(request), request.getConnectorId());
   }
 
