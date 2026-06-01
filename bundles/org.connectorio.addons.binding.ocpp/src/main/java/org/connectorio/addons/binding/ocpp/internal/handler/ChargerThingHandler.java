@@ -19,6 +19,7 @@ package org.connectorio.addons.binding.ocpp.internal.handler;
 
 import eu.chargetime.ocpp.model.Confirmation;
 import eu.chargetime.ocpp.model.Request;
+import eu.chargetime.ocpp.model.core.BootNotificationRequest;
 import eu.chargetime.ocpp.model.core.HeartbeatConfirmation;
 import eu.chargetime.ocpp.model.core.HeartbeatRequest;
 import eu.chargetime.ocpp.model.core.MeterValuesConfirmation;
@@ -85,6 +86,41 @@ public class ChargerThingHandler extends GenericBridgeHandlerBase<ChargerConfig>
   @Override
   public Collection<Class<? extends ThingHandlerService>> getServices() {
     return Arrays.asList(OcppChargerConnectorDiscoveryService.class);
+  }
+
+  public void handleBoot(BootNotificationRequest request) {
+    if (request == null) {
+      return;
+    }
+    java.util.Map<String, String> properties = editProperties();
+    if (request.getChargePointVendor() != null) {
+      properties.put(org.openhab.core.thing.Thing.PROPERTY_VENDOR, request.getChargePointVendor());
+    }
+    if (request.getChargePointModel() != null) {
+      properties.put(org.openhab.core.thing.Thing.PROPERTY_MODEL_ID, request.getChargePointModel());
+    }
+    if (request.getFirmwareVersion() != null) {
+      properties.put(org.openhab.core.thing.Thing.PROPERTY_FIRMWARE_VERSION, request.getFirmwareVersion());
+    }
+    if (request.getChargePointSerialNumber() != null) {
+      properties.put(org.openhab.core.thing.Thing.PROPERTY_SERIAL_NUMBER, request.getChargePointSerialNumber());
+    }
+    if (request.getChargeBoxSerialNumber() != null) {
+      properties.put("chargeBoxSerialNumber", request.getChargeBoxSerialNumber());
+    }
+    if (request.getIccid() != null) {
+      properties.put("iccid", request.getIccid());
+    }
+    if (request.getImsi() != null) {
+      properties.put("imsi", request.getImsi());
+    }
+    if (request.getMeterType() != null) {
+      properties.put("meterType", request.getMeterType());
+    }
+    if (request.getMeterSerialNumber() != null) {
+      properties.put("meterSerialNumber", request.getMeterSerialNumber());
+    }
+    updateProperties(properties);
   }
 
   @Override
