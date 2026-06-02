@@ -17,7 +17,7 @@
  */
 package org.connectorio.addons.binding.ocpp.internal.server;
 
-import eu.chargetime.ocpp.feature.profile.ClientSmartChargingProfile;
+import eu.chargetime.ocpp.feature.profile.ServerSmartChargingProfile;
 import eu.chargetime.ocpp.feature.profile.ServerRemoteTriggerProfile;
 import eu.chargetime.ocpp.feature.profile.ServerCoreEventHandler;
 import eu.chargetime.ocpp.JSONConfiguration;
@@ -80,8 +80,10 @@ public class OcppServer implements OcppSender {
       this.server = new JSONServer(new ServerCoreProfile(handler));
     }
 
-    ServerSmartChargingHandler smartHandler = new ServerSmartChargingHandler();
-    this.server.addFeatureProfile(new ClientSmartChargingProfile(smartHandler));
+    // Register the SERVER smart-charging profile so the CSMS can SEND SetChargingProfile /
+    // ClearChargingProfile / GetCompositeSchedule. (Previously the *client* profile was registered,
+    // which is the charge-point side and does not let the server issue smart-charging CALLs.)
+    this.server.addFeatureProfile(new ServerSmartChargingProfile());
     this.server.addFeatureProfile(new ServerRemoteTriggerProfile());
   }
 
