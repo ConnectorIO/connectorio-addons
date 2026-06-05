@@ -32,6 +32,8 @@
   <name>ConnectorIO - Addons - Binding - Base</name>
   <description>Base elements supporting binding 3rd party binding implementations from ConnectorIO.</description>
 
+  <!-- test change -->
+
   <dependencies>
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
