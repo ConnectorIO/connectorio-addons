@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Parse command
         id: parse
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # 9.0.0
         with:
           script: |
             const body = context.payload.comment.body.trim().toLowerCase();
@@ -34,7 +34,7 @@ jobs:
 
       - name: Verify permissions
         id: verify
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # 9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -69,7 +69,7 @@ jobs:
 
       - name: Get PR details
         id: pr
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # 9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -86,7 +86,7 @@ jobs:
 
       - name: Execute /retest
         if: steps.parse.outputs.command == '/retest'
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # 9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -129,7 +129,7 @@ jobs:
 
       - name: Execute /rebuild
         if: steps.parse.outputs.command == '/rebuild'
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # 9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -200,7 +200,7 @@ jobs:
 
       - name: React to comment
         if: success()
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # 9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
