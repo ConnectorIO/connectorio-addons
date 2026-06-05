@@ -19,7 +19,21 @@ on:
         description: ""
 
 jobs:
+  reactor:
+    runs-on: ubuntu-latest
+    outputs:
+      additional_options: ${{ steps.reactor-calculator.outputs.additional_options }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # 6.0.3
+        with:
+          fetch-depth: 2
+      - id: reactor-calculator
+        run: |
+          additional_options=$(.github/workflows/scripts/reactor-calculator.sh "HEAD~1")
+          echo "additional_options=$additional_options" >> $GITHUB_OUTPUT
+
   build:
+    needs: reactor
     permissions:
       checks: write
       contents: read
@@ -33,4 +47,5 @@ jobs:
       deploy: ${{ github.event.pull_request.head.repo.fork == false }}
       skip_test_publish: ${{ github.event.pull_request.head.repo.fork == true }}
       additional_profiles: 'thing4,openhab'
+      additional_options: ${{ needs.reactor.outputs.additional_options }}
       master_branch: '5'
