@@ -19,13 +19,14 @@ package org.connectorio.addons.binding.ocpp.internal.config;
 
 import java.util.List;
 import org.connectorio.addons.binding.config.Configuration;
+import org.connectorio.addons.binding.ocpp.internal.server.custom.OcularSolarEcoMode.EcoMode;
 
 public class ServerConfig implements Configuration {
 
   public String address;
   public int port;
   public int heartbeat;
-  public String initialOcularEcoMode;
+  public EcoMode initialOcularEcoMode = EcoMode.NONE;
   public int pingInterval = 60;
 
   public int meterValueSampleInterval = 30;
