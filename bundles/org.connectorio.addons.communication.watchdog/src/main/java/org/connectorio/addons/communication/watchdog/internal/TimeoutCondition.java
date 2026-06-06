@@ -17,6 +17,7 @@
  */
 package org.connectorio.addons.communication.watchdog.internal;
 
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import org.connectorio.addons.communication.watchdog.WatchdogClock;
 import org.connectorio.addons.communication.watchdog.WatchdogCondition;
@@ -33,7 +34,7 @@ public class TimeoutCondition implements WatchdogCondition {
   private final long timeoutPeriodMs;
   private final ChannelUID channel;
 
-  private Long lastUpdate;
+  private final AtomicLong lastUpdate = new AtomicLong(Long.MIN_VALUE);
 
   public TimeoutCondition(WatchdogClock clock, ChannelUID channel, long timeoutPeriodMs) {
     this.clock = clock;
@@ -48,14 +49,13 @@ public class TimeoutCondition implements WatchdogCondition {
 
   @Override
   public State evaluate() {
-    Long updateWindow = clock.getTimestamp() - timeoutPeriodMs;
-    if (this.lastUpdate == null) {
-      // assume we haven't seen anything for last window
-      this.lastUpdate = updateWindow;
+    long updateWindow = clock.getTimestamp() - timeoutPeriodMs;
+    if (this.lastUpdate.compareAndSet(Long.MIN_VALUE, updateWindow)) {
       return State.INITIALIZED;
     }
-    logger.debug("Last update time {} should be higher than {}", lastUpdate, updateWindow);
-    State currentState = lastUpdate > updateWindow ? State.OK : State.FAILED;
+    long last = this.lastUpdate.get();
+    logger.debug("Last update time {} should be higher than {}", last, updateWindow);
+    State currentState = last > updateWindow ? State.OK : State.FAILED;
     state.set(currentState);
     return currentState;
   }
@@ -67,8 +67,9 @@ public class TimeoutCondition implements WatchdogCondition {
 
   @Override
   public void mark() {
-    this.lastUpdate = clock.getTimestamp();
-    logger.debug("Channel {} received update at {}.", channel, lastUpdate);
+    long now = clock.getTimestamp();
+    this.lastUpdate.set(now);
+    logger.debug("Channel {} received update at {}.", channel, now);
   }
 
   @Override
