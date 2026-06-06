@@ -33,9 +33,15 @@ import eu.chargetime.ocpp.model.SessionInformation;
 import eu.chargetime.ocpp.model.remotetrigger.TriggerMessageRequest;
 import eu.chargetime.ocpp.model.remotetrigger.TriggerMessageRequestType;
 import java.util.Deque;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.connectorio.addons.binding.ocpp.internal.OcppSender;
@@ -61,6 +67,33 @@ public class OcppServer implements OcppSender {
   private final int port;
   private final OcppChargerSessionRegistry chargerSessionRegistry;
   private final OcularSolarEcoMode ocularSolarEcoMode;
+
+  /**
+   * Chargers we have already sent TriggerMessage(BootNotification) to once. Chargers that honor it
+   * re-cycle their connection in a loop if it is re-sent on every reconnect, so it is sent at most
+   * once per charger, immediately on first connect. StatusNotification is handled separately — see
+   * {@link #scheduleStateRefresh}: it is (re)requested only once a session has been stable for
+   * {@link #STATE_REFRESH_SETTLE_SECONDS}, so a flapping charger never gets flooded.
+   */
+  private final Set<String> bootTriggered = ConcurrentHashMap.newKeySet();
+
+  /**
+   * How long a session must stay up before we (re)request StatusNotification. A charger that flaps
+   * (reconnecting every few tens of seconds) never reaches this, so we stop flooding it with
+   * TriggerMessage CALLs it cannot answer (which also appears to shorten its reconnect cycle) and
+   * stop the resulting timeout-WARN spam. A stable or charging session DOES reach it, keeping the
+   * connector status in sync — a stale Available-while-charging makes RemoteStart be Rejected and
+   * power read NaN. The charger's own spontaneous StatusNotification still covers real state
+   * changes; this scheduled trigger is only the fallback re-sync.
+   */
+  private static final long STATE_REFRESH_SETTLE_SECONDS = 90;
+  private final ScheduledExecutorService refreshScheduler =
+      Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread thread = new Thread(r, "ocpp-state-refresh");
+        thread.setDaemon(true);
+        return thread;
+      });
+  private final Map<UUID, ScheduledFuture<?>> pendingStatusRefresh = new ConcurrentHashMap<>();
 
   public OcppServer(String ip, int port, OcppChargerSessionRegistry chargerSessionRegistry,
       Deque<ServerCoreEventHandler> eventHandlers, OcularSolarEcoMode ocularSolarEcoMode,
@@ -103,13 +136,19 @@ public class OcppServer implements OcppSender {
 
         ChargerReference reference = new ChargerReference(identifier);
         ocularSolarEcoMode.applyOcularEcoMode(reference);
-        triggerStateRefresh(reference);
+        scheduleStateRefresh(sessionIndex, reference);
       }
 
       @Override
       public void lostSession(UUID sessionIndex) {
         logger.info("Terminated connection {}.", sessionIndex);
         chargerSessionRegistry.removeSession(sessionIndex);
+        // Cancel a not-yet-fired StatusNotification refresh — this session flapped before it settled,
+        // so re-probing it would just flood a flapping charger.
+        ScheduledFuture<?> pending = pendingStatusRefresh.remove(sessionIndex);
+        if (pending != null) {
+          pending.cancel(false);
+        }
       }
     });
   }
@@ -138,14 +177,31 @@ public class OcppServer implements OcppSender {
   }
 
   public void close() {
+    refreshScheduler.shutdownNow();
     if (!server.isClosed()) {
       server.close();
     }
   }
 
-  private void triggerStateRefresh(ChargerReference reference) {
-    sendTrigger(reference, TriggerMessageRequestType.StatusNotification);
-    sendTrigger(reference, TriggerMessageRequestType.BootNotification);
+  private void scheduleStateRefresh(UUID sessionIndex, ChargerReference reference) {
+    // BootNotification at most once per charger, immediately: chargers that honor
+    // TriggerMessage(BootNotification) re-cycle their connection in a loop if it is re-sent on every
+    // reconnect. Guarded once, it does not flood.
+    if (bootTriggered.add(reference.getSerial())) {
+      sendTrigger(reference, TriggerMessageRequestType.BootNotification);
+    }
+    // StatusNotification only once the session has stayed up for STATE_REFRESH_SETTLE_SECONDS. A
+    // flapping charger never reaches it — so we no longer flood it with TriggerMessage CALLs it can't
+    // answer, killing the timeout-WARN spam and easing the flap. A stable or charging session does
+    // reach it, re-syncing a stale status. Cancelled in lostSession if the session drops first.
+    ScheduledFuture<?> future = refreshScheduler.schedule(() -> {
+      pendingStatusRefresh.remove(sessionIndex);
+      // Only if this exact session is still the charger's current one (it didn't flap away meanwhile).
+      if (sessionIndex.equals(chargerSessionRegistry.getSession(reference))) {
+        sendTrigger(reference, TriggerMessageRequestType.StatusNotification);
+      }
+    }, STATE_REFRESH_SETTLE_SECONDS, TimeUnit.SECONDS);
+    pendingStatusRefresh.put(sessionIndex, future);
   }
 
   private void sendTrigger(ChargerReference reference, TriggerMessageRequestType type) {
