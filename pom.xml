@@ -43,6 +43,8 @@
     <release.repository-id>co7io-public-releases</release.repository-id>
     <release.repository-name>ConnectorIO Public Releases</release.repository-name>
     <release.repository-url>https://repository.connectorio.cloud/repository/co7io-public-releases/</release.repository-url>
+
+    <gib.disable>true</gib.disable>
   </properties>
 
   <modules>
