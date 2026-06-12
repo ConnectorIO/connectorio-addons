@@ -109,6 +109,17 @@
         <unitLabel>s</unitLabel>
         <advanced>true</advanced>
       </parameter>
+      <parameter name="disableRemoteTxAuthorization" type="boolean" required="false">
+        <label>Disable Local Authorization for RemoteStart</label>
+        <description>
+          Push AuthorizeRemoteTxRequests=false to each connecting charger on BootNotification.
+          Chargers like Phoenix Contact CHARX SEC-3xxx ship with AuthorizeRemoteTxRequests=true
+          and an empty local auth list, which Rejects every CSMS-initiated RemoteStartTransaction.
+          Disable only if you rely on the charger's local authorization list.
+        </description>
+        <default>true</default>
+        <advanced>true</advanced>
+      </parameter>
     </config-description>
   </bridge-type>
 
