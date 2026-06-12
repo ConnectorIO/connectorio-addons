@@ -177,6 +177,10 @@
         <label>Unlock Connector</label>
         <description>Momentary. Send ON to issue UnlockConnector for this connector (releases the cable latch / terminates a stuck transaction); the channel returns to OFF once the request settles.</description>
       </channel>
+      <channel id="pause" typeId="switch">
+        <label>Pause</label>
+        <description>Pause/resume charging without ending the transaction. Send ON to apply a 0 A limit (SetChargingProfile), OFF to restore the last non-zero limit. OCPP 1.6 has no dedicated pause command.</description>
+      </channel>
       <channel id="timestampStart" typeId="dateTime">
         <label>Start timestamp</label>
         <description>Start timestamp of most recent transaction.</description>
