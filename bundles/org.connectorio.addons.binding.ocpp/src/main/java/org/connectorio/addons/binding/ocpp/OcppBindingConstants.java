@@ -52,6 +52,7 @@ public interface OcppBindingConstants extends BaseBindingConstants {
   ChannelRef CHARGING = new ChannelRef("charging");
   ChannelRef RESET = new ChannelRef("reset");
   ChannelRef LOCK = new ChannelRef("lock");
+  ChannelRef PAUSE = new ChannelRef("pause");
   ChannelRef ENERGY_ACTIVE_EXPORT = new ChannelRef("energyActiveExport");
   ChannelRef ENERGY_ACTIVE_IMPORT = new ChannelRef("energyActiveImport");
   ChannelRef ENERGY_REACTIVE_EXPORT = new ChannelRef("energyReactiveExport");
