@@ -18,6 +18,9 @@ import org.slf4j.LoggerFactory;
 public class ChargeLimitCommandHandler {
     private final Logger logger = LoggerFactory.getLogger(ChargeLimitCommandHandler.class);
 
+    // Last non-zero limit requested, restored on resume (pause = limit 0).
+    private double lastRequestedLimit = -1;
+
     public void handle(Command command, ConnectorCommandContext context) {
         double limit;
         if (command instanceof DecimalType) {
@@ -28,7 +31,24 @@ public class ChargeLimitCommandHandler {
             logger.warn("Unsupported command type for chargeLimit: {}", command.getClass());
             return;
         }
+        if (limit > 0) {
+            lastRequestedLimit = limit;
+        }
         sendChargingProfile(limit, context.getOcppSender(), context.getChargerSerialNumber(), context.getConnectorId());
+    }
+
+    /** Pause charging by applying a 0 A limit (OCPP has no dedicated pause command). */
+    public void pause(ConnectorCommandContext context) {
+        sendChargingProfile(0, context.getOcppSender(), context.getChargerSerialNumber(), context.getConnectorId());
+    }
+
+    /** Resume charging by restoring the last non-zero limit. */
+    public void resume(ConnectorCommandContext context) {
+        if (lastRequestedLimit <= 0) {
+            logger.info("No prior charge limit to resume to; awaiting next chargeLimit command.");
+            return;
+        }
+        sendChargingProfile(lastRequestedLimit, context.getOcppSender(), context.getChargerSerialNumber(), context.getConnectorId());
     }
 
     private void sendChargingProfile(double limit, OcppSender ocppSender, String chargerSerialNumber, Integer connectorId) {
