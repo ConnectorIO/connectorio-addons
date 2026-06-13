@@ -33,6 +33,7 @@ public class ServerConfig implements Configuration {
   public String meterValuesData = "Energy.Active.Import.Register,Power.Active.Import,Current.Import,Voltage";
   public int clockAlignedDataInterval = 30;
   public boolean disableRemoteTxAuthorization = true;
+  public List<String> vendorConfig;
 
   public List<String> chargers;
   public List<String> tags;
