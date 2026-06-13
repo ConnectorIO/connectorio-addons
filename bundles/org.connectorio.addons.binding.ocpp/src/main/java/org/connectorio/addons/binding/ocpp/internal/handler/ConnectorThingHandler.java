@@ -52,6 +52,13 @@ import tec.uom.se.quantity.Quantities;
 public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeHandler, ConnectorConfig> implements
   StatusNotificationHandler, TransactionHandler, MeterValuesHandler, ConnectorCommandContext {
 
+  // Package-scoped for testability
+  void setTransactionId(int value) {
+    this.transactionId.set(value);
+  }
+
+  private static final long DEFAULT_PROFILE_MIN_INTERVAL_MS = 500L;
+
   private final AtomicInteger transactionId = new AtomicInteger();
   private final Logger logger = LoggerFactory.getLogger(ConnectorThingHandler.class);
 
@@ -102,6 +109,20 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
   @Override
   public Integer getConnectorId() {
     return connectorId;
+  }
+
+  @Override
+  public java.util.concurrent.ScheduledExecutorService getScheduler() {
+    return scheduler;
+  }
+
+  @Override
+  public long getProfileMinIntervalMs() {
+    return getThingConfig()
+        .map(config -> config.profileMinIntervalMs)
+        .filter(value -> value != null && value >= 0)
+        .map(Integer::longValue)
+        .orElse(DEFAULT_PROFILE_MIN_INTERVAL_MS);
   }
 
   @Override
