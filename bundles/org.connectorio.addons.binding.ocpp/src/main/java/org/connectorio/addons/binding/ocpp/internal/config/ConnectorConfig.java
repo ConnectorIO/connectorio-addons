@@ -23,4 +23,5 @@ public class ConnectorConfig implements Configuration {
   public static final String DEFAULT_REMOTE_START_TAG = "openhab";
   public Integer connectorId;
   public String remoteStartTag = DEFAULT_REMOTE_START_TAG;
+  public Integer profileMinIntervalMs;
 }
