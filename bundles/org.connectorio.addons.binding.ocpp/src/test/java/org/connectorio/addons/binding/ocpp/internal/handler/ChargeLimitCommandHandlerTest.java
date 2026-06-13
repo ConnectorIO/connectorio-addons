@@ -40,9 +40,16 @@ class ChargeLimitCommandHandlerTest {
     handler = new ChargeLimitCommandHandler();
   }
 
+  private void stubCoalescer() {
+    // getProfileMinIntervalMs() is read when the coalescer is constructed; getScheduler() is only
+    // touched if a drain is scheduled, which a single idle submit never triggers.
+    when(context.getProfileMinIntervalMs()).thenReturn(0L);
+  }
+
   @Test
   void shouldSendSetChargingProfileForDecimalType() {
     // given
+    stubCoalescer();
     when(context.getOcppSender()).thenReturn(sender);
     when(context.getChargerSerialNumber()).thenReturn("charger-serial");
     when(context.getConnectorId()).thenReturn(2);
@@ -63,6 +70,7 @@ class ChargeLimitCommandHandlerTest {
   @Test
   void shouldSendSetChargingProfileForQuantityType() {
     // given
+    stubCoalescer();
     when(context.getOcppSender()).thenReturn(sender);
     when(context.getChargerSerialNumber()).thenReturn("charger-serial");
     when(context.getConnectorId()).thenReturn(1);
