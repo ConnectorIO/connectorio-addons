@@ -329,6 +329,18 @@
         <description>Tag to use for remote start transactions. Defaults to "openhab" if not specified.</description>
         <default>openhab</default>
       </parameter>
+      <parameter name="profileMinIntervalMs" type="integer" required="false" min="0">
+        <label>SetChargingProfile Min Interval (ms)</label>
+        <description>
+          Minimum gap between consecutive SetChargingProfile CALLs to this connector. Rapid
+          charge-limit changes are coalesced — at most one CALL in flight plus the latest pending
+          value — so a fast caller cannot flood the charger's OCPP queue. Higher values help slow
+          chargers such as Phoenix Contact CHARX SEC-3xxx.
+        </description>
+        <default>500</default>
+        <unitLabel>ms</unitLabel>
+        <advanced>true</advanced>
+      </parameter>
     </config-description>
 
   </thing-type>
