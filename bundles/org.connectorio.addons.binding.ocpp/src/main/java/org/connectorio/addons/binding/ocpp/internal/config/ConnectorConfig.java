@@ -24,4 +24,5 @@ public class ConnectorConfig implements Configuration {
   public Integer connectorId;
   public String remoteStartTag = DEFAULT_REMOTE_START_TAG;
   public Integer profileMinIntervalMs;
+  public String hardwareMaxCurrentKey;
 }
