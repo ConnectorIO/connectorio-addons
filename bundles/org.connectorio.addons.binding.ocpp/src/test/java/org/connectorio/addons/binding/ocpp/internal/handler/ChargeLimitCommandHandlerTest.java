@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import eu.chargetime.ocpp.model.Request;
 import eu.chargetime.ocpp.model.core.ChargingProfile;
+import eu.chargetime.ocpp.model.core.ChargingProfilePurposeType;
 import eu.chargetime.ocpp.model.smartcharging.SetChargingProfileRequest;
 import java.util.concurrent.CompletableFuture;
 import org.connectorio.addons.binding.ocpp.internal.OcppSender;
@@ -102,6 +103,48 @@ class ChargeLimitCommandHandlerTest {
 
     // then
     verify(sender, never()).send(any(ChargerReference.class), any(Request.class));
+  }
+
+  @Test
+  void shouldUseTxProfileWithTransactionIdWhenTransactionActive() {
+    // given a running transaction
+    when(context.getOcppSender()).thenReturn(sender);
+    when(context.getChargerSerialNumber()).thenReturn("charger-serial");
+    when(context.getCurrentTransactionId()).thenReturn(42);
+    when(sender.send(any(ChargerReference.class), any(Request.class)))
+      .thenReturn(CompletableFuture.completedFuture(null));
+
+    // when
+    handler.handle(new DecimalType(16), context);
+
+    // then the profile targets the running transaction
+    ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
+    verify(sender).send(any(ChargerReference.class), requestCaptor.capture());
+
+    ChargingProfile profile = ((SetChargingProfileRequest) requestCaptor.getValue()).getCsChargingProfiles();
+    assertThat(profile.getChargingProfilePurpose()).isEqualTo(ChargingProfilePurposeType.TxProfile);
+    assertThat(profile.getTransactionId()).isEqualTo(42);
+  }
+
+  @Test
+  void shouldUseTxDefaultProfileWhenNoTransaction() {
+    // given no active transaction
+    when(context.getOcppSender()).thenReturn(sender);
+    when(context.getChargerSerialNumber()).thenReturn("charger-serial");
+    when(context.getCurrentTransactionId()).thenReturn(null);
+    when(sender.send(any(ChargerReference.class), any(Request.class)))
+      .thenReturn(CompletableFuture.completedFuture(null));
+
+    // when
+    handler.handle(new DecimalType(16), context);
+
+    // then it seeds the next session's default and carries no transaction id
+    ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
+    verify(sender).send(any(ChargerReference.class), requestCaptor.capture());
+
+    ChargingProfile profile = ((SetChargingProfileRequest) requestCaptor.getValue()).getCsChargingProfiles();
+    assertThat(profile.getChargingProfilePurpose()).isEqualTo(ChargingProfilePurposeType.TxDefaultProfile);
+    assertThat(profile.getTransactionId()).isNull();
   }
 
   @Test
