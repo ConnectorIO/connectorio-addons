@@ -1,6 +1,9 @@
 package org.connectorio.addons.binding.ocpp.internal.handler;
 
+import eu.chargetime.ocpp.model.Request;
 import eu.chargetime.ocpp.model.core.AuthorizationStatus;
+import eu.chargetime.ocpp.model.core.AvailabilityType;
+import eu.chargetime.ocpp.model.core.ChangeAvailabilityRequest;
 import eu.chargetime.ocpp.model.core.ChargePointStatus;
 import eu.chargetime.ocpp.model.core.IdTagInfo;
 import eu.chargetime.ocpp.model.core.MeterValue;
@@ -17,8 +20,12 @@ import eu.chargetime.ocpp.model.core.StopTransactionConfirmation;
 import eu.chargetime.ocpp.model.core.StopTransactionRequest;
 import eu.chargetime.ocpp.model.core.UnlockConnectorRequest;
 import eu.chargetime.ocpp.model.core.ValueFormat;
+import eu.chargetime.ocpp.model.remotetrigger.TriggerMessageRequest;
+import eu.chargetime.ocpp.model.remotetrigger.TriggerMessageRequestType;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.measure.Quantity;
 import org.connectorio.addons.binding.handler.GenericThingHandlerBase;
@@ -59,8 +66,15 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
 
   private static final long DEFAULT_PROFILE_MIN_INTERVAL_MS = 500L;
 
+  private static final long WATCHDOG_TICK_SECONDS = 5L;
+  private static final long AVAILABILITY_RESTORE_DELAY_MS = 2_000L;
+
   private final AtomicInteger transactionId = new AtomicInteger();
   private final Logger logger = LoggerFactory.getLogger(ConnectorThingHandler.class);
+
+  private final org.connectorio.addons.binding.ocpp.internal.server.StuckStateWatchdog watchdog =
+      new org.connectorio.addons.binding.ocpp.internal.server.StuckStateWatchdog();
+  private ScheduledFuture<?> watchdogFuture;
 
   private OcppSender ocppSender;
   private String chargerSerialNumber;
@@ -137,7 +151,18 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
     } else {
       remoteStartTag = ConnectorConfig.DEFAULT_REMOTE_START_TAG;
     }
+    watchdogFuture = scheduler.scheduleWithFixedDelay(this::runWatchdog,
+        WATCHDOG_TICK_SECONDS, WATCHDOG_TICK_SECONDS, TimeUnit.SECONDS);
     updateStatus(ThingStatus.ONLINE);
+  }
+
+  @Override
+  public void dispose() {
+    if (watchdogFuture != null) {
+      watchdogFuture.cancel(true);
+      watchdogFuture = null;
+    }
+    super.dispose();
   }
 
   @Override
@@ -253,7 +278,79 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
       resetSessionState(null, null);
     }
 
+    watchdog.onStatus(status, System.currentTimeMillis());
+
     return new StatusNotificationConfirmation();
+  }
+
+  private void runWatchdog() {
+    org.connectorio.addons.binding.ocpp.internal.server.StuckStateWatchdog.Action action =
+        watchdog.evaluate(System.currentTimeMillis());
+    if (action == org.connectorio.addons.binding.ocpp.internal.server.StuckStateWatchdog.Action.NONE) {
+      return;
+    }
+    Integer connector = resolveConnectorId();
+    if (ocppSender == null || chargerSerialNumber == null || connector == null) {
+      return;
+    }
+    ChargerReference reference = new ChargerReference(chargerSerialNumber);
+    switch (action) {
+      case TRIGGER_STATUS:
+        logger.info("Connector {} stuck — nudging with TriggerMessage(StatusNotification)", getThing().getUID());
+        TriggerMessageRequest trigger = new TriggerMessageRequest(TriggerMessageRequestType.StatusNotification);
+        trigger.setConnectorId(connector);
+        sendRecovery(reference, trigger, "TriggerMessage(StatusNotification)");
+        break;
+      case CHANGE_AVAILABILITY:
+        logger.warn("Connector {} stuck — cycling ChangeAvailability(Inoperative->Operative)", getThing().getUID());
+        cycleAvailability(reference, connector);
+        break;
+      case UNLOCK:
+        logger.error("Connector {} still stuck — sending UnlockConnector; physical intervention may be required",
+            getThing().getUID());
+        sendRecovery(reference, new UnlockConnectorRequest(connector), "UnlockConnector");
+        break;
+      default:
+        break;
+    }
+  }
+
+  private void cycleAvailability(ChargerReference reference, Integer connector) {
+    ocppSender.send(reference, new ChangeAvailabilityRequest(connector, AvailabilityType.Inoperative))
+        .whenComplete((confirmation, ex) -> {
+          if (ex != null) {
+            logger.warn("ChangeAvailability(Inoperative) for {} failed: {}", getThing().getUID(), ex.getMessage());
+            return;
+          }
+          scheduler.schedule(() -> sendRecovery(reference,
+              new ChangeAvailabilityRequest(connector, AvailabilityType.Operative),
+              "ChangeAvailability(Operative)"), AVAILABILITY_RESTORE_DELAY_MS, TimeUnit.MILLISECONDS);
+        });
+  }
+
+  private void sendRecovery(ChargerReference reference, Request request, String label) {
+    ocppSender.send(reference, request).whenComplete((confirmation, ex) -> {
+      if (ex != null) {
+        logger.warn("{} for {} failed: {}", label, getThing().getUID(), ex.getMessage());
+      } else {
+        logger.debug("{} for {}: {}", label, getThing().getUID(), confirmation);
+      }
+    });
+  }
+
+  private Integer resolveConnectorId() {
+    Object value = getThing().getConfiguration().get("connectorId");
+    if (value instanceof Number) {
+      return ((Number) value).intValue();
+    }
+    if (value instanceof String) {
+      try {
+        return Integer.parseInt(((String) value).trim());
+      } catch (NumberFormatException e) {
+        return null;
+      }
+    }
+    return null;
   }
 
   @Override
