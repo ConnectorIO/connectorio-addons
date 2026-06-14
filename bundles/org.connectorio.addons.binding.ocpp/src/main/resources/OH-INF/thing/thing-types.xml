@@ -192,6 +192,10 @@
         <label>Pause</label>
         <description>Pause/resume charging without ending the transaction. Send ON to apply a 0 A limit (SetChargingProfile), OFF to restore the last non-zero limit. OCPP 1.6 has no dedicated pause command.</description>
       </channel>
+      <channel id="cableConnected" typeId="switch">
+        <label>Cable Connected</label>
+        <description>Read-only. ON while an EV is plugged in (connector status Preparing/Charging/SuspendedEV/SuspendedEVSE/Finishing), OFF otherwise. Derived from StatusNotification since OCPP 1.6 has no dedicated plug-presence message.</description>
+      </channel>
       <channel id="timestampStart" typeId="dateTime">
         <label>Start timestamp</label>
         <description>Start timestamp of most recent transaction.</description>
