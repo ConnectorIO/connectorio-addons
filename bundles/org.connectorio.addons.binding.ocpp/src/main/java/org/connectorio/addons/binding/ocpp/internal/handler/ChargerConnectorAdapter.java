@@ -12,6 +12,7 @@ import eu.chargetime.ocpp.model.core.StopTransactionRequest;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import org.connectorio.addons.binding.ocpp.internal.OcppRequestListener;
 import org.connectorio.addons.binding.ocpp.internal.server.listener.MeterValuesHandler;
@@ -26,6 +27,9 @@ public class ChargerConnectorAdapter implements StatusNotificationHandler, Meter
   private final Logger logger = LoggerFactory.getLogger(ChargerConnectorAdapter.class);
   private final Map<Integer, ConnectorThingHandler> handlers = new ConcurrentHashMap<>();
   private final Map<Integer, Integer> transactionMap = new ConcurrentHashMap<>();
+  // Charger-wide transaction-id sequence shared with every connector so their ids never collide;
+  // StopTransaction carries no connectorId, so the id is the only key back to the right connector.
+  private final AtomicInteger transactionSequence = new AtomicInteger(1);
   private final OcppRequestListener<Request> listener;
 
   public ChargerConnectorAdapter(OcppRequestListener<Request> listener) {
@@ -33,6 +37,7 @@ public class ChargerConnectorAdapter implements StatusNotificationHandler, Meter
   }
 
   public void addConnector(int connector, ConnectorThingHandler handler) {
+    handler.setTransactionSequence(transactionSequence);
     handlers.put(connector, handler);
   }
 
@@ -80,6 +85,7 @@ public class ChargerConnectorAdapter implements StatusNotificationHandler, Meter
     for (Entry<Integer, Integer> entry : transactionMap.entrySet()) {
       if (entry.getValue().equals(request.getTransactionId())) {
         connectorId = entry.getKey();
+        break;
       }
     }
 
