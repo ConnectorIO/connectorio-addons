@@ -19,6 +19,7 @@ package org.connectorio.addons.binding.fatek.internal.handler;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.function.Consumer;
 import org.connectorio.addons.binding.fatek.transport.FaconConnection;
 import org.connectorio.addons.binding.handler.polling.PollingBridgeHandler;
 import org.connectorio.addons.binding.fatek.config.BridgeConfig;
@@ -29,5 +30,7 @@ public interface FatekBridgeHandler<C extends BridgeConfig> extends PollingBridg
   CompletableFuture<FaconConnection> getConnection();
 
   CompletionStage<DiscoveryCoordinator> getDiscoveryCoordinator();
+
+  Consumer<Exception> getConnectionErrorHandler();
 
 }

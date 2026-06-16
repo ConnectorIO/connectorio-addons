@@ -19,10 +19,12 @@ package org.connectorio.addons.binding.fatek.internal.handler;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
-
+import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import org.simplify4u.jfatek.io.FatekIOException;
 import org.connectorio.addons.binding.config.PollingConfiguration;
 import org.connectorio.addons.binding.fatek.config.BridgeConfig;
 import org.connectorio.addons.binding.fatek.config.DeviceConfig;
@@ -102,7 +104,8 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
             .map(cfg -> cfg.refreshInterval)
             .filter(interval -> interval != 0)
             .orElseGet(this::getRefreshInterval);
-          source.add(refreshInterval, channel.getUID().getAsString(), new FatekRegisterSampler(connection, stationNumber, handler.registers(), new HandlerCallback(handler, this::update)));
+          source.add(refreshInterval, channel.getUID().getAsString(), new FatekRegisterSampler(connection, stationNumber, handler.registers(),
+              new HandlerCallback(handler, this::update, this::signalConnectionError)));
           handlerMap.put(channel.getUID(), handler);
         }
       }
@@ -123,7 +126,8 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
       FatekChannelHandler handler = handlerMap.get(channelUID);
       if (RefreshType.REFRESH.equals(command) && this.source != null) {
         // read channel status independently of scheduled tasks
-        source.request(new FatekRegisterSampler(connection, stationNumber, handler.registers(), new HandlerCallback(handler, this::update)));
+        source.request(new FatekRegisterSampler(connection, stationNumber, handler.registers(),
+            new HandlerCallback(handler, this::update, this::signalConnectionError)));
         return;
       }
       FatekCommand<?> cmd = handler.prepareWrite(command);
@@ -141,10 +145,23 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
     connection.execute(stationNumber, cmd).whenComplete((r, e) -> {
       if (e != null) {
         logger.error("Could not signal channel {} with command {} by fatek command {}", channel, command, cmd, e);
+        signalConnectionError(e);
         return;
       }
-      logger.debug("Successful write of channel {} with command {} annd fatek command {}", channel, command, cmd);
+      logger.debug("Successful write of channel {} with command {} and fatek command {}", channel, command, cmd);
     });
+  }
+
+  private void signalConnectionError(Throwable cause) {
+    if (cause instanceof FatekIOException || cause instanceof TimeoutException
+        || (cause.getCause() instanceof FatekIOException)) {
+      logger.warn("Communication failure on station {}, signalling bridge", stationNumber, cause);
+      updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, cause.getMessage());
+      getBridgeHandler().map(FatekBridgeHandler::getConnectionErrorHandler)
+          .ifPresent(handler -> handler.accept(cause instanceof Exception ? (Exception) cause : new RuntimeException(cause)));
+    } else {
+      logger.warn("Non-IO error on station {}", stationNumber, cause);
+    }
   }
 
   private void update(ChannelUID channelUID, Type value) {
@@ -166,18 +183,24 @@ public class FatekPlcThingHandler extends BasePollingThingHandler<FatekBridgeHan
     return 1000L;
   }
 
-  static class HandlerCallback implements Consumer<Map<Reg, RegValue>> {
+  static class HandlerCallback implements BiConsumer<Map<Reg, RegValue>, Throwable> {
 
     private final FatekChannelHandler handler;
     private final BiConsumer<ChannelUID, State> callback;
+    private final Consumer<Throwable> errorCallback;
 
-    public HandlerCallback(FatekChannelHandler handler, BiConsumer<ChannelUID, State> callback) {
+    public HandlerCallback(FatekChannelHandler handler, BiConsumer<ChannelUID, State> callback, Consumer<Throwable> errorCallback) {
       this.handler = handler;
       this.callback = callback;
+      this.errorCallback = errorCallback;
     }
 
     @Override
-    public void accept(Map<Reg, RegValue> regValues) {
+    public void accept(Map<Reg, RegValue> regValues, Throwable error) {
+      if (error != null) {
+        errorCallback.accept(error);
+        return;
+      }
       State state = handler.state(new ArrayList<>(regValues.values()));
       if (state != null) {
         callback.accept(handler.channel(), state);

@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import org.connectorio.addons.binding.fatek.transport.FaconConnection;
 import org.connectorio.addons.binding.source.sampling.SamplerComposer;
@@ -84,19 +85,19 @@ public class FatekSamplerComposer implements SamplerComposer<FatekSampler> {
     }
   }
 
-  static class WrappedCallback implements Consumer<Map<Reg, RegValue>> {
+  static class WrappedCallback implements BiConsumer<Map<Reg, RegValue>, Throwable> {
 
     private final List<Reg> registers;
-    private final Consumer<Map<Reg, RegValue>> callback;
+    private final BiConsumer<Map<Reg, RegValue>, Throwable> callback;
 
-    public WrappedCallback(List<Reg> registers, Consumer<Map<Reg, RegValue>> callback) {
+    public WrappedCallback(List<Reg> registers, BiConsumer<Map<Reg, RegValue>, Throwable> callback) {
       this.registers = registers;
       this.callback = callback;
     }
 
     @Override
-    public void accept(Map<Reg, RegValue> result) {
-      this.callback.accept(result);
+    public void accept(Map<Reg, RegValue> result, Throwable error) {
+      this.callback.accept(result, error);
     }
   }
 
