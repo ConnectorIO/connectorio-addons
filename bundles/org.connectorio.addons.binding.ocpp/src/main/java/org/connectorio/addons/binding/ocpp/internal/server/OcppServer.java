@@ -39,7 +39,10 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -55,8 +58,8 @@ public class OcppServer implements OcppSender {
    * Maximum time to wait for a charger to answer a CSMS-initiated CALL.
    * chargetime/ocpp's {@code Server.send(...)} returns a future from
    * {@code PromiseRepository} that is silently orphaned when the underlying
-   * WebSocket closes mid-flight — see ChargeTimeEU/Java-OCA-OCPP#121. Wrapping
-   * with {@code orTimeout} surfaces the failure as a
+   * WebSocket closes mid-flight — see ChargeTimeEU/Java-OCA-OCPP#121. Bounding
+   * the wait with {@code Future.get(timeout)} surfaces the failure as a
    * {@link TimeoutException} instead of leaving the caller waiting forever.
    */
   private static final long CALL_TIMEOUT_SECONDS = 15;
@@ -94,6 +97,14 @@ public class OcppServer implements OcppSender {
         return thread;
       });
   private final Map<UUID, ScheduledFuture<?>> pendingStatusRefresh = new ConcurrentHashMap<>();
+
+  /**
+   * One {@link SessionSender} per live session, each owning a single worker thread that serialises
+   * that charger's outbound CALLs. OCPP 1.6 permits only one in-flight request per direction, and a
+   * strict charger drops the WebSocket if it receives a concurrent burst (observed on the Wallbox
+   * Copper SB during the boot-time configuration burst).
+   */
+  private final Map<UUID, SessionSender> sessionSenders = new ConcurrentHashMap<>();
 
   public OcppServer(String ip, int port, OcppChargerSessionRegistry chargerSessionRegistry,
       Deque<ServerCoreEventHandler> eventHandlers, OcularSolarEcoMode ocularSolarEcoMode,
@@ -133,6 +144,12 @@ public class OcppServer implements OcppSender {
             identifier = identifier.substring(1);
         }
         
+        // Stand up the per-session sender before the registry entry so any send triggered below (or
+        // by a racing caller) finds its serialising worker rather than failing as "session not found".
+        SessionSender previous = sessionSenders.put(sessionIndex, new SessionSender(sessionIndex));
+        if (previous != null) {
+          previous.close(); // never orphan a worker thread if the same id ever reconnects without a lost event
+        }
         chargerSessionRegistry.registerSession(sessionIndex,
             new ChargerReference(identifier));
 
@@ -151,35 +168,33 @@ public class OcppServer implements OcppSender {
         if (pending != null) {
           pending.cancel(false);
         }
+        SessionSender sender = sessionSenders.remove(sessionIndex);
+        if (sender != null) {
+          sender.close();
+        }
       }
     });
   }
 
   @Override
   public CompletionStage<Confirmation> send(ChargerReference chargerReference, Request request) {
-    try {
-      UUID sessionIndex = chargerSessionRegistry.getSession(chargerReference);
-      if (sessionIndex == null) {
-        logger.warn("Could not send request {} to charger {}. Session not found.", request, chargerReference);
-        return CompletableFuture.failedFuture(new NotConnectedException());
-      }
-      return this.server.send(sessionIndex, request)
-          .toCompletableFuture()
-          .orTimeout(CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS)
-          .whenComplete((confirmation, throwable) -> {
-            if (throwable instanceof TimeoutException) {
-              logger.warn("Request {} to charger {} timed out after {} s — chargetime/ocpp future may have been"
-                      + " orphaned by socket close (ChargeTimeEU/Java-OCA-OCPP#121).",
-                  request.getClass().getSimpleName(), chargerReference, CALL_TIMEOUT_SECONDS);
-            }
-          });
-    } catch (OccurenceConstraintException | UnsupportedFeatureException | NotConnectedException e) {
-      throw new RuntimeException(e);
+    UUID sessionIndex = chargerSessionRegistry.getSession(chargerReference);
+    if (sessionIndex == null) {
+      logger.warn("Could not send request {} to charger {}. Session not found.", request, chargerReference);
+      return CompletableFuture.failedFuture(new NotConnectedException());
     }
+    SessionSender sender = sessionSenders.get(sessionIndex);
+    if (sender == null) {
+      logger.warn("Could not send request {} to charger {}. Session is closing.", request, chargerReference);
+      return CompletableFuture.failedFuture(new NotConnectedException());
+    }
+    return sender.submit(chargerReference, request);
   }
 
   public void close() {
     refreshScheduler.shutdownNow();
+    sessionSenders.values().forEach(SessionSender::close);
+    sessionSenders.clear();
     if (!server.isClosed()) {
       server.close();
     }
@@ -215,6 +230,110 @@ public class OcppServer implements OcppSender {
         logger.debug("TriggerMessage({}) for {}: {}", type, reference, confirmation);
       }
     });
+  }
+
+  /**
+   * Serialises outbound CALLs to one charger over a dedicated worker thread.
+   *
+   * <p>OCPP 1.6 permits only one in-flight request per direction, and a strict charger (the Wallbox
+   * Copper SB observed here) drops its WebSocket if it receives a concurrent burst — e.g. the
+   * boot-time configuration burst. Each session owns a single daemon thread that takes requests off
+   * its queue and sends them one at a time, blocking on the charger's answer (bounded by
+   * {@link #CALL_TIMEOUT_SECONDS}) before starting the next. The work stays on this per-session
+   * thread rather than the shared {@link CompletableFuture} pool, the per-CALL result futures are
+   * dropped from {@link #inFlight} as soon as they settle so nothing accumulates, and when the
+   * session ends every queued or in-flight CALL is failed at once instead of hanging until it times
+   * out on a socket that is already gone.
+   *
+   * <p>Continuations on the stage returned by {@link #submit} run on this worker thread, so callers
+   * must keep them non-blocking and must not synchronously await another CALL to the same session.
+   */
+  private final class SessionSender {
+
+    private final UUID sessionIndex;
+    private final ExecutorService worker;
+    private final Set<CompletableFuture<Confirmation>> inFlight = ConcurrentHashMap.newKeySet();
+    private volatile boolean closed;
+
+    SessionSender(UUID sessionIndex) {
+      this.sessionIndex = sessionIndex;
+      this.worker = Executors.newSingleThreadExecutor(runnable -> {
+        Thread thread = new Thread(runnable, "ocpp-send-" + sessionIndex);
+        thread.setDaemon(true);
+        return thread;
+      });
+    }
+
+    CompletableFuture<Confirmation> submit(ChargerReference reference, Request request) {
+      CompletableFuture<Confirmation> result = new CompletableFuture<>();
+      if (closed) {
+        result.completeExceptionally(new NotConnectedException());
+        return result;
+      }
+      // Track only what is still pending — release each future the moment it settles so completed
+      // CALLs are not retained.
+      inFlight.add(result);
+      result.whenComplete((confirmation, throwable) -> inFlight.remove(result));
+      try {
+        worker.execute(() -> deliver(reference, request, result));
+      } catch (RejectedExecutionException e) {
+        result.completeExceptionally(new NotConnectedException());
+      }
+      return result;
+    }
+
+    private void deliver(ChargerReference reference, Request request,
+        CompletableFuture<Confirmation> result) {
+      if (closed) {
+        result.completeExceptionally(new NotConnectedException());
+        return;
+      }
+      if (result.isDone()) {
+        return; // failed by close() while still queued
+      }
+      try {
+        // Single worker thread => exactly one CALL in flight per session. Block here on the answer so
+        // the next queued CALL only starts once this one has been acknowledged.
+        Confirmation confirmation = server.send(sessionIndex, request)
+            .toCompletableFuture()
+            .get(CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        result.complete(confirmation);
+      } catch (TimeoutException e) {
+        // chargetime/ocpp does not cancel the timed-out CALL (ChargeTimeEU/Java-OCA-OCPP#121), so it is
+        // still registered on the wire. Dispatching the next CALL would put two in flight at once — the
+        // very burst a strict charger drops on. Close the session instead; the charger reconnects and we
+        // resume on a fresh, known-clear socket.
+        logger.warn("Request {} to charger {} timed out after {} s; closing the session to avoid a"
+                + " concurrent in-flight CALL (ChargeTimeEU/Java-OCA-OCPP#121).",
+            request.getClass().getSimpleName(), reference, CALL_TIMEOUT_SECONDS);
+        result.completeExceptionally(e);
+        closed = true;
+        server.closeSession(sessionIndex);
+      } catch (ExecutionException e) {
+        result.completeExceptionally(e.getCause() != null ? e.getCause() : e);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        result.completeExceptionally(e);
+      } catch (OccurenceConstraintException | UnsupportedFeatureException | NotConnectedException e) {
+        result.completeExceptionally(e);
+      } finally {
+        // Never leave a caller hanging: an unchecked throw from server.send() (e.g. the WebSocket
+        // transmitter on a half-closed socket) still settles the future here.
+        if (!result.isDone()) {
+          result.completeExceptionally(new NotConnectedException());
+        }
+      }
+    }
+
+    void close() {
+      closed = true;
+      worker.shutdownNow(); // stop the worker; interrupts a blocking get(), drops queued CALLs
+      NotConnectedException terminated = new NotConnectedException();
+      for (CompletableFuture<Confirmation> pending : inFlight) {
+        pending.completeExceptionally(terminated);
+      }
+      inFlight.clear();
+    }
   }
 
 }
