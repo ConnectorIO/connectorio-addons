@@ -6,6 +6,7 @@ import org.connectorio.addons.binding.ocpp.internal.OcppSender;
 import org.connectorio.addons.binding.ocpp.internal.server.ChargerReference;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.types.Command;
+import org.openhab.core.types.RefreshType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +14,10 @@ public class ChargingCommandHandler {
     private final Logger logger = LoggerFactory.getLogger(ChargingCommandHandler.class);
 
     public void handle(Command command, ConnectorCommandContext context) {
+        if (command instanceof RefreshType) {
+            // charging is a write-only RemoteStart/Stop control; REFRESH has nothing to read.
+            return;
+        }
         if (!(command instanceof OnOffType)) {
             logger.warn("Unsupported command type for charging control: {}", command.getClass());
             return;
