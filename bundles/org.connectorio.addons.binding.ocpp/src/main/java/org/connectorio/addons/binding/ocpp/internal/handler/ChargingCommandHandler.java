@@ -41,12 +41,24 @@ public class ChargingCommandHandler {
 
         ChargerReference chargerRef = new ChargerReference(chargerSerialNumber);
         RemoteStartTransactionRequest request = new RemoteStartTransactionRequest(remoteStartTag);
+        // Target the specific connector. On a multi-connector charge point the
+        // connectorId is required — without it some chargers (e.g. Phoenix CHARX)
+        // cannot bind the remote start to an EVSE and Reject the request. Single
+        // connector chargers are unaffected (connectorId 1 is unambiguous). OCPP
+        // requires connectorId > 0 (0 = the charge point as a whole, invalid for
+        // RemoteStart), so omit anything else and let the charger choose.
+        Integer connectorId = context.getConnectorId();
+        if (connectorId != null && connectorId > 0) {
+            request.setConnectorId(connectorId);
+        }
 
         ocppSender.send(chargerRef, request).whenComplete((confirmation, throwable) -> {
             if (throwable != null) {
-                logger.warn("Failed to send RemoteStartTransaction with tag {}", remoteStartTag, throwable);
+                logger.warn("Failed to send RemoteStartTransaction (connector {}, tag {})", connectorId, remoteStartTag,
+                        throwable);
             } else {
-                logger.info("RemoteStartTransaction with tag {} sent successfully: {}", remoteStartTag, confirmation);
+                logger.info("RemoteStartTransaction (connector {}, tag {}) sent successfully: {}", connectorId,
+                        remoteStartTag, confirmation);
             }
         });
     }
