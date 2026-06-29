@@ -105,4 +105,12 @@ class ChargingCommandHandlerTest {
     // then
     verify(sender, never()).send(any(ChargerReference.class), any(Request.class));
   }
+
+  @Test
+  void shouldIgnoreRefreshType() {
+    // charging is a write-only RemoteStart/Stop control; REFRESH must be a no-op
+    handler.handle(org.openhab.core.types.RefreshType.REFRESH, context);
+
+    verify(sender, never()).send(any(ChargerReference.class), any(Request.class));
+  }
 }

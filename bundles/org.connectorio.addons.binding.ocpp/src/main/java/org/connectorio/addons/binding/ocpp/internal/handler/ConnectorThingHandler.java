@@ -64,7 +64,10 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
 
   private static final long DEFAULT_PROFILE_MIN_INTERVAL_MS = 500L;
 
-  private final AtomicInteger transactionId = new AtomicInteger();
+  // Transaction-id sequence. Replaced with a charger-wide shared sequence (see setTransactionSequence)
+  // so connectors on the same charge point never issue colliding ids — StopTransaction carries only a
+  // transactionId, no connectorId, so colliding ids cannot be routed back to the right connector.
+  private AtomicInteger transactionId = new AtomicInteger(1);
   private final Logger logger = LoggerFactory.getLogger(ConnectorThingHandler.class);
 
   private OcppSender ocppSender;
@@ -90,6 +93,14 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
   protected void setOcppSender(OcppSender sender, String chargerSerial) {
     this.ocppSender = sender;
     this.chargerSerialNumber = chargerSerial;
+  }
+
+  /**
+   * Share one transaction-id sequence across all connectors of a charge point so the ids stay unique
+   * per charger. Called by {@link ChargerConnectorAdapter} when the connector is registered.
+   */
+  void setTransactionSequence(AtomicInteger sequence) {
+    this.transactionId = sequence;
   }
 
   @Override
@@ -314,12 +325,22 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
     StringType val = new StringType(status.name());
     getCallback().stateUpdated(new ChannelUID(getThing().getUID(), "chargePointStatus"), val);
 
+    if (status == ChargePointStatus.Available
+        || status == ChargePointStatus.Finishing
+        || status == ChargePointStatus.SuspendedEV
+        || status == ChargePointStatus.SuspendedEVSE) {
+      resetSessionState(null, null);
+    }
+
     return new StatusNotificationConfirmation();
   }
 
   @Override
   public StartTransactionConfirmation handleStartTransaction(StartTransactionRequest request) {
     String tag = request.getIdTag();
+
+    int txId = generateId();
+    currentTransactionId = txId;
 
     ThingHandlerCallback callback = getCallback();
     callback.stateUpdated(new ChannelUID(getThing().getUID(), "idTag"), new StringType(tag));
@@ -328,7 +349,7 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
     callback.stateUpdated(new ChannelUID(getThing().getUID(), "meterStart"), new QuantityType<>(request.getMeterStart(), Units.WATT_HOUR));
 
     IdTagInfo tagInfo = new IdTagInfo(AuthorizationStatus.Accepted);
-    return new StartTransactionConfirmation(tagInfo, generateId());
+    return new StartTransactionConfirmation(tagInfo, txId);
   }
 
   @Override
@@ -336,11 +357,14 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
     String tag = request.getIdTag();
 
     Integer txId = request.getTransactionId();
-    if (transactionId.get() != txId + 1) {
+    // Only act on a stop for this connector's own running transaction; with one charge point exposing
+    // several connectors a StopTransaction can be dispatched here for another connector's id.
+    if (currentTransactionId == null || !currentTransactionId.equals(txId)) {
       return new StopTransactionConfirmation();
     }
 
-    currentTransactionId = null;
+    resetSessionState(tag, OnOffType.OFF);
+    // Set stop-specific fields
     ThingHandlerCallback callback = getCallback();
     callback.stateUpdated(new ChannelUID(getThing().getUID(), "idTag"), new StringType(tag));
     callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CHARGING.getAsString()), OnOffType.OFF);
@@ -348,6 +372,27 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
     callback.stateUpdated(new ChannelUID(getThing().getUID(), "meterStop"), new QuantityType<>(request.getMeterStop(), Units.WATT_HOUR));
 
     return new StopTransactionConfirmation();
+  }
+  /**
+   * Resets all relevant session state and channels when a transaction ends or charger becomes available.
+   * If any argument is null, that field is not updated (for use in StatusNotification events).
+   */
+  private void resetSessionState(String idTag, OnOffType chargingState) {
+    currentTransactionId = null;
+    ThingHandlerCallback callback = getCallback();
+    if (idTag != null) {
+      callback.stateUpdated(new ChannelUID(getThing().getUID(), "idTag"), new StringType(idTag));
+    }
+    if (chargingState != null) {
+      callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CHARGING.getAsString()), chargingState);
+    }
+    // Always reset power/current channels
+    callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.POWER_ACTIVE_IMPORT.getAsString()), new QuantityType<>(0, Units.WATT));
+    callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CURRENT_IMPORT.getAsString()), new QuantityType<>(0, Units.AMPERE));
+    callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CURRENT_IMPORT_L1.getAsString()), new QuantityType<>(0, Units.AMPERE));
+    callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CURRENT_IMPORT_L2.getAsString()), new QuantityType<>(0, Units.AMPERE));
+    callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CURRENT_IMPORT_L3.getAsString()), new QuantityType<>(0, Units.AMPERE));
+    callback.stateUpdated(new ChannelUID(getThing().getUID(), OcppBindingConstants.CURRENT_OFFERED.getAsString()), new QuantityType<>(0, Units.AMPERE));
   }
 
   private static State parse(Double measurement, ChannelUID uid, SampledValue sample) {
