@@ -43,6 +43,7 @@ import org.openhab.core.thing.UID;
 import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.binding.ThingHandlerCallback;
 import org.openhab.core.library.types.OnOffType;
+import org.openhab.core.library.types.OpenClosedType;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
 import org.slf4j.Logger;
@@ -229,9 +230,11 @@ public class ConnectorThingHandler extends GenericThingHandlerBase<ServerBridgeH
     StringType val = new StringType(status.name());
     getCallback().stateUpdated(new ChannelUID(getThing().getUID(), "chargePointStatus"), val);
 
+    // Contact, not Switch — this channel is read-only. CLOSED mirrors the physical pilot circuit:
+    // plugging in the cable closes it.
     getCallback().stateUpdated(
         new ChannelUID(getThing().getUID(), OcppBindingConstants.CABLE_CONNECTED.getAsString()),
-        OnOffType.from(isCableConnected(status)));
+        isCableConnected(status) ? OpenClosedType.CLOSED : OpenClosedType.OPEN);
 
     if (status == ChargePointStatus.Available
         || status == ChargePointStatus.Finishing

@@ -50,6 +50,13 @@
     <description>On/off control channel.</description>
   </channel-type>
 
+  <channel-type id="contact">
+    <item-type>Contact</item-type>
+    <label>Contact</label>
+    <description>Read-only open/closed sensor channel.</description>
+    <state readOnly="true"/>
+  </channel-type>
+
   <!-- quantities -->
   <channel-type id="current">
     <item-type>Number:ElectricCurrent</item-type>
