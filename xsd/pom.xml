@@ -35,6 +35,7 @@
   <description>Third party XSD resources.</description>
 
   <modules>
+    <module>org.connectorio.xsd.managed</module>
     <module>org.connectorio.xsd.openhab</module>
   </modules>
 

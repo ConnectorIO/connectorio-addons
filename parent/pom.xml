@@ -958,30 +958,55 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>xml-maven-plugin</artifactId>
           <version>1.2.0</version>
-          <configuration>
-            <validationSets>
-              <validationSet>
-                <dir>src/main/resources/OH-INF/</dir>
-                <includes>
-                  <include>**/*.xml</include>
-                </includes>
-                <validating>true</validating>
-              </validationSet>
-            </validationSets>
-            <catalogs>
-              <catalog>openhab-catalog.xml</catalog>
-            </catalogs>
-          </configuration>
           <executions>
             <execution>
               <id>default</id>
               <phase>none</phase>
+            </execution>
+            <execution>
+              <id>validate</id>
+              <configuration>
+                <validationSets>
+                  <validationSet>
+                    <dir>src/main/resources/OH-INF/</dir>
+                    <includes>
+                      <include>**/*.xml</include>
+                    </includes>
+                    <validating>true</validating>
+                  </validationSet>
+                </validationSets>
+                <catalogs>
+                  <catalog>openhab-catalog.xml</catalog>
+                </catalogs>
+              </configuration>
+            </execution>
+            <execution>
+              <id>validate-co7io</id>
+              <configuration>
+                <validationSets>
+                  <validationSet>
+                    <dir>src/test/resources/</dir>
+                    <includes>
+                      <include>**/*.xml</include>
+                    </includes>
+                    <validating>true</validating>
+                  </validationSet>
+                </validationSets>
+                <catalogs>
+                  <catalog>co7io-catalog.xml</catalog>
+                </catalogs>
+              </configuration>
             </execution>
           </executions>
           <dependencies>
             <dependency>
               <groupId>org.connectorio.addons</groupId>
               <artifactId>org.connectorio.xsd.openhab</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.connectorio.addons</groupId>
+              <artifactId>org.connectorio.xsd.managed</artifactId>
               <version>${project.version}</version>
             </dependency>
           </dependencies>

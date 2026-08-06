@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<items>
+<items xmlns="https://connectorio.com/xmlns/managed/items/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+    https://connectorio.com/xmlns/managed/items/1.0.0
+    https://connectorio.com/xmlns/managed/items-1.0.0.xsd
+  ">
+
   <item name="Foo" label="Custom item" category="Test">
     <type>Number:Energy</type>
     <tag>Measurement</tag>
     <tag>Energy</tag>
+    <group>A</group>
+    <group>B</group>
     <metadata>
       <state-description>
         <pattern>%d</pattern>
@@ -19,8 +27,6 @@
         <label>y</label>
       </co7io-abc>
     </metadata>
-    <group>A</group>
-    <group>B</group>
     <link>
       <channel>foo:bar:baz</channel>
       <config>
@@ -29,7 +35,10 @@
       </config>
     </link>
   </item>
+
   <group name="y">
+    <type>Group</type>
     <member>Foo</member>
   </group>
+
 </items>
