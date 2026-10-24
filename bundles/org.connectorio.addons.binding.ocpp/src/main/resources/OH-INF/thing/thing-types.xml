@@ -70,67 +70,6 @@
           If at least one value is provided requests from unknown tags will be rejected.
         </description>
       </parameter>
-      <parameter name="pingInterval" type="integer" required="false" min="0">
-        <label>WebSocket Ping Interval</label>
-        <description>
-          Seconds between server-driven WebSocket PING frames towards charger.
-        </description>
-        <default>60</default>
-        <unitLabel>s</unitLabel>
-        <advanced>true</advanced>
-      </parameter>
-      <parameter name="meterValueSampleInterval" type="integer" required="false" min="0">
-        <label>MeterValue Sample Interval</label>
-        <description>
-          Seconds between MeterValues samples during an active transaction.
-          Pushed to each connecting charger on BootNotification.
-        </description>
-        <default>30</default>
-        <unitLabel>s</unitLabel>
-        <advanced>true</advanced>
-      </parameter>
-      <parameter name="meterValuesData" type="text" required="false">
-        <label>MeterValues Measurands</label>
-        <description>
-          Comma-separated OCPP measurand list pushed as both MeterValuesSampledData
-          (during transactions) and MeterValuesAlignedData (clock-aligned, idle).
-        </description>
-        <default>Energy.Active.Import.Register,Power.Active.Import,Current.Import,Voltage</default>
-        <advanced>true</advanced>
-      </parameter>
-      <parameter name="clockAlignedDataInterval" type="integer" required="false" min="0">
-        <label>Clock-Aligned Data Interval</label>
-        <description>
-          Seconds between clock-aligned MeterValues pushes. Set to 0 to disable
-          idle telemetry; chargers that don't support clock-aligned values
-          respond Rejected and the setting is logged.
-        </description>
-        <default>30</default>
-        <unitLabel>s</unitLabel>
-        <advanced>true</advanced>
-      </parameter>
-      <parameter name="disableRemoteTxAuthorization" type="boolean" required="false">
-        <label>Disable Local Authorization for RemoteStart</label>
-        <description>
-          Push AuthorizeRemoteTxRequests=false to each connecting charger on BootNotification.
-          Chargers like Phoenix Contact CHARX SEC-3xxx ship with AuthorizeRemoteTxRequests=true
-          and an empty local auth list, which Rejects every CSMS-initiated RemoteStartTransaction.
-          Disable only if you rely on the charger's local authorization list.
-        </description>
-        <default>true</default>
-        <advanced>true</advanced>
-      </parameter>
-      <parameter name="vendorConfig" type="text" required="false" multiple="true">
-        <label>Vendor Configuration Keys</label>
-        <description>
-          Vendor-specific OCPP configuration keys to push as ChangeConfiguration on each charger's
-          BootNotification. Format: KEY=VALUE per entry. Example: FreeMode=true (Phoenix Contact CHARX
-          authorisation bypass; AuthorizeRemoteTxRequests=false alone is not enough on CHARX SEC-3xxx
-          FW 1.9.0 to accept CSMS-initiated RemoteStartTransaction). Chargers that don't recognise a
-          key respond NotSupported and the entry is logged.
-        </description>
-        <advanced>true</advanced>
-      </parameter>
     </config-description>
   </bridge-type>
 
@@ -180,22 +119,6 @@
         <label>Charging</label>
         <description>Remote start/stop charging control. Send ON to trigger RemoteStartTransaction and OFF to trigger RemoteStopTransaction.</description>
       </channel>
-      <channel id="reset" typeId="switch">
-        <label>Reset</label>
-        <description>Momentary. Send ON to issue a soft Reset to the charge point; the channel returns to OFF once the request settles.</description>
-      </channel>
-      <channel id="lock" typeId="switch">
-        <label>Unlock Connector</label>
-        <description>Momentary. Send ON to issue UnlockConnector for this connector (releases the cable latch / terminates a stuck transaction); the channel returns to OFF once the request settles.</description>
-      </channel>
-      <channel id="pause" typeId="switch">
-        <label>Pause</label>
-        <description>Pause/resume charging without ending the transaction. Send ON to apply a 0 A limit (SetChargingProfile), OFF to restore the last non-zero limit. OCPP 1.6 has no dedicated pause command.</description>
-      </channel>
-      <channel id="hardwareMaxCurrent" typeId="current">
-        <label>Hardware Max Current</label>
-        <description>Read/write the charger's persisted hardware current ceiling via a vendor-specific configuration key (set hardwareMaxCurrentKey on the connector; e.g. Wallbox uses chargingALimitConn1). Commands are written with ChangeConfiguration; REFRESH reads back with GetConfiguration. Inactive if no key is configured.</description>
-      </channel>
       <channel id="timestampStart" typeId="dateTime">
         <label>Start timestamp</label>
         <description>Start timestamp of most recent transaction.</description>
@@ -222,19 +145,7 @@
       </channel>
       <channel id="currentImport" typeId="current">
         <label>Current.Import</label>
-        <description>Instantaneous current flow to EV. Last-write-wins across phases: if the charger sends per-phase Current.Import samples, the last phase processed lands here. Single-phase chargers can link this directly; for true per-phase telemetry use the L1/L2/L3 channels.</description>
-      </channel>
-      <channel id="currentImportL1" typeId="current">
-        <label>Current.Import L1</label>
-        <description>Instantaneous current flow to EV on phase L1. Populated when the charger identifies a phase via either SampledValue.phase or a vendor measurand suffix (e.g. Current.Import.L1).</description>
-      </channel>
-      <channel id="currentImportL2" typeId="current">
-        <label>Current.Import L2</label>
-        <description>Instantaneous current flow to EV on phase L2.</description>
-      </channel>
-      <channel id="currentImportL3" typeId="current">
-        <label>Current.Import L3</label>
-        <description>Instantaneous current flow to EV on phase L3.</description>
+        <description>Instantaneous current flow to EV</description>
       </channel>
       <channel id="currentOffered" typeId="current">
         <label>Current.Offered</label>
@@ -314,19 +225,7 @@
       </channel>
       <channel id="voltage" typeId="voltage">
         <label>Voltage</label>
-        <description>Instantaneous AC RMS supply voltage. Updated from every SampledValue whose measurand resolves to Voltage, regardless of phase; link this if you want a single channel that follows the latest reading.</description>
-      </channel>
-      <channel id="voltageL1" typeId="voltage">
-        <label>Voltage L1</label>
-        <description>Instantaneous AC RMS supply voltage on phase L1. Filled when the charger reports a phase.</description>
-      </channel>
-      <channel id="voltageL2" typeId="voltage">
-        <label>Voltage L2</label>
-        <description>Instantaneous AC RMS supply voltage on phase L2.</description>
-      </channel>
-      <channel id="voltageL3" typeId="voltage">
-        <label>Voltage L3</label>
-        <description>Instantaneous AC RMS supply voltage on phase L3.</description>
+        <description>Instantaneous AC RMS supply voltage</description>
       </channel>
       <channel id="chargeLimit" typeId="current">
         <label>Charge Limit</label>
@@ -343,23 +242,6 @@
         <label>Remote Start Tag</label>
         <description>Tag to use for remote start transactions. Defaults to "openhab" if not specified.</description>
         <default>openhab</default>
-      </parameter>
-      <parameter name="profileMinIntervalMs" type="integer" required="false" min="0">
-        <label>SetChargingProfile Min Interval (ms)</label>
-        <description>
-          Minimum gap between consecutive SetChargingProfile CALLs to this connector. Rapid
-          charge-limit changes are coalesced — at most one CALL in flight plus the latest pending
-          value — so a fast caller cannot flood the charger's OCPP queue. Higher values help slow
-          chargers such as Phoenix Contact CHARX SEC-3xxx.
-        </description>
-        <default>500</default>
-        <unitLabel>ms</unitLabel>
-        <advanced>true</advanced>
-      </parameter>
-      <parameter name="hardwareMaxCurrentKey" type="text" required="false">
-        <label>Hardware Max Current Key</label>
-        <description>Vendor-specific OCPP configuration key backing the hardwareMaxCurrent channel (read with GetConfiguration, written with ChangeConfiguration). Wallbox uses chargingALimitConn1. Leave empty to disable the channel.</description>
-        <advanced>true</advanced>
       </parameter>
     </config-description>
 

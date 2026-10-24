@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import eu.chargetime.ocpp.model.Request;
 import eu.chargetime.ocpp.model.core.ChargingProfile;
-import eu.chargetime.ocpp.model.core.ChargingProfilePurposeType;
 import eu.chargetime.ocpp.model.smartcharging.SetChargingProfileRequest;
 import java.util.concurrent.CompletableFuture;
 import org.connectorio.addons.binding.ocpp.internal.OcppSender;
@@ -41,19 +40,11 @@ class ChargeLimitCommandHandlerTest {
     handler = new ChargeLimitCommandHandler();
   }
 
-  private void stubCoalescer() {
-    // getProfileMinIntervalMs() is read when the coalescer is constructed; getScheduler() is only
-    // touched if a drain is scheduled, which a single idle submit never triggers.
-    when(context.getProfileMinIntervalMs()).thenReturn(0L);
-  }
-
   @Test
   void shouldSendSetChargingProfileForDecimalType() {
     // given
-    stubCoalescer();
     when(context.getOcppSender()).thenReturn(sender);
     when(context.getChargerSerialNumber()).thenReturn("charger-serial");
-    when(context.getConnectorId()).thenReturn(2);
     when(sender.send(any(ChargerReference.class), any(Request.class)))
       .thenReturn(CompletableFuture.completedFuture(null));
 
@@ -65,16 +56,13 @@ class ChargeLimitCommandHandlerTest {
     verify(sender).send(any(ChargerReference.class), requestCaptor.capture());
 
     assertThat(requestCaptor.getValue()).isInstanceOf(SetChargingProfileRequest.class);
-    assertThat(((SetChargingProfileRequest) requestCaptor.getValue()).getConnectorId()).isEqualTo(2);
   }
 
   @Test
   void shouldSendSetChargingProfileForQuantityType() {
     // given
-    stubCoalescer();
     when(context.getOcppSender()).thenReturn(sender);
     when(context.getChargerSerialNumber()).thenReturn("charger-serial");
-    when(context.getConnectorId()).thenReturn(1);
     when(sender.send(any(ChargerReference.class), any(Request.class)))
       .thenReturn(CompletableFuture.completedFuture(null));
 
@@ -88,63 +76,6 @@ class ChargeLimitCommandHandlerTest {
     verify(sender).send(any(ChargerReference.class), requestCaptor.capture());
 
     assertThat(requestCaptor.getValue()).isInstanceOf(SetChargingProfileRequest.class);
-    assertThat(((SetChargingProfileRequest) requestCaptor.getValue()).getConnectorId()).isEqualTo(1);
-  }
-
-  @Test
-  void shouldNotSendWhenConnectorIdMissing() {
-    // given
-    when(context.getOcppSender()).thenReturn(sender);
-    when(context.getChargerSerialNumber()).thenReturn("charger-serial");
-    when(context.getConnectorId()).thenReturn(null);
-
-    // when
-    handler.handle(new DecimalType(10), context);
-
-    // then
-    verify(sender, never()).send(any(ChargerReference.class), any(Request.class));
-  }
-
-  @Test
-  void shouldUseTxProfileWithTransactionIdWhenTransactionActive() {
-    // given a running transaction
-    when(context.getOcppSender()).thenReturn(sender);
-    when(context.getChargerSerialNumber()).thenReturn("charger-serial");
-    when(context.getCurrentTransactionId()).thenReturn(42);
-    when(sender.send(any(ChargerReference.class), any(Request.class)))
-      .thenReturn(CompletableFuture.completedFuture(null));
-
-    // when
-    handler.handle(new DecimalType(16), context);
-
-    // then the profile targets the running transaction
-    ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
-    verify(sender).send(any(ChargerReference.class), requestCaptor.capture());
-
-    ChargingProfile profile = ((SetChargingProfileRequest) requestCaptor.getValue()).getCsChargingProfiles();
-    assertThat(profile.getChargingProfilePurpose()).isEqualTo(ChargingProfilePurposeType.TxProfile);
-    assertThat(profile.getTransactionId()).isEqualTo(42);
-  }
-
-  @Test
-  void shouldUseTxDefaultProfileWhenNoTransaction() {
-    // given no active transaction
-    when(context.getOcppSender()).thenReturn(sender);
-    when(context.getChargerSerialNumber()).thenReturn("charger-serial");
-    when(context.getCurrentTransactionId()).thenReturn(null);
-    when(sender.send(any(ChargerReference.class), any(Request.class)))
-      .thenReturn(CompletableFuture.completedFuture(null));
-
-    // when
-    handler.handle(new DecimalType(16), context);
-
-    // then it seeds the next session's default and carries no transaction id
-    ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
-    verify(sender).send(any(ChargerReference.class), requestCaptor.capture());
-
-    ChargingProfile profile = ((SetChargingProfileRequest) requestCaptor.getValue()).getCsChargingProfiles();
-    assertThat(profile.getChargingProfilePurpose()).isEqualTo(ChargingProfilePurposeType.TxDefaultProfile);
-    assertThat(profile.getTransactionId()).isNull();
   }
 
   @Test
@@ -158,14 +89,6 @@ class ChargeLimitCommandHandlerTest {
     handler.handle(command, context);
 
     // then
-    verify(sender, never()).send(any(ChargerReference.class), any(Request.class));
-  }
-
-  @Test
-  void shouldIgnoreRefreshType() {
-    // chargeLimit is a write-only control; REFRESH must be a no-op
-    handler.handle(org.openhab.core.types.RefreshType.REFRESH, context);
-
     verify(sender, never()).send(any(ChargerReference.class), any(Request.class));
   }
 }

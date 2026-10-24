@@ -6,7 +6,6 @@ import org.connectorio.addons.binding.ocpp.internal.OcppSender;
 import org.connectorio.addons.binding.ocpp.internal.server.ChargerReference;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.types.Command;
-import org.openhab.core.types.RefreshType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,10 +13,6 @@ public class ChargingCommandHandler {
     private final Logger logger = LoggerFactory.getLogger(ChargingCommandHandler.class);
 
     public void handle(Command command, ConnectorCommandContext context) {
-        if (command instanceof RefreshType) {
-            // charging is a write-only RemoteStart/Stop control; REFRESH has nothing to read.
-            return;
-        }
         if (!(command instanceof OnOffType)) {
             logger.warn("Unsupported command type for charging control: {}", command.getClass());
             return;
@@ -41,24 +36,12 @@ public class ChargingCommandHandler {
 
         ChargerReference chargerRef = new ChargerReference(chargerSerialNumber);
         RemoteStartTransactionRequest request = new RemoteStartTransactionRequest(remoteStartTag);
-        // Target the specific connector. On a multi-connector charge point the
-        // connectorId is required — without it some chargers (e.g. Phoenix CHARX)
-        // cannot bind the remote start to an EVSE and Reject the request. Single
-        // connector chargers are unaffected (connectorId 1 is unambiguous). OCPP
-        // requires connectorId > 0 (0 = the charge point as a whole, invalid for
-        // RemoteStart), so omit anything else and let the charger choose.
-        Integer connectorId = context.getConnectorId();
-        if (connectorId != null && connectorId > 0) {
-            request.setConnectorId(connectorId);
-        }
 
         ocppSender.send(chargerRef, request).whenComplete((confirmation, throwable) -> {
             if (throwable != null) {
-                logger.warn("Failed to send RemoteStartTransaction (connector {}, tag {})", connectorId, remoteStartTag,
-                        throwable);
+                logger.warn("Failed to send RemoteStartTransaction with tag {}", remoteStartTag, throwable);
             } else {
-                logger.info("RemoteStartTransaction (connector {}, tag {}) sent successfully: {}", connectorId,
-                        remoteStartTag, confirmation);
+                logger.info("RemoteStartTransaction with tag {} sent successfully: {}", remoteStartTag, confirmation);
             }
         });
     }

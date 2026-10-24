@@ -1,7 +1,6 @@
 package org.connectorio.addons.binding.ocpp.internal.handler;
 
 import eu.chargetime.ocpp.model.core.ChargePointStatus;
-import eu.chargetime.ocpp.model.core.StartTransactionRequest;
 import eu.chargetime.ocpp.model.core.StatusNotificationRequest;
 import eu.chargetime.ocpp.model.core.StopTransactionRequest;
 import java.time.ZonedDateTime;
@@ -35,12 +34,10 @@ class ConnectorThingHandlerTest {
 
     @Test
     void testResetOnStopTransaction() {
-        // Stops are matched against the connector's own running transaction, so own one first.
-        StartTransactionRequest start = new StartTransactionRequest(1, "testTag", 0, ZonedDateTime.now());
-        int txId = handler.handleStartTransaction(start).getTransactionId();
-
-        StopTransactionRequest request = new StopTransactionRequest(0, ZonedDateTime.now(), txId);
+        StopTransactionRequest request = new StopTransactionRequest(0, ZonedDateTime.now(), 1);
         request.setIdTag("testTag");
+        // Simulate transactionId state
+        handler.setTransactionId(2); // so transactionId.get() == 2, request.getTransactionId() == 1
         handler.handleStopTransaction(request);
         verifyResetChannels();
     }

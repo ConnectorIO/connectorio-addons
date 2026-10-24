@@ -44,16 +44,9 @@ public interface OcppBindingConstants extends BaseBindingConstants {
   // common channel types
   ChannelRef CURRENT_EXPORT = new ChannelRef("currentExport");
   ChannelRef CURRENT_IMPORT = new ChannelRef("currentImport");
-  ChannelRef CURRENT_IMPORT_L1 = new ChannelRef("currentImportL1");
-  ChannelRef CURRENT_IMPORT_L2 = new ChannelRef("currentImportL2");
-  ChannelRef CURRENT_IMPORT_L3 = new ChannelRef("currentImportL3");
   ChannelRef CURRENT_OFFERED = new ChannelRef("currentOffered");
   ChannelRef CHARGE_LIMIT = new ChannelRef("chargeLimit");
   ChannelRef CHARGING = new ChannelRef("charging");
-  ChannelRef RESET = new ChannelRef("reset");
-  ChannelRef LOCK = new ChannelRef("lock");
-  ChannelRef PAUSE = new ChannelRef("pause");
-  ChannelRef HARDWARE_MAX_CURRENT = new ChannelRef("hardwareMaxCurrent");
   ChannelRef ENERGY_ACTIVE_EXPORT = new ChannelRef("energyActiveExport");
   ChannelRef ENERGY_ACTIVE_IMPORT = new ChannelRef("energyActiveImport");
   ChannelRef ENERGY_REACTIVE_EXPORT = new ChannelRef("energyReactiveExport");
@@ -73,9 +66,6 @@ public interface OcppBindingConstants extends BaseBindingConstants {
   ChannelRef SOC = new ChannelRef("soc");
   ChannelRef TEMPERATURE = new ChannelRef("temperature");
   ChannelRef VOLTAGE = new ChannelRef("voltage");
-  ChannelRef VOLTAGE_L1 = new ChannelRef("voltageL1");
-  ChannelRef VOLTAGE_L2 = new ChannelRef("voltageL2");
-  ChannelRef VOLTAGE_L3 = new ChannelRef("voltageL3");
 
   static class ChannelRef extends UID {
 
