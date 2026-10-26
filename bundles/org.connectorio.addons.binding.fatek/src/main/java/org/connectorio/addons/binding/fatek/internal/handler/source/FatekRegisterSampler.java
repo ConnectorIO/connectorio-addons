@@ -20,6 +20,8 @@ package org.connectorio.addons.binding.fatek.internal.handler.source;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import org.connectorio.addons.binding.fatek.transport.FaconConnection;
 import org.simplify4u.jfatek.FatekReadMixDataCmd;
@@ -31,9 +33,9 @@ public class FatekRegisterSampler implements FatekSampler {
   private final FaconConnection connection;
   private final int stationNumber;
   private final List<Reg> registers;
-  private final Consumer<Map<Reg, RegValue>> consumer;
+  private final BiConsumer<Map<Reg, RegValue>, Throwable> consumer;
 
-  public FatekRegisterSampler(FaconConnection connection, int stationNumber, List<Reg> registers, Consumer<Map<Reg, RegValue>> consumer) {
+  public FatekRegisterSampler(FaconConnection connection, int stationNumber, List<Reg> registers, BiConsumer<Map<Reg, RegValue>, Throwable> consumer) {
     this.connection = connection;
     this.stationNumber = stationNumber;
     this.registers = registers;
@@ -43,11 +45,9 @@ public class FatekRegisterSampler implements FatekSampler {
   @Override
   public CompletableFuture<Map<Reg, RegValue>> fetch() {
     return connection.execute(stationNumber, new FatekReadMixDataCmd(null, registers.toArray(new Reg[0])))
+      .orTimeout(5, TimeUnit.SECONDS)
       .whenComplete((result, error) -> {
-        if (error != null) {
-          return;
-        }
-        consumer.accept(result);
+        consumer.accept(result, error);
       });
   }
 
@@ -56,7 +56,7 @@ public class FatekRegisterSampler implements FatekSampler {
   }
 
   @Override
-  public Consumer<Map<Reg, RegValue>> getCallback() {
+  public BiConsumer<Map<Reg, RegValue>, Throwable> getCallback() {
     return consumer;
   }
 }

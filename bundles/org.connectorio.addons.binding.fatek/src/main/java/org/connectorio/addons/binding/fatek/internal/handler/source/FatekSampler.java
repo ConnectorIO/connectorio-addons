@@ -19,7 +19,7 @@ package org.connectorio.addons.binding.fatek.internal.handler.source;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import org.connectorio.addons.binding.source.sampling.Sampler;
 import org.simplify4u.jfatek.registers.Reg;
 import org.simplify4u.jfatek.registers.RegValue;
@@ -30,6 +30,6 @@ import org.simplify4u.jfatek.registers.RegValue;
 public interface FatekSampler extends Sampler {
 
   List<Reg> getRegisters();
-  Consumer<Map<Reg, RegValue>> getCallback();
+  BiConsumer<Map<Reg, RegValue>, Throwable> getCallback();
 
 }

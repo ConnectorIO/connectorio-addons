@@ -22,6 +22,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import org.connectorio.addons.binding.fatek.internal.transport.JFatekTcpFaconConnection;
 import org.connectorio.addons.binding.fatek.transport.FaconConnection;
 import org.connectorio.addons.binding.handler.GenericBridgeHandlerBase;
@@ -40,10 +42,10 @@ public class FatekTcpBridgeHandler extends GenericBridgeHandlerBase<TcpBridgeCon
   FatekBridgeHandler<TcpBridgeConfig> {
 
   private final Logger logger = LoggerFactory.getLogger(FatekPlcThingHandler.class);
-  private final CompletableFuture<FaconConnection> connection = new CompletableFuture<>();
 
   private final DiscoveryCoordinator discoveryCoordinator;
 
+  private CompletableFuture<FaconConnection> connection = new CompletableFuture<>();
   private ExecutorService executor;
   private Long refreshInterval;
 
@@ -60,40 +62,63 @@ public class FatekTcpBridgeHandler extends GenericBridgeHandlerBase<TcpBridgeCon
       updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "Missing configuration");
       return;
     }
+    executor = Executors.newFixedThreadPool(2, (runnable) -> new Thread(runnable, "fatek-connection-" + getThing().getUID().getId()));
 
-    scheduler.execute(() -> {
-      if (config.host == null || config.host.trim().isEmpty()) {
-        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "Missing host address");
-        return;
-      }
-      if (config.port == 0) {
-        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "Missing port number");
-        return;
-      }
+    connect();
+  }
+
+  private void connect() {
+    TcpBridgeConfig config = getBridgeConfig().orElse(null);
+
+    if (config == null) {
+      updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "Missing configuration");
+      return;
+    }
+    if (config.host == null || config.host.trim().isEmpty()) {
+      updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "Missing host address");
+      return;
+    }
+    if (config.port == 0) {
+      updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "Missing port number");
+      return;
+    }
+    try {
       int timeout = config.connectionTimeout != 0 ? config.connectionTimeout : 5000;
-      executor = Executors.newFixedThreadPool(2, (runnable) -> new Thread(runnable, "fatek-connection-" + config.host));
+      JFatekTcpFaconConnection faconConnection = new JFatekTcpFaconConnection(executor, config.host, config.port, timeout);
+      this.refreshInterval = config.refreshInterval;
+      connection.complete(faconConnection);
+      updateStatus(ThingStatus.ONLINE);
+    } catch (FatekIOException e) {
+      connection.completeExceptionally(e);
+    }
+  }
 
+  private void disconnect() {
+    if (connection != null && connection.isDone()) {
       try {
-        JFatekTcpFaconConnection faconConnection = new JFatekTcpFaconConnection(executor, config.host, config.port, timeout);
-        this.refreshInterval = config.refreshInterval;
-        connection.complete(faconConnection);
-        updateStatus(ThingStatus.ONLINE);
-      } catch (FatekIOException e) {
-        connection.completeExceptionally(e);
+        connection.join().close();
+      } catch (IOException e) {
+        logger.warn("Error while shutting down connection");
+      } finally {
+        connection = null;
       }
-    });
+    }
+  }
 
+  @Override
+  public Consumer<Exception> getConnectionErrorHandler() {
+    return cause -> {
+      logger.warn("Fatek TCP connection error, scheduling reconnect in 5s", cause);
+      updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, cause.getMessage());
+      disconnect();
+      this.connection = new CompletableFuture<>();
+      scheduler.schedule(this::connect, 5, TimeUnit.SECONDS);
+    };
   }
 
   @Override
   public void dispose() {
-    if (connection.isDone()) {
-      try {
-        connection.join().close();
-      } catch (IOException e) {
-        logger.warn("Graceful shutdown of TCP connection failed", e);
-      }
-    }
+    disconnect();
 
     if (executor != null) {
       executor.shutdownNow();
